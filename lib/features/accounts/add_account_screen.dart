@@ -10,10 +10,12 @@ const Color arthamBackground = Color(0xFFF5F7F8);
 
 class AddAccountScreen extends StatefulWidget {
   final AppDatabase database;
+  final BankAccount? account;
 
   const AddAccountScreen({
     super.key,
     required this.database,
+    this.account,
   });
 
   @override
@@ -50,6 +52,16 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   void initState() {
     super.initState();
     _accountRepository = AccountRepository(widget.database);
+    final account = widget.account;
+    if (account != null) {
+      _selectedBank = account.bankName;
+      if (!_banks.contains(account.bankName)) _banks.add(account.bankName);
+      _accountNameController.text = account.accountName;
+      _lastFourController.text = account.accountNumberLast4 ?? '';
+      _openingBalanceController.text =
+          (account.openingBalancePaise / 100).toStringAsFixed(2);
+      _openingDate = account.openingDate;
+    }
   }
 
   @override
@@ -112,19 +124,32 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     });
 
     try {
-      await _accountRepository.addAccount(
-        bankName: _selectedBank!,
-        accountName: _accountNameController.text.trim(),
-        accountNumberLast4: _lastFourController.text.trim(),
-        openingBalancePaise: balancePaise,
-        openingDate: _openingDate,
-      );
+      if (widget.account == null) {
+        await _accountRepository.addAccount(
+          bankName: _selectedBank!,
+          accountName: _accountNameController.text.trim(),
+          accountNumberLast4: _lastFourController.text.trim(),
+          openingBalancePaise: balancePaise,
+          openingDate: _openingDate,
+        );
+      } else {
+        await _accountRepository.updateAccount(
+          accountId: widget.account!.id,
+          bankName: _selectedBank!,
+          accountName: _accountNameController.text.trim(),
+          accountNumberLast4: _lastFourController.text.trim(),
+          openingBalancePaise: balancePaise,
+          openingDate: _openingDate,
+        );
+      }
 
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Bank account saved successfully!'),
+        SnackBar(
+          content: Text(widget.account == null
+              ? 'Bank account saved successfully!'
+              : 'Bank account updated successfully!'),
           backgroundColor: arthamGreen,
         ),
       );
@@ -156,8 +181,8 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         backgroundColor: arthamBackground,
         foregroundColor: arthamNavy,
         elevation: 0,
-        title: const Text(
-          'Add Bank Account',
+        title: Text(
+          widget.account == null ? 'Add Bank Account' : 'Edit Bank Account',
           style: TextStyle(
             fontWeight: FontWeight.w700,
             fontSize: 20,
@@ -176,9 +201,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   color: arthamNavy,
                   borderRadius: BorderRadius.circular(20),
                 ),
-                child: const Row(
+                child: Row(
                   children: [
-                    Icon(
+                    const Icon(
                       Icons.account_balance_rounded,
                       color: Color(0xFF61D6B3),
                       size: 35,
@@ -189,7 +214,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Add your account',
+                            widget.account == null ? 'Add your account' : 'Edit your account',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -198,7 +223,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                           ),
                           SizedBox(height: 5),
                           Text(
-                            'Keep all your bank balances in one place.',
+                            widget.account == null
+                                ? 'Keep all your bank balances in one place.'
+                                : 'Update your bank account details.',
                             style: TextStyle(
                               color: Colors.white70,
                               fontSize: 13,
@@ -398,12 +425,12 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                           ),
                         )
                       else
-                        const Icon(Icons.add_rounded),
+                        Icon(widget.account == null ? Icons.add_rounded : Icons.save_outlined),
                       const SizedBox(width: 8),
                       Text(
                         _isSaving
                             ? 'Saving...'
-                            : 'Save Bank Account',
+                            : widget.account == null ? 'Save Bank Account' : 'Save Changes',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,

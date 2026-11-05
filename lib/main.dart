@@ -1,8 +1,12 @@
 
 import 'package:flutter/material.dart';
 import 'features/transactions/activity_screen.dart';
+import 'features/budgets/budgets_screen.dart';
+import 'features/insights/insights_screen.dart';
 import 'data/app_database.dart';
 import 'data/repositories/account_repository.dart';
+import 'data/repositories/transaction_repository.dart';
+import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
 
 late final AppDatabase appDatabase;
@@ -65,6 +69,9 @@ class _HomeScreenState extends State<HomeScreen> {
   bool showBalance = true;
 
   late Future<List<BankAccount>> _accountsFuture;
+  late Future<AccountBalanceSummary> _summaryFuture;
+  late Future<List<RecentTransaction>> _recentTransactionsFuture;
+  late Future<MonthlyBudgetSummary?> _budgetSummaryFuture;
 
   @override
   void initState() {
@@ -74,6 +81,115 @@ class _HomeScreenState extends State<HomeScreen> {
 
   void _loadAccounts() {
     _accountsFuture = AccountRepository(appDatabase).getActiveAccounts();
+    final transactionRepository = TransactionRepository(appDatabase);
+    _summaryFuture = transactionRepository.getBalanceSummary();
+    _recentTransactionsFuture =
+        transactionRepository.getRecentTransactions(limit: 5);
+    _loadBudget();
+  }
+
+  void _loadBudget() {
+    _budgetSummaryFuture =
+        BudgetRepository(appDatabase).getMonthlyBudgetSummary(DateTime.now());
+  }
+
+  Future<void> _editMonthlyBudget() async {
+    final repository = BudgetRepository(appDatabase);
+    final now = DateTime.now();
+    final existing = await repository.getMonthlyBudget(now);
+
+    if (!mounted) return;
+
+    final controller = TextEditingController(
+      text: existing == null
+          ? ''
+          : (existing.limitPaise / 100).toStringAsFixed(2),
+    );
+
+    final formKey = GlobalKey<FormState>();
+    final shouldSave = await showDialog<bool>(
+      context: context,
+      builder: (dialogContext) {
+        return AlertDialog(
+          title: const Text('Monthly spending budget'),
+          content: Form(
+            key: formKey,
+            child: TextFormField(
+              controller: controller,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Budget amount',
+                prefixText: '₹ ',
+                hintText: 'e.g. 35000',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                final amount = double.tryParse(
+                  (value ?? '').trim().replaceAll(',', ''),
+                );
+                if (amount == null || amount <= 0) {
+                  return 'Enter an amount greater than zero';
+                }
+                if (amount > 100000000000) {
+                  return 'Enter a smaller amount';
+                }
+                return null;
+              },
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () {
+                if (formKey.currentState!.validate()) {
+                  Navigator.pop(dialogContext, true);
+                }
+              },
+              style: FilledButton.styleFrom(
+                backgroundColor: primaryGreen,
+              ),
+              child: const Text('Save budget'),
+            ),
+          ],
+        );
+      },
+    );
+
+    if (shouldSave == true) {
+      final amount = double.parse(
+        controller.text.trim().replaceAll(',', ''),
+      );
+      final amountPaise = (amount * 100).round();
+
+      await repository.saveMonthlyBudget(
+        month: now,
+        limitPaise: amountPaise,
+      );
+
+      if (!mounted) return;
+      setState(_loadBudget);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Monthly budget saved')),
+      );
+    }
+
+    controller.dispose();
+  }
+
+  String _currentMonthLabel() {
+    const months = [
+      'January', 'February', 'March', 'April', 'May', 'June',
+      'July', 'August', 'September', 'October', 'November', 'December',
+    ];
+    final now = DateTime.now();
+    return '${months[now.month - 1]} ${now.year}';
   }
 
   Future<void> _openAccounts() async {
@@ -107,8 +223,8 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             buildDashboard(),
             ActivityScreen(database: appDatabase),
-            buildPlaceholder('Insights', Icons.insights),
-            buildPlaceholder('Budgets', Icons.pie_chart),
+            InsightsScreen(database: appDatabase, isActive: selectedTab == 2),
+            BudgetsScreen(database: appDatabase, isActive: selectedTab == 3),
             buildPlaceholder('Settings', Icons.settings),
           ],
         ),
@@ -116,7 +232,12 @@ class _HomeScreenState extends State<HomeScreen> {
       bottomNavigationBar: NavigationBar(
         selectedIndex: selectedTab,
         onDestinationSelected: (index) {
-          setState(() => selectedTab = index);
+          setState(() {
+            selectedTab = index;
+            if (index == 0) {
+              _loadAccounts();
+            }
+          });
         },
         backgroundColor: Colors.white,
         indicatorColor: primaryGreen.withValues(alpha: 0.12),
@@ -226,99 +347,119 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildBalanceCard() {
-    return Container(
-      padding: const EdgeInsets.all(23),
-      decoration: BoxDecoration(
-        color: darkNavy,
-        borderRadius: BorderRadius.circular(27),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF142B35), Color(0xFF176B59)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              const Text(
-                'TOTAL AVAILABLE BALANCE',
-                style: TextStyle(
-                  color: Colors.white70,
-                  fontSize: 11,
-                  letterSpacing: 1.1,
-                  fontWeight: FontWeight.w600,
-                ),
-              ),
-              const Spacer(),
-              IconButton(
-                onPressed: () {
-                  setState(() => showBalance = !showBalance);
-                },
-                icon: Icon(
-                  showBalance
-                      ? Icons.visibility_outlined
-                      : Icons.visibility_off_outlined,
-                  color: Colors.white70,
-                  size: 20,
-                ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 5),
-          Text(
-            showBalance ? '₹81,250.00' : '••••••••',
-            style: const TextStyle(
-              fontSize: 34,
-              fontWeight: FontWeight.w800,
-              color: Colors.white,
-              letterSpacing: -1,
+    return FutureBuilder<AccountBalanceSummary>(
+      future: _summaryFuture,
+      builder: (context, snapshot) {
+        final summary = snapshot.data;
+        final totalBalance = summary == null
+            ? (snapshot.connectionState == ConnectionState.waiting
+                ? 'Loading...'
+                : 'Unavailable')
+            : (showBalance ? _formatRupees(summary.totalBalancePaise) : '••••••••');
+        final monthlyIncome = summary == null
+            ? '—'
+            : (showBalance ? _formatRupees(summary.monthlyIncomePaise) : '••••');
+        final monthlyExpenses = summary == null
+            ? '—'
+            : (showBalance ? _formatRupees(summary.monthlyExpensesPaise) : '••••');
+
+        return Container(
+          padding: const EdgeInsets.all(23),
+          decoration: BoxDecoration(
+            color: darkNavy,
+            borderRadius: BorderRadius.circular(27),
+            gradient: const LinearGradient(
+              colors: [Color(0xFF142B35), Color(0xFF176B59)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
             ),
           ),
-          const SizedBox(height: 7),
-          Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const Icon(
-                Icons.shield_outlined,
-                color: Color(0xFF62DAB0),
-                size: 15,
+              Row(
+                children: [
+                  const Text(
+                    'TOTAL AVAILABLE BALANCE',
+                    style: TextStyle(
+                      color: Colors.white70,
+                      fontSize: 11,
+                      letterSpacing: 1.1,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const Spacer(),
+                  IconButton(
+                    onPressed: () {
+                      setState(() => showBalance = !showBalance);
+                    },
+                    icon: Icon(
+                      showBalance
+                          ? Icons.visibility_outlined
+                          : Icons.visibility_off_outlined,
+                      color: Colors.white70,
+                      size: 20,
+                    ),
+                  ),
+                ],
               ),
-              const SizedBox(width: 6),
+              const SizedBox(height: 5),
               Text(
-                'Sample data · Not connected to banks',
-                style: TextStyle(
-                  color: Colors.white.withValues(alpha: 0.7),
-                  fontSize: 11,
+                totalBalance,
+                style: const TextStyle(
+                  fontSize: 34,
+                  fontWeight: FontWeight.w800,
+                  color: Colors.white,
+                  letterSpacing: -1,
                 ),
+              ),
+              const SizedBox(height: 7),
+              Row(
+                children: [
+                  const Icon(
+                    Icons.shield_outlined,
+                    color: Color(0xFF62DAB0),
+                    size: 15,
+                  ),
+                  const SizedBox(width: 6),
+                  Text(
+                    snapshot.hasError
+                        ? 'Unable to calculate balance'
+                        : 'Calculated from your saved transactions',
+                    style: TextStyle(
+                      color: Colors.white.withValues(alpha: 0.7),
+                      fontSize: 11,
+                    ),
+                  ),
+                ],
+              ),
+              const SizedBox(height: 24),
+              const Divider(color: Colors.white24),
+              const SizedBox(height: 15),
+              Row(
+                children: [
+                  Expanded(
+                    child: balanceSummary(
+                      'INCOME THIS MONTH',
+                      monthlyIncome,
+                      Icons.trending_up,
+                      const Color(0xFF68DFB4),
+                    ),
+                  ),
+                  Expanded(
+                    child: balanceSummary(
+                      'EXPENSES THIS MONTH',
+                      monthlyExpenses,
+                      Icons.trending_down,
+                      const Color(0xFFFFA69A),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-          const SizedBox(height: 24),
-          const Divider(color: Colors.white24),
-          const SizedBox(height: 15),
-          Row(
-            children: [
-              Expanded(
-                child: balanceSummary(
-                  'INCOME THIS MONTH',
-                  '₹55,000',
-                  Icons.trending_up,
-                  const Color(0xFF68DFB4),
-                ),
-              ),
-              Expanded(
-                child: balanceSummary(
-                  'EXPENSES THIS MONTH',
-                  '₹23,750',
-                  Icons.trending_down,
-                  const Color(0xFFFFA69A),
-                ),
-              ),
-            ],
-          ),
-        ],
-      ),
+        );
+      },
     );
   }
 
@@ -372,7 +513,11 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const Spacer(),
         TextButton(
-          onPressed: title == 'My accounts' ? _openAccounts : () {},
+          onPressed: title == 'My accounts'
+              ? _openAccounts
+              : title == 'Monthly budget'
+                  ? _editMonthlyBudget
+                  : () {},
           child: Text(
             action,
             style: const TextStyle(
@@ -462,21 +607,47 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-        return Wrap(
-          spacing: 12,
-          runSpacing: 12,
-          children: accounts.map((account) {
-            return SizedBox(
-              width: (MediaQuery.of(context).size.width - 52) / 2,
-              child: accountCard(
-                account.bankName,
-                '•••• ${account.accountNumberLast4 ?? '----'}',
-                _formatRupees(account.openingBalancePaise),
-                Icons.account_balance,
-                primaryGreen,
-              ),
+        return FutureBuilder<AccountBalanceSummary>(
+          future: _summaryFuture,
+          builder: (context, summarySnapshot) {
+            if (summarySnapshot.connectionState == ConnectionState.waiting) {
+              return const Center(
+                child: Padding(
+                  padding: EdgeInsets.all(20),
+                  child: CircularProgressIndicator(color: primaryGreen),
+                ),
+              );
+            }
+
+            if (summarySnapshot.hasError || !summarySnapshot.hasData) {
+              return const Text(
+                'Unable to calculate account balances.',
+                style: TextStyle(color: Colors.red),
+              );
+            }
+
+            final balances = summarySnapshot.data!.accountBalancesPaise;
+
+            return Wrap(
+              spacing: 12,
+              runSpacing: 12,
+              children: accounts.map((account) {
+                final balancePaise =
+                    balances[account.id] ?? account.openingBalancePaise;
+
+                return SizedBox(
+                  width: (MediaQuery.of(context).size.width - 52) / 2,
+                  child: accountCard(
+                    account.bankName,
+                    '•••• ${account.accountNumberLast4 ?? '----'}',
+                    _formatRupees(balancePaise),
+                    Icons.account_balance,
+                    primaryGreen,
+                  ),
+                );
+              }).toList(),
             );
-          }).toList(),
+          },
         );
       },
     );
@@ -532,108 +703,345 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildBudgetCard() {
-    return Container(
-      padding: const EdgeInsets.all(19),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(22),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Row(
-            children: [
-              Text(
-                'November 2026',
-                style: TextStyle(color: Colors.black54, fontSize: 12),
-              ),
-              Spacer(),
-              Icon(
-                Icons.calendar_month_outlined,
-                color: primaryGreen,
-                size: 20,
-              ),
-            ],
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            '₹23,750',
-            style: TextStyle(
-              color: darkNavy,
-              fontWeight: FontWeight.w800,
-              fontSize: 27,
+    return FutureBuilder<MonthlyBudgetSummary?>(
+      future: _budgetSummaryFuture,
+      builder: (context, snapshot) {
+        final summary = snapshot.data;
+
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(24),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
             ),
-          ),
-          const SizedBox(height: 5),
-          const Text(
-            'of ₹35,000 monthly budget',
-            style: TextStyle(color: Colors.black54, fontSize: 12),
-          ),
-          const SizedBox(height: 18),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(20),
-            child: const LinearProgressIndicator(
-              value: 23750 / 35000,
-              minHeight: 10,
-              backgroundColor: Color(0xFFE9EEEC),
-              color: primaryGreen,
+            child: const Center(
+              child: CircularProgressIndicator(color: primaryGreen),
             ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(19),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: const Text(
+              'Unable to load monthly budget.',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          );
+        }
+
+        if (summary == null) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(22),
+            ),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  _currentMonthLabel(),
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'No monthly budget set',
+                  style: TextStyle(
+                    color: darkNavy,
+                    fontWeight: FontWeight.w800,
+                    fontSize: 19,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'Set a spending limit to track your monthly expenses.',
+                  style: TextStyle(color: Colors.black54, fontSize: 12),
+                ),
+                const SizedBox(height: 14),
+                OutlinedButton.icon(
+                  onPressed: _editMonthlyBudget,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Set monthly budget'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: primaryGreen,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        final budget = summary.budgetPaise;
+        final expenses = summary.expensesPaise;
+        final remaining = summary.remainingPaise;
+        final rawProgress = summary.percentageUsed;
+        final progress = rawProgress.clamp(0.0, 1.0).toDouble();
+        final percentage = (rawProgress * 100).toStringAsFixed(1);
+        final isOverBudget = remaining < 0;
+
+        return Container(
+          padding: const EdgeInsets.all(19),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
           ),
-          const SizedBox(height: 13),
-          const Row(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              Row(
+                children: [
+                  Text(
+                    _currentMonthLabel(),
+                    style: const TextStyle(
+                      color: Colors.black54,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Spacer(),
+                  const Icon(
+                    Icons.calendar_month_outlined,
+                    color: primaryGreen,
+                    size: 20,
+                  ),
+                ],
+              ),
+              const SizedBox(height: 10),
               Text(
-                '67.9% used',
-                style: TextStyle(
-                  color: primaryGreen,
-                  fontWeight: FontWeight.bold,
-                  fontSize: 12,
+                _formatRupees(expenses),
+                style: const TextStyle(
+                  color: darkNavy,
+                  fontWeight: FontWeight.w800,
+                  fontSize: 27,
                 ),
               ),
-              Spacer(),
+              const SizedBox(height: 5),
               Text(
-                '₹11,250 remaining',
-                style: TextStyle(color: Colors.black54, fontSize: 12),
+                'of ${_formatRupees(budget)} monthly budget',
+                style: const TextStyle(color: Colors.black54, fontSize: 12),
+              ),
+              const SizedBox(height: 18),
+              ClipRRect(
+                borderRadius: BorderRadius.circular(20),
+                child: LinearProgressIndicator(
+                  value: progress,
+                  minHeight: 10,
+                  backgroundColor: const Color(0xFFE9EEEC),
+                  color: isOverBudget
+                      ? const Color(0xFFC45D58)
+                      : primaryGreen,
+                ),
+              ),
+              const SizedBox(height: 13),
+              Row(
+                children: [
+                  Text(
+                    isOverBudget ? '$percentage% used · Over budget' : '$percentage% used',
+                    style: TextStyle(
+                      color: isOverBudget
+                          ? const Color(0xFFC45D58)
+                          : primaryGreen,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const Spacer(),
+                  Flexible(
+                    child: Text(
+                      isOverBudget
+                          ? '${_formatRupees(remaining.abs())} over'
+                          : '${_formatRupees(remaining)} remaining',
+                      textAlign: TextAlign.end,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 
   Widget buildTransactions() {
-    return Column(
-      children: [
-        transactionItem(
-          'Swiggy',
-          'Food & Dining · Federal Bank',
-          'Today, 12:30 PM',
-          '−₹450',
-          Icons.restaurant,
-          const Color(0xFFEAF3E9),
-          false,
-        ),
-        transactionItem(
-          'Petrol Pump',
-          'Transportation · HDFC Bank',
-          'Today, 10:15 AM',
-          '−₹1,000',
-          Icons.local_gas_station,
-          const Color(0xFFEAF0FC),
-          false,
-        ),
-        transactionItem(
-          'Salary Credit',
-          'Income · Federal Bank',
-          '1 Nov, 09:00 AM',
-          '+₹35,000',
-          Icons.payments_outlined,
-          const Color(0xFFE5F5EE),
-          true,
-        ),
-      ],
+    return FutureBuilder<List<RecentTransaction>>(
+      future: _recentTransactionsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Padding(
+            padding: EdgeInsets.all(22),
+            child: Center(
+              child: CircularProgressIndicator(color: primaryGreen),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Text(
+              'Unable to load recent transactions.',
+              style: TextStyle(color: Colors.red, fontSize: 12),
+            ),
+          );
+        }
+
+        final recentTransactions = snapshot.data ?? [];
+
+        if (recentTransactions.isEmpty) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(18),
+            ),
+            child: const Column(
+              children: [
+                Icon(
+                  Icons.receipt_long_outlined,
+                  color: primaryGreen,
+                  size: 34,
+                ),
+                SizedBox(height: 9),
+                Text(
+                  'No transactions yet',
+                  style: TextStyle(
+                    color: darkNavy,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
+                SizedBox(height: 4),
+                Text(
+                  'Your latest transactions will appear here.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(color: Colors.black54, fontSize: 11),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Column(
+          children: recentTransactions.map((item) {
+            final transaction = item.transaction;
+            final categoryName = item.category?.name;
+            final transactionType = transaction.transactionType;
+            final isIncome = transactionType == 'income';
+            final isTransfer = transactionType == 'transfer';
+
+            final title = transaction.description?.trim().isNotEmpty == true
+                ? transaction.description!.trim()
+                : (categoryName ??
+                    (isIncome
+                        ? 'Income'
+                        : isTransfer
+                            ? 'Transfer'
+                            : 'Expense'));
+
+            final categoryLabel = categoryName ??
+                (isIncome
+                    ? 'Income'
+                    : isTransfer
+                        ? 'Transfer'
+                        : 'Expense');
+            final subtitle = '$categoryLabel · ${item.account.bankName}';
+            final amountPrefix = isIncome ? '+' : '−';
+            final amount = '$amountPrefix${_formatRupees(transaction.amountPaise)}';
+            final icon = _transactionIcon(
+              transactionType,
+              categoryName,
+            );
+            final background = isIncome
+                ? const Color(0xFFE5F5EE)
+                : isTransfer
+                    ? const Color(0xFFEAF0FC)
+                    : const Color(0xFFFFEFED);
+
+            return transactionItem(
+              title,
+              subtitle,
+              _formatTransactionDate(transaction.transactionDate),
+              amount,
+              icon,
+              background,
+              isIncome,
+            );
+          }).toList(),
+        );
+      },
     );
+  }
+
+  IconData _transactionIcon(String type, String? categoryName) {
+    if (type == 'income') return Icons.payments_outlined;
+    if (type == 'transfer') return Icons.swap_horiz_rounded;
+
+    final category = (categoryName ?? '').toLowerCase();
+
+    if (category.contains('food') || category.contains('dining')) {
+      return Icons.restaurant_outlined;
+    }
+    if (category.contains('transport')) return Icons.directions_car_outlined;
+    if (category.contains('shop')) return Icons.shopping_bag_outlined;
+    if (category.contains('bill') || category.contains('utilit')) {
+      return Icons.receipt_long_outlined;
+    }
+    if (category.contains('health')) return Icons.medical_services_outlined;
+    if (category.contains('education')) return Icons.school_outlined;
+    if (category.contains('travel')) return Icons.flight_outlined;
+    if (category.contains('grocer')) return Icons.local_grocery_store_outlined;
+    if (category.contains('rent')) return Icons.home_outlined;
+
+    return Icons.payments_outlined;
+  }
+
+  String _formatTransactionDate(DateTime date) {
+    final now = DateTime.now();
+    final localDate = date.toLocal();
+    final today = DateTime(now.year, now.month, now.day);
+    final transactionDay = DateTime(
+      localDate.year,
+      localDate.month,
+      localDate.day,
+    );
+
+    final time = TimeOfDay.fromDateTime(localDate).format(context);
+
+    if (transactionDay == today) {
+      return 'Today, $time';
+    }
+    if (transactionDay == today.subtract(const Duration(days: 1))) {
+      return 'Yesterday, $time';
+    }
+
+    const months = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+    ];
+
+    return '${localDate.day} ${months[localDate.month - 1]}, $time';
   }
 
   Widget transactionItem(
@@ -670,6 +1078,8 @@ class _HomeScreenState extends State<HomeScreen> {
               children: [
                 Text(
                   title,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     fontWeight: FontWeight.w700,
                     fontSize: 13,
@@ -678,6 +1088,8 @@ class _HomeScreenState extends State<HomeScreen> {
                 const SizedBox(height: 3),
                 Text(
                   subtitle,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
                     color: Colors.black54,
                     fontSize: 10,
@@ -694,6 +1106,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
           ),
+          const SizedBox(width: 8),
           Text(
             amount,
             style: TextStyle(
