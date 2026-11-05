@@ -1,6 +1,9 @@
 
 import 'package:flutter/material.dart';
+import 'features/transactions/activity_screen.dart';
 import 'data/app_database.dart';
+import 'data/repositories/account_repository.dart';
+import 'features/accounts/accounts_screen.dart';
 
 late final AppDatabase appDatabase;
 
@@ -8,6 +11,18 @@ Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   appDatabase = AppDatabase();
+
+  try {
+    final isConnected = await appDatabase.testConnection();
+
+    debugPrint(
+      isConnected
+          ? 'Artham Database: CONNECTION SUCCESSFUL'
+          : 'Artham Database: CONNECTION FAILED',
+    );
+  } catch (e) {
+    debugPrint('Artham Database Error: $e');
+  }
 
   runApp(const ArthamApp());
 }
@@ -49,6 +64,40 @@ class _HomeScreenState extends State<HomeScreen> {
   int selectedTab = 0;
   bool showBalance = true;
 
+  late Future<List<BankAccount>> _accountsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadAccounts();
+  }
+
+  void _loadAccounts() {
+    _accountsFuture = AccountRepository(appDatabase).getActiveAccounts();
+  }
+
+  Future<void> _openAccounts() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => AccountsScreen(
+          database: appDatabase,
+        ),
+      ),
+    );
+
+    if (!mounted) return;
+
+    setState(() {
+      _loadAccounts();
+    });
+  }
+
+  String _formatRupees(int paise) {
+    final rupees = paise / 100;
+    return '₹${rupees.toStringAsFixed(2)}';
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -57,7 +106,7 @@ class _HomeScreenState extends State<HomeScreen> {
           index: selectedTab,
           children: [
             buildDashboard(),
-            buildPlaceholder('Transactions', Icons.receipt_long),
+            ActivityScreen(database: appDatabase),
             buildPlaceholder('Insights', Icons.insights),
             buildPlaceholder('Budgets', Icons.pie_chart),
             buildPlaceholder('Settings', Icons.settings),
@@ -208,7 +257,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   setState(() => showBalance = !showBalance);
                 },
                 icon: Icon(
-                  showBalance ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                  showBalance
+                      ? Icons.visibility_outlined
+                      : Icons.visibility_off_outlined,
                   color: Colors.white70,
                   size: 20,
                 ),
@@ -228,8 +279,11 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 7),
           Row(
             children: [
-              const Icon(Icons.shield_outlined,
-                  color: Color(0xFF62DAB0), size: 15),
+              const Icon(
+                Icons.shield_outlined,
+                color: Color(0xFF62DAB0),
+                size: 15,
+              ),
               const SizedBox(width: 6),
               Text(
                 'Sample data · Not connected to banks',
@@ -284,7 +338,10 @@ class _HomeScreenState extends State<HomeScreen> {
             Flexible(
               child: Text(
                 label,
-                style: const TextStyle(color: Colors.white60, fontSize: 9),
+                style: const TextStyle(
+                  color: Colors.white60,
+                  fontSize: 9,
+                ),
               ),
             ),
           ],
@@ -315,7 +372,7 @@ class _HomeScreenState extends State<HomeScreen> {
         ),
         const Spacer(),
         TextButton(
-          onPressed: () {},
+          onPressed: title == 'My accounts' ? _openAccounts : () {},
           child: Text(
             action,
             style: const TextStyle(
@@ -330,28 +387,98 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildAccounts() {
-    return Row(
-      children: [
-        Expanded(
-          child: accountCard(
-            'Federal Bank',
-            '•••• 1234',
-            '₹42,500',
-            Icons.account_balance,
-            primaryGreen,
-          ),
-        ),
-        const SizedBox(width: 12),
-        Expanded(
-          child: accountCard(
-            'HDFC Bank',
-            '•••• 5678',
-            '₹38,750',
-            Icons.account_balance,
-            const Color(0xFF5279B9),
-          ),
-        ),
-      ],
+    return FutureBuilder<List<BankAccount>>(
+      future: _accountsFuture,
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(
+            child: Padding(
+              padding: EdgeInsets.all(25),
+              child: CircularProgressIndicator(color: primaryGreen),
+            ),
+          );
+        }
+
+        if (snapshot.hasError) {
+          return Container(
+            padding: const EdgeInsets.all(18),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: const Text(
+              'Unable to load bank accounts.',
+              style: TextStyle(color: Colors.red),
+            ),
+          );
+        }
+
+        final accounts = snapshot.data ?? [];
+
+        if (accounts.isEmpty) {
+          return Container(
+            width: double.infinity,
+            padding: const EdgeInsets.all(22),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(21),
+            ),
+            child: Column(
+              children: [
+                Icon(
+                  Icons.account_balance_outlined,
+                  size: 36,
+                  color: primaryGreen.withValues(alpha: 0.8),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'No bank accounts added yet',
+                  style: TextStyle(
+                    color: darkNavy,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 14,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                const Text(
+                  'Add your first bank account to get started.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.black54,
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                OutlinedButton.icon(
+                  onPressed: _openAccounts,
+                  icon: const Icon(Icons.add_rounded),
+                  label: const Text('Add bank account'),
+                  style: OutlinedButton.styleFrom(
+                    foregroundColor: primaryGreen,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }
+
+        return Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: accounts.map((account) {
+            return SizedBox(
+              width: (MediaQuery.of(context).size.width - 52) / 2,
+              child: accountCard(
+                account.bankName,
+                '•••• ${account.accountNumberLast4 ?? '----'}',
+                _formatRupees(account.openingBalancePaise),
+                Icons.account_balance,
+                primaryGreen,
+              ),
+            );
+          }).toList(),
+        );
+      },
     );
   }
 
@@ -373,20 +500,29 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           Icon(icon, color: color, size: 24),
           const SizedBox(height: 13),
-          Text(name,
-              style: const TextStyle(
-                fontWeight: FontWeight.w700,
-                fontSize: 13,
-              )),
+          Text(
+            name,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
           const SizedBox(height: 3),
-          Text(number,
-              style: const TextStyle(color: Colors.black45, fontSize: 11)),
+          Text(
+            number,
+            style: const TextStyle(
+              color: Colors.black45,
+              fontSize: 11,
+            ),
+          ),
           const SizedBox(height: 12),
           Text(
             amount,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
-              fontSize: 19,
+              fontSize: 17,
               color: darkNavy,
             ),
           ),
@@ -407,11 +543,16 @@ class _HomeScreenState extends State<HomeScreen> {
         children: [
           const Row(
             children: [
-              Text('November 2026',
-                  style: TextStyle(color: Colors.black54, fontSize: 12)),
+              Text(
+                'November 2026',
+                style: TextStyle(color: Colors.black54, fontSize: 12),
+              ),
               Spacer(),
-              Icon(Icons.calendar_month_outlined,
-                  color: primaryGreen, size: 20),
+              Icon(
+                Icons.calendar_month_outlined,
+                color: primaryGreen,
+                size: 20,
+              ),
             ],
           ),
           const SizedBox(height: 10),
@@ -424,8 +565,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
           ),
           const SizedBox(height: 5),
-          const Text('of ₹35,000 monthly budget',
-              style: TextStyle(color: Colors.black54, fontSize: 12)),
+          const Text(
+            'of ₹35,000 monthly budget',
+            style: TextStyle(color: Colors.black54, fontSize: 12),
+          ),
           const SizedBox(height: 18),
           ClipRRect(
             borderRadius: BorderRadius.circular(20),
@@ -439,15 +582,19 @@ class _HomeScreenState extends State<HomeScreen> {
           const SizedBox(height: 13),
           const Row(
             children: [
-              Text('67.9% used',
-                  style: TextStyle(
-                    color: primaryGreen,
-                    fontWeight: FontWeight.bold,
-                    fontSize: 12,
-                  )),
+              Text(
+                '67.9% used',
+                style: TextStyle(
+                  color: primaryGreen,
+                  fontWeight: FontWeight.bold,
+                  fontSize: 12,
+                ),
+              ),
               Spacer(),
-              Text('₹11,250 remaining',
-                  style: TextStyle(color: Colors.black54, fontSize: 12)),
+              Text(
+                '₹11,250 remaining',
+                style: TextStyle(color: Colors.black54, fontSize: 12),
+              ),
             ],
           ),
         ],
@@ -521,23 +668,29 @@ class _HomeScreenState extends State<HomeScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(title,
-                    style: const TextStyle(
-                      fontWeight: FontWeight.w700,
-                      fontSize: 13,
-                    )),
+                Text(
+                  title,
+                  style: const TextStyle(
+                    fontWeight: FontWeight.w700,
+                    fontSize: 13,
+                  ),
+                ),
                 const SizedBox(height: 3),
-                Text(subtitle,
-                    style: const TextStyle(
-                      color: Colors.black54,
-                      fontSize: 10,
-                    )),
+                Text(
+                  subtitle,
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 10,
+                  ),
+                ),
                 const SizedBox(height: 3),
-                Text(date,
-                    style: const TextStyle(
-                      color: Colors.black38,
-                      fontSize: 10,
-                    )),
+                Text(
+                  date,
+                  style: const TextStyle(
+                    color: Colors.black38,
+                    fontSize: 10,
+                  ),
+                ),
               ],
             ),
           ),
