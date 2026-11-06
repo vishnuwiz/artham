@@ -168,6 +168,157 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     );
   }
 
+  Future<void> _openBudgetHistory() async {
+    final history = await _repository.getMonthlyBudgetHistory(months: 12);
+    if (!mounted) return;
+
+    await showModalBottomSheet<void>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (sheetContext) {
+        return Container(
+          constraints: BoxConstraints(
+            maxHeight: MediaQuery.of(sheetContext).size.height * 0.78,
+          ),
+          decoration: const BoxDecoration(
+            color: Color(0xFFF5F7F8),
+            borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
+          ),
+          child: SafeArea(
+            top: false,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(20, 20, 12, 12),
+                  child: Row(
+                    children: [
+                      const Expanded(
+                        child: Text(
+                          'Budget history',
+                          style: TextStyle(
+                            color: _navy,
+                            fontSize: 21,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                      ),
+                      IconButton(
+                        tooltip: 'Close',
+                        onPressed: () => Navigator.pop(sheetContext),
+                        icon: const Icon(Icons.close_rounded),
+                      ),
+                    ],
+                  ),
+                ),
+                const Padding(
+                  padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Your overall budget and spending for the last 12 months.',
+                      style: TextStyle(color: Colors.black54, fontSize: 12),
+                    ),
+                  ),
+                ),
+                Flexible(
+                  child: ListView.separated(
+                    shrinkWrap: true,
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                    itemCount: history.length,
+                    separatorBuilder: (_, _) => const SizedBox(height: 8),
+                    itemBuilder: (context, index) {
+                      final item = history[history.length - 1 - index];
+                      final hasBudget = item.hasBudget;
+                      final over = hasBudget && item.remainingPaise < 0;
+                      final isSelected = item.month.year == _selectedMonth.year &&
+                          item.month.month == _selectedMonth.month;
+
+                      return Material(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(17),
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(17),
+                          onTap: () {
+                            Navigator.pop(sheetContext);
+                            setState(() {
+                              _selectedMonth = DateTime(
+                                item.month.year, item.month.month, 1,
+                              );
+                              _loadData();
+                            });
+                          },
+                          child: Padding(
+                            padding: const EdgeInsets.all(15),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Expanded(
+                                      child: Text(
+                                        _monthLabel(item.month),
+                                        style: const TextStyle(
+                                          color: _navy,
+                                          fontWeight: FontWeight.w800,
+                                          fontSize: 14,
+                                        ),
+                                      ),
+                                    ),
+                                    if (isSelected)
+                                      const Text(
+                                        'VIEWING',
+                                        style: TextStyle(
+                                          color: _green,
+                                          fontSize: 10,
+                                          fontWeight: FontWeight.w800,
+                                          letterSpacing: 0.5,
+                                        ),
+                                      )
+                                    else
+                                      const Icon(
+                                        Icons.chevron_right_rounded,
+                                        color: Colors.black38,
+                                      ),
+                                  ],
+                                ),
+                                const SizedBox(height: 8),
+                                Text(
+                                  'Spent  ${_money(item.expensesPaise)}',
+                                  style: const TextStyle(
+                                    color: _navy,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  hasBudget
+                                      ? 'Budget  ${_money(item.budgetPaise!)}  ·  ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
+                                      : 'No overall budget set',
+                                  style: TextStyle(
+                                    color: over ? const Color(0xFFC45D58) : Colors.black54,
+                                    fontSize: 11,
+                                    fontWeight: over ? FontWeight.w700 : FontWeight.w500,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -215,6 +366,11 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                   fontWeight: FontWeight.w800,
                                 ),
                               ),
+                            ),
+                            IconButton(
+                              tooltip: 'Budget history',
+                              onPressed: _openBudgetHistory,
+                              icon: const Icon(Icons.history_rounded),
                             ),
                             IconButton(
                               onPressed: () => _changeMonth(-1),

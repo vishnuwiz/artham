@@ -38,6 +38,23 @@ class CategoryBudgetSummary {
   }
 }
 
+
+class MonthlyBudgetHistoryItem {
+  final DateTime month;
+  final int? budgetPaise;
+  final int expensesPaise;
+
+  const MonthlyBudgetHistoryItem({
+    required this.month,
+    required this.budgetPaise,
+    required this.expensesPaise,
+  });
+
+  bool get hasBudget => budgetPaise != null && budgetPaise! > 0;
+
+  int get remainingPaise => (budgetPaise ?? 0) - expensesPaise;
+}
+
 class BudgetRepository {
   final AppDatabase database;
 
@@ -194,6 +211,37 @@ class BudgetRepository {
       0,
       (total, transaction) => total + transaction.amountPaise,
     );
+  }
+
+
+  /// Returns the overall budget and actual expenses for the requested number
+  /// of months, ending with [endingMonth] (or the current month).
+  /// Months without a budget are included so spending history is not hidden.
+  Future<List<MonthlyBudgetHistoryItem>> getMonthlyBudgetHistory({
+    int months = 12,
+    DateTime? endingMonth,
+  }) async {
+    if (months < 1) {
+      throw ArgumentError.value(months, 'months', 'Must be at least 1.');
+    }
+
+    final end = _monthStart(endingMonth ?? DateTime.now());
+    final start = DateTime(end.year, end.month - months + 1, 1);
+    final history = <MonthlyBudgetHistoryItem>[];
+
+    for (var index = 0; index < months; index++) {
+      final month = DateTime(start.year, start.month + index, 1);
+      final budget = await getMonthlyBudget(month);
+      final expenses = await getMonthlyExpensesPaise(month);
+
+      history.add(MonthlyBudgetHistoryItem(
+        month: month,
+        budgetPaise: budget?.limitPaise,
+        expensesPaise: expenses,
+      ));
+    }
+
+    return history;
   }
 
   Future<MonthlyBudgetSummary?> getMonthlyBudgetSummary(
