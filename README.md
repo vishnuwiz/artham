@@ -1,17 +1,165 @@
 # Artham
 
-A new Flutter project.
+**Artham** is a Flutter-based personal finance app designed to help users manage their money, track transactions, monitor account balances, and stay on top of their budgets.
+
+The app follows a **local-first architecture**, using Drift and SQLite to store financial data on the device.
+
+> **Project status:** Active development.
+
+## Features
+
+### Implemented
+
+- **Home dashboard** — View a summary of finances and account balances.
+- **Transaction management** — Record and manage income and expenses.
+- **Live account balances** — Keep account balances updated as transactions change.
+- **Internal transfers** — Transfer money between accounts while preserving the overall balance.
+- **Account history** — Review transactions associated with an account.
+- **Budgets** — Set category-based budgets and track spending progress.
+- **Automatic budget refresh** — Budget progress updates when relevant transactions change.
+- **Activity screen** — Review, search, filter, and sort transaction activity.
+- **Insights screen** — View financial insights.
+- **Recurring transactions** — Create recurring income or expense schedules with daily, weekly, monthly, or yearly frequencies and a custom interval.
+  - Set a start date and an optional end date.
+  - Pause, resume, or delete a schedule.
+  - Review schedules that are due.
+  - Confirm a due occurrence to add it to the normal transaction history.
+  - Generated transactions are recorded with a recurring source and protected against duplicate generation for the same schedule occurrence.
+
+### Planned
+
+- Budget alerts, rollover, and projections.
+- SMS-based transaction import.
+- Bank statement import.
+- Database encryption and additional security improvements.
+- Expanded Settings options.
+- Further performance improvements.
+
+## Tech Stack
+
+| Area | Technology |
+|---|---|
+| App framework | Flutter |
+| Programming language | Dart |
+| Local database | SQLite |
+| Database toolkit | Drift |
+| Data persistence | On-device / local-first |
+
+## Database
+
+Artham stores its data locally in an SQLite database.
+
+- **Database file:** `artham.sqlite`
+- **Drift database definition:** `lib/data/app_database.dart`
+- **Generated database code:** `lib/data/app_database.g.dart`
+
+The database includes the following tables:
+
+| Table | Purpose |
+|---|---|
+| `BankAccounts` | Stores account information |
+| `Categories` | Stores transaction categories |
+| `Merchants` | Stores merchant information |
+| `MoneyTransactions` | Stores income, expense, transfer, and generated recurring transactions |
+| `Budgets` | Stores budget settings and limits |
+| `ProcessedSms` | Tracks processed SMS records |
+| `RecurringSchedules` | Stores recurring transaction schedules and their next due dates |
+
+**Amount storage:** Monetary amounts are stored as integer paise to avoid floating-point precision issues. For example, ₹100.00 is stored as `10000`.
+
+> Keep generated Drift code in sync with the database definitions whenever the schema changes. Database migrations should preserve existing user data.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### Prerequisites
 
-A few resources to get you started if this is your first Flutter project:
+Install the following before running the project:
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+- Flutter SDK
+- Dart SDK (included with Flutter)
+- Android Studio or Visual Studio Code
+- An Android emulator or a connected device
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+### 1. Clone the repository
+
+```bash
+git clone https://github.com/vishnuwiz/artham.git
+cd artham
+```
+
+### 2. Install dependencies
+
+```bash
+flutter pub get
+```
+
+### 3. Generate Drift code
+
+If generated database code needs to be refreshed after a schema change, run:
+
+```bash
+dart run build_runner build --delete-conflicting-outputs
+```
+
+### 4. Check the project
+
+```bash
+flutter analyze
+```
+
+### 5. Run the app
+
+```bash
+flutter run
+```
+
+## Project Structure
+
+The main application code is maintained under `lib/`.
+
+```text
+lib/
+├── data/
+│   ├── app_database.dart
+│   ├── app_database.g.dart
+│   └── repositories/
+│       └── recurring_transaction_repository.dart
+└── features/
+    └── transactions/
+        ├── activity_screen.dart
+        └── recurring_transactions_screen.dart
+```
+
+Other screens, repositories, and features are maintained in their respective folders.
+
+## Development Notes
+
+- Store monetary values as integer paise, not floating-point rupees.
+- Keep account balances consistent when creating, editing, or deleting transactions.
+- Internal transfers should update the source and destination accounts without changing the user's overall net worth.
+- Keep budget progress in sync with the transactions that contribute to each budget.
+- Recurring schedules should generate transactions only when the user confirms a due occurrence.
+- Prevent duplicate recurring transactions for the same schedule and due date.
+- Regenerate Drift code after changing database definitions.
+- Add a dated entry to `CHANGELOG.md` when a feature, fix, or notable change is included in a build.
+
+## Changelog
+
+See [CHANGELOG.md](CHANGELOG.md) for a chronological record of app changes.
+
+## Contributing
+
+Artham is under active development. Contributions, bug reports, and suggestions are welcome.
+
+1. Fork the repository.
+2. Create a feature branch.
+3. Make your changes and test them.
+4. Submit a pull request with a clear description of the changes.
+
+## License
+
+No license has been specified yet. Until a license is added to this repository, all rights are reserved by the project owner. Please contact the owner before redistributing or reusing the code.
+
+---
+
+**Repository:** [github.com/vishnuwiz/artham](https://github.com/vishnuwiz/artham)
