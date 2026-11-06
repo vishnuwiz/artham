@@ -567,6 +567,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         ),
                         const SizedBox(height: 18),
                         _buildOverallCard(data.overall),
+                        _buildBudgetAlerts(data),
                         const SizedBox(height: 28),
                         Row(
                           children: [
@@ -600,6 +601,157 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  List<_BudgetAlert> _getBudgetAlerts(_BudgetScreenData data) {
+    final alerts = <_BudgetAlert>[];
+
+    final overall = data.overall;
+    if (overall != null && overall.budgetPaise > 0) {
+      final percentage = overall.expensesPaise / overall.budgetPaise;
+      if (percentage >= 0.8) {
+        alerts.add(_BudgetAlert(
+          title: 'Overall monthly budget',
+          spentPaise: overall.expensesPaise,
+          budgetPaise: overall.budgetPaise,
+          percentage: percentage,
+          exceeded: percentage >= 1.0,
+        ));
+      }
+    }
+
+    for (final category in data.categories) {
+      if (category.budgetPaise <= 0) continue;
+
+      final percentage = category.percentageUsed;
+      if (percentage >= 0.8) {
+        alerts.add(_BudgetAlert(
+          title: category.category.name,
+          spentPaise: category.expensesPaise,
+          budgetPaise: category.budgetPaise,
+          percentage: percentage,
+          exceeded: percentage >= 1.0,
+        ));
+      }
+    }
+
+    // Show the most urgent alerts first.
+    alerts.sort((a, b) {
+      if (a.exceeded != b.exceeded) return a.exceeded ? -1 : 1;
+      return b.percentage.compareTo(a.percentage);
+    });
+
+    return alerts;
+  }
+
+  Widget _buildBudgetAlerts(_BudgetScreenData data) {
+    final alerts = _getBudgetAlerts(data);
+    if (alerts.isEmpty) return const SizedBox.shrink();
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 18),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Budget alerts',
+                  style: TextStyle(
+                    color: _navy,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              Text(
+                '${alerts.length} ${alerts.length == 1 ? 'alert' : 'alerts'}',
+                style: const TextStyle(
+                  color: Colors.black54,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          ...alerts.map(_buildBudgetAlertCard),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBudgetAlertCard(_BudgetAlert alert) {
+    final color = alert.exceeded
+        ? const Color(0xFFC45D58)
+        : const Color(0xFFB7791F);
+    final background = alert.exceeded
+        ? const Color(0xFFFFF0EE)
+        : const Color(0xFFFFF7E8);
+    final icon = alert.exceeded
+        ? Icons.error_outline_rounded
+        : Icons.warning_amber_rounded;
+    final percentage = (alert.percentage * 100).toStringAsFixed(1);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 8),
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        border: Border.all(color: color.withValues(alpha: 0.22)),
+      ),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 34,
+            height: 34,
+            decoration: BoxDecoration(
+              color: background,
+              borderRadius: BorderRadius.circular(11),
+            ),
+            child: Icon(icon, color: color, size: 19),
+          ),
+          const SizedBox(width: 11),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  alert.title,
+                  style: const TextStyle(
+                    color: _navy,
+                    fontSize: 13,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  alert.exceeded
+                      ? 'Budget exceeded · $percentage% used'
+                      : 'You have used $percentage% of this budget',
+                  style: TextStyle(
+                    color: color,
+                    fontSize: 11,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                Text(
+                  '${_money(alert.spentPaise)} spent of ${_money(alert.budgetPaise)}',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -805,6 +957,22 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       ),
     );
   }
+}
+
+class _BudgetAlert {
+  final String title;
+  final int spentPaise;
+  final int budgetPaise;
+  final double percentage;
+  final bool exceeded;
+
+  const _BudgetAlert({
+    required this.title,
+    required this.spentPaise,
+    required this.budgetPaise,
+    required this.percentage,
+    required this.exceeded,
+  });
 }
 
 class _BudgetScreenData {
