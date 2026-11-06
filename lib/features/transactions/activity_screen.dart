@@ -4,6 +4,7 @@ import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 import 'add_transaction_screen.dart';
 import 'transaction_details_screen.dart';
+import 'recurring_transactions_screen.dart';
 
 const Color activityGreen = Color(0xFF13866A);
 const Color activityNavy = Color(0xFF142B35);
@@ -92,6 +93,21 @@ class _ActivityScreenState extends State<ActivityScreen> {
       ),
     );
     if (result == true && mounted) setState(_loadActivity);
+  }
+
+  Future<void> _openRecurringTransactions() async {
+    await Navigator.push<void>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => RecurringTransactionsScreen(
+          database: widget.database,
+        ),
+      ),
+    );
+
+    if (mounted) {
+      setState(_loadActivity);
+    }
   }
 
   Future<void> _refresh() async {
@@ -440,6 +456,14 @@ class _ActivityScreenState extends State<ActivityScreen> {
           'Activity',
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
+        actions: [
+          IconButton(
+            tooltip: 'Recurring transactions',
+            onPressed: _openRecurringTransactions,
+            icon: const Icon(Icons.event_repeat_rounded),
+          ),
+          const SizedBox(width: 6),
+        ],
       ),
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addTransaction,

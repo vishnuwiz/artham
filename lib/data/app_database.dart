@@ -1,4 +1,3 @@
-
 import 'dart:io';
 
 import 'package:drift/drift.dart';
@@ -97,7 +96,7 @@ class MoneyTransactions extends Table {
 
   TextColumn get source =>
       text().withDefault(const Constant('manual'))();
-  // manual, sms, statement
+  // manual, sms, statement, recurring
 
   TextColumn get notes => text().nullable()();
 
@@ -139,6 +138,45 @@ class ProcessedSms extends Table {
 }
 
 // ==========================================
+// 7. RECURRING TRANSACTION SCHEDULES
+// ==========================================
+
+class RecurringSchedules extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  IntColumn get accountId =>
+      integer().references(BankAccounts, #id)();
+
+  IntColumn get categoryId =>
+      integer().references(Categories, #id)();
+
+  IntColumn get amountPaise => integer()();
+
+  TextColumn get transactionType => text()();
+  // income or expense
+
+  TextColumn get description => text().nullable()();
+
+  TextColumn get frequency => text()();
+  // daily, weekly, monthly, yearly
+
+  IntColumn get interval => integer().withDefault(const Constant(1))();
+  // Repeat every N frequency units.
+
+  DateTimeColumn get startDate => dateTime()();
+
+  DateTimeColumn get endDate => dateTime().nullable()();
+
+  DateTimeColumn get nextDueDate => dateTime()();
+
+  BoolColumn get isActive =>
+      boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
+}
+
+// ==========================================
 // MAIN DATABASE
 // ==========================================
 
@@ -150,13 +188,26 @@ class ProcessedSms extends Table {
     MoneyTransactions,
     Budgets,
     ProcessedSms,
+    RecurringSchedules,
   ],
 )
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   @override
-  int get schemaVersion => 1;
+  int get schemaVersion => 2;
+
+  @override
+  MigrationStrategy get migration => MigrationStrategy(
+        onCreate: (m) async {
+          await m.createAll();
+        },
+        onUpgrade: (m, from, to) async {
+          if (from < 2) {
+            await m.createTable(recurringSchedules);
+          }
+        },
+      );
 
   Future<bool> testConnection() async {
     try {
