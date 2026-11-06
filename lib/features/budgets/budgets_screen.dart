@@ -20,6 +20,15 @@ class BudgetsScreen extends StatefulWidget {
   State<BudgetsScreen> createState() => _BudgetsScreenState();
 }
 
+enum _BudgetDialogAction { save, remove }
+
+class _BudgetDialogResult {
+  final _BudgetDialogAction action;
+  final String amount;
+
+  const _BudgetDialogResult({required this.action, this.amount = ''});
+}
+
 class _BudgetsScreenState extends State<BudgetsScreen> {
   late DateTime _selectedMonth;
   late Future<_BudgetScreenData> _dataFuture;
@@ -78,85 +87,85 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     required int? categoryId,
     required int currentPaise,
   }) async {
-    final controller = TextEditingController(
-      text: currentPaise > 0 ? (currentPaise / 100).toStringAsFixed(2) : '',
-    );
-    final formKey = GlobalKey<FormState>();
-
-    final saved = await showDialog<bool>(
+    final result = await showDialog<_BudgetDialogResult>(
       context: context,
-      builder: (dialogContext) => AlertDialog(
-        title: Text(title),
-        content: Form(
-          key: formKey,
-          child: TextFormField(
-            controller: controller,
-            autofocus: true,
-            keyboardType: const TextInputType.numberWithOptions(decimal: true),
-            decoration: const InputDecoration(
-              labelText: 'Monthly limit',
-              prefixText: '₹ ',
-              border: OutlineInputBorder(),
-            ),
-            validator: (value) {
-              final amount = double.tryParse(
-                (value ?? '').trim().replaceAll(',', ''),
-              );
-              if (amount == null || amount <= 0) {
-                return 'Enter an amount greater than zero';
-              }
-              if (amount > 100000000000) return 'Enter a smaller amount';
-              return null;
-            },
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext, false),
-            child: const Text('Cancel'),
-          ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: _green),
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                Navigator.pop(dialogContext, true);
-              }
-            },
-            child: const Text('Save'),
-          ),
-        ],
+      builder: (_) => _BudgetLimitDialog(
+        title: title,
+        initialAmount: currentPaise > 0
+            ? (currentPaise / 100).toStringAsFixed(2)
+            : '',
+        canRemove: currentPaise > 0,
       ),
     );
 
-    if (saved == true) {
-      final amount = double.parse(
-        controller.text.trim().replaceAll(',', ''),
+    if (!mounted || result == null) return;
+
+    if (result.action == _BudgetDialogAction.remove) {
+      final shouldRemove = await showDialog<bool>(
+        context: context,
+        builder: (confirmContext) => AlertDialog(
+          title: const Text('Remove budget?'),
+          content: Text(
+            'This will remove the ${categoryId == null ? 'overall' : 'category'} '
+            'budget limit for ${_monthLabel(_selectedMonth)}. '
+            'Your transactions and account balances will not be changed.',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(confirmContext, false),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              style: FilledButton.styleFrom(
+                backgroundColor: Colors.red.shade700,
+              ),
+              onPressed: () => Navigator.pop(confirmContext, true),
+              child: const Text('Remove'),
+            ),
+          ],
+        ),
       );
-      final paise = (amount * 100).round();
+
+      if (!mounted || shouldRemove != true) return;
 
       if (categoryId == null) {
-        await _repository.saveMonthlyBudget(
-          month: _selectedMonth,
-          limitPaise: paise,
-        );
+        await _repository.deleteMonthlyBudget(_selectedMonth);
       } else {
-        await _repository.saveCategoryBudget(
+        await _repository.deleteCategoryBudget(
           month: _selectedMonth,
           categoryId: categoryId,
-          limitPaise: paise,
         );
       }
 
-      if (!mounted) {
-        controller.dispose();
-        return;
-      }
+      if (!mounted) return;
       setState(_loadData);
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Budget saved successfully')),
+        const SnackBar(content: Text('Budget limit removed')),
+      );
+      return;
+    }
+
+    final amount = double.parse(result.amount.trim().replaceAll(',', ''));
+    final paise = (amount * 100).round();
+
+    if (categoryId == null) {
+      await _repository.saveMonthlyBudget(
+        month: _selectedMonth,
+        limitPaise: paise,
+      );
+    } else {
+      await _repository.saveCategoryBudget(
+        month: _selectedMonth,
+        categoryId: categoryId,
+        limitPaise: paise,
       );
     }
-    controller.dispose();
+
+    if (!mounted) return;
+    setState(_loadData);
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text('Budget saved successfully')),
+    );
   }
 
   @override
@@ -474,4 +483,97 @@ class _BudgetScreenData {
     required this.overall,
     required this.categories,
   });
+}
+
+
+class _BudgetLimitDialog extends StatefulWidget {
+  final String title;
+  final String initialAmount;
+  final bool canRemove;
+
+  const _BudgetLimitDialog({
+    required this.title,
+    required this.initialAmount,
+    required this.canRemove,
+  });
+
+  @override
+  State<_BudgetLimitDialog> createState() => _BudgetLimitDialogState();
+}
+
+class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
+  late final TextEditingController _controller;
+  final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: widget.initialAmount);
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Text(widget.title),
+      content: Form(
+        key: _formKey,
+        child: TextFormField(
+          controller: _controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          decoration: const InputDecoration(
+            labelText: 'Monthly limit',
+            prefixText: '₹ ',
+            border: OutlineInputBorder(),
+          ),
+          validator: (value) {
+            final amount = double.tryParse(
+              (value ?? '').trim().replaceAll(',', ''),
+            );
+            if (amount == null || amount <= 0) {
+              return 'Enter an amount greater than zero';
+            }
+            if (amount > 100000000000) return 'Enter a smaller amount';
+            return null;
+          },
+        ),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context),
+          child: const Text('Cancel'),
+        ),
+        if (widget.canRemove)
+          TextButton(
+            onPressed: () => Navigator.pop(
+              context,
+              const _BudgetDialogResult(action: _BudgetDialogAction.remove),
+            ),
+            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            child: const Text('Remove budget'),
+          ),
+        FilledButton(
+          style: FilledButton.styleFrom(backgroundColor: _green),
+          onPressed: () {
+            if (_formKey.currentState!.validate()) {
+              Navigator.pop(
+                context,
+                _BudgetDialogResult(
+                  action: _BudgetDialogAction.save,
+                  amount: _controller.text,
+                ),
+              );
+            }
+          },
+          child: const Text('Save'),
+        ),
+      ],
+    );
+  }
 }

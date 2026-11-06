@@ -103,6 +103,16 @@ class BudgetRepository {
     return budgets.isEmpty ? null : budgets.first;
   }
 
+  /// Removes the overall budget for the selected month.
+  /// Transactions are not changed.
+  Future<void> deleteMonthlyBudget(DateTime month) async {
+    final start = _monthStart(month);
+    await (database.delete(database.budgets)
+          ..where((budget) =>
+              budget.monthStart.equals(start) & budget.categoryId.isNull()))
+        .go();
+  }
+
   Future<void> saveCategoryBudget({
     required DateTime month,
     required int categoryId,
@@ -134,6 +144,20 @@ class BudgetRepository {
             ),
           );
     }
+  }
+
+  /// Removes a category budget for the selected month.
+  /// The category and its transactions are not changed.
+  Future<void> deleteCategoryBudget({
+    required DateTime month,
+    required int categoryId,
+  }) async {
+    final start = _monthStart(month);
+    await (database.delete(database.budgets)
+          ..where((budget) =>
+              budget.monthStart.equals(start) &
+              budget.categoryId.equals(categoryId)))
+        .go();
   }
 
   Future<int> getMonthlyExpensesPaise(DateTime month) async {
