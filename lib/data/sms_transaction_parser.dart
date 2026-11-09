@@ -31,6 +31,11 @@ class SmsTransactionParser {
     caseSensitive: false,
   );
 
+  static final RegExp _otpPattern = RegExp(
+    r'\\b(?:OTP|one[- ]time password|verification code|security code)\\b',
+    caseSensitive: false,
+  );
+
   static final RegExp _amountPattern = RegExp(
     r'(?:₹|\bINR\b|\bRs\.?\s*)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)',
     caseSensitive: false,
@@ -43,7 +48,7 @@ class SmsTransactionParser {
 
   ParsedSmsTransaction? parse(String message) {
     final text = message.trim();
-    if (text.isEmpty) return null;
+    if (text.isEmpty || _otpPattern.hasMatch(text)) return null;
 
     final debitMatch = _debitPattern.firstMatch(text);
     final creditMatch = _creditPattern.firstMatch(text);
