@@ -118,6 +118,9 @@ class Budgets extends Table {
 
   IntColumn get limitPaise => integer()();
 
+  BoolColumn get rolloverEnabled =>
+      boolean().withDefault(const Constant(false))();
+
   DateTimeColumn get createdAt =>
       dateTime().withDefault(currentDateAndTime)();
 }
@@ -194,8 +197,11 @@ class RecurringSchedules extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// Creates an in-memory database for widget and repository tests.
+  AppDatabase.forTesting(super.e);
+
   @override
-  int get schemaVersion => 2;
+  int get schemaVersion => 3;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -205,6 +211,9 @@ class AppDatabase extends _$AppDatabase {
         onUpgrade: (m, from, to) async {
           if (from < 2) {
             await m.createTable(recurringSchedules);
+          }
+          if (from < 3) {
+            await m.addColumn(budgets, budgets.rolloverEnabled);
           }
         },
       );

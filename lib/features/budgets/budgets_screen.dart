@@ -25,8 +25,13 @@ enum _BudgetDialogAction { save, remove }
 class _BudgetDialogResult {
   final _BudgetDialogAction action;
   final String amount;
+  final bool rolloverEnabled;
 
-  const _BudgetDialogResult({required this.action, this.amount = ''});
+  const _BudgetDialogResult({
+    required this.action,
+    this.amount = '',
+    this.rolloverEnabled = false,
+  });
 }
 
 class _BudgetsScreenState extends State<BudgetsScreen> {
@@ -59,23 +64,37 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
 
   Future<_BudgetScreenData> _fetchData() async {
     final overall = await _repository.getMonthlyBudgetSummary(_selectedMonth);
-    final categories =
-        await _repository.getCategoryBudgetSummaries(_selectedMonth);
+    final categories = await _repository.getCategoryBudgetSummaries(
+      _selectedMonth,
+    );
     return _BudgetScreenData(overall: overall, categories: categories);
   }
 
   void _changeMonth(int offset) {
     setState(() {
-      _selectedMonth =
-          DateTime(_selectedMonth.year, _selectedMonth.month + offset, 1);
+      _selectedMonth = DateTime(
+        _selectedMonth.year,
+        _selectedMonth.month + offset,
+        1,
+      );
       _loadData();
     });
   }
 
   String _monthLabel(DateTime date) {
     const months = [
-      'January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December',
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
     ];
     return '${months[date.month - 1]} ${date.year}';
   }
@@ -86,6 +105,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     required String title,
     required int? categoryId,
     required int currentPaise,
+    required bool currentRolloverEnabled,
   }) async {
     final result = await showDialog<_BudgetDialogResult>(
       context: context,
@@ -95,6 +115,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             ? (currentPaise / 100).toStringAsFixed(2)
             : '',
         canRemove: currentPaise > 0,
+        rolloverEnabled: currentRolloverEnabled,
       ),
     );
 
@@ -139,9 +160,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
 
       if (!mounted) return;
       setState(_loadData);
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Budget limit removed')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(const SnackBar(content: Text('Budget limit removed')));
       return;
     }
 
@@ -152,20 +172,22 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       await _repository.saveMonthlyBudget(
         month: _selectedMonth,
         limitPaise: paise,
+        rolloverEnabled: result.rolloverEnabled,
       );
     } else {
       await _repository.saveCategoryBudget(
         month: _selectedMonth,
         categoryId: categoryId,
         limitPaise: paise,
+        rolloverEnabled: result.rolloverEnabled,
       );
     }
 
     if (!mounted) return;
     setState(_loadData);
-    ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(content: Text('Budget saved successfully')),
-    );
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(const SnackBar(content: Text('Budget saved successfully')));
   }
 
   Future<void> _openBudgetHistory() async {
@@ -182,8 +204,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           _selectedMonth.month,
           1,
         );
-        Future<List<CategoryBudgetSummary>>? categoryFuture =
-            _repository.getCategoryBudgetSummaries(expandedMonth);
+        Future<List<CategoryBudgetSummary>>? categoryFuture = _repository
+            .getCategoryBudgetSummaries(expandedMonth);
 
         return StatefulBuilder(
           builder: (context, setSheetState) {
@@ -245,7 +267,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                           final isSelected =
                               item.month.year == _selectedMonth.year &&
                               item.month.month == _selectedMonth.month;
-                          final isExpanded = expandedMonth != null &&
+                          final isExpanded =
+                              expandedMonth != null &&
                               item.month.year == expandedMonth!.year &&
                               item.month.month == expandedMonth!.month;
 
@@ -266,14 +289,17 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                       } else {
                                         expandedMonth = item.month;
                                         categoryFuture = _repository
-                                            .getCategoryBudgetSummaries(item.month);
+                                            .getCategoryBudgetSummaries(
+                                              item.month,
+                                            );
                                       }
                                     });
                                   },
                                   child: Padding(
                                     padding: const EdgeInsets.all(15),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         Row(
                                           children: [
@@ -318,7 +344,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           hasBudget
-                                              ? 'Budget  ${_money(item.budgetPaise!)}  ·  ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
+                                              ? 'Budget ${_money(item.budgetPaise!)} · Available ${_money(item.availableBudgetPaise)} · ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
                                               : 'No overall budget set',
                                           style: TextStyle(
                                             color: over
@@ -330,16 +356,50 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                                 : FontWeight.w500,
                                           ),
                                         ),
+                                        if (hasBudget && item.rolloverPaise > 0)
+                                          Padding(
+                                            padding: const EdgeInsets.only(
+                                              top: 3,
+                                            ),
+                                            child: Text(
+                                              '${_money(item.rolloverPaise)} carried from previous month',
+                                              style: const TextStyle(
+                                                color: _green,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ),
+                                        if (hasBudget && item.rolloverEnabled)
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 3),
+                                            child: Text(
+                                              'Unused balance carries into next month',
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
                                 ),
                                 if (isExpanded) ...[
-                                  const Divider(height: 1, indent: 15, endIndent: 15),
+                                  const Divider(
+                                    height: 1,
+                                    indent: 15,
+                                    endIndent: 15,
+                                  ),
                                   Padding(
-                                    padding: const EdgeInsets.fromLTRB(15, 12, 15, 14),
+                                    padding: const EdgeInsets.fromLTRB(
+                                      15,
+                                      12,
+                                      15,
+                                      14,
+                                    ),
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
                                         const Text(
                                           'CATEGORY BREAKDOWN',
@@ -351,7 +411,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                           ),
                                         ),
                                         const SizedBox(height: 10),
-                                        FutureBuilder<List<CategoryBudgetSummary>>(
+                                        FutureBuilder<
+                                          List<CategoryBudgetSummary>
+                                        >(
                                           future: categoryFuture,
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
@@ -359,9 +421,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               return const Padding(
                                                 padding: EdgeInsets.all(16),
                                                 child: Center(
-                                                  child: CircularProgressIndicator(
-                                                    color: _green,
-                                                  ),
+                                                  child:
+                                                      CircularProgressIndicator(
+                                                        color: _green,
+                                                      ),
                                                 ),
                                               );
                                             }
@@ -374,7 +437,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                                 ),
                                               );
                                             }
-                                            final categories = snapshot.data ?? [];
+                                            final categories =
+                                                snapshot.data ?? [];
                                             if (categories.isEmpty) {
                                               return const Text(
                                                 'No expense categories found.',
@@ -410,7 +474,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               Icons.calendar_month_rounded,
                                               size: 16,
                                             ),
-                                            label: const Text('View this month'),
+                                            label: const Text(
+                                              'View this month',
+                                            ),
                                             style: TextButton.styleFrom(
                                               foregroundColor: _green,
                                             ),
@@ -471,13 +537,21 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           const SizedBox(height: 3),
           Text(
             hasBudget
-                ? 'Budget ${_money(item.budgetPaise)}  ·  ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
+                ? 'Available ${_money(item.availableBudgetPaise)}  ·  ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
                 : 'No category budget set',
             style: TextStyle(
               color: over ? const Color(0xFFC45D58) : Colors.black54,
               fontSize: 10,
             ),
           ),
+          if (hasBudget && item.rolloverPaise > 0)
+            Padding(
+              padding: const EdgeInsets.only(top: 3),
+              child: Text(
+                '${_money(item.rolloverPaise)} carried from previous month',
+                style: const TextStyle(color: _green, fontSize: 10),
+              ),
+            ),
           if (hasBudget) ...[
             const SizedBox(height: 7),
             ClipRRect(
@@ -609,31 +683,35 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     final alerts = <_BudgetAlert>[];
 
     final overall = data.overall;
-    if (overall != null && overall.budgetPaise > 0) {
-      final percentage = overall.expensesPaise / overall.budgetPaise;
+    if (overall != null && overall.availableBudgetPaise > 0) {
+      final percentage = overall.percentageUsed;
       if (percentage >= 0.8) {
-        alerts.add(_BudgetAlert(
-          title: 'Overall monthly budget',
-          spentPaise: overall.expensesPaise,
-          budgetPaise: overall.budgetPaise,
-          percentage: percentage,
-          exceeded: percentage >= 1.0,
-        ));
+        alerts.add(
+          _BudgetAlert(
+            title: 'Overall monthly budget',
+            spentPaise: overall.expensesPaise,
+            budgetPaise: overall.availableBudgetPaise,
+            percentage: percentage,
+            exceeded: percentage >= 1.0,
+          ),
+        );
       }
     }
 
     for (final category in data.categories) {
-      if (category.budgetPaise <= 0) continue;
+      if (category.availableBudgetPaise <= 0) continue;
 
       final percentage = category.percentageUsed;
       if (percentage >= 0.8) {
-        alerts.add(_BudgetAlert(
-          title: category.category.name,
-          spentPaise: category.expensesPaise,
-          budgetPaise: category.budgetPaise,
-          percentage: percentage,
-          exceeded: percentage >= 1.0,
-        ));
+        alerts.add(
+          _BudgetAlert(
+            title: category.category.name,
+            spentPaise: category.expensesPaise,
+            budgetPaise: category.availableBudgetPaise,
+            percentage: percentage,
+            exceeded: percentage >= 1.0,
+          ),
+        );
       }
     }
 
@@ -743,10 +821,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 const SizedBox(height: 3),
                 Text(
                   '${_money(alert.spentPaise)} spent of ${_money(alert.budgetPaise)}',
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 11,
-                  ),
+                  style: const TextStyle(color: Colors.black54, fontSize: 11),
                 ),
               ],
             ),
@@ -758,10 +833,13 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
 
   Widget _buildOverallCard(MonthlyBudgetSummary? summary) {
     final budget = summary?.budgetPaise ?? 0;
+    final available = summary?.availableBudgetPaise ?? 0;
     final spent = summary?.expensesPaise ?? 0;
     final remaining = summary?.remainingPaise ?? 0;
     final hasBudget = summary != null;
-    final ratio = hasBudget && budget > 0 ? spent / budget : 0.0;
+    final rolloverPaise = summary?.rolloverPaise ?? 0;
+    final rolloverEnabled = summary?.rolloverEnabled ?? false;
+    final ratio = hasBudget && available > 0 ? spent / available : 0.0;
     final over = hasBudget && remaining < 0;
 
     return Container(
@@ -796,6 +874,15 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               fontWeight: FontWeight.w800,
             ),
           ),
+          if (hasBudget && (rolloverEnabled || rolloverPaise > 0)) ...[
+            const SizedBox(height: 5),
+            Text(
+              rolloverPaise > 0
+                  ? '${_money(available)} available · includes ${_money(rolloverPaise)} carried in'
+                  : 'Unused balance will carry into next month',
+              style: const TextStyle(color: Colors.white70, fontSize: 11),
+            ),
+          ],
           const SizedBox(height: 18),
           Row(
             children: [
@@ -826,9 +913,12 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 title: 'Overall monthly budget',
                 categoryId: null,
                 currentPaise: budget,
+                currentRolloverEnabled: rolloverEnabled,
               ),
               icon: const Icon(Icons.edit_outlined, size: 17),
-              label: Text(hasBudget ? 'Edit overall budget' : 'Set overall budget'),
+              label: Text(
+                hasBudget ? 'Edit overall budget' : 'Set overall budget',
+              ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: Colors.white,
                 side: const BorderSide(color: Colors.white54),
@@ -844,7 +934,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 10)),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.white60, fontSize: 10),
+        ),
         const SizedBox(height: 5),
         Text(
           value,
@@ -900,7 +993,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                     const SizedBox(height: 3),
                     Text(
                       hasBudget
-                          ? '${_money(item.expensesPaise)} of ${_money(item.budgetPaise)}'
+                          ? '${_money(item.expensesPaise)} of ${_money(item.availableBudgetPaise)} available'
                           : '${_money(item.expensesPaise)} spent · No limit set',
                       style: const TextStyle(
                         color: Colors.black54,
@@ -911,16 +1004,39 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 ),
               ),
               IconButton(
-                tooltip: hasBudget ? 'Edit category budget' : 'Set category budget',
+                tooltip: hasBudget
+                    ? 'Edit category budget'
+                    : 'Set category budget',
                 onPressed: () => _editBudget(
                   title: '${item.category.name} budget',
                   categoryId: item.category.id,
                   currentPaise: item.budgetPaise,
+                  currentRolloverEnabled: item.rolloverEnabled,
                 ),
                 icon: const Icon(Icons.edit_outlined, color: _green, size: 20),
               ),
             ],
           ),
+          if (hasBudget && item.rolloverPaise > 0) ...[
+            const SizedBox(height: 5),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                '${_money(item.rolloverPaise)} carried from previous month',
+                style: const TextStyle(color: _green, fontSize: 10),
+              ),
+            ),
+          ],
+          if (hasBudget && item.rolloverEnabled) ...[
+            const SizedBox(height: 3),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Unused balance carries into next month',
+                style: TextStyle(color: Colors.black54, fontSize: 10),
+              ),
+            ),
+          ],
           if (hasBudget) ...[
             const SizedBox(height: 13),
             ClipRRect(
@@ -979,22 +1095,20 @@ class _BudgetScreenData {
   final MonthlyBudgetSummary? overall;
   final List<CategoryBudgetSummary> categories;
 
-  const _BudgetScreenData({
-    required this.overall,
-    required this.categories,
-  });
+  const _BudgetScreenData({required this.overall, required this.categories});
 }
-
 
 class _BudgetLimitDialog extends StatefulWidget {
   final String title;
   final String initialAmount;
   final bool canRemove;
+  final bool rolloverEnabled;
 
   const _BudgetLimitDialog({
     required this.title,
     required this.initialAmount,
     required this.canRemove,
+    required this.rolloverEnabled,
   });
 
   @override
@@ -1004,11 +1118,13 @@ class _BudgetLimitDialog extends StatefulWidget {
 class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
   late final TextEditingController _controller;
   final _formKey = GlobalKey<FormState>();
+  late bool _rolloverEnabled;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialAmount);
+    _rolloverEnabled = widget.rolloverEnabled;
   }
 
   @override
@@ -1023,25 +1139,49 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
       title: Text(widget.title),
       content: Form(
         key: _formKey,
-        child: TextFormField(
-          controller: _controller,
-          autofocus: true,
-          keyboardType: const TextInputType.numberWithOptions(decimal: true),
-          decoration: const InputDecoration(
-            labelText: 'Monthly limit',
-            prefixText: '₹ ',
-            border: OutlineInputBorder(),
-          ),
-          validator: (value) {
-            final amount = double.tryParse(
-              (value ?? '').trim().replaceAll(',', ''),
-            );
-            if (amount == null || amount <= 0) {
-              return 'Enter an amount greater than zero';
-            }
-            if (amount > 100000000000) return 'Enter a smaller amount';
-            return null;
-          },
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            TextFormField(
+              controller: _controller,
+              autofocus: true,
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
+              decoration: const InputDecoration(
+                labelText: 'Monthly limit',
+                prefixText: '₹ ',
+                border: OutlineInputBorder(),
+              ),
+              validator: (value) {
+                final amount = double.tryParse(
+                  (value ?? '').trim().replaceAll(',', ''),
+                );
+                if (amount == null || amount <= 0) {
+                  return 'Enter an amount greater than zero';
+                }
+                if (amount > 100000000000) return 'Enter a smaller amount';
+                return null;
+              },
+            ),
+            const SizedBox(height: 8),
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              value: _rolloverEnabled,
+              onChanged: (value) {
+                setState(() => _rolloverEnabled = value);
+              },
+              title: const Text(
+                'Carry unused budget forward',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              subtitle: const Text(
+                'Move the unused balance into the next month.',
+                style: TextStyle(fontSize: 11),
+              ),
+              activeTrackColor: _green,
+            ),
+          ],
         ),
       ),
       actions: [
@@ -1067,6 +1207,7 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
                 _BudgetDialogResult(
                   action: _BudgetDialogAction.save,
                   amount: _controller.text,
+                  rolloverEnabled: _rolloverEnabled,
                 ),
               );
             }
