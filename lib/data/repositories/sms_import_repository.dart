@@ -108,8 +108,8 @@ class SmsImportRepository {
     return pending;
   }
 
-  Future<void> deletePendingImport(int id) {
-    return database.customStatement(
+  Future<void> deletePendingImport(int id) async {
+    await database.customUpdate(
       'DELETE FROM pending_sms_imports WHERE id = ?',
       variables: [Variable.withInt(id)],
     );
