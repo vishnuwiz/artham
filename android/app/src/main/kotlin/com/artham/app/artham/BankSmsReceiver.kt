@@ -85,7 +85,12 @@ class BankSmsReceiver : BroadcastReceiver() {
                 SQLiteDatabase.OPEN_READWRITE,
             )
             database.setForeignKeyConstraintsEnabled(true)
-            database.execSQL("PRAGMA busy_timeout = 5000")
+            // PRAGMA busy_timeout returns a result row on Android SQLite.
+            // Use rawQuery rather than execSQL, which only supports statements
+            // that do not return rows.
+            database.rawQuery("PRAGMA busy_timeout = 5000", null).use {
+                it.moveToFirst()
+            }
 
             val fingerprint = fingerprint(body)
             database.beginTransactionNonExclusive()
