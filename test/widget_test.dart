@@ -9,7 +9,7 @@ void main() {
 
   setUp(() {
     testDatabase = AppDatabase.forTesting(NativeDatabase.memory());
-    appDatabase = testDatabase;
+    initializeAppDatabaseForTesting(testDatabase);
   });
 
   tearDown(() async {
