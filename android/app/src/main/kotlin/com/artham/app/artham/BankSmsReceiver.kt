@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.database.sqlite.SQLiteDatabase
 import android.provider.Telephony
+import android.util.Log
 import io.flutter.util.PathUtils
 import java.io.File
 import java.util.Calendar
@@ -189,9 +190,10 @@ class BankSmsReceiver : BroadcastReceiver() {
             } finally {
                 database.endTransaction()
             }
-        } catch (_: Exception) {
-            // SMS delivery must not crash the user's messaging app. A later
-            // release can surface detailed import diagnostics in Artham.
+        } catch (error: Exception) {
+            // Never log or retain the incoming SMS body. The exception itself
+            // is safe to log and helps diagnose database/receiver failures.
+            Log.e(LOG_TAG, "Unable to process an incoming bank SMS alert.", error)
         } finally {
             database?.close()
         }
@@ -557,6 +559,7 @@ class BankSmsReceiver : BroadcastReceiver() {
     }
 
     companion object {
+        private const val LOG_TAG = "ArthamSmsReceiver"
         private const val DATABASE_NAME = "artham.sqlite"
         private const val PENDING_TABLE = "pending_sms_imports"
         private const val PREFERENCES_NAME = "artham_sms_import"
