@@ -22,22 +22,22 @@ class ParsedSmsTransaction {
 /// debit/credit direction and one currency amount are not imported.
 class SmsTransactionParser {
   static final RegExp _debitPattern = RegExp(
-    r'\\b(?:debited|debit|withdrawn|withdrawal|spent|paid|purchase|purchased|sent|transferred out|payment)\\b',
+    r'\b(?:debited|debit|withdrawn|withdrawal|spent|paid|purchase|purchased|sent|transferred out|payment)\b',
     caseSensitive: false,
   );
 
   static final RegExp _creditPattern = RegExp(
-    r'\\b(?:credited|credit|deposited|received|refund(?:ed)?|cashback|transferred in)\\b',
+    r'\b(?:credited|credit|deposited|received|refund(?:ed)?|cashback|transferred in)\b',
     caseSensitive: false,
   );
 
   static final RegExp _amountPattern = RegExp(
-    r'(?:₹|\\bINR\\b|\\bRs\\.?\\s*)\\s*([0-9][0-9,]*(?:\\.[0-9]{1,2})?)',
+    r'(?:₹|\bINR\b|\bRs\.?\s*)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)',
     caseSensitive: false,
   );
 
   static final RegExp _referencePattern = RegExp(
-    r'\\b(?:UPI\\s*Ref(?:erence)?(?:\\s*(?:No\\.?|Number))?|UTR(?:\\s*(?:No\\.?|Number))?|RRN|Ref(?:erence)?(?:\\s*(?:No\\.?|Number))?|Txn(?:\\s*(?:ID|No\\.?))?)\\s*[:#-]?\\s*([A-Z0-9]{6,})\\b',
+    r'\b(?:UPI\s*Ref(?:erence)?(?:\s*(?:No\.?|Number))?|UTR(?:\s*(?:No\.?|Number))?|RRN|Ref(?:erence)?(?:\s*(?:No\.?|Number))?|Txn(?:\s*(?:ID|No\.?))?)\s*[:#-]?\s*([A-Z0-9]{6,})\b',
     caseSensitive: false,
   );
 
@@ -106,7 +106,7 @@ class SmsTransactionParser {
   }
 
   DateTime? _extractDate(String text) {
-    final iso = RegExp(r'\\b(20\\d{2})-(\\d{1,2})-(\\d{1,2})\\b')
+    final iso = RegExp(r'\b(20\d{2})-(\d{1,2})-(\d{1,2})\b')
         .firstMatch(text);
     if (iso != null) {
       return _safeDate(
@@ -117,7 +117,7 @@ class SmsTransactionParser {
     }
 
     final numeric = RegExp(
-      r'\\b(\\d{1,2})[/-](\\d{1,2})[/-](\\d{2,4})\\b',
+      r'\b(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b',
     ).firstMatch(text);
     if (numeric != null) {
       var year = int.parse(numeric.group(3)!);
@@ -130,7 +130,7 @@ class SmsTransactionParser {
     }
 
     final namedMonth = RegExp(
-      r'\\b(\\d{1,2})[- ]([A-Za-z]{3,9})[- , ](\\d{2,4})\\b',
+      r'\b(\d{1,2})[- ]([A-Za-z]{3,9})[- , ](\d{2,4})\b',
     ).firstMatch(text);
     if (namedMonth != null) {
       const months = {
@@ -171,7 +171,7 @@ class SmsTransactionParser {
 
   String? _extractCounterparty(String text) {
     final match = RegExp(
-      r'\\b(?:to|from|at)\\s+([A-Za-z][A-Za-z0-9 .&@_-]{1,35}?)(?=\\s+(?:on|via|ref|utr|rrn|txn|transaction|available|avl|bal(?:ance)?|for|using)\\b|[,.;\\n]|$)',
+      r'\b(?:to|from|at)\s+([A-Za-z][A-Za-z0-9 .&@_-]{1,35}?)(?=\s+(?:on|via|ref|utr|rrn|txn|transaction|available|avl|bal(?:ance)?|for|using)\b|[,.;\n]|$)',
       caseSensitive: false,
     ).firstMatch(text);
     final value = match?.group(1)?.trim();
