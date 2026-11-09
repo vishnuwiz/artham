@@ -331,6 +331,36 @@ void main() {
     expect(await repository.applyTemplatesForMonth(may), 1);
   });
 
+  test('editing an active template starts the new plan in that month', () async {
+    await repository.saveBudgetTemplate(
+      categoryId: null,
+      startMonth: april,
+      limitPaise: 100000,
+      rolloverEnabled: false,
+    );
+    await repository.applyTemplatesForMonth(april);
+
+    await repository.saveBudgetTemplate(
+      categoryId: null,
+      startMonth: may,
+      limitPaise: 150000,
+      rolloverEnabled: true,
+    );
+
+    final june = DateTime(2027, 6, 1);
+    final applied = await repository.applyTemplatesForMonth(june);
+    final aprilBudget = await repository.getMonthlyBudget(april);
+    final mayBudget = await repository.getMonthlyBudget(may);
+    final juneBudget = await repository.getMonthlyBudget(june);
+
+    expect(applied, 2);
+    expect(aprilBudget!.limitPaise, 100000);
+    expect(mayBudget!.limitPaise, 150000);
+    expect(juneBudget!.limitPaise, 150000);
+    expect(aprilBudget.rolloverEnabled, isFalse);
+    expect(mayBudget.rolloverEnabled, isTrue);
+  });
+
   test('budget summaries identify monthly templates', () async {
     await repository.saveBudgetTemplate(
       categoryId: null,
