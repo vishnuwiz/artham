@@ -98,6 +98,15 @@ class BankAccountSuffixMatcherTest {
     }
 
     @Test
+    fun doesNotMistakeLargeTransactionAmountForAnAccountSuffix() {
+        assertNull(
+            BankAccountSuffixMatcher.extractLast4(
+                "Your account was debited by Rs. 12,500 at a shop.",
+            ),
+        )
+    }
+
+    @Test
     fun doesNotTreatAnUnlabelledUpiReferenceAsAnAccountNumber() {
         val result = BankAccountSuffixMatcher.matchSavedAccount(
             accounts = listOf(BankAccountSuffixMatcher.SavedAccount(51L, "9012")),
