@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
@@ -99,6 +101,9 @@ class MonthlyBudgetHistoryItem {
 }
 
 class BudgetRepository {
+  static final Expando<Future<void>> _templateApplyTails =
+      Expando<Future<void>>('budgetTemplateApplyTails');
+
   final AppDatabase database;
 
   BudgetRepository(this.database);
@@ -207,6 +212,22 @@ class BudgetRepository {
   /// This is intentionally run when the app opens a budget view rather than
   /// through a background task. It creates budget limits only, not transactions.
   Future<int> applyTemplatesForMonth(DateTime month) async {
+    // The Home, Budgets, and Insights views can request template application
+    // close together. Serialize these operations per database so two screens
+    // cannot both observe a missing month and insert duplicate budget rows.
+    final previous = _templateApplyTails[database] ?? Future<void>.value();
+    final gate = Completer<void>();
+    _templateApplyTails[database] = gate.future;
+
+    await previous;
+    try {
+      return await _applyTemplatesForMonth(month);
+    } finally {
+      gate.complete();
+    }
+  }
+
+  Future<int> _applyTemplatesForMonth(DateTime month) async {
     final targetMonth = _monthStart(month);
     final templates = await (database.select(database.budgetTemplates)
           ..where(
@@ -265,6 +286,7 @@ class BudgetRepository {
       }
     });
     return applied;
+  }
   }
   Future<Budget?> getMonthlyBudget(DateTime month) async {
     final start = _monthStart(month);
