@@ -291,18 +291,3 @@ String legacyAccountNameForStorage(String? lastFourDigits) {
   final digits = lastFourDigits?.trim() ?? '';
   return digits.isEmpty ? 'Account' : 'Account $digits';
 }
-).hasMatch(digits);
-  return '•••• ${valid ? digits : '----'}';
-}
-
-/// Displays a bank account using its bank name and last four digits.
-String bankAccountDisplayLabel(String bankName, String? lastFourDigits) {
-  return '${bankName.trim()} · ${accountNumberLastFourLabel(lastFourDigits)}';
-}
-
-/// Keeps the legacy non-null database field populated without asking users
-/// to provide a separate nickname. It is not used as a visible account label.
-String legacyAccountNameForStorage(String? lastFourDigits) {
-  final digits = lastFourDigits?.trim() ?? '';
-  return digits.isEmpty ? 'Account' : 'Account $digits';
-}
