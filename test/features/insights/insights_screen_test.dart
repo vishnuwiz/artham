@@ -49,32 +49,26 @@ void main() {
       ),
     );
 
+    // Keep the full Insights content in the test viewport so assertions do
+    // not depend on scrollable discovery or scroll timing.
+    tester.view.physicalSize = const Size(430, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
     await tester.pumpWidget(
       MaterialApp(home: InsightsScreen(database: database)),
     );
     await tester.pumpAndSettle();
 
-    final scrollable = find.byType(Scrollable).first;
-    await tester.scrollUntilVisible(
-      find.text('Budget performance'),
-      300,
-      scrollable: scrollable,
+    expect(find.byType(CustomScrollView), findsOneWidget);
+    expect(
+      find.text('Unable to load insights. Please try again.'),
+      findsNothing,
     );
     expect(find.text('Budget performance'), findsOneWidget);
     expect(find.text('CATEGORIES ON TRACK'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('Planned vs actual'),
-      350,
-      scrollable: scrollable,
-    );
     expect(find.text('Planned vs actual'), findsOneWidget);
-
-    await tester.scrollUntilVisible(
-      find.text('Category budget insights'),
-      350,
-      scrollable: scrollable,
-    );
     expect(find.text('Category budget insights'), findsOneWidget);
     expect(find.text('Food'), findsWidgets);
   });
