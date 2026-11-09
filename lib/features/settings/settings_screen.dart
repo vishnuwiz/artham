@@ -274,7 +274,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               ),
             ),
             value: _isEnabled,
-            onChanged: _toggleAutomaticImport,
+            onChanged: _accounts.isEmpty ? null : _toggleAutomaticImport,
             activeTrackColor: const Color(0xFF13866A),
           ),
           if (_accounts.length > 1) ...[
