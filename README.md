@@ -12,11 +12,12 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
-- **Automatic Android bank-SMS import (device validation pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are processed in the background and saved locally without paste or confirmation. Duplicate alerts are ignored, and the original SMS body is not retained. Alerts that cannot be mapped safely to a saved bank account wait in Settings for account assignment.
+- **Automatic Android bank-SMS import (Android emulator validated; physical-device testing pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are parsed in the background and saved to the existing local database. The receiver uses the account suffix in the alert to match a saved account, ignores duplicate alerts, and does not retain the original SMS body. Alerts with an unknown or ambiguous account suffix wait in Settings for manual account assignment.
 - **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
+- **Bank account identification** — Display accounts throughout the app using the bank name and masked last four digits (for example, `Federal Bank · •••• 1255`) instead of requiring a separate account nickname. The same label is used in account cards, transaction details, account selectors, transfers, filters, recurring transactions, and SMS review.
 - **Budgets** — Set overall and category-based monthly budgets, track spending progress, and carry positive unused balances forward when rollover is enabled.
 - **Recurring budget templates** — Repeat overall or category budget limits each month. Templates can be paused or resumed; missing months are populated when the app opens, without creating transactions or changing account balances.
 - **Budget performance** — Compare planned and actual spending for the overall budget and each category, review the remaining or exceeded amount, and view a six-month planned-versus-actual trend.
@@ -33,7 +34,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ### Platform notes
 
-- Android automatic SMS import is opt-in and listens only for new incoming SMS broadcasts; it does not read or scan the existing inbox and does not request `READ_SMS`. `RECEIVE_SMS` is a hard-restricted Android permission. Distribution through Google Play requires the applicable SMS-based money-management declaration and review/approval; a sideloaded APK may not be allowlisted to hold this permission.
+- Android automatic SMS import is opt-in and listens only for new incoming SMS broadcasts; it does not read or scan the existing inbox and does not request `READ_SMS`. `RECEIVE_SMS` is a hard-restricted Android permission. The flow has been validated in the Android emulator; physical-device testing and distribution checks remain outstanding. Distribution through Google Play requires the applicable SMS-based money-management declaration and review/approval; a sideloaded APK may not be allowlisted to hold this permission.
 - iOS supports user-initiated SMS sharing/pasting only; ordinary third-party apps cannot read the full Messages inbox.
 - Bank statement import.
 - Database encryption and additional security improvements.
@@ -45,7 +46,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 | Area | Technology |
 |---|---|
 | App framework | Flutter |
-| Programming language | Dart |
+| Programming language | Dart (Flutter app), Kotlin (Android SMS receiver) |
 | Local database | SQLite |
 | Database toolkit | Drift |
 | Data persistence | On-device / local-first |
@@ -145,6 +146,8 @@ Other screens, repositories, and features are maintained in their respective fol
 
 - Store monetary values as integer paise, not floating-point rupees.
 - Keep account balances consistent when creating, editing, or deleting transactions.
+- Display saved bank accounts using the bank name and masked last four digits; do not depend on a user-entered nickname for account identification.
+- Keep native Android SMS `DateTime` values in the Unix-seconds format expected by Drift, and keep auxiliary pending-queue timestamp conversions consistent with their Dart readers.
 - Internal transfers should update the source and destination accounts without changing the user's overall net worth.
 - Keep budget progress in sync with the transactions that contribute to each budget.
 - Recurring budget templates create budget-limit rows only; they must never create financial transactions or alter account balances.
