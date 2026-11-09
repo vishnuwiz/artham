@@ -68,12 +68,15 @@ class _InsightsScreenState extends State<InsightsScreen> {
     final currentMonth = DateTime(now.year, now.month, 1);
 
     await budgetRepository.applyTemplatesForMonth(currentMonth);
-    final overallBudget =
-        await budgetRepository.getMonthlyBudgetSummary(currentMonth);
-    final categoryBudgets =
-        await budgetRepository.getCategoryBudgetSummaries(currentMonth);
-    final budgetHistory =
-        await budgetRepository.getMonthlyBudgetHistory(months: 6);
+    final overallBudget = await budgetRepository.getMonthlyBudgetSummary(
+      currentMonth,
+    );
+    final categoryBudgets = await budgetRepository.getCategoryBudgetSummaries(
+      currentMonth,
+    );
+    final budgetHistory = await budgetRepository.getMonthlyBudgetHistory(
+      months: 6,
+    );
 
     final monthData = <_MonthTotals>[];
     for (var offset = 5; offset >= 0; offset--) {
@@ -94,7 +97,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
         }
       }
 
-      monthData.add(_MonthTotals(month: month, income: income, expenses: expenses));
+      monthData.add(
+        _MonthTotals(month: month, income: income, expenses: expenses),
+      );
     }
 
     final currentStart = DateTime(now.year, now.month, 1);
@@ -132,14 +137,17 @@ class _InsightsScreenState extends State<InsightsScreen> {
       }
     }
 
-    final categoryData = categories
-        .map((category) => _CategoryTotal(
-              name: category.name,
-              amount: categoryTotals[category.id] ?? 0,
-            ))
-        .where((item) => item.amount > 0)
-        .toList()
-      ..sort((a, b) => b.amount.compareTo(a.amount));
+    final categoryData =
+        categories
+            .map(
+              (category) => _CategoryTotal(
+                name: category.name,
+                amount: categoryTotals[category.id] ?? 0,
+              ),
+            )
+            .where((item) => item.amount > 0)
+            .toList()
+          ..sort((a, b) => b.amount.compareTo(a.amount));
 
     final overallForecast = overallBudget == null
         ? null
@@ -149,26 +157,27 @@ class _InsightsScreenState extends State<InsightsScreen> {
             budgetPaise: overallBudget.availableBudgetPaise,
             spentToDatePaise: expensesToDate,
           );
-    final categoryForecasts = categoryBudgets
-        .where((item) => item.availableBudgetPaise > 0)
-        .map(
-          (item) => _CategoryForecast(
-            name: item.category.name,
-            forecast: BudgetForecastCalculator.calculate(
-              month: currentMonth,
-              asOf: now,
-              budgetPaise: item.availableBudgetPaise,
-              spentToDatePaise:
-                  categoryExpensesToDate[item.category.id] ?? 0,
-            ),
-          ),
-        )
-        .toList()
-      ..sort(
-        (a, b) => _forecastRiskRank(b.forecast.status).compareTo(
-          _forecastRiskRank(a.forecast.status),
-        ),
-      );
+    final categoryForecasts =
+        categoryBudgets
+            .where((item) => item.availableBudgetPaise > 0)
+            .map(
+              (item) => _CategoryForecast(
+                name: item.category.name,
+                forecast: BudgetForecastCalculator.calculate(
+                  month: currentMonth,
+                  asOf: now,
+                  budgetPaise: item.availableBudgetPaise,
+                  spentToDatePaise:
+                      categoryExpensesToDate[item.category.id] ?? 0,
+                ),
+              ),
+            )
+            .toList()
+          ..sort(
+            (a, b) =>
+                _forecastRiskRank(b.forecast.status)
+                    .compareTo(_forecastRiskRank(a.forecast.status)),
+          );
     return _InsightsData(
       monthTotals: monthData,
       currentIncome: currentIncome,
@@ -185,14 +194,38 @@ class _InsightsScreenState extends State<InsightsScreen> {
   String _money(int paise) => '₹${(paise / 100).toStringAsFixed(2)}';
 
   String _monthShort(DateTime date) {
-    const names = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const names = [
+      'Jan',
+      'Feb',
+      'Mar',
+      'Apr',
+      'May',
+      'Jun',
+      'Jul',
+      'Aug',
+      'Sep',
+      'Oct',
+      'Nov',
+      'Dec',
+    ];
     return names[date.month - 1];
   }
 
   String _monthLong(DateTime date) {
-    const names = ['January', 'February', 'March', 'April', 'May', 'June',
-      'July', 'August', 'September', 'October', 'November', 'December'];
+    const names = [
+      'January',
+      'February',
+      'March',
+      'April',
+      'May',
+      'June',
+      'July',
+      'August',
+      'September',
+      'October',
+      'November',
+      'December',
+    ];
     return '${names[date.month - 1]} ${date.year}';
   }
 
@@ -210,7 +243,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
               );
             }
             if (snapshot.hasError) {
-              return const Center(child: Text('Unable to load insights. Please try again.'));
+              return const Center(
+                child: Text('Unable to load insights. Please try again.'),
+              );
             }
             final data = snapshot.data;
             if (data == null) {
@@ -246,7 +281,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 5),
                         Text(
                           'Your financial overview · ${_monthLong(DateTime.now())}',
-                          style: const TextStyle(color: Colors.black54, fontSize: 12),
+                          style: const TextStyle(
+                            color: Colors.black54,
+                            fontSize: 12,
+                          ),
                         ),
                         const SizedBox(height: 20),
                         _buildSavingsCard(data, netSavings, savingsRate),
@@ -255,7 +293,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 12),
                         _buildBudgetPerformance(data),
                         const SizedBox(height: 25),
-                        _sectionTitle('Spending forecast', 'Month-end estimate'),
+                        _sectionTitle(
+                          'Spending forecast',
+                          'Month-end estimate',
+                        ),
                         const SizedBox(height: 12),
                         _buildBudgetForecast(data),
                         const SizedBox(height: 25),
@@ -273,7 +314,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 25),
                         _sectionTitle('Where your money goes', 'This month'),
                         const SizedBox(height: 12),
-                        _buildCategoryBreakdown(data.categoryTotals, data.currentExpenses),
+                        _buildCategoryBreakdown(
+                          data.categoryTotals,
+                          data.currentExpenses,
+                        ),
                         const SizedBox(height: 20),
                         const Text(
                           'Insights are based on transactions saved in Artham. Transfers are excluded.',
@@ -296,8 +340,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
     final budgetedCategories = data.categoryBudgets
         .where((item) => item.budgetPaise > 0)
         .toList();
-    final overBudgetCategories =
-        budgetedCategories.where((item) => item.remainingPaise < 0).length;
+    final overBudgetCategories = budgetedCategories
+        .where((item) => item.remainingPaise < 0)
+        .length;
     final onTrackCategories = budgetedCategories.length - overBudgetCategories;
 
     if (overall == null && budgetedCategories.isEmpty) {
@@ -356,12 +401,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
             const SizedBox(height: 12),
             Row(
               children: [
-                Expanded(
-                  child: _performanceMetric('PLANNED', _money(planned)),
-                ),
-                Expanded(
-                  child: _performanceMetric('ACTUAL', _money(actual)),
-                ),
+                Expanded(child: _performanceMetric('PLANNED', _money(planned))),
+                Expanded(child: _performanceMetric('ACTUAL', _money(actual))),
                 Expanded(
                   child: _performanceMetric(
                     over ? 'OVER BY' : 'REMAINING',
@@ -485,10 +526,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
               children: [
                 Expanded(
                   child: _performanceMetric(
-                    overall.hasProjection ? 'MONTH-END ESTIMATE' : 'SPENT SO FAR',
+                    overall.hasProjection
+                        ? 'MONTH-END ESTIMATE'
+                        : 'SPENT SO FAR',
                     _money(
-                      overall.projectedSpendPaise ??
-                          overall.spentToDatePaise,
+                      overall.projectedSpendPaise ?? overall.spentToDatePaise,
                     ),
                   ),
                 ),
@@ -510,11 +552,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ClipRRect(
               borderRadius: BorderRadius.circular(10),
               child: LinearProgressIndicator(
-                value: ((overall.projectedSpendPaise ??
-                            overall.spentToDatePaise) /
-                        overall.budgetPaise)
-                    .clamp(0.0, 1.0)
-                    .toDouble(),
+                value:
+                    ((overall.projectedSpendPaise ?? overall.spentToDatePaise) /
+                            overall.budgetPaise)
+                        .clamp(0.0, 1.0)
+                        .toDouble(),
                 minHeight: 8,
                 backgroundColor: const Color(0xFFE9EEEC),
                 color: _forecastColor(overall.status),
@@ -553,8 +595,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             const SizedBox(height: 12),
             for (var index = 0; index < categories.length; index++) ...[
               _buildCategoryForecastTile(categories[index]),
-              if (index < categories.length - 1)
-                const Divider(height: 20),
+              if (index < categories.length - 1) const Divider(height: 20),
             ],
           ],
           const SizedBox(height: 12),
@@ -621,10 +662,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
         ClipRRect(
           borderRadius: BorderRadius.circular(8),
           child: LinearProgressIndicator(
-            value: ((estimate ?? forecast.spentToDatePaise) /
-                    forecast.budgetPaise)
-                .clamp(0.0, 1.0)
-                .toDouble(),
+            value:
+                ((estimate ?? forecast.spentToDatePaise) / forecast.budgetPaise)
+                    .clamp(0.0, 1.0)
+                    .toDouble(),
             minHeight: 6,
             backgroundColor: const Color(0xFFE9EEEC),
             color: _forecastColor(forecast.status),
@@ -807,20 +848,21 @@ class _InsightsScreenState extends State<InsightsScreen> {
   }
 
   Widget _buildCategoryBudgetInsights(List<CategoryBudgetSummary> categories) {
-    final items = categories
-        .where((item) => item.budgetPaise > 0 || item.expensesPaise > 0)
-        .toList()
-      ..sort((a, b) {
-        final aOver = a.budgetPaise > 0 && a.remainingPaise < 0;
-        final bOver = b.budgetPaise > 0 && b.remainingPaise < 0;
-        if (aOver != bOver) return aOver ? -1 : 1;
-        if (a.budgetPaise == 0 && b.budgetPaise == 0) {
-          return b.expensesPaise.compareTo(a.expensesPaise);
-        }
-        if (a.budgetPaise == 0) return 1;
-        if (b.budgetPaise == 0) return -1;
-        return b.percentageUsed.compareTo(a.percentageUsed);
-      });
+    final items =
+        categories
+            .where((item) => item.budgetPaise > 0 || item.expensesPaise > 0)
+            .toList()
+          ..sort((a, b) {
+            final aOver = a.budgetPaise > 0 && a.remainingPaise < 0;
+            final bOver = b.budgetPaise > 0 && b.remainingPaise < 0;
+            if (aOver != bOver) return aOver ? -1 : 1;
+            if (a.budgetPaise == 0 && b.budgetPaise == 0) {
+              return b.expensesPaise.compareTo(a.expensesPaise);
+            }
+            if (a.budgetPaise == 0) return 1;
+            if (b.budgetPaise == 0) return -1;
+            return b.percentageUsed.compareTo(a.percentageUsed);
+          });
 
     if (items.isEmpty) {
       return Container(
@@ -869,13 +911,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     Text(
                       hasBudget
                           ? (over
-                              ? '${_money(item.remainingPaise.abs())} over'
-                              : '${_money(item.remainingPaise)} left')
+                                ? '${_money(item.remainingPaise.abs())} over'
+                                : '${_money(item.remainingPaise)} left')
                           : 'No plan',
                       style: TextStyle(
-                        color: over
-                            ? const Color(0xFFC45D58)
-                            : Colors.black54,
+                        color: over ? const Color(0xFFC45D58) : Colors.black54,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -887,10 +927,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   hasBudget
                       ? 'Actual ${_money(item.expensesPaise)} · Plan ${_money(item.availableBudgetPaise)}'
                       : 'Actual spending ${_money(item.expensesPaise)}',
-                  style: const TextStyle(
-                    color: Colors.black54,
-                    fontSize: 10,
-                  ),
+                  style: const TextStyle(color: Colors.black54, fontSize: 10),
                 ),
                 if (hasBudget) ...[
                   const SizedBox(height: 7),
@@ -900,9 +937,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       value: ratio.clamp(0.0, 1.0).toDouble(),
                       minHeight: 6,
                       backgroundColor: const Color(0xFFE9EEEC),
-                      color: over
-                          ? const Color(0xFFC45D58)
-                          : _insightsGreen,
+                      color: over ? const Color(0xFFC45D58) : _insightsGreen,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -911,9 +946,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     child: Text(
                       '${(ratio * 100).toStringAsFixed(1)}% used',
                       style: TextStyle(
-                        color: over
-                            ? const Color(0xFFC45D58)
-                            : _insightsGreen,
+                        color: over ? const Color(0xFFC45D58) : _insightsGreen,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -932,17 +965,32 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Row(
       children: [
         Expanded(
-          child: Text(title, style: const TextStyle(
-            color: _insightsNavy, fontSize: 18, fontWeight: FontWeight.w800,
-          )),
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: _insightsNavy,
+              fontSize: 18,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
         ),
-        Text(subtitle, style: const TextStyle(color: _insightsGreen, fontSize: 11,
-          fontWeight: FontWeight.w700)),
+        Text(
+          subtitle,
+          style: const TextStyle(
+            color: _insightsGreen,
+            fontSize: 11,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
       ],
     );
   }
 
-  Widget _buildSavingsCard(_InsightsData data, int netSavings, double savingsRate) {
+  Widget _buildSavingsCard(
+    _InsightsData data,
+    int netSavings,
+    double savingsRate,
+  ) {
     final positive = netSavings >= 0;
     return Container(
       padding: const EdgeInsets.all(20),
@@ -957,25 +1005,48 @@ class _InsightsScreenState extends State<InsightsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('NET SAVINGS THIS MONTH',
-            style: TextStyle(color: Colors.white70, fontSize: 11,
-              letterSpacing: 1, fontWeight: FontWeight.w700)),
+          const Text(
+            'NET SAVINGS THIS MONTH',
+            style: TextStyle(
+              color: Colors.white70,
+              fontSize: 11,
+              letterSpacing: 1,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
           const SizedBox(height: 9),
-          Text(_money(netSavings.abs()),
-            style: const TextStyle(color: Colors.white, fontSize: 30,
-              fontWeight: FontWeight.w800)),
+          Text(
+            _money(netSavings.abs()),
+            style: const TextStyle(
+              color: Colors.white,
+              fontSize: 30,
+              fontWeight: FontWeight.w800,
+            ),
+          ),
           const SizedBox(height: 5),
-          Text(positive ? 'You are spending within your income' : 'Expenses exceed income',
-            style: const TextStyle(color: Colors.white70, fontSize: 11)),
+          Text(
+            positive
+                ? 'You are spending within your income'
+                : 'Expenses exceed income',
+            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          ),
           const SizedBox(height: 20),
           const Divider(color: Colors.white24),
           const SizedBox(height: 12),
           Row(
             children: [
-              Expanded(child: _whiteMetric('INCOME', _money(data.currentIncome))),
-              Expanded(child: _whiteMetric('EXPENSES', _money(data.currentExpenses))),
-              Expanded(child: _whiteMetric('SAVINGS RATE',
-                '${(savingsRate * 100).toStringAsFixed(1)}%')),
+              Expanded(
+                child: _whiteMetric('INCOME', _money(data.currentIncome)),
+              ),
+              Expanded(
+                child: _whiteMetric('EXPENSES', _money(data.currentExpenses)),
+              ),
+              Expanded(
+                child: _whiteMetric(
+                  'SAVINGS RATE',
+                  '${(savingsRate * 100).toStringAsFixed(1)}%',
+                ),
+              ),
             ],
           ),
         ],
@@ -989,21 +1060,33 @@ class _InsightsScreenState extends State<InsightsScreen> {
       children: [
         Text(label, style: const TextStyle(color: Colors.white60, fontSize: 9)),
         const SizedBox(height: 6),
-        Text(value, maxLines: 1, overflow: TextOverflow.ellipsis,
-          style: const TextStyle(color: Colors.white, fontSize: 13,
-            fontWeight: FontWeight.w800)),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: Colors.white,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
       ],
     );
   }
 
   Widget _buildMonthlyChart(List<_MonthTotals> months) {
     final maxValue = months.fold<int>(0, (max, item) {
-      final monthMax = item.income > item.expenses ? item.income : item.expenses;
+      final monthMax = item.income > item.expenses
+          ? item.income
+          : item.expenses;
       return monthMax > max ? monthMax : max;
     });
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(21)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
       child: Column(
         children: [
           Row(
@@ -1019,8 +1102,12 @@ class _InsightsScreenState extends State<InsightsScreen> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
               children: months.map((item) {
-                final incomeHeight = maxValue == 0 ? 0.0 : 105 * item.income / maxValue;
-                final expenseHeight = maxValue == 0 ? 0.0 : 105 * item.expenses / maxValue;
+                final incomeHeight = maxValue == 0
+                    ? 0.0
+                    : 105 * item.income / maxValue;
+                final expenseHeight = maxValue == 0
+                    ? 0.0
+                    : 105 * item.expenses / maxValue;
                 return Expanded(
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
@@ -1037,8 +1124,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         ),
                       ),
                       const SizedBox(height: 8),
-                      Text(_monthShort(item.month),
-                        style: const TextStyle(color: Colors.black54, fontSize: 10)),
+                      Text(
+                        _monthShort(item.month),
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 10,
+                        ),
+                      ),
                     ],
                   ),
                 );
@@ -1064,10 +1156,16 @@ class _InsightsScreenState extends State<InsightsScreen> {
   Widget _legend(Color color, String label) {
     return Row(
       children: [
-        Container(width: 9, height: 9,
-          decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+        Container(
+          width: 9,
+          height: 9,
+          decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+        ),
         const SizedBox(width: 6),
-        Text(label, style: const TextStyle(color: Colors.black54, fontSize: 11)),
+        Text(
+          label,
+          style: const TextStyle(color: Colors.black54, fontSize: 11),
+        ),
       ],
     );
   }
@@ -1077,16 +1175,30 @@ class _InsightsScreenState extends State<InsightsScreen> {
       return Container(
         width: double.infinity,
         padding: const EdgeInsets.all(22),
-        decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(20)),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
         child: const Column(
           children: [
-            Icon(Icons.pie_chart_outline_rounded, color: _insightsGreen, size: 34),
+            Icon(
+              Icons.pie_chart_outline_rounded,
+              color: _insightsGreen,
+              size: 34,
+            ),
             SizedBox(height: 8),
-            Text('No expenses recorded this month',
-              style: TextStyle(color: _insightsNavy, fontWeight: FontWeight.w700)),
+            Text(
+              'No expenses recorded this month',
+              style: TextStyle(
+                color: _insightsNavy,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
             SizedBox(height: 4),
-            Text('Your category breakdown will appear here.',
-              style: TextStyle(color: Colors.black54, fontSize: 11)),
+            Text(
+              'Your category breakdown will appear here.',
+              style: TextStyle(color: Colors.black54, fontSize: 11),
+            ),
           ],
         ),
       );
@@ -1094,7 +1206,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
     return Container(
       padding: const EdgeInsets.all(17),
-      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(21)),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
       child: Column(
         children: categories.map((item) {
           final share = total > 0 ? item.amount / total : 0.0;
@@ -1104,12 +1219,24 @@ class _InsightsScreenState extends State<InsightsScreen> {
               children: [
                 Row(
                   children: [
-                    Expanded(child: Text(item.name,
-                      style: const TextStyle(color: _insightsNavy,
-                        fontSize: 13, fontWeight: FontWeight.w700))),
-                    Text(_money(item.amount),
-                      style: const TextStyle(color: _insightsNavy,
-                        fontSize: 12, fontWeight: FontWeight.w700)),
+                    Expanded(
+                      child: Text(
+                        item.name,
+                        style: const TextStyle(
+                          color: _insightsNavy,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      _money(item.amount),
+                      style: const TextStyle(
+                        color: _insightsNavy,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
                   ],
                 ),
                 const SizedBox(height: 8),
@@ -1125,8 +1252,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: Text('${(share * 100).toStringAsFixed(1)}%',
-                    style: const TextStyle(color: Colors.black45, fontSize: 10)),
+                  child: Text(
+                    '${(share * 100).toStringAsFixed(1)}%',
+                    style: const TextStyle(color: Colors.black45, fontSize: 10),
+                  ),
                 ),
               ],
             ),
@@ -1184,10 +1313,7 @@ class _CategoryForecast {
   final String name;
   final BudgetForecast forecast;
 
-  const _CategoryForecast({
-    required this.name,
-    required this.forecast,
-  });
+  const _CategoryForecast({required this.name, required this.forecast});
 }
 
 int _forecastRiskRank(BudgetForecastStatus status) {
