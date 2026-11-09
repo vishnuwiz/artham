@@ -102,103 +102,8 @@ class _HomeScreenState extends State<HomeScreen> {
     }();
   }
 
-  Future<void> _editMonthlyBudget() async {
-    final repository = BudgetRepository(appDatabase);
-    final now = DateTime.now();
-    final existing = await repository.getMonthlyBudget(now);
-
-    if (!mounted) return;
-
-    final controller = TextEditingController(
-      text: existing == null
-          ? ''
-          : (existing.limitPaise / 100).toStringAsFixed(2),
-    );
-
-    final formKey = GlobalKey<FormState>();
-    final existingTemplate =
-        await repository.getBudgetTemplate(categoryId: null);
-    final shouldSave = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Monthly spending budget'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Budget amount',
-                prefixText: '₹ ',
-                hintText: 'e.g. 35000',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                final amount = double.tryParse(
-                  (value ?? '').trim().replaceAll(',', ''),
-                );
-                if (amount == null || amount <= 0) {
-                  return 'Enter an amount greater than zero';
-                }
-                if (amount > 100000000000) {
-                  return 'Enter a smaller amount';
-                }
-                return null;
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  Navigator.pop(dialogContext, true);
-                }
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: primaryGreen,
-              ),
-              child: const Text('Save budget'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (shouldSave == true) {
-      final amount = double.parse(
-        controller.text.trim().replaceAll(',', ''),
-      );
-      final amountPaise = (amount * 100).round();
-
-      await repository.saveMonthlyBudget(
-        month: now,
-        limitPaise: amountPaise,
-      );
-      await repository.setBudgetTemplateActive(
-        categoryId: null,
-        isActive: existingTemplate?.isActive ?? false,
-        limitPaise: amountPaise,
-        rolloverEnabled:
-            existing?.rolloverEnabled ?? existingTemplate?.rolloverEnabled ?? false,
-      );
-
-      if (!mounted) return;
-      setState(_loadBudget);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Monthly budget saved')),
-      );
-    }
-
-    controller.dispose();
+  void _openBudgets() {
+    setState(() => selectedTab = 3);
   }
 
   String _currentMonthLabel() {
@@ -534,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: title == 'My accounts'
               ? _openAccounts
               : title == 'Monthly budget'
-                  ? _editMonthlyBudget
+                  ? _openBudgets
                   : () {},
           child: Text(
             action,
@@ -789,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
                 OutlinedButton.icon(
-                  onPressed: _editMonthlyBudget,
+                  onPressed: _openBudgets,
                   icon: const Icon(Icons.add_rounded),
                   label: const Text('Set monthly budget'),
                   style: OutlinedButton.styleFrom(
