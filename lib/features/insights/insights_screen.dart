@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/app_database.dart';
+import '../../data/budget_forecast.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -35,7 +36,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
         currentExpenses: 0,
         categoryTotals: [],
         overallBudget: null,
+        overallForecast: null,
         categoryBudgets: [],
+        categoryForecasts: [],
         budgetHistory: [],
       ),
     );
@@ -98,7 +101,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
     final nextStart = DateTime(now.year, now.month + 1, 1);
     var currentIncome = 0;
     var currentExpenses = 0;
+    var expensesToDate = 0;
     final categoryTotals = <int, int>{};
+    final categoryExpensesToDate = <int, int>{};
 
     for (final transaction in transactions) {
       final date = transaction.transactionDate;
@@ -113,6 +118,17 @@ class _InsightsScreenState extends State<InsightsScreen> {
           categoryTotals[categoryId] =
               (categoryTotals[categoryId] ?? 0) + transaction.amountPaise;
         }
+        // Forecasts use transactions recorded through today only. Future-dated
+        // entries remain visible in existing monthly totals but do not distort
+        // the current spending pace.
+        if (!date.isAfter(now)) {
+          expensesToDate += transaction.amountPaise;
+          if (categoryId != null) {
+            categoryExpensesToDate[categoryId] =
+                (categoryExpensesToDate[categoryId] ?? 0) +
+                transaction.amountPaise;
+          }
+        }
       }
     }
 
@@ -125,13 +141,43 @@ class _InsightsScreenState extends State<InsightsScreen> {
         .toList()
       ..sort((a, b) => b.amount.compareTo(a.amount));
 
+    final overallForecast = overallBudget == null
+        ? null
+        : BudgetForecastCalculator.calculate(
+            month: currentMonth,
+            asOf: now,
+            budgetPaise: overallBudget.availableBudgetPaise,
+            spentToDatePaise: expensesToDate,
+          );
+    final categoryForecasts = categoryBudgets
+        .where((item) => item.availableBudgetPaise > 0)
+        .map(
+          (item) => _CategoryForecast(
+            name: item.category.name,
+            forecast: BudgetForecastCalculator.calculate(
+              month: currentMonth,
+              asOf: now,
+              budgetPaise: item.availableBudgetPaise,
+              spentToDatePaise:
+                  categoryExpensesToDate[item.category.id] ?? 0,
+            ),
+          ),
+        )
+        .toList()
+      ..sort(
+        (a, b) => _forecastRiskRank(b.forecast.status).compareTo(
+          _forecastRiskRank(a.forecast.status),
+        ),
+      );
     return _InsightsData(
       monthTotals: monthData,
       currentIncome: currentIncome,
       currentExpenses: currentExpenses,
       categoryTotals: categoryData,
       overallBudget: overallBudget,
+      overallForecast: overallForecast,
       categoryBudgets: categoryBudgets,
+      categoryForecasts: categoryForecasts,
       budgetHistory: budgetHistory,
     );
   }
@@ -208,6 +254,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         _sectionTitle('Budget performance', 'This month'),
                         const SizedBox(height: 12),
                         _buildBudgetPerformance(data),
+                        const SizedBox(height: 25),
+                        _sectionTitle('Spending forecast', 'Month-end estimate'),
+                        const SizedBox(height: 12),
+                        _buildBudgetForecast(data),
                         const SizedBox(height: 25),
                         _sectionTitle('Planned vs actual', 'Last 6 months'),
                         const SizedBox(height: 12),
@@ -379,6 +429,277 @@ class _InsightsScreenState extends State<InsightsScreen> {
         ],
       ),
     );
+  }
+
+  Widget _buildBudgetForecast(_InsightsData data) {
+    final overall = data.overallForecast;
+    final categories = data.categoryForecasts;
+    if (overall == null && categories.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'Set an overall or category budget to see month-end spending estimates and daily spending guidance.',
+          style: TextStyle(color: Colors.black54, fontSize: 11),
+        ),
+      );
+    }
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (overall != null) ...[
+            Row(
+              children: [
+                const Expanded(
+                  child: Text(
+                    'Overall spending estimate',
+                    style: TextStyle(
+                      color: _insightsNavy,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+                Text(
+                  _forecastStatusLabel(overall.status),
+                  style: TextStyle(
+                    color: _forecastColor(overall.status),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 13),
+            Row(
+              children: [
+                Expanded(
+                  child: _performanceMetric(
+                    overall.hasProjection ? 'MONTH-END ESTIMATE' : 'SPENT SO FAR',
+                    _money(
+                      overall.projectedSpendPaise ??
+                          overall.spentToDatePaise,
+                    ),
+                  ),
+                ),
+                Expanded(
+                  child: _performanceMetric(
+                    'AVAILABLE PLAN',
+                    _money(overall.budgetPaise),
+                  ),
+                ),
+                Expanded(
+                  child: _performanceMetric(
+                    'DAYS LEFT',
+                    '${overall.daysRemaining}',
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 13),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: ((overall.projectedSpendPaise ??
+                            overall.spentToDatePaise) /
+                        overall.budgetPaise)
+                    .clamp(0.0, 1.0)
+                    .toDouble(),
+                minHeight: 8,
+                backgroundColor: const Color(0xFFE9EEEC),
+                color: _forecastColor(overall.status),
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _forecastMessage(overall),
+              style: const TextStyle(color: Colors.black54, fontSize: 11),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              _dailySpendingGuide(overall),
+              style: const TextStyle(
+                color: _insightsNavy,
+                fontSize: 11,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ],
+          if (categories.isNotEmpty) ...[
+            if (overall != null) ...[
+              const SizedBox(height: 16),
+              const Divider(height: 1),
+              const SizedBox(height: 14),
+            ],
+            const Text(
+              'CATEGORY OUTLOOK',
+              style: TextStyle(
+                color: Colors.black45,
+                fontSize: 9,
+                fontWeight: FontWeight.w800,
+                letterSpacing: 0.8,
+              ),
+            ),
+            const SizedBox(height: 12),
+            for (var index = 0; index < categories.length; index++) ...[
+              _buildCategoryForecastTile(categories[index]),
+              if (index < categories.length - 1)
+                const Divider(height: 20),
+            ],
+          ],
+          const SizedBox(height: 12),
+          const Text(
+            'Estimates use the average daily spending recorded so far this month. A projection appears after at least 3 elapsed days and can change as new transactions are added.',
+            style: TextStyle(color: Colors.black45, fontSize: 10),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryForecastTile(_CategoryForecast item) {
+    final forecast = item.forecast;
+    final estimate = forecast.projectedSpendPaise;
+    final displayedAmount = estimate == null
+        ? 'Spent ${_money(forecast.spentToDatePaise)}'
+        : 'Projected ${_money(estimate)}';
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                item.name,
+                style: const TextStyle(
+                  color: _insightsNavy,
+                  fontSize: 12,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ),
+            Text(
+              _forecastStatusLabel(forecast.status),
+              style: TextStyle(
+                color: _forecastColor(forecast.status),
+                fontSize: 10,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+          ],
+        ),
+        const SizedBox(height: 5),
+        Row(
+          children: [
+            Expanded(
+              child: Text(
+                displayedAmount,
+                style: const TextStyle(
+                  color: _insightsNavy,
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ),
+            Text(
+              'Plan ${_money(forecast.budgetPaise)}',
+              style: const TextStyle(color: Colors.black54, fontSize: 10),
+            ),
+          ],
+        ),
+        const SizedBox(height: 7),
+        ClipRRect(
+          borderRadius: BorderRadius.circular(8),
+          child: LinearProgressIndicator(
+            value: ((estimate ?? forecast.spentToDatePaise) /
+                    forecast.budgetPaise)
+                .clamp(0.0, 1.0)
+                .toDouble(),
+            minHeight: 6,
+            backgroundColor: const Color(0xFFE9EEEC),
+            color: _forecastColor(forecast.status),
+          ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          _dailySpendingGuide(forecast),
+          style: const TextStyle(color: Colors.black54, fontSize: 10),
+        ),
+      ],
+    );
+  }
+
+  String _forecastStatusLabel(BudgetForecastStatus status) {
+    switch (status) {
+      case BudgetForecastStatus.noBudget:
+        return 'No budget';
+      case BudgetForecastStatus.noSpending:
+        return 'No spend yet';
+      case BudgetForecastStatus.insufficientData:
+        return 'Building trend';
+      case BudgetForecastStatus.onTrack:
+        return 'On track';
+      case BudgetForecastStatus.approachingLimit:
+        return 'Near limit';
+      case BudgetForecastStatus.likelyOverBudget:
+        return 'Likely over';
+      case BudgetForecastStatus.alreadyOverBudget:
+        return 'Over budget';
+    }
+  }
+
+  Color _forecastColor(BudgetForecastStatus status) {
+    switch (status) {
+      case BudgetForecastStatus.alreadyOverBudget:
+      case BudgetForecastStatus.likelyOverBudget:
+        return const Color(0xFFC45D58);
+      case BudgetForecastStatus.approachingLimit:
+        return const Color(0xFFB7791F);
+      case BudgetForecastStatus.onTrack:
+        return _insightsGreen;
+      case BudgetForecastStatus.noBudget:
+      case BudgetForecastStatus.noSpending:
+      case BudgetForecastStatus.insufficientData:
+        return Colors.black45;
+    }
+  }
+
+  String _forecastMessage(BudgetForecast forecast) {
+    switch (forecast.status) {
+      case BudgetForecastStatus.noBudget:
+        return 'Set a monthly limit to receive a spending forecast.';
+      case BudgetForecastStatus.noSpending:
+        return 'No expenses have been recorded against this plan yet.';
+      case BudgetForecastStatus.insufficientData:
+        return 'A month-end estimate will appear after at least 3 elapsed days.';
+      case BudgetForecastStatus.onTrack:
+        return 'At the current pace, estimated spending is within this month’s plan.';
+      case BudgetForecastStatus.approachingLimit:
+        return 'At the current pace, estimated spending may use 90% or more of the available plan.';
+      case BudgetForecastStatus.likelyOverBudget:
+        return 'At the current pace, spending may exceed the available plan by ${_money(forecast.projectedOverBudgetPaise)}.';
+      case BudgetForecastStatus.alreadyOverBudget:
+        return 'Recorded spending has already exceeded the available plan by ${_money(forecast.alreadyOverBudgetPaise)}.';
+    }
+  }
+
+  String _dailySpendingGuide(BudgetForecast forecast) {
+    final daily = forecast.recommendedDailySpendPaise;
+    if (daily == null) return 'No daily guide until a monthly plan is set.';
+    if (forecast.remainingBudgetPaise <= 0) {
+      return 'Daily guide: no budget remains for additional spending.';
+    }
+    return 'Daily guide: about ${_money(daily)} per day through month-end, including today.';
   }
 
   Widget _performanceMetric(String label, String value) {
@@ -822,7 +1143,9 @@ class _InsightsData {
   final int currentExpenses;
   final List<_CategoryTotal> categoryTotals;
   final MonthlyBudgetSummary? overallBudget;
+  final BudgetForecast? overallForecast;
   final List<CategoryBudgetSummary> categoryBudgets;
+  final List<_CategoryForecast> categoryForecasts;
   final List<MonthlyBudgetHistoryItem> budgetHistory;
 
   const _InsightsData({
@@ -831,7 +1154,9 @@ class _InsightsData {
     required this.currentExpenses,
     required this.categoryTotals,
     required this.overallBudget,
+    required this.overallForecast,
     required this.categoryBudgets,
+    required this.categoryForecasts,
     required this.budgetHistory,
   });
 }
@@ -853,4 +1178,33 @@ class _CategoryTotal {
   final int amount;
 
   const _CategoryTotal({required this.name, required this.amount});
+}
+
+class _CategoryForecast {
+  final String name;
+  final BudgetForecast forecast;
+
+  const _CategoryForecast({
+    required this.name,
+    required this.forecast,
+  });
+}
+
+int _forecastRiskRank(BudgetForecastStatus status) {
+  switch (status) {
+    case BudgetForecastStatus.alreadyOverBudget:
+      return 6;
+    case BudgetForecastStatus.likelyOverBudget:
+      return 5;
+    case BudgetForecastStatus.approachingLimit:
+      return 4;
+    case BudgetForecastStatus.onTrack:
+      return 3;
+    case BudgetForecastStatus.insufficientData:
+      return 2;
+    case BudgetForecastStatus.noSpending:
+      return 1;
+    case BudgetForecastStatus.noBudget:
+      return 0;
+  }
 }
