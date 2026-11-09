@@ -286,7 +286,6 @@ class BankSmsReceiver : BroadcastReceiver() {
         defaultAccountId: Long,
     ): Long? {
         if (accounts.isEmpty()) return null
-        if (accounts.size == 1) return accounts.first().id
 
         val explicitLast4 = Regex(
             """(?:a/c|account|acct|ending(?:\s+with)?|xx+)[^0-9]{0,8}(\d{4})\b""",
