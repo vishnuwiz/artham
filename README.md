@@ -71,8 +71,9 @@ The database includes the following tables:
 | `BudgetTemplates` | Stores recurring monthly overall/category budget templates and their effective start month |
 | `ProcessedSms` | Tracks processed SMS records |
 
-An auxiliary Android-only `pending_sms_imports` table stores structured transaction fields (never the original SMS body) when an alert cannot be matched safely to an account. Pending items are shown in Settings for account assignment.
 | `RecurringSchedules` | Stores recurring transaction schedules and their next due dates |
+
+An auxiliary Android-only `pending_sms_imports` table stores structured transaction fields (never the original SMS body) when an alert cannot be matched safely to an account. Pending items are shown in Settings for account assignment.
 
 **Amount storage:** Monetary amounts are stored as integer paise to avoid floating-point precision issues. For example, ₹100.00 is stored as `10000`.
 
