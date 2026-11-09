@@ -84,6 +84,7 @@ class BankSmsReceiver : BroadcastReceiver() {
                 SQLiteDatabase.OPEN_READWRITE,
             )
             database.setForeignKeyConstraintsEnabled(true)
+            database.execSQL("PRAGMA busy_timeout = 5000")
 
             val fingerprint = fingerprint(body)
             database.beginTransactionNonExclusive()
