@@ -2,8 +2,8 @@ package com.artham.app.artham
 
 import android.Manifest
 import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
-import androidx.core.content.ContextCompat
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
@@ -93,8 +93,10 @@ class MainActivity : FlutterActivity() {
     }
 
     private fun hasReceiveSmsPermission(): Boolean {
-        return ContextCompat.checkSelfPermission(
-            this,
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.M) {
+            return true
+        }
+        return checkSelfPermission(
             Manifest.permission.RECEIVE_SMS,
         ) == PackageManager.PERMISSION_GRANTED
     }
