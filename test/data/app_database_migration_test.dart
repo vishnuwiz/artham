@@ -52,8 +52,9 @@ void main() {
     expect(migratedBudget.limitPaise, 250000);
     expect(migratedBudget.rolloverEnabled, isFalse);
 
-    final versionRow =
-        await database.customSelect('PRAGMA user_version').getSingle();
+    final versionRow = await database
+        .customSelect('PRAGMA user_version')
+        .getSingle();
     expect(versionRow.read<int>('user_version'), 3);
   });
 }
