@@ -480,6 +480,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
         final aOver = a.budgetPaise > 0 && a.remainingPaise < 0;
         final bOver = b.budgetPaise > 0 && b.remainingPaise < 0;
         if (aOver != bOver) return aOver ? -1 : 1;
+        if (a.budgetPaise == 0 && b.budgetPaise == 0) {
+          return b.expensesPaise.compareTo(a.expensesPaise);
+        }
         if (a.budgetPaise == 0) return 1;
         if (b.budgetPaise == 0) return -1;
         return b.percentageUsed.compareTo(a.percentageUsed);
