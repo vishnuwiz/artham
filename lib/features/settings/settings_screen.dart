@@ -347,8 +347,9 @@ class _SettingsScreenState extends State<SettingsScreen>
           ),
           const SizedBox(height: 6),
           const Text(
-            'Automatically detect new bank and UPI debit/credit alerts and '
-            'add recognised transactions to Artham.',
+            'Automatically detect new bank and UPI debit/credit alerts. When a '
+            'message includes account digits, Artham matches the final four '
+            'digits to your saved bank accounts.',
             style: TextStyle(
               color: Color(0xFF52636A),
               height: 1.5,
@@ -390,9 +391,9 @@ class _SettingsScreenState extends State<SettingsScreen>
             ),
             const SizedBox(height: 5),
             const Text(
-              'Used only when a bank alert does not identify a saved account. '
-              'A clear account suffix or sender match takes priority; otherwise '
-              'the alert waits for your review.',
+              'Used only when the message has no account suffix and its sender cannot '
+              'identify a saved account. A suffix that is unknown or shared by '
+              'multiple accounts waits for your review.',
               style: TextStyle(
                 color: Color(0xFF68777D),
                 fontSize: 12,
