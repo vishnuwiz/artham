@@ -30,6 +30,11 @@ jobs:
           distribution: temurin
           java-version: "17"
 
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: "9.3.1"
+
       - name: Set up Flutter
         uses: subosito/flutter-action@v2
         with:
@@ -49,9 +54,9 @@ jobs:
       - name: Run Flutter tests
         run: flutter test --reporter expanded
 
-      - name: Run Android JVM tests
-        working-directory: android
-        run: ./gradlew :app:testDebugUnitTest
-
       - name: Build Android release APK
         run: flutter build apk --release
+
+      - name: Run Android JVM tests
+        working-directory: android
+        run: gradle :app:testDebugUnitTest
