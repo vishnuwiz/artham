@@ -396,7 +396,7 @@ class _RecurringTransactionsScreenState
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      item.account.bankName,
+                      bankAccountDisplayLabel(item.account.bankName, item.account.accountNumberLast4),
                       style: const TextStyle(
                         color: Colors.black54,
                         fontSize: 12,
