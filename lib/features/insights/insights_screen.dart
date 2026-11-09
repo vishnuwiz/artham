@@ -28,7 +28,20 @@ class _InsightsScreenState extends State<InsightsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _dataFuture = Future.value(
+      const _InsightsData(
+        monthTotals: [],
+        currentIncome: 0,
+        currentExpenses: 0,
+        categoryTotals: [],
+        overallBudget: null,
+        categoryBudgets: [],
+        budgetHistory: [],
+      ),
+    );
+    if (widget.isActive) {
+      _loadData();
+    }
   }
 
   @override
