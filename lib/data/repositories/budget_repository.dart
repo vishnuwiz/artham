@@ -340,7 +340,7 @@ class BudgetRepository {
 
     // Walk backwards only while each month's budget explicitly allows its
     // unused amount to move forward. A missing/disabled month breaks the chain.
-    for (var index = 0; index < 120; index++) {
+    while (true) {
       final budget = categoryId == null
           ? await getMonthlyBudget(previousMonth)
           : await getCategoryBudget(
