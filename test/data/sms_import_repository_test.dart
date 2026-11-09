@@ -108,7 +108,7 @@ void main() {
     const transactionDate = 1794240000000;
 
     await repository.ensurePendingImportsTable();
-    await database.customStatement(
+    await database.customInsert(
       '''
       INSERT INTO pending_sms_imports (
         fingerprint, sender, received_at, amount_paise, transaction_type,
