@@ -98,7 +98,7 @@ class SmsTransactionParser {
     final rupees = int.tryParse(parts.first);
     if (rupees == null) return null;
     final paiseText = parts.length > 1
-        ? (parts[1] + '00').substring(0, 2)
+        ? ('${parts[1]}00').substring(0, 2)
         : '00';
     final paise = int.tryParse(paiseText);
     if (paise == null) return null;
