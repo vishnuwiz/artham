@@ -32,7 +32,7 @@ class SmsTransactionParser {
   );
 
   static final RegExp _otpPattern = RegExp(
-    r'\\b(?:OTP|one[- ]time password|verification code|security code)\\b',
+    r'\b(?:OTP|one[- ]time password|verification code|security code)\b',
     caseSensitive: false,
   );
 
