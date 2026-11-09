@@ -19,11 +19,11 @@ internal object BankAccountSuffixMatcher {
 
     private val accountContextPatterns = listOf(
         Regex(
-            """(?:\bA/C\b|\baccount\b(?:\s*(?:no\.?|number))?|\bacct\b(?:\s*(?:no\.?|number))?)[^0-9]{0,32}([0-9][0-9\s,-]{2,24}[0-9])(?=\D|$)""",
+            """(?:\bA/C\b|\baccount\b|\bacct\b)\s*(?:no\.?|number)?\s*[:#-]?\s*(?:[xX*•]\s*)*[-\s]*([0-9][0-9\s,-]{2,24}[0-9])(?=\D|$)""",
             RegexOption.IGNORE_CASE,
         ),
         Regex(
-            """\bending(?:\s+with)?(?:\s+in)?[^0-9]{0,16}([0-9][0-9\s,-]{2,24}[0-9])(?=\D|$)""",
+            """(?:\baccount\b\s*)?\bending(?:\s+with)?(?:\s+in)?\s*[:#-]?\s*([0-9][0-9\s,-]{2,24}[0-9])(?=\D|$)""",
             RegexOption.IGNORE_CASE,
         ),
         Regex(
