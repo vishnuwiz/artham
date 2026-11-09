@@ -75,17 +75,24 @@ class CategoryBudgetSummary {
 class MonthlyBudgetHistoryItem {
   final DateTime month;
   final int? budgetPaise;
+  final int availableBudgetPaise;
+  final int rolloverPaise;
+  final bool rolloverEnabled;
   final int expensesPaise;
 
   const MonthlyBudgetHistoryItem({
     required this.month,
     required this.budgetPaise,
     required this.expensesPaise,
-  });
+    int? availableBudgetPaise,
+    this.rolloverPaise = 0,
+    this.rolloverEnabled = false,
+  }) : availableBudgetPaise =
+            availableBudgetPaise ?? (budgetPaise ?? 0) + rolloverPaise;
 
   bool get hasBudget => budgetPaise != null && budgetPaise! > 0;
 
-  int get remainingPaise => (budgetPaise ?? 0) - expensesPaise;
+  int get remainingPaise => availableBudgetPaise - expensesPaise;
 }
 
 class BudgetRepository {
@@ -274,12 +281,17 @@ class BudgetRepository {
 
     for (var index = 0; index < months; index++) {
       final month = DateTime(start.year, start.month + index, 1);
+      final amounts = await getMonthlyBudgetRolloverAmounts(month);
       final budget = await getMonthlyBudget(month);
-      final expenses = await getMonthlyExpensesPaise(month);
+      final expenses =
+          amounts?.expensesPaise ?? await getMonthlyExpensesPaise(month);
 
       history.add(MonthlyBudgetHistoryItem(
         month: month,
         budgetPaise: budget?.limitPaise,
+        availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
+        rolloverPaise: amounts?.rolloverPaise ?? 0,
+        rolloverEnabled: budget?.rolloverEnabled ?? false,
         expensesPaise: expenses,
       ));
     }
