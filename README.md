@@ -12,7 +12,8 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
-- **Bank SMS import (reviewed paste flow)** — paste one bank/UPI alert, review the parsed amount, direction, date, reference, account and category, then import it with local duplicate protection. The original message body is not stored.
+- **Automatic Android bank-SMS import** — after the user enables it and grants SMS permission, new bank/UPI debit and credit alerts are processed in the background and saved locally without a paste or confirmation step. Duplicate messages are ignored, and the original SMS body is not retained.
+- **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
@@ -30,10 +31,10 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
   - Confirm a due occurrence to add it to the normal transaction history.
   - Generated transactions are recorded with a recurring source and protected against duplicate generation for the same schedule occurrence.
 
-### Planned
+### Platform notes
 
-- Automatic Android bank-SMS intake, with explicit disclosure, consent and Google Play permission-eligibility review.
-- User-initiated SMS sharing/pasting on iOS; ordinary third-party apps cannot read the full Messages inbox.
+- Android automatic SMS import is opt-in and uses the incoming-SMS broadcast. Publishing with SMS access on Google Play requires the applicable SMS-based money-management permission declaration and Google Play review/approval.
+- iOS supports user-initiated SMS sharing/pasting only; ordinary third-party apps cannot read the full Messages inbox.
 - Bank statement import.
 - Database encryption and additional security improvements.
 - Expanded Settings options.
