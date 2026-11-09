@@ -290,16 +290,19 @@ class BankSmsReceiver : BroadcastReceiver() {
     ): Long? {
         if (accounts.isEmpty()) return null
 
-        val explicitLast4 = Regex(
-            """(?:a/c|account|acct|ending(?:\s+with)?|xx+)[^0-9]{0,8}(\d{4})\b""",
-            RegexOption.IGNORE_CASE,
-        ).find(body)?.groupValues?.getOrNull(1)
-
-        if (explicitLast4 != null) {
-            val suffixMatches = accounts.filter {
-                it.accountLast4?.takeLast(4) == explicitLast4
-            }
-            return suffixMatches.singleOrNull()?.id
+        val suffixMatch = BankAccountSuffixMatcher.matchSavedAccount(
+            accounts = accounts.map {
+                BankAccountSuffixMatcher.SavedAccount(
+                    id = it.id,
+                    accountNumberLast4 = it.accountLast4,
+                )
+            },
+            messageBody = body,
+        )
+        if (suffixMatch.accountSuffixFound) {
+            // Do not guess by sender or default when the SMS explicitly names
+            // an account suffix that is unknown or shared by multiple accounts.
+            return suffixMatch.accountId
         }
 
         val searchableText = normalizeLetters(sender)
