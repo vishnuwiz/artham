@@ -140,7 +140,8 @@ class BankSmsReceiver : BroadcastReceiver() {
 
                 val processedValues = ContentValues().apply {
                     put("fingerprint", fingerprint)
-                    put("received_at", receivedAt)
+                    // Drift DateTime columns store Unix timestamps in seconds.
+                    put("received_at", DriftDateTime.secondsFromMillis(receivedAt))
                     put("is_processed", 1)
                 }
                 val processedId = database.insertWithOnConflict(
@@ -171,10 +172,17 @@ class BankSmsReceiver : BroadcastReceiver() {
                     put("description", parsed.description)
                     if (parsed.referenceNumber == null) putNull("reference_number")
                     else put("reference_number", parsed.referenceNumber)
-                    put("transaction_date", parsed.transactionDate)
+                    // Drift DateTime columns store Unix timestamps in seconds.
+                    put(
+                        "transaction_date",
+                        DriftDateTime.secondsFromMillis(parsed.transactionDate),
+                    )
                     put("source", "sms")
                     putNull("notes")
-                    put("created_at", System.currentTimeMillis())
+                    put(
+                        "created_at",
+                        DriftDateTime.secondsFromMillis(System.currentTimeMillis()),
+                    )
                 }
 
                 val transactionId = database.insert(
@@ -574,4 +582,14 @@ class BankSmsReceiver : BroadcastReceiver() {
         private const val KEY_ENABLED = "enabled"
         private const val KEY_DEFAULT_ACCOUNT_ID = "default_account_id"
     }
+}
+
+/**
+ * Converts epoch milliseconds to the Unix timestamp unit used by Drift DateTime columns.
+ *
+ * Keep the pending SMS queue in milliseconds: its custom INTEGER fields are
+ * explicitly read with DateTime.fromMillisecondsSinceEpoch in Dart.
+ */
+internal object DriftDateTime {
+    fun secondsFromMillis(timestampMillis: Long): Long = timestampMillis / 1000L
 }
