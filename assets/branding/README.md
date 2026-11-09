@@ -1,0 +1,1 @@
+Place the supplied 1024x1024 app artwork here as `artham_app_icon_ios_1024.png`. This exact file is referenced by the Flutter launcher-icon and native-splash generation settings in `pubspec.yaml`.

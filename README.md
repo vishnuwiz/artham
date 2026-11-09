@@ -170,3 +170,16 @@ No license has been specified yet. Until a license is added to this repository, 
 ---
 
 **Repository:** [github.com/vishnuwiz/artham](https://github.com/vishnuwiz/artham)
+
+## App icon and splash screen
+
+The same 1024×1024 Artham artwork is configured for the Android/iOS launcher icon and native launch screen. Place the supplied image at `assets/branding/artham_app_icon_ios_1024.png`, then run:
+
+```powershell
+flutter pub get
+dart run flutter_launcher_icons
+dart run flutter_native_splash:create
+flutter analyze
+flutter test
+```
+
