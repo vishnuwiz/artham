@@ -19,9 +19,14 @@ void main() {
 
   testWidgets('Artham app renders its main navigation', (tester) async {
     await tester.pumpWidget(const ArthamApp());
+
+    expect(find.text('ARTHAM'), findsOneWidget);
+    expect(find.text('അർഥം'), findsNWidgets(2));
+    expect(find.byKey(const ValueKey('artham-splash-logo')), findsOneWidget);
+
     await tester.pumpAndSettle();
 
-    expect(find.text('Artham'), findsOneWidget);
+    expect(find.text('ARTHAM'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
   });
 }

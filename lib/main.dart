@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'features/transactions/activity_screen.dart';
+import 'features/splash/splash_screen.dart';
 import 'features/budgets/budgets_screen.dart';
 import 'features/insights/insights_screen.dart';
 import 'data/app_database.dart';
@@ -8,6 +9,7 @@ import 'data/repositories/account_repository.dart';
 import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'widgets/artham_logo.dart';
 
 late final AppDatabase appDatabase;
 
@@ -57,7 +59,17 @@ class ArthamApp extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      home: const HomeScreen(),
+      home: Builder(
+        builder: (context) => SplashScreen(
+          onFinished: () {
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute<void>(
+                builder: (_) => const HomeScreen(),
+              ),
+            );
+          },
+        ),
+      ),
     );
   }
 }
@@ -223,36 +235,11 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget buildHeader() {
     return Row(
       children: [
-        Container(
-          height: 46,
-          width: 46,
-          decoration: BoxDecoration(
-            color: darkNavy,
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: const Icon(
-            Icons.account_balance_wallet_rounded,
-            color: Color(0xFF55D8AD),
-            size: 25,
-          ),
-        ),
-        const SizedBox(width: 12),
-        const Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Artham',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.w800,
-                color: darkNavy,
-              ),
-            ),
-            Text(
-              'Your money, under control.',
-              style: TextStyle(fontSize: 12, color: Colors.black54),
-            ),
-          ],
+        const ArthamLogoMark(size: 43),
+        const SizedBox(width: 11),
+        const ArthamWordmark(
+          primaryColor: darkNavy,
+          secondaryColor: Colors.black54,
         ),
         const Spacer(),
         IconButton.filledTonal(

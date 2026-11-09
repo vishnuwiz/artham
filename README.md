@@ -10,6 +10,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ### Implemented
 
+- **Branded splash screen** — Show the supplied Artham logo, wordmark, and Malayalam name when the app starts on Android and iOS.
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
 - **Live account balances** — Keep account balances updated as transactions change.

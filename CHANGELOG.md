@@ -7,6 +7,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 ## [Unreleased]
 
 ### Added
+- Added an animated midnight neon-glass splash screen with a circular Malayalam medallion, reusable Artham wordmark, and matching dashboard branding.
+- Added matching Android vector and iOS storyboard launch artwork using the midnight/teal/violet brand palette.
 - Added opt-in rollover for unused overall and category budget balances.
 - Added recurring monthly budget templates for overall and category budgets, with pause/resume controls.
 - Automatically populate missing monthly budgets from active templates when opening the app or budget view; existing month budgets are never overwritten.
