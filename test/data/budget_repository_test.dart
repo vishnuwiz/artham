@@ -259,7 +259,7 @@ void main() {
       categoryId: foodCategoryId,
     );
 
-    expect(applied, 1);
+    expect(applied, 3);
     expect(overall!.limitPaise, 175000);
     expect(food, isNotNull);
     expect(food!.limitPaise, 50000);
