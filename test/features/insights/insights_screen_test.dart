@@ -45,13 +45,17 @@ void main() {
         categoryId: Value(foodCategoryId),
         amountPaise: 2500000,
         transactionType: 'expense',
-        transactionDate: DateTime(now.year, now.month, 10),
+        transactionDate: DateTime(
+          now.year,
+          now.month,
+          now.day > 1 ? now.day - 1 : now.day,
+        ),
       ),
     );
 
     // Keep the full Insights content in the test viewport so assertions do
     // not depend on scrollable discovery or scroll timing.
-    tester.view.physicalSize = const Size(430, 3000);
+    tester.view.physicalSize = const Size(430, 4000);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
@@ -68,6 +72,10 @@ void main() {
     );
     expect(find.text('Budget performance'), findsOneWidget);
     expect(find.text('CATEGORIES ON TRACK'), findsOneWidget);
+    expect(find.text('Spending forecast'), findsOneWidget);
+    expect(find.text('Overall spending estimate'), findsOneWidget);
+    expect(find.text('CATEGORY OUTLOOK'), findsOneWidget);
+    expect(find.text('Food'), findsWidgets);
     expect(find.text('Planned vs actual'), findsOneWidget);
     expect(find.text('Category budget insights'), findsOneWidget);
     expect(find.text('Food'), findsWidgets);
