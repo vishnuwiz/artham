@@ -82,7 +82,10 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
       }
 
       final fingerprint = smsMessageFingerprint(message);
-      if (await _smsImportRepository.isDuplicate(fingerprint)) {
+      final isDuplicate =
+          await _smsImportRepository.isDuplicate(fingerprint);
+      if (!mounted) return;
+      if (isDuplicate) {
         setState(() {
           _error = 'This SMS has already been imported.';
           _isParsing = false;
