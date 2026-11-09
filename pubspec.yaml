@@ -40,6 +40,8 @@ dependencies:
   path: ^1.9.1
 
 dev_dependencies:
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.7
   flutter_test:
     sdk: flutter
 
@@ -63,10 +65,8 @@ flutter:
   # the material Icons class.
   uses-material-design: true
 
-  # To add assets to your application, add an assets section, like this:
-  # assets:
-  #   - images/a_dot_burr.jpeg
-  #   - images/a_dot_ham.jpeg
+  assets:
+    - assets/branding/artham_app_icon_ios_1024.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -93,3 +93,24 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+# Generates the launcher icons from the supplied 1024x1024 Artham artwork.
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: assets/branding/artham_app_icon_ios_1024.png
+  remove_alpha_ios: true
+  adaptive_icon_background: "#24205F"
+  adaptive_icon_foreground: assets/branding/artham_app_icon_ios_1024.png
+  min_sdk_android: 21
+
+# Generates the native Android and iOS launch screens using the same artwork.
+flutter_native_splash:
+  color: "#24205F"
+  image: assets/branding/artham_app_icon_ios_1024.png
+  android: true
+  ios: true
+  android_12:
+    color: "#24205F"
+    image: assets/branding/artham_app_icon_ios_1024.png
+    icon_background_color: "#24205F"
