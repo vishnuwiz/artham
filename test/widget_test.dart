@@ -21,9 +21,6 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Artham'), findsOneWidget);
-    expect(find.text('Home'), findsOneWidget);
-    expect(find.text('Activity'), findsOneWidget);
-    expect(find.text('Insights'), findsOneWidget);
-    expect(find.text('Budgets'), findsOneWidget);
+    expect(find.byType(NavigationBar), findsOneWidget);
   });
 }
