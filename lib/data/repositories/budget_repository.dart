@@ -95,7 +95,7 @@ class BudgetRepository {
   Future<void> saveMonthlyBudget({
     required DateTime month,
     required int limitPaise,
-    bool? rolloverEnabled = false,
+    bool? rolloverEnabled,
   }) async {
     if (limitPaise <= 0) {
       throw ArgumentError('Budget amount must be greater than zero.');
@@ -175,7 +175,7 @@ class BudgetRepository {
           .write(BudgetsCompanion(
         monthStart: Value(start),
         limitPaise: Value(limitPaise),
-        rolloverEnabled: Value(rolloverEnabled),
+        rolloverEnabled: Value(rolloverEnabled ?? false),
       ));
     } else {
       await database.into(database.budgets).insert(
