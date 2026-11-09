@@ -9,7 +9,12 @@ import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
 
-late AppDatabase appDatabase;
+late final AppDatabase appDatabase;
+
+/// Allows widget tests to install an in-memory database before building the app.
+void initializeAppDatabaseForTesting(AppDatabase database) {
+  appDatabase = database;
+}
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
