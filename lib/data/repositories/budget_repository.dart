@@ -207,12 +207,12 @@ class BudgetRepository {
   /// This is intentionally run when the app opens a budget view rather than
   /// through a background task. It creates budget limits only, not transactions.
   Future<int> applyTemplatesForMonth(DateTime month) async {
-    final start = _monthStart(month);
+    final targetMonth = _monthStart(month);
     final templates = await (database.select(database.budgetTemplates)
           ..where(
             (template) =>
                 template.isActive.equals(true) &
-                template.startMonth.isSmallerOrEqualValue(start),
+                template.startMonth.isSmallerOrEqualValue(targetMonth),
           )
           ..orderBy([(template) => OrderingTerm.asc(template.id)]))
         .get();
@@ -220,46 +220,52 @@ class BudgetRepository {
     var applied = 0;
     await database.transaction(() async {
       for (final template in templates) {
-        if (template.categoryId == null) {
-          final existing = await getMonthlyBudget(start);
-          if (existing != null) continue;
+        // Backfill any months missed while the app was not opened. This keeps
+        // the recurring plan consistent and makes the budget history complete.
+        var monthToApply = _monthStart(template.startMonth);
+        while (!monthToApply.isAfter(targetMonth)) {
+          if (template.categoryId == null) {
+            final existing = await getMonthlyBudget(monthToApply);
+            if (existing == null) {
+              await database.into(database.budgets).insert(
+                BudgetsCompanion.insert(
+                  categoryId: const Value(null),
+                  monthStart: monthToApply,
+                  limitPaise: template.limitPaise,
+                  rolloverEnabled: Value(template.rolloverEnabled),
+                ),
+              );
+              applied++;
+            }
+          } else {
+            final category = await (database.select(database.categories)
+                  ..where((item) => item.id.equals(template.categoryId!)))
+                .getSingleOrNull();
+            if (category != null && category.type == 'expense') {
+              final existing = await getCategoryBudget(
+                month: monthToApply,
+                categoryId: template.categoryId!,
+              );
+              if (existing == null) {
+                await database.into(database.budgets).insert(
+                  BudgetsCompanion.insert(
+                    categoryId: Value(template.categoryId),
+                    monthStart: monthToApply,
+                    limitPaise: template.limitPaise,
+                    rolloverEnabled: Value(template.rolloverEnabled),
+                  ),
+                );
+                applied++;
+              }
+            }
+          }
 
-          await database.into(database.budgets).insert(
-            BudgetsCompanion.insert(
-              categoryId: const Value(null),
-              monthStart: start,
-              limitPaise: template.limitPaise,
-              rolloverEnabled: Value(template.rolloverEnabled),
-            ),
-          );
-          applied++;
-        } else {
-          final category = await (database.select(database.categories)
-                ..where((item) => item.id.equals(template.categoryId!)))
-              .getSingleOrNull();
-          if (category == null || category.type != 'expense') continue;
-
-          final existing = await getCategoryBudget(
-            month: start,
-            categoryId: template.categoryId!,
-          );
-          if (existing != null) continue;
-
-          await database.into(database.budgets).insert(
-            BudgetsCompanion.insert(
-              categoryId: Value(template.categoryId),
-              monthStart: start,
-              limitPaise: template.limitPaise,
-              rolloverEnabled: Value(template.rolloverEnabled),
-            ),
-          );
-          applied++;
+          monthToApply = _nextMonthStart(monthToApply);
         }
       }
     });
     return applied;
   }
-
   Future<Budget?> getMonthlyBudget(DateTime month) async {
     final start = _monthStart(month);
     final budgets =
