@@ -142,6 +142,7 @@ class BankSmsReceiver : BroadcastReceiver() {
                     put("transaction_date", parsed.transactionDate)
                     put("source", "sms")
                     putNull("notes")
+                    put("created_at", System.currentTimeMillis())
                     // created_at is left to the database's existing default.
                 }
 
