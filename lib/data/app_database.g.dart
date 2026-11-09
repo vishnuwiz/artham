@@ -5631,7 +5631,7 @@ typedef $$BudgetsTableCreateCompanionBuilder = BudgetsCompanion Function({
   Value<bool> rolloverEnabled,
   Value<DateTime> createdAt,
 });
-typedef $BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
+typedef $$BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
   Value<int> id,
   Value<int?> categoryId,
   Value<DateTime> monthStart,
