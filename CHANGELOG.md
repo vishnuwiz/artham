@@ -12,7 +12,9 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Automatically populate missing monthly budgets from active templates when opening the app or budget view; existing month budgets are never overwritten.
 - Added a planned-versus-actual budget performance dashboard with overall and category-level insights.
 - Added a six-month planned-versus-actual budget trend chart.
-- Added tests for recurring templates, template backfill/effective dates, budget insights, and the database migration.
+- Added month-end spending forecasts for overall and category budgets using the current month’s average daily spending pace.
+- Added budget risk indicators and daily spending recommendations, with forecasts withheld until at least three elapsed days.
+- Added tests for recurring templates, template backfill/effective dates, budget insights, month-end forecast calculations, and the database migration.
 
 ### Changed
 - Upgraded the Drift database schema to version 4.
