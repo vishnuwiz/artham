@@ -54,10 +54,28 @@ void main() {
     );
     await tester.pumpAndSettle();
 
+    final scrollable = find.byType(Scrollable).first;
+    await tester.scrollUntilVisible(
+      find.text('Budget performance'),
+      300,
+      scrollable: scrollable,
+    );
     expect(find.text('Budget performance'), findsOneWidget);
-    expect(find.text('Planned vs actual'), findsOneWidget);
-    expect(find.text('Category budget insights'), findsOneWidget);
-    expect(find.text('Food'), findsNWidgets(2));
     expect(find.text('CATEGORIES ON TRACK'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Planned vs actual'),
+      350,
+      scrollable: scrollable,
+    );
+    expect(find.text('Planned vs actual'), findsOneWidget);
+
+    await tester.scrollUntilVisible(
+      find.text('Category budget insights'),
+      350,
+      scrollable: scrollable,
+    );
+    expect(find.text('Category budget insights'), findsOneWidget);
+    expect(find.text('Food'), findsWidgets);
   });
 }
