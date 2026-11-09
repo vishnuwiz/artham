@@ -327,7 +327,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                         const SizedBox(height: 4),
                                         Text(
                                           hasBudget
-                                              ? 'Budget  ${_money(item.budgetPaise!)}  ·  ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
+                                              ? 'Budget ${_money(item.budgetPaise!)} · Available ${_money(item.availableBudgetPaise)} · ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
                                               : 'No overall budget set',
                                           style: TextStyle(
                                             color: over
@@ -339,6 +339,28 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                                 : FontWeight.w500,
                                           ),
                                         ),
+                                        if (hasBudget && item.rolloverPaise > 0)
+                                          Padding(
+                                            padding: const EdgeInsets.only(top: 3),
+                                            child: Text(
+                                              '${_money(item.rolloverPaise)} carried from previous month',
+                                              style: const TextStyle(
+                                                color: _green,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ),
+                                        if (hasBudget && item.rolloverEnabled)
+                                          const Padding(
+                                            padding: EdgeInsets.only(top: 3),
+                                            child: Text(
+                                              'Unused balance carries into next month',
+                                              style: TextStyle(
+                                                color: Colors.black54,
+                                                fontSize: 10,
+                                              ),
+                                            ),
+                                          ),
                                       ],
                                     ),
                                   ),
@@ -779,6 +801,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     final spent = summary?.expensesPaise ?? 0;
     final remaining = summary?.remainingPaise ?? 0;
     final hasBudget = summary != null;
+    final rolloverPaise = summary?.rolloverPaise ?? 0;
+    final rolloverEnabled = summary?.rolloverEnabled ?? false;
     final ratio = hasBudget && available > 0 ? spent / available : 0.0;
     final over = hasBudget && remaining < 0;
 
@@ -814,12 +838,11 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               fontWeight: FontWeight.w800,
             ),
           ),
-          if (hasBudget &&
-              (summary.rolloverEnabled || summary.rolloverPaise > 0)) ...[
+          if (hasBudget && (rolloverEnabled || rolloverPaise > 0)) ...[
             const SizedBox(height: 5),
             Text(
-              summary.rolloverPaise > 0
-                  ? '${_money(available)} available · includes ${_money(summary.rolloverPaise)} carried in'
+              rolloverPaise > 0
+                  ? '${_money(available)} available · includes ${_money(rolloverPaise)} carried in'
                   : 'Unused balance will carry into next month',
               style: const TextStyle(color: Colors.white70, fontSize: 11),
             ),
@@ -854,7 +877,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 title: 'Overall monthly budget',
                 categoryId: null,
                 currentPaise: budget,
-                currentRolloverEnabled: summary?.rolloverEnabled ?? false,
+                currentRolloverEnabled: rolloverEnabled,
               ),
               icon: const Icon(Icons.edit_outlined, size: 17),
               label: Text(hasBudget ? 'Edit overall budget' : 'Set overall budget'),
