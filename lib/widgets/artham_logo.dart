@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 const Color _brandTeal = Color(0xFF48E7D2);
 const Color _brandViolet = Color(0xFF8F8CF2);
-const Color _brandPink = Color(0xFFE75CB5);
 
 /// The circular glass medallion used throughout the Artham brand.
 class ArthamLogoMark extends StatelessWidget {
