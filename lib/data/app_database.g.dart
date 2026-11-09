@@ -5628,13 +5628,15 @@ typedef $$BudgetsTableCreateCompanionBuilder = BudgetsCompanion Function({
   Value<int?> categoryId,
   required DateTime monthStart,
   required int limitPaise,
+  Value<bool> rolloverEnabled,
   Value<DateTime> createdAt,
 });
-typedef $$BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
+typedef $BudgetsTableUpdateCompanionBuilder = BudgetsCompanion Function({
   Value<int> id,
   Value<int?> categoryId,
   Value<DateTime> monthStart,
   Value<int> limitPaise,
+  Value<bool> rolloverEnabled,
   Value<DateTime> createdAt,
 });
 
@@ -5681,6 +5683,11 @@ class $$BudgetsTableFilterComposer
 
   ColumnFilters<int> get limitPaise => $composableBuilder(
     column: $table.limitPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -5737,6 +5744,11 @@ class $$BudgetsTableOrderingComposer
     builder: (column) => ColumnOrderings(column),
   );
 
+  ColumnOrderings<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
   ColumnOrderings<DateTime> get createdAt => $composableBuilder(
     column: $table.createdAt,
     builder: (column) => ColumnOrderings(column),
@@ -5785,6 +5797,11 @@ class $$BudgetsTableAnnotationComposer
 
   GeneratedColumn<int> get limitPaise => $composableBuilder(
     column: $table.limitPaise,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
     builder: (column) => column,
   );
 
@@ -5847,12 +5864,14 @@ class $$BudgetsTableTableManager
                 Value<int?> categoryId = const Value.absent(),
                 Value<DateTime> monthStart = const Value.absent(),
                 Value<int> limitPaise = const Value.absent(),
+                Value<bool> rolloverEnabled = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => BudgetsCompanion(
                 id: id,
                 categoryId: categoryId,
                 monthStart: monthStart,
                 limitPaise: limitPaise,
+                rolloverEnabled: rolloverEnabled,
                 createdAt: createdAt,
               ),
           createCompanionCallback:
@@ -5861,12 +5880,14 @@ class $$BudgetsTableTableManager
                 Value<int?> categoryId = const Value.absent(),
                 required DateTime monthStart,
                 required int limitPaise,
+                Value<bool> rolloverEnabled = const Value.absent(),
                 Value<DateTime> createdAt = const Value.absent(),
               }) => BudgetsCompanion.insert(
                 id: id,
                 categoryId: categoryId,
                 monthStart: monthStart,
                 limitPaise: limitPaise,
+                rolloverEnabled: rolloverEnabled,
                 createdAt: createdAt,
               ),
           withReferenceMapper: (p0) => p0
