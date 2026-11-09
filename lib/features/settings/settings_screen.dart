@@ -425,7 +425,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   (account) => DropdownMenuItem<int?>(
                     value: account.id,
                     child: Text(
-                      '${account.bankName} · ${account.accountName}',
+                      bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -621,7 +621,7 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
                   (account) => DropdownMenuItem<int>(
                     value: account.id,
                     child: Text(
-                      '${account.bankName} · ${account.accountName}',
+                      bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

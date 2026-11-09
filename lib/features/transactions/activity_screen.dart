@@ -77,7 +77,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       transactions: transactions,
       accountNames: {
         for (final account in accounts)
-          account.id: '${account.bankName} · ${account.accountName}',
+          account.id: bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
       },
       categoryNames: {
         for (final category in categories) category.id: category.name,
@@ -367,7 +367,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                             (account) => DropdownMenuItem<int?>(
                               value: account.id,
                               child: Text(
-                                '${account.bankName} · ${account.accountName}',
+                                bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),

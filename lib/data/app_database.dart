@@ -272,3 +272,22 @@ LazyDatabase _openConnection() {
     return NativeDatabase.createInBackground(file);
   });
 }
+
+/// Returns a masked account identifier for display in the UI.
+String accountNumberLastFourLabel(String? lastFourDigits) {
+  final digits = lastFourDigits?.trim() ?? '';
+  final valid = RegExp(r'^\\d{4}$').hasMatch(digits);
+  return '•••• ${valid ? digits : '----'}';
+}
+
+/// Displays a bank account using its bank name and last four digits.
+String bankAccountDisplayLabel(String bankName, String? lastFourDigits) {
+  return '${bankName.trim()} · ${accountNumberLastFourLabel(lastFourDigits)}';
+}
+
+/// Keeps the legacy non-null database field populated without asking users
+/// to provide a separate nickname. It is not used as a visible account label.
+String legacyAccountNameForStorage(String? lastFourDigits) {
+  final digits = lastFourDigits?.trim() ?? '';
+  return digits.isEmpty ? 'Account' : 'Account $digits';
+}

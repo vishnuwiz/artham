@@ -88,7 +88,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     children: [
                       Text(widget.account.bankName, style: const TextStyle(color: Colors.white70)),
                       const SizedBox(height: 5),
-                      Text(widget.account.accountName, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700)),
+                      Text(accountNumberLastFourLabel(widget.account.accountNumberLast4), style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.w700, letterSpacing: 1)),
                       const SizedBox(height: 18),
                       const Text('CURRENT BALANCE', style: TextStyle(color: Colors.white70, fontSize: 10, letterSpacing: 1)),
                       Text(_money(data.balance), style: const TextStyle(color: Colors.white, fontSize: 26, fontWeight: FontWeight.w800)),

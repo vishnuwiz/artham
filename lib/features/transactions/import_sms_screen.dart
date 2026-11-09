@@ -293,7 +293,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               return DropdownMenuItem<int>(
                 value: account.id,
                 child: Text(
-                  '${account.bankName} · ${account.accountName}',
+                  bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
                   overflow: TextOverflow.ellipsis,
                 ),
               );

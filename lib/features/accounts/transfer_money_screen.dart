@@ -252,7 +252,7 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
         return DropdownMenuItem(
           value: account.id,
           child: Text(
-            '${account.bankName} · ${account.accountName} (${_money(balance)})',
+            '${bankAccountDisplayLabel(account.bankName, account.accountNumberLast4)} (${_money(balance)})',
             overflow: TextOverflow.ellipsis,
           ),
         );
