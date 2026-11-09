@@ -84,7 +84,7 @@ class SmsImportRepository {
   }
 }
 
-/// Stable, non-reversible message fingerprint for local duplicate detection.
+/// Stable, non-cryptographic message fingerprint for local duplicate detection.
 /// The raw SMS text is not written to the database.
 String smsMessageFingerprint(String message) {
   final normalized = message.trim().toLowerCase().replaceAll(
