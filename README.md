@@ -70,7 +70,6 @@ The database includes the following tables:
 | `Budgets` | Stores monthly overall and category budget limits, including rollover settings |
 | `BudgetTemplates` | Stores recurring monthly overall/category budget templates and their effective start month |
 | `ProcessedSms` | Tracks processed SMS records |
-
 | `RecurringSchedules` | Stores recurring transaction schedules and their next due dates |
 
 An auxiliary Android-only `pending_sms_imports` table stores structured transaction fields (never the original SMS body) when an alert cannot be matched safely to an account. Pending items are shown in Settings for account assignment.
