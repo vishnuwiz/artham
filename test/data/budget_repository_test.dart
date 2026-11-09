@@ -1,9 +1,9 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-import '../../lib/data/app_database.dart';
-import '../../lib/data/repositories/budget_repository.dart';
+import 'package:artham/data/app_database.dart';
+import 'package:artham/data/repositories/budget_repository.dart';
 
 void main() {
   late AppDatabase database;
