@@ -363,7 +363,7 @@ class BankSmsReceiver : BroadcastReceiver() {
         val type = if (debit != null) "expense" else "income"
         val directionOffset = (debit ?: credit)!!.range.first
         val amountPattern = Regex(
-            """(?:₹|\bINR\b|\bRs\.?\s*)([0-9][0-9,]*(?:\.[0-9]{1,2})?)""",
+            """(?:₹|\bINR\b|\bRs\.?\s*)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)""",
             RegexOption.IGNORE_CASE,
         )
         val amountMatches = amountPattern.findAll(body).toList()
