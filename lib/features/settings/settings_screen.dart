@@ -1,4 +1,5 @@
-import 'package:flutter/foundation.dart';
+import 'package:flutter/foundation.dart'
+    show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
@@ -516,7 +517,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 class _PendingSmsImportTile extends StatefulWidget {
   final PendingSmsImport pending;
   final List<BankAccount> accounts;
-  final Future<void> Function(int accountId) onImport,
+  final Future<void> Function(int accountId) onImport;
 
   const _PendingSmsImportTile({
     required this.pending,
