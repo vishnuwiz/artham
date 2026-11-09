@@ -198,7 +198,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
   /// Creates an in-memory database for widget and repository tests.
-  AppDatabase.forTesting(super.executor);
+  AppDatabase.forTesting(super.e);
 
   @override
   int get schemaVersion => 3;
