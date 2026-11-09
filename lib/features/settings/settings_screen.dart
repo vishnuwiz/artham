@@ -378,7 +378,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             onChanged: _accounts.isEmpty ? null : _toggleAutomaticImport,
             activeTrackColor: const Color(0xFF13866A),
           ),
-          if (_accounts.length > 1) ...[
+          if (_accounts.isNotEmpty) ...[
             const Divider(height: 22),
             const Text(
               'Default bank account',
@@ -389,8 +389,9 @@ class _SettingsScreenState extends State<SettingsScreen>
             ),
             const SizedBox(height: 5),
             const Text(
-              'Used only when an SMS does not clearly identify an account. '
-              'An account number suffix or a clear bank match takes priority.',
+              'Used only when a bank alert does not identify a saved account. '
+              'A clear account suffix or sender match takes priority; otherwise '
+              'the alert waits for your review.',
               style: TextStyle(
                 color: Color(0xFF68777D),
                 fontSize: 12,
