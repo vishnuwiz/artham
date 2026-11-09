@@ -287,7 +287,7 @@ class BudgetRepository {
     });
     return applied;
   }
-  }
+
   Future<Budget?> getMonthlyBudget(DateTime month) async {
     final start = _monthStart(month);
     final budgets =
