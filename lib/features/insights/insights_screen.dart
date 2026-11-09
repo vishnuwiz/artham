@@ -559,7 +559,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           ],
           const SizedBox(height: 12),
           const Text(
-            'Estimates use the average daily spending recorded so far this month. A projection appears after at least 3 elapsed days and can change as new transactions are added.',
+            'Estimates use the average daily spending recorded so far this month. A projection appears after at least 3 elapsed days and can change when new transactions are recorded and Insights is refreshed.',
             style: TextStyle(color: Colors.black45, fontSize: 10),
           ),
         ],
