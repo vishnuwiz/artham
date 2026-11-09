@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
+import '../../data/repositories/sms_import_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
 const MethodChannel _automaticSmsChannel = MethodChannel(
@@ -21,19 +22,39 @@ class SettingsScreen extends StatefulWidget {
   State<SettingsScreen> createState() => _SettingsScreenState();
 }
 
-class _SettingsScreenState extends State<SettingsScreen> {
+class _SettingsScreenState extends State<SettingsScreen>
+    with WidgetsBindingObserver {
+  late final SmsImportRepository _smsRepository;
+
   bool _isLoading = true;
   bool _isSupported = false;
   bool _permissionGranted = false;
   bool _isEnabled = false;
   int? _defaultAccountId;
   List<BankAccount> _accounts = [];
+  List<Category> _categories = [];
+  List<PendingSmsImport> _pendingImports = [];
   String? _error;
 
   @override
   void initState() {
     super.initState();
+    _smsRepository = SmsImportRepository(widget.database);
+    WidgetsBinding.instance.addObserver(this);
     _loadSettings();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted && !_isLoading) {
+      _loadSettings();
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   Future<void> _loadSettings() async {
@@ -46,10 +67,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
       return;
     }
 
+    setState(() {
+      _isLoading = true;
+      _error = null;
+    });
+
     try {
-      final accounts = await TransactionRepository(
-        widget.database,
-      ).getActiveAccounts();
+      final transactionRepository = TransactionRepository(widget.database);
+      await transactionRepository.seedDefaultCategories();
+
+      final accounts = await transactionRepository.getActiveAccounts();
+      final incomeCategories =
+          await transactionRepository.getCategories('income');
+      final expenseCategories =
+          await transactionRepository.getCategories('expense');
+      await _smsRepository.ensurePendingImportsTable();
+      final pendingImports = await _smsRepository.getPendingImports();
       final status = await _automaticSmsChannel.invokeMapMethod<String, dynamic>(
         'getStatus',
       );
@@ -57,9 +90,11 @@ class _SettingsScreenState extends State<SettingsScreen> {
       if (!mounted) return;
       setState(() {
         _accounts = accounts;
+        _categories = [...incomeCategories, ...expenseCategories];
+        _pendingImports = pendingImports;
         _isSupported = status?['supported'] == true;
         _permissionGranted = status?['permissionGranted'] == true;
-        _isEnabled = status?['enabled'] == true;
+        _isEnabled = status?['enabled'] == true && _permissionGranted;
         _defaultAccountId = (status?['defaultAccountId'] as num?)?.toInt();
         _isLoading = false;
       });
@@ -169,6 +204,61 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _importPending(
+    PendingSmsImport pending,
+    int accountId,
+  ) async {
+    final category = _categories.where(
+      (item) =>
+          item.type == pending.transactionType &&
+          item.name.toLowerCase() == pending.suggestedCategory.toLowerCase(),
+    );
+    final fallbackName = pending.transactionType == 'income'
+        ? 'Other Income'
+        : 'Other Expense';
+    final fallback = _categories.where(
+      (item) =>
+          item.type == pending.transactionType &&
+          item.name == fallbackName,
+    );
+    final categoryId = category.isNotEmpty
+        ? category.first.id
+        : (fallback.isNotEmpty ? fallback.first.id : null);
+
+    if (categoryId == null) {
+      _showMessage('No matching transaction category is available.');
+      return;
+    }
+
+    try {
+      await _smsRepository.importTransaction(
+        fingerprint: pending.fingerprint,
+        accountId: accountId,
+        categoryId: categoryId,
+        amountPaise: pending.amountPaise,
+        transactionType: pending.transactionType,
+        transactionDate: pending.transactionDate,
+        description: pending.description,
+        referenceNumber: pending.referenceNumber,
+      );
+      await _smsRepository.deletePendingImport(pending.id);
+      if (!mounted) return;
+      setState(() {
+        _pendingImports.removeWhere((item) => item.id == pending.id);
+      });
+      _showMessage('Transaction imported successfully.');
+    } on DuplicateSmsImportException {
+      await _smsRepository.deletePendingImport(pending.id);
+      if (!mounted) return;
+      setState(() {
+        _pendingImports.removeWhere((item) => item.id == pending.id);
+      });
+      _showMessage('This SMS was already imported. Duplicate removed.');
+    } catch (error) {
+      _showMessage('Unable to import this transaction: $error');
+    }
+  }
+
   void _showMessage(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(context).showSnackBar(
@@ -190,6 +280,13 @@ class _SettingsScreenState extends State<SettingsScreen> {
         ),
         backgroundColor: const Color(0xFFF5F7F8),
         elevation: 0,
+        actions: [
+          IconButton(
+            onPressed: _isLoading ? null : _loadSettings,
+            tooltip: 'Refresh settings',
+            icon: const Icon(Icons.refresh_rounded),
+          ),
+        ],
       ),
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
@@ -197,6 +294,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
               padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
               children: [
                 _buildAutomaticSmsCard(),
+                if (_pendingImports.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  _buildPendingImportsCard(),
+                ],
                 if (_error != null) ...[
                   const SizedBox(height: 12),
                   Text(
@@ -345,6 +446,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
     );
   }
 
+  Widget _buildPendingImportsCard() {
+    return _SettingsCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _SectionHeading(
+            icon: Icons.pending_actions_rounded,
+            title: 'SMS transactions waiting for account',
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '${_pendingImports.length} transaction(s) could not be assigned '
+            'automatically. Choose the correct bank account to finish importing.',
+            style: const TextStyle(
+              color: Color(0xFF52636A),
+              fontSize: 12,
+              height: 1.45,
+            ),
+          ),
+          const SizedBox(height: 12),
+          ..._pendingImports.map(
+            (pending) => Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _PendingSmsImportTile(
+                pending: pending,
+                accounts: _accounts,
+                onImport: (accountId) => _importPending(pending, accountId),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildPrivacyCard() {
     return _SettingsCard(
       child: Column(
@@ -369,6 +505,151 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           _PrivacyLine(
             text: 'You can disable automatic import here or revoke SMS permission in Android settings.',
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PendingSmsImportTile extends StatefulWidget {
+  final PendingSmsImport pending;
+  final List<BankAccount> accounts;
+  final ValueChanged<int> onImport;
+
+  const _PendingSmsImportTile({
+    required this.pending,
+    required this.accounts,
+    required this.onImport,
+  });
+
+  @override
+  State<_PendingSmsImportTile> createState() => _PendingSmsImportTileState();
+}
+
+class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
+  int? _selectedAccountId;
+  bool _isImporting = false;
+
+  @override
+  Widget build(BuildContext context) {
+    final pending = widget.pending;
+    final isIncome = pending.transactionType == 'income';
+
+    return Container(
+      padding: const EdgeInsets.all(14),
+      decoration: BoxDecoration(
+        color: const Color(0xFFF7F9FA),
+        borderRadius: BorderRadius.circular(15),
+        border: Border.all(color: const Color(0xFFE5EAEC)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  pending.description,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: const TextStyle(
+                    color: Color(0xFF142B35),
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ),
+              Text(
+                '${isIncome ? '+' : '-'}₹${(pending.amountPaise / 100).toStringAsFixed(2)}',
+                style: TextStyle(
+                  color: isIncome
+                      ? const Color(0xFF13866A)
+                      : const Color(0xFFC45D58),
+                  fontWeight: FontWeight.w800,
+                  fontSize: 15,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 5),
+          Text(
+            '${pending.transactionType.toUpperCase()} · '
+            '${pending.transactionDate.day.toString().padLeft(2, '0')}/'
+            '${pending.transactionDate.month.toString().padLeft(2, '0')}/'
+            '${pending.transactionDate.year}',
+            style: const TextStyle(
+              color: Color(0xFF68777D),
+              fontSize: 11,
+            ),
+          ),
+          const SizedBox(height: 3),
+          Text(
+            'Sender: ${pending.sender.isEmpty ? 'Unknown' : pending.sender} · '
+            'Suggested: ${pending.suggestedCategory}',
+            style: const TextStyle(
+              color: Color(0xFF68777D),
+              fontSize: 11,
+            ),
+          ),
+          if (pending.referenceNumber != null) ...[
+            const SizedBox(height: 3),
+            Text(
+              'Reference: ${pending.referenceNumber}',
+              style: const TextStyle(
+                color: Color(0xFF68777D),
+                fontSize: 11,
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          DropdownButtonFormField<int>(
+            initialValue: _selectedAccountId,
+            isExpanded: true,
+            decoration: const InputDecoration(
+              labelText: 'Choose bank account',
+              border: OutlineInputBorder(),
+              contentPadding: EdgeInsets.symmetric(
+                horizontal: 12,
+                vertical: 10,
+              ),
+            ),
+            items: widget.accounts
+                .map(
+                  (account) => DropdownMenuItem<int>(
+                    value: account.id,
+                    child: Text(
+                      '${account.bankName} · ${account.accountName}',
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+                )
+                .toList(),
+            onChanged: _isImporting
+                ? null
+                : (value) => setState(() => _selectedAccountId = value),
+          ),
+          const SizedBox(height: 10),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: _selectedAccountId == null ||
+                      _isImporting ||
+                      widget.accounts.isEmpty
+                  ? null
+                  : () async {
+                      setState(() => _isImporting = true);
+                      widget.onImport(_selectedAccountId!);
+                      if (mounted) {
+                        setState(() => _isImporting = false);
+                      }
+                    },
+              icon: const Icon(Icons.check_rounded),
+              label: const Text('Import transaction'),
+              style: FilledButton.styleFrom(
+                backgroundColor: const Color(0xFF13866A),
+                foregroundColor: Colors.white,
+              ),
+            ),
           ),
         ],
       ),
@@ -410,12 +691,14 @@ class _SectionHeading extends StatelessWidget {
       children: [
         Icon(icon, color: const Color(0xFF13866A)),
         const SizedBox(width: 10),
-        Text(
-          title,
-          style: const TextStyle(
-            color: Color(0xFF142B35),
-            fontWeight: FontWeight.w800,
-            fontSize: 16,
+        Expanded(
+          child: Text(
+            title,
+            style: const TextStyle(
+              color: Color(0xFF142B35),
+              fontWeight: FontWeight.w800,
+              fontSize: 16,
+            ),
           ),
         ),
       ],
