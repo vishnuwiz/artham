@@ -8,6 +8,7 @@ import 'data/repositories/account_repository.dart';
 import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'features/settings/settings_screen.dart';
 
 late final AppDatabase appDatabase;
 
@@ -148,7 +149,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ActivityScreen(database: appDatabase),
             InsightsScreen(database: appDatabase, isActive: selectedTab == 2),
             BudgetsScreen(database: appDatabase, isActive: selectedTab == 3),
-            buildPlaceholder('Settings', Icons.settings),
+            SettingsScreen(database: appDatabase),
           ],
         ),
       ),
