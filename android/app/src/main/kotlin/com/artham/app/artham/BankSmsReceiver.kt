@@ -339,6 +339,12 @@ class BankSmsReceiver : BroadcastReceiver() {
         body: String,
         receivedAt: Long,
     ): ParsedTransaction? {
+        val otpPattern = Regex(
+            """\b(?:OTP|one[- ]time password|verification code|security code)\b""",
+            RegexOption.IGNORE_CASE,
+        )
+        if (otpPattern.containsMatchIn(body)) return null
+
         val debitPattern = Regex(
             """\b(?:debited|debit|withdrawn|withdrawal|spent|paid|purchase|purchased|sent|transferred out)\b""",
             RegexOption.IGNORE_CASE,
