@@ -17,6 +17,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Added tests for recurring templates, template backfill/effective dates, budget insights, month-end forecast calculations, and the database migration.
 
 ### Changed
+- Set the user-facing app name to **Artham** across Android, iOS, and Web; kept the Dart package identifier lowercase as required.
 - Upgraded the Drift database schema to version 4.
 - Added the `BudgetTemplates` table while preserving existing budget records.
 - Routed the Home dashboard's budget management shortcut to the full Budgets screen.
