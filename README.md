@@ -18,6 +18,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - **Budgets** — Set overall and category-based monthly budgets, track spending progress, and carry positive unused balances forward when rollover is enabled.
 - **Recurring budget templates** — Repeat overall or category budget limits each month. Templates can be paused or resumed; missing months are populated when the app opens, without creating transactions or changing account balances.
 - **Budget performance** — Compare planned and actual spending for the overall budget and each category, review the remaining or exceeded amount, and view a six-month planned-versus-actual trend.
+- **Predictive budget forecasts** — Estimate month-end spending from the average daily pace, identify budgets approaching or likely to exceed their limits, and show a daily spending guide for overall and category plans. Estimates appear after at least three elapsed days and update as transactions are recorded.
 - **Automatic budget refresh** — Budget progress updates when relevant transactions change.
 - **Activity screen** — Review, search, filter, and sort transaction activity.
 - **Insights screen** — View financial insights.
@@ -30,7 +31,6 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ### Planned
 
-- Additional predictive budget projections and recommendations.
 - SMS-based transaction import.
 - Bank statement import.
 - Database encryption and additional security improvements.
