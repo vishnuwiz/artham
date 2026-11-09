@@ -151,7 +151,9 @@ class BudgetRepository {
       throw ArgumentError('Budget template amount must be greater than zero.');
     }
     final existing = await getBudgetTemplate(categoryId: categoryId);
-    final normalizedStart = existing?.startMonth ?? _monthStart(startMonth);
+    final normalizedStart = existing == null || !existing.isActive
+        ? _monthStart(startMonth)
+        : existing.startMonth;
 
     if (existing == null) {
       await database.into(database.budgetTemplates).insert(
