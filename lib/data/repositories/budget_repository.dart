@@ -2,6 +2,22 @@ import 'package:drift/drift.dart';
 
 import '../app_database.dart';
 
+class BudgetRolloverAmounts {
+  final int baseBudgetPaise;
+  final int rolloverPaise;
+  final int availableBudgetPaise;
+  final int expensesPaise;
+  final int remainingPaise;
+
+  const BudgetRolloverAmounts({
+    required this.baseBudgetPaise,
+    required this.rolloverPaise,
+    required this.availableBudgetPaise,
+    required this.expensesPaise,
+    required this.remainingPaise,
+  });
+}
+
 class MonthlyBudgetSummary {
   final int budgetPaise;
   final int expensesPaise;
@@ -79,6 +95,7 @@ class BudgetRepository {
   Future<void> saveMonthlyBudget({
     required DateTime month,
     required int limitPaise,
+    bool rolloverEnabled = false,
   }) async {
     if (limitPaise <= 0) {
       throw ArgumentError('Budget amount must be greater than zero.');
@@ -93,6 +110,7 @@ class BudgetRepository {
           .write(BudgetsCompanion(
         monthStart: Value(start),
         limitPaise: Value(limitPaise),
+        rolloverEnabled: Value(rolloverEnabled),
       ));
     } else {
       await database.into(database.budgets).insert(
@@ -100,6 +118,7 @@ class BudgetRepository {
               categoryId: const Value(null),
               monthStart: start,
               limitPaise: limitPaise,
+              rolloverEnabled: Value(rolloverEnabled),
             ),
           );
     }
@@ -134,6 +153,7 @@ class BudgetRepository {
     required DateTime month,
     required int categoryId,
     required int limitPaise,
+    bool rolloverEnabled = false,
   }) async {
     if (limitPaise <= 0) {
       throw ArgumentError('Budget amount must be greater than zero.');
@@ -151,6 +171,7 @@ class BudgetRepository {
           .write(BudgetsCompanion(
         monthStart: Value(start),
         limitPaise: Value(limitPaise),
+        rolloverEnabled: Value(rolloverEnabled),
       ));
     } else {
       await database.into(database.budgets).insert(
@@ -158,6 +179,7 @@ class BudgetRepository {
               categoryId: Value(categoryId),
               monthStart: start,
               limitPaise: limitPaise,
+              rolloverEnabled: Value(rolloverEnabled),
             ),
           );
     }
@@ -242,6 +264,103 @@ class BudgetRepository {
     }
 
     return history;
+  }
+
+
+  /// Returns carry-forward amounts for the selected overall monthly budget.
+  /// Rollover is applied month-by-month and stops at the first missing budget
+  /// or a month where rollover is disabled. Only positive unused amounts carry.
+  Future<BudgetRolloverAmounts?> getMonthlyBudgetRolloverAmounts(
+    DateTime month,
+  ) async {
+    final current = await getMonthlyBudget(month);
+    if (current == null) return null;
+
+    final rollover = await _getRolloverFromPreviousMonths(
+      month: month,
+      categoryId: null,
+    );
+    final expenses = await getMonthlyExpensesPaise(month);
+    final available = current.limitPaise + rollover;
+
+    return BudgetRolloverAmounts(
+      baseBudgetPaise: current.limitPaise,
+      rolloverPaise: rollover,
+      availableBudgetPaise: available,
+      expensesPaise: expenses,
+      remainingPaise: available - expenses,
+    );
+  }
+
+  /// Returns carry-forward amounts for a selected category monthly budget.
+  Future<BudgetRolloverAmounts?> getCategoryBudgetRolloverAmounts({
+    required DateTime month,
+    required int categoryId,
+  }) async {
+    final current = await getCategoryBudget(
+      month: month,
+      categoryId: categoryId,
+    );
+    if (current == null) return null;
+
+    final rollover = await _getRolloverFromPreviousMonths(
+      month: month,
+      categoryId: categoryId,
+    );
+    final expenses = await getCategoryExpensesPaise(
+      month: month,
+      categoryId: categoryId,
+    );
+    final available = current.limitPaise + rollover;
+
+    return BudgetRolloverAmounts(
+      baseBudgetPaise: current.limitPaise,
+      rolloverPaise: rollover,
+      availableBudgetPaise: available,
+      expensesPaise: expenses,
+      remainingPaise: available - expenses,
+    );
+  }
+
+  Future<int> _getRolloverFromPreviousMonths({
+    required DateTime month,
+    required int? categoryId,
+  }) async {
+    var carryForward = 0;
+    var previousMonth = DateTime(month.year, month.month - 1, 1);
+
+    // A bounded lookback prevents an unbounded query over the entire history.
+    // Twelve months is enough for the initial rollover release; this can be
+    // expanded later if the product requires lifetime carry-forward.
+    for (var index = 0; index < 12; index++) {
+      final previousBudget = categoryId == null
+          ? await getMonthlyBudget(previousMonth)
+          : await getCategoryBudget(
+              month: previousMonth,
+              categoryId: categoryId,
+            );
+
+      if (previousBudget == null || !previousBudget.rolloverEnabled) {
+        break;
+      }
+
+      final expenses = categoryId == null
+          ? await getMonthlyExpensesPaise(previousMonth)
+          : await getCategoryExpensesPaise(
+              month: previousMonth,
+              categoryId: categoryId,
+            );
+
+      final unused = previousBudget.limitPaise + carryForward - expenses;
+      carryForward = unused > 0 ? unused : 0;
+
+      // Overspending consumes the whole available amount and does not roll
+      // forward as a negative balance.
+      if (carryForward == 0) break;
+      previousMonth = DateTime(previousMonth.year, previousMonth.month - 1, 1);
+    }
+
+    return carryForward;
   }
 
   Future<MonthlyBudgetSummary?> getMonthlyBudgetSummary(
