@@ -78,7 +78,7 @@ class BudgetForecastCalculator {
     }
 
     final daysInMonth = DateTime(month.year, month.month + 1, 0).day;
-    final daysElapsed = asOf.day.clamp(1, daysInMonth);
+    final daysElapsed = asOf.day.clamp(1, daysInMonth).toInt();
     // Includes today, because the user can still spend during the current day.
     final daysRemaining = daysInMonth - daysElapsed + 1;
 
