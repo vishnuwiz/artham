@@ -5,7 +5,6 @@
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="12089"/>
     </dependencies>
     <scenes>
-        <!--View Controller-->
         <scene sceneID="EHf-IW-A2E">
             <objects>
                 <viewController id="01J-lp-oVM" sceneMemberID="viewController">
@@ -16,13 +15,50 @@
                     <view key="view" contentMode="scaleToFill" id="Ze5-6b-2t3">
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" image="LaunchImage" translatesAutoresizingMaskIntoConstraints="NO" id="YRO-k0-Ey4">
-                            </imageView>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="orb-artham">
+                                <rect key="frame" x="0.0" y="0.0" width="176" height="176"/>
+                                <color key="backgroundColor" red="0.34" green="0.38" blue="0.62" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius" value="88"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth" value="3.5"/>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                        <color red="0.28" green="0.91" blue="0.82" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="orb-inner">
+                                <rect key="frame" x="13" y="13" width="150" height="150"/>
+                                <color key="backgroundColor" red="0.48" green="0.53" blue="0.71" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                                <userDefinedRuntimeAttributes>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.cornerRadius" value="75"/>
+                                    <userDefinedRuntimeAttribute type="number" keyPath="layer.borderWidth" value="1.5"/>
+                                    <userDefinedRuntimeAttribute type="color" keyPath="layer.borderColor">
+                                        <color red="0.88" green="0.90" blue="1" alpha="0.40" colorSpace="custom" customColorSpace="sRGB"/>
+                                    </userDefinedRuntimeAttribute>
+                                    <userDefinedRuntimeAttribute type="boolean" keyPath="layer.masksToBounds" value="YES"/>
+                                </userDefinedRuntimeAttributes>
+                            </view>
+                            <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="അർഥം" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignCenters" adjustsFontSizeToFit="YES" minimumFontSize="17" translatesAutoresizingMaskIntoConstraints="NO" id="brand-malayalam">
+                                <rect key="frame" x="20" y="66" width="136" height="44"/>
+                                <fontDescription key="fontDescription" type="system" weight="semibold" pointSize="35"/>
+                                <color key="textColor" red="0.96" green="0.97" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                            </label>
                         </subviews>
-                        <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                        <color key="backgroundColor" red="0.0314" green="0.0471" blue="0.0863" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="1a2-6s-vTC"/>
-                            <constraint firstItem="YRO-k0-Ey4" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="4X2-HB-R7a"/>
+                            <constraint firstItem="orb-artham" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="orb-center-x"/>
+                            <constraint firstItem="orb-artham" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="orb-center-y"/>
+                            <constraint firstItem="orb-artham" firstAttribute="width" constant="176" id="orb-width"/>
+                            <constraint firstItem="orb-artham" firstAttribute="height" constant="176" id="orb-height"/>
+                            <constraint firstItem="orb-inner" firstAttribute="centerX" secondItem="orb-artham" secondAttribute="centerX" id="inner-center-x"/>
+                            <constraint firstItem="orb-inner" firstAttribute="centerY" secondItem="orb-artham" secondAttribute="centerY" id="inner-center-y"/>
+                            <constraint firstItem="orb-inner" firstAttribute="width" constant="150" id="inner-width"/>
+                            <constraint firstItem="orb-inner" firstAttribute="height" constant="150" id="inner-height"/>
+                            <constraint firstItem="brand-malayalam" firstAttribute="centerX" secondItem="orb-artham" secondAttribute="centerX" id="brand-center-x"/>
+                            <constraint firstItem="brand-malayalam" firstAttribute="centerY" secondItem="orb-artham" secondAttribute="centerY" id="brand-center-y"/>
+                            <constraint firstItem="brand-malayalam" firstAttribute="width" constant="136" id="brand-width"/>
+                            <constraint firstItem="brand-malayalam" firstAttribute="height" constant="44" id="brand-height"/>
                         </constraints>
                     </view>
                 </viewController>
@@ -31,7 +67,4 @@
             <point key="canvasLocation" x="53" y="375"/>
         </scene>
     </scenes>
-    <resources>
-        <image name="LaunchImage" width="168" height="185"/>
-    </resources>
 </document>
