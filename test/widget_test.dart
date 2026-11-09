@@ -20,7 +20,10 @@ void main() {
   testWidgets('Artham navigation opens the bank SMS import review screen',
       (tester) async {
     await tester.pumpWidget(const ArthamApp());
-    await tester.pumpAndSettle();
+    // The initial dashboard and offstage tabs may contain indeterminate
+    // loading indicators, so do not wait for every animation to settle.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Artham'), findsOneWidget);
     expect(find.byType(NavigationBar), findsOneWidget);
