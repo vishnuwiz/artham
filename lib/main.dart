@@ -186,7 +186,8 @@ class _HomeScreenState extends State<HomeScreen> {
         categoryId: null,
         isActive: existingTemplate?.isActive ?? false,
         limitPaise: amountPaise,
-        rolloverEnabled: existing?.rolloverEnabled ?? false,
+        rolloverEnabled:
+            existing?.rolloverEnabled ?? existingTemplate?.rolloverEnabled ?? false,
       );
 
       if (!mounted) return;
