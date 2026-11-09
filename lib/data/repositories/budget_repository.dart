@@ -594,7 +594,9 @@ class BudgetRepository {
       availableBudgetPaise: amounts.availableBudgetPaise,
       rolloverPaise: amounts.rolloverPaise,
       rolloverEnabled: budget.rolloverEnabled,
-      repeatsMonthly: template?.isActive ?? false,
+      repeatsMonthly: template != null &&
+              template.isActive &&
+              !_monthStart(template.startMonth).isAfter(_monthStart(month)),
       expensesPaise: amounts.expensesPaise,
       remainingPaise: amounts.remainingPaise,
     );
@@ -630,7 +632,9 @@ class BudgetRepository {
           availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
           rolloverPaise: amounts?.rolloverPaise ?? 0,
           rolloverEnabled: budget?.rolloverEnabled ?? false,
-          repeatsMonthly: template?.isActive ?? false,
+          repeatsMonthly: template != null &&
+              template.isActive &&
+              !_monthStart(template.startMonth).isAfter(_monthStart(month)),
           expensesPaise: expenses,
         ),
       );
