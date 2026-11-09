@@ -30,13 +30,18 @@ void main() {
       matching: find.text('Activity'),
     );
     await tester.tap(activityDestination);
-    await tester.pumpAndSettle();
+    // The Activity screen can keep a progress indicator animating while its
+    // database query completes. Pump the tab transition without requiring
+    // every offstage animation to settle.
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
 
     final importButton = find.byTooltip('Import bank SMS');
     expect(importButton, findsOneWidget);
 
     await tester.tap(importButton);
-    await tester.pumpAndSettle();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
 
     expect(find.text('Import bank SMS'), findsOneWidget);
     expect(find.text('Parse message'), findsOneWidget);
