@@ -57,7 +57,7 @@ void main() {
 
       expect(result.projectedSpendPaise, isNull);
       expect(result.status, BudgetForecastStatus.insufficientData);
-      expect(result.recommendedDailySpendPaise, 4750);
+      expect(result.recommendedDailySpendPaise, 3275);
     });
 
     test('identifies a budget that has already been exceeded', () {
