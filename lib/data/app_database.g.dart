@@ -2041,6 +2041,21 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
     type: DriftSqlType.int,
     requiredDuringInsert: true,
   );
+  static const VerificationMeta _rolloverEnabledMeta = const VerificationMeta(
+    'rolloverEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> rolloverEnabled = GeneratedColumn<bool>(
+    'rollover_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("rollover_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   static const VerificationMeta _createdAtMeta = const VerificationMeta(
     'createdAt',
   );
@@ -2059,6 +2074,7 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
     categoryId,
     monthStart,
     limitPaise,
+    rolloverEnabled,
     createdAt,
   ];
   @override
@@ -2098,6 +2114,15 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
     } else if (isInserting) {
       context.missing(_limitPaiseMeta);
     }
+    if (data.containsKey('rollover_enabled')) {
+      context.handle(
+        _rolloverEnabledMeta,
+        rolloverEnabled.isAcceptableOrUnknown(
+          data['rollover_enabled']!,
+          _rolloverEnabledMeta,
+        ),
+      );
+    }
     if (data.containsKey('created_at')) {
       context.handle(
         _createdAtMeta,
@@ -2129,6 +2154,10 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
         DriftSqlType.int,
         data['${effectivePrefix}limit_paise'],
       )!,
+      rolloverEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}rollover_enabled'],
+      )!,
       createdAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}created_at'],
@@ -2147,12 +2176,14 @@ class Budget extends DataClass implements Insertable<Budget> {
   final int? categoryId;
   final DateTime monthStart;
   final int limitPaise;
+  final bool rolloverEnabled;
   final DateTime createdAt;
   const Budget({
     required this.id,
     this.categoryId,
     required this.monthStart,
     required this.limitPaise,
+    required this.rolloverEnabled,
     required this.createdAt,
   });
   @override
@@ -2164,6 +2195,7 @@ class Budget extends DataClass implements Insertable<Budget> {
     }
     map['month_start'] = Variable<DateTime>(monthStart);
     map['limit_paise'] = Variable<int>(limitPaise);
+    map['rollover_enabled'] = Variable<bool>(rolloverEnabled);
     map['created_at'] = Variable<DateTime>(createdAt);
     return map;
   }
@@ -2176,6 +2208,7 @@ class Budget extends DataClass implements Insertable<Budget> {
           : Value(categoryId),
       monthStart: Value(monthStart),
       limitPaise: Value(limitPaise),
+      rolloverEnabled: Value(rolloverEnabled),
       createdAt: Value(createdAt),
     );
   }
@@ -2190,6 +2223,7 @@ class Budget extends DataClass implements Insertable<Budget> {
       categoryId: serializer.fromJson<int?>(json['categoryId']),
       monthStart: serializer.fromJson<DateTime>(json['monthStart']),
       limitPaise: serializer.fromJson<int>(json['limitPaise']),
+      rolloverEnabled: serializer.fromJson<bool>(json['rolloverEnabled']),
       createdAt: serializer.fromJson<DateTime>(json['createdAt']),
     );
   }
@@ -2201,6 +2235,7 @@ class Budget extends DataClass implements Insertable<Budget> {
       'categoryId': serializer.toJson<int?>(categoryId),
       'monthStart': serializer.toJson<DateTime>(monthStart),
       'limitPaise': serializer.toJson<int>(limitPaise),
+      'rolloverEnabled': serializer.toJson<bool>(rolloverEnabled),
       'createdAt': serializer.toJson<DateTime>(createdAt),
     };
   }
@@ -2210,12 +2245,14 @@ class Budget extends DataClass implements Insertable<Budget> {
     Value<int?> categoryId = const Value.absent(),
     DateTime? monthStart,
     int? limitPaise,
+    bool? rolloverEnabled,
     DateTime? createdAt,
   }) => Budget(
     id: id ?? this.id,
     categoryId: categoryId.present ? categoryId.value : this.categoryId,
     monthStart: monthStart ?? this.monthStart,
     limitPaise: limitPaise ?? this.limitPaise,
+    rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
     createdAt: createdAt ?? this.createdAt,
   );
   Budget copyWithCompanion(BudgetsCompanion data) {
@@ -2230,6 +2267,9 @@ class Budget extends DataClass implements Insertable<Budget> {
       limitPaise: data.limitPaise.present
           ? data.limitPaise.value
           : this.limitPaise,
+      rolloverEnabled: data.rolloverEnabled.present
+          ? data.rolloverEnabled.value
+          : this.rolloverEnabled,
       createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
     );
   }
@@ -2241,14 +2281,21 @@ class Budget extends DataClass implements Insertable<Budget> {
           ..write('categoryId: $categoryId, ')
           ..write('monthStart: $monthStart, ')
           ..write('limitPaise: $limitPaise, ')
+          ..write('rolloverEnabled: $rolloverEnabled, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode =>
-      Object.hash(id, categoryId, monthStart, limitPaise, createdAt);
+  int get hashCode => Object.hash(
+    id,
+    categoryId,
+    monthStart,
+    limitPaise,
+    rolloverEnabled,
+    createdAt,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -2257,6 +2304,7 @@ class Budget extends DataClass implements Insertable<Budget> {
           other.categoryId == this.categoryId &&
           other.monthStart == this.monthStart &&
           other.limitPaise == this.limitPaise &&
+          other.rolloverEnabled == this.rolloverEnabled &&
           other.createdAt == this.createdAt);
 }
 
@@ -2265,12 +2313,14 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
   final Value<int?> categoryId;
   final Value<DateTime> monthStart;
   final Value<int> limitPaise;
+  final Value<bool> rolloverEnabled;
   final Value<DateTime> createdAt;
   const BudgetsCompanion({
     this.id = const Value.absent(),
     this.categoryId = const Value.absent(),
     this.monthStart = const Value.absent(),
     this.limitPaise = const Value.absent(),
+    this.rolloverEnabled = const Value.absent(),
     this.createdAt = const Value.absent(),
   });
   BudgetsCompanion.insert({
@@ -2278,6 +2328,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     this.categoryId = const Value.absent(),
     required DateTime monthStart,
     required int limitPaise,
+    this.rolloverEnabled = const Value.absent(),
     this.createdAt = const Value.absent(),
   }) : monthStart = Value(monthStart),
        limitPaise = Value(limitPaise);
@@ -2286,6 +2337,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     Expression<int>? categoryId,
     Expression<DateTime>? monthStart,
     Expression<int>? limitPaise,
+    Expression<bool>? rolloverEnabled,
     Expression<DateTime>? createdAt,
   }) {
     return RawValuesInsertable({
@@ -2293,6 +2345,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
       if (categoryId != null) 'category_id': categoryId,
       if (monthStart != null) 'month_start': monthStart,
       if (limitPaise != null) 'limit_paise': limitPaise,
+      if (rolloverEnabled != null) 'rollover_enabled': rolloverEnabled,
       if (createdAt != null) 'created_at': createdAt,
     });
   }
@@ -2302,6 +2355,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     Value<int?>? categoryId,
     Value<DateTime>? monthStart,
     Value<int>? limitPaise,
+    Value<bool>? rolloverEnabled,
     Value<DateTime>? createdAt,
   }) {
     return BudgetsCompanion(
@@ -2309,6 +2363,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
       categoryId: categoryId ?? this.categoryId,
       monthStart: monthStart ?? this.monthStart,
       limitPaise: limitPaise ?? this.limitPaise,
+      rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
       createdAt: createdAt ?? this.createdAt,
     );
   }
@@ -2328,6 +2383,9 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
     if (limitPaise.present) {
       map['limit_paise'] = Variable<int>(limitPaise.value);
     }
+    if (rolloverEnabled.present) {
+      map['rollover_enabled'] = Variable<bool>(rolloverEnabled.value);
+    }
     if (createdAt.present) {
       map['created_at'] = Variable<DateTime>(createdAt.value);
     }
@@ -2341,6 +2399,7 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
           ..write('categoryId: $categoryId, ')
           ..write('monthStart: $monthStart, ')
           ..write('limitPaise: $limitPaise, ')
+          ..write('rolloverEnabled: $rolloverEnabled, ')
           ..write('createdAt: $createdAt')
           ..write(')'))
         .toString();
