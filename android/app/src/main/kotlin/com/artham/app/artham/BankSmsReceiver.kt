@@ -38,7 +38,6 @@ class BankSmsReceiver : BroadcastReceiver() {
         val sender = smsParts.firstOrNull()?.originatingAddress.orEmpty()
         val receivedAt = smsParts.maxOfOrNull { it.timestampMillis }
             ?: System.currentTimeMillis()
-
         val parsed = parseTransaction(body, receivedAt) ?: return
 
         val databaseFile = File(
@@ -58,23 +57,55 @@ class BankSmsReceiver : BroadcastReceiver() {
             )
             database.setForeignKeyConstraintsEnabled(true)
 
-            val accounts = readActiveAccounts(database)
-            val accountId = resolveAccount(
-                accounts = accounts,
-                sender = sender,
-                body = body,
-                defaultAccountId = preferences.getLong(KEY_DEFAULT_ACCOUNT_ID, -1L),
-            ) ?: return
-
-            val categoryId = findOrCreateCategory(
-                database = database,
-                name = parsed.category,
-                type = parsed.type,
-            )
-
             val fingerprint = fingerprint(body)
             database.beginTransactionNonExclusive()
             try {
+                createPendingTableIfNeeded(database)
+
+                val alreadyImported = database.rawQuery(
+                    "SELECT id FROM processed_sms WHERE fingerprint = ? LIMIT 1",
+                    arrayOf(fingerprint),
+                ).use { it.moveToFirst() }
+
+                if (alreadyImported) {
+                    database.delete(
+                        PENDING_TABLE,
+                        "fingerprint = ?",
+                        arrayOf(fingerprint),
+                    )
+                    database.setTransactionSuccessful()
+                    return
+                }
+
+                val accounts = readActiveAccounts(database)
+                val accountId = resolveAccount(
+                    accounts = accounts,
+                    sender = sender,
+                    body = body,
+                    defaultAccountId = preferences.getLong(
+                        KEY_DEFAULT_ACCOUNT_ID,
+                        -1L,
+                    ),
+                )
+
+                if (accountId == null) {
+                    savePendingSms(
+                        database = database,
+                        fingerprint = fingerprint,
+                        sender = sender,
+                        receivedAt = receivedAt,
+                        parsed = parsed,
+                    )
+                    database.setTransactionSuccessful()
+                    return
+                }
+
+                val categoryId = findOrCreateCategory(
+                    database = database,
+                    name = parsed.category,
+                    type = parsed.type,
+                )
+
                 val processedValues = ContentValues().apply {
                     put("fingerprint", fingerprint)
                     put("received_at", receivedAt)
@@ -87,9 +118,12 @@ class BankSmsReceiver : BroadcastReceiver() {
                     SQLiteDatabase.CONFLICT_IGNORE,
                 )
 
-                // A matching fingerprint means this alert has already been
-                // handled by either automatic or manual import.
                 if (processedId == -1L) {
+                    database.delete(
+                        PENDING_TABLE,
+                        "fingerprint = ?",
+                        arrayOf(fingerprint),
+                    )
                     database.setTransactionSuccessful()
                     return
                 }
@@ -120,6 +154,11 @@ class BankSmsReceiver : BroadcastReceiver() {
                     "Could not save the parsed SMS transaction."
                 }
 
+                database.delete(
+                    PENDING_TABLE,
+                    "fingerprint = ?",
+                    arrayOf(fingerprint),
+                )
                 database.setTransactionSuccessful()
             } finally {
                 database.endTransaction()
@@ -130,6 +169,52 @@ class BankSmsReceiver : BroadcastReceiver() {
         } finally {
             database?.close()
         }
+    }
+
+    private fun createPendingTableIfNeeded(database: SQLiteDatabase) {
+        database.execSQL(
+            """
+            CREATE TABLE IF NOT EXISTS $PENDING_TABLE (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                fingerprint TEXT NOT NULL UNIQUE,
+                sender TEXT NOT NULL,
+                received_at INTEGER NOT NULL,
+                amount_paise INTEGER NOT NULL,
+                transaction_type TEXT NOT NULL,
+                transaction_date INTEGER NOT NULL,
+                reference_number TEXT,
+                description TEXT NOT NULL,
+                suggested_category TEXT NOT NULL
+            )
+            """.trimIndent(),
+        )
+    }
+
+    private fun savePendingSms(
+        database: SQLiteDatabase,
+        fingerprint: String,
+        sender: String,
+        receivedAt: Long,
+        parsed: ParsedTransaction,
+    ) {
+        val values = ContentValues().apply {
+            put("fingerprint", fingerprint)
+            put("sender", sender)
+            put("received_at", receivedAt)
+            put("amount_paise", parsed.amountPaise)
+            put("transaction_type", parsed.type)
+            put("transaction_date", parsed.transactionDate)
+            if (parsed.referenceNumber == null) putNull("reference_number")
+            else put("reference_number", parsed.referenceNumber)
+            put("description", parsed.description)
+            put("suggested_category", parsed.category)
+        }
+        database.insertWithOnConflict(
+            PENDING_TABLE,
+            null,
+            values,
+            SQLiteDatabase.CONFLICT_IGNORE,
+        )
     }
 
     private data class AccountRow(
@@ -442,6 +527,7 @@ class BankSmsReceiver : BroadcastReceiver() {
 
     companion object {
         private const val DATABASE_NAME = "artham.sqlite"
+        private const val PENDING_TABLE = "pending_sms_imports"
         private const val PREFERENCES_NAME = "artham_sms_import"
         private const val KEY_ENABLED = "enabled"
         private const val KEY_DEFAULT_ACCOUNT_ID = "default_account_id"
