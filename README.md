@@ -12,6 +12,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
+- **Bank SMS import (reviewed paste flow)** — paste one bank/UPI alert, review the parsed amount, direction, date, reference, account and category, then import it with local duplicate protection. The original message body is not stored.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
@@ -31,7 +32,8 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ### Planned
 
-- SMS-based transaction import.
+- Automatic Android bank-SMS intake, with explicit disclosure, consent and Google Play permission-eligibility review.
+- User-initiated SMS sharing/pasting on iOS; ordinary third-party apps cannot read the full Messages inbox.
 - Bank statement import.
 - Database encryption and additional security improvements.
 - Expanded Settings options.
