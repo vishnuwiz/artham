@@ -126,6 +126,31 @@ class Budgets extends Table {
 }
 
 // ==========================================
+// 5A. RECURRING MONTHLY BUDGET TEMPLATES
+// ==========================================
+
+class BudgetTemplates extends Table {
+  IntColumn get id => integer().autoIncrement()();
+
+  // Null category means this template applies to the overall monthly budget.
+  IntColumn get categoryId =>
+      integer().nullable().references(Categories, #id)();
+
+  DateTimeColumn get startMonth => dateTime()();
+
+  IntColumn get limitPaise => integer()();
+
+  BoolColumn get rolloverEnabled =>
+      boolean().withDefault(const Constant(false))();
+
+  BoolColumn get isActive =>
+      boolean().withDefault(const Constant(true))();
+
+  DateTimeColumn get createdAt =>
+      dateTime().withDefault(currentDateAndTime)();
+}
+
+// ==========================================
 // 6. PROCESSED SMS RECORDS
 // ==========================================
 
@@ -190,6 +215,7 @@ class RecurringSchedules extends Table {
     Merchants,
     MoneyTransactions,
     Budgets,
+    BudgetTemplates,
     ProcessedSms,
     RecurringSchedules,
   ],
@@ -201,7 +227,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 3;
+  int get schemaVersion => 4;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -214,6 +240,9 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 3) {
             await m.addColumn(budgets, budgets.rolloverEnabled);
+          }
+          if (from < 4) {
+            await m.createTable(budgetTemplates);
           }
         },
       );

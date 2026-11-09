@@ -7,6 +7,20 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 ## [Unreleased]
 
 ### Added
+- Added opt-in rollover for unused overall and category budget balances.
+- Added recurring monthly budget templates for overall and category budgets, with pause/resume controls.
+- Automatically populate missing monthly budgets from active templates when opening the app or budget view; existing month budgets are never overwritten.
+- Added a planned-versus-actual budget performance dashboard with overall and category-level insights.
+- Added a six-month planned-versus-actual budget trend chart.
+- Added tests for recurring templates, template backfill/effective dates, budget insights, and the database migration.
+
+### Changed
+- Upgraded the Drift database schema to version 4.
+- Added the `BudgetTemplates` table while preserving existing budget records.
+- Routed the Home dashboard's budget management shortcut to the full Budgets screen.
+- Updated project documentation for the budget planning features.
+
+### Added
 - Added recurring transaction schedules for income and expenses.
 - Added daily, weekly, monthly, and yearly recurrence frequencies.
 - Added custom recurrence intervals using a scrollable number picker.

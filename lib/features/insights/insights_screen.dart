@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../data/app_database.dart';
+import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
 const Color _insightsGreen = Color(0xFF13866A);
@@ -27,7 +28,20 @@ class _InsightsScreenState extends State<InsightsScreen> {
   @override
   void initState() {
     super.initState();
-    _loadData();
+    _dataFuture = Future.value(
+      const _InsightsData(
+        monthTotals: [],
+        currentIncome: 0,
+        currentExpenses: 0,
+        categoryTotals: [],
+        overallBudget: null,
+        categoryBudgets: [],
+        budgetHistory: [],
+      ),
+    );
+    if (widget.isActive) {
+      _loadData();
+    }
   }
 
   @override
@@ -44,9 +58,19 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
   Future<_InsightsData> _fetchData() async {
     final repository = TransactionRepository(widget.database);
+    final budgetRepository = BudgetRepository(widget.database);
     final transactions = await repository.getAllTransactions();
     final categories = await repository.getCategories('expense');
     final now = DateTime.now();
+    final currentMonth = DateTime(now.year, now.month, 1);
+
+    await budgetRepository.applyTemplatesForMonth(currentMonth);
+    final overallBudget =
+        await budgetRepository.getMonthlyBudgetSummary(currentMonth);
+    final categoryBudgets =
+        await budgetRepository.getCategoryBudgetSummaries(currentMonth);
+    final budgetHistory =
+        await budgetRepository.getMonthlyBudgetHistory(months: 6);
 
     final monthData = <_MonthTotals>[];
     for (var offset = 5; offset >= 0; offset--) {
@@ -106,6 +130,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
       currentIncome: currentIncome,
       currentExpenses: currentExpenses,
       categoryTotals: categoryData,
+      overallBudget: overallBudget,
+      categoryBudgets: categoryBudgets,
+      budgetHistory: budgetHistory,
     );
   }
 
@@ -178,6 +205,18 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 20),
                         _buildSavingsCard(data, netSavings, savingsRate),
                         const SizedBox(height: 25),
+                        _sectionTitle('Budget performance', 'This month'),
+                        const SizedBox(height: 12),
+                        _buildBudgetPerformance(data),
+                        const SizedBox(height: 25),
+                        _sectionTitle('Planned vs actual', 'Last 6 months'),
+                        const SizedBox(height: 12),
+                        _buildBudgetTrendChart(data.budgetHistory),
+                        const SizedBox(height: 25),
+                        _sectionTitle('Category budget insights', 'This month'),
+                        const SizedBox(height: 12),
+                        _buildCategoryBudgetInsights(data.categoryBudgets),
+                        const SizedBox(height: 25),
                         _sectionTitle('Income vs expenses', 'Last 6 months'),
                         const SizedBox(height: 12),
                         _buildMonthlyChart(data.monthTotals),
@@ -198,6 +237,372 @@ class _InsightsScreenState extends State<InsightsScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  Widget _buildBudgetPerformance(_InsightsData data) {
+    final overall = data.overallBudget;
+    final budgetedCategories = data.categoryBudgets
+        .where((item) => item.budgetPaise > 0)
+        .toList();
+    final overBudgetCategories =
+        budgetedCategories.where((item) => item.remainingPaise < 0).length;
+    final onTrackCategories = budgetedCategories.length - overBudgetCategories;
+
+    if (overall == null && budgetedCategories.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(
+              'No budget plan for this month yet',
+              style: TextStyle(
+                color: _insightsNavy,
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+              ),
+            ),
+            SizedBox(height: 5),
+            Text(
+              'Set an overall or category budget to compare your plan with actual spending.',
+              style: TextStyle(color: Colors.black54, fontSize: 11),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final planned = overall?.availableBudgetPaise ?? 0;
+    final actual = overall?.expensesPaise ?? data.currentExpenses;
+    final remaining = overall?.remainingPaise ?? 0;
+    final ratio = overall?.percentageUsed ?? 0.0;
+    final over = overall != null && remaining < 0;
+
+    return Container(
+      padding: const EdgeInsets.all(18),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (overall != null) ...[
+            Text(
+              over ? 'Overall plan exceeded' : 'Overall monthly plan',
+              style: const TextStyle(
+                color: _insightsNavy,
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                Expanded(
+                  child: _performanceMetric('PLANNED', _money(planned)),
+                ),
+                Expanded(
+                  child: _performanceMetric('ACTUAL', _money(actual)),
+                ),
+                Expanded(
+                  child: _performanceMetric(
+                    over ? 'OVER BY' : 'REMAINING',
+                    _money(remaining.abs()),
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 14),
+            ClipRRect(
+              borderRadius: BorderRadius.circular(10),
+              child: LinearProgressIndicator(
+                value: ratio.clamp(0.0, 1.0).toDouble(),
+                minHeight: 8,
+                backgroundColor: const Color(0xFFE9EEEC),
+                color: over ? const Color(0xFFC45D58) : _insightsGreen,
+              ),
+            ),
+            const SizedBox(height: 6),
+            Text(
+              '${(ratio * 100).toStringAsFixed(1)}% of the available plan used'
+              '${overall.rolloverPaise > 0 ? ' · includes ${_money(overall.rolloverPaise)} carried in' : ''}',
+              style: const TextStyle(color: Colors.black54, fontSize: 10),
+            ),
+          ] else ...[
+            const Text(
+              'No overall monthly limit set',
+              style: TextStyle(
+                color: _insightsNavy,
+                fontWeight: FontWeight.w800,
+                fontSize: 14,
+              ),
+            ),
+            const SizedBox(height: 5),
+            Text(
+              '${budgetedCategories.length} category budgets cover ${_money(budgetedCategories.fold<int>(0, (sum, item) => sum + item.availableBudgetPaise))} in planned spending.',
+              style: const TextStyle(color: Colors.black54, fontSize: 11),
+            ),
+          ],
+          const SizedBox(height: 15),
+          const Divider(height: 1),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: _performanceMetric(
+                  'CATEGORIES ON TRACK',
+                  '$onTrackCategories',
+                ),
+              ),
+              Expanded(
+                child: _performanceMetric(
+                  'OVER BUDGET',
+                  '$overBudgetCategories',
+                ),
+              ),
+              Expanded(
+                child: _performanceMetric(
+                  'WITH A PLAN',
+                  '${budgetedCategories.length}',
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _performanceMetric(String label, String value) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          label,
+          style: const TextStyle(
+            color: Colors.black45,
+            fontSize: 9,
+            fontWeight: FontWeight.w700,
+          ),
+        ),
+        const SizedBox(height: 5),
+        Text(
+          value,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: const TextStyle(
+            color: _insightsNavy,
+            fontSize: 13,
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildBudgetTrendChart(List<MonthlyBudgetHistoryItem> months) {
+    final maxValue = months.fold<int>(0, (max, item) {
+      final value = item.availableBudgetPaise > item.expensesPaise
+          ? item.availableBudgetPaise
+          : item.expensesPaise;
+      return value > max ? value : max;
+    });
+
+    return Container(
+      padding: const EdgeInsets.fromLTRB(16, 17, 16, 14),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
+      child: Column(
+        children: [
+          Row(
+            children: [
+              _legend(_insightsGreen, 'Planned'),
+              const SizedBox(width: 18),
+              _legend(const Color(0xFFFFA69A), 'Actual'),
+            ],
+          ),
+          const SizedBox(height: 18),
+          SizedBox(
+            height: 145,
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: months.map((item) {
+                final planHeight = maxValue == 0 || !item.hasBudget
+                    ? 0.0
+                    : 100 * item.availableBudgetPaise / maxValue;
+                final actualHeight = maxValue == 0
+                    ? 0.0
+                    : 100 * item.expensesPaise / maxValue;
+                return Expanded(
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.end,
+                    children: [
+                      Expanded(
+                        child: Row(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            _bar(planHeight, color: _insightsGreen),
+                            const SizedBox(width: 3),
+                            _bar(actualHeight, color: const Color(0xFFFFA69A)),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        _monthShort(item.month),
+                        style: const TextStyle(
+                          color: Colors.black54,
+                          fontSize: 10,
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              }).toList(),
+            ),
+          ),
+          const SizedBox(height: 8),
+          const Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              'Months without an overall budget show actual spending only.',
+              style: TextStyle(color: Colors.black45, fontSize: 10),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoryBudgetInsights(List<CategoryBudgetSummary> categories) {
+    final items = categories
+        .where((item) => item.budgetPaise > 0 || item.expensesPaise > 0)
+        .toList()
+      ..sort((a, b) {
+        final aOver = a.budgetPaise > 0 && a.remainingPaise < 0;
+        final bOver = b.budgetPaise > 0 && b.remainingPaise < 0;
+        if (aOver != bOver) return aOver ? -1 : 1;
+        if (a.budgetPaise == 0 && b.budgetPaise == 0) {
+          return b.expensesPaise.compareTo(a.expensesPaise);
+        }
+        if (a.budgetPaise == 0) return 1;
+        if (b.budgetPaise == 0) return -1;
+        return b.percentageUsed.compareTo(a.percentageUsed);
+      });
+
+    if (items.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'Category budget comparisons will appear once you set category limits and record spending.',
+          style: TextStyle(color: Colors.black54, fontSize: 11),
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(17),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
+      child: Column(
+        children: items.map((item) {
+          final hasBudget = item.budgetPaise > 0;
+          final over = hasBudget && item.remainingPaise < 0;
+          final ratio = hasBudget ? item.percentageUsed : 0.0;
+
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.category.name,
+                        style: const TextStyle(
+                          color: _insightsNavy,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      hasBudget
+                          ? (over
+                              ? '${_money(item.remainingPaise.abs())} over'
+                              : '${_money(item.remainingPaise)} left')
+                          : 'No plan',
+                      style: TextStyle(
+                        color: over
+                            ? const Color(0xFFC45D58)
+                            : Colors.black54,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  hasBudget
+                      ? 'Actual ${_money(item.expensesPaise)} · Plan ${_money(item.availableBudgetPaise)}'
+                      : 'Actual spending ${_money(item.expensesPaise)}',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 10,
+                  ),
+                ),
+                if (hasBudget) ...[
+                  const SizedBox(height: 7),
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(8),
+                    child: LinearProgressIndicator(
+                      value: ratio.clamp(0.0, 1.0).toDouble(),
+                      minHeight: 6,
+                      backgroundColor: const Color(0xFFE9EEEC),
+                      color: over
+                          ? const Color(0xFFC45D58)
+                          : _insightsGreen,
+                    ),
+                  ),
+                  const SizedBox(height: 4),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: Text(
+                      '${(ratio * 100).toStringAsFixed(1)}% used',
+                      style: TextStyle(
+                        color: over
+                            ? const Color(0xFFC45D58)
+                            : _insightsGreen,
+                        fontSize: 10,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          );
+        }).toList(),
       ),
     );
   }
@@ -416,12 +821,18 @@ class _InsightsData {
   final int currentIncome;
   final int currentExpenses;
   final List<_CategoryTotal> categoryTotals;
+  final MonthlyBudgetSummary? overallBudget;
+  final List<CategoryBudgetSummary> categoryBudgets;
+  final List<MonthlyBudgetHistoryItem> budgetHistory;
 
   const _InsightsData({
     required this.monthTotals,
     required this.currentIncome,
     required this.currentExpenses,
     required this.categoryTotals,
+    required this.overallBudget,
+    required this.categoryBudgets,
+    required this.budgetHistory,
   });
 }
 

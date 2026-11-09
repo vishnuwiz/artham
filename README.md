@@ -15,7 +15,9 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
-- **Budgets** — Set category-based budgets and track spending progress.
+- **Budgets** — Set overall and category-based monthly budgets, track spending progress, and carry positive unused balances forward when rollover is enabled.
+- **Recurring budget templates** — Repeat overall or category budget limits each month. Templates can be paused or resumed; missing months are populated when the app opens, without creating transactions or changing account balances.
+- **Budget performance** — Compare planned and actual spending for the overall budget and each category, review the remaining or exceeded amount, and view a six-month planned-versus-actual trend.
 - **Automatic budget refresh** — Budget progress updates when relevant transactions change.
 - **Activity screen** — Review, search, filter, and sort transaction activity.
 - **Insights screen** — View financial insights.
@@ -28,7 +30,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ### Planned
 
-- Budget alerts, rollover, and projections.
+- Additional predictive budget projections and recommendations.
 - SMS-based transaction import.
 - Bank statement import.
 - Database encryption and additional security improvements.
@@ -52,6 +54,7 @@ Artham stores its data locally in an SQLite database.
 - **Database file:** `artham.sqlite`
 - **Drift database definition:** `lib/data/app_database.dart`
 - **Generated database code:** `lib/data/app_database.g.dart`
+- **Current schema version:** `4`
 
 The database includes the following tables:
 
@@ -61,7 +64,8 @@ The database includes the following tables:
 | `Categories` | Stores transaction categories |
 | `Merchants` | Stores merchant information |
 | `MoneyTransactions` | Stores income, expense, transfer, and generated recurring transactions |
-| `Budgets` | Stores budget settings and limits |
+| `Budgets` | Stores monthly overall and category budget limits, including rollover settings |
+| `BudgetTemplates` | Stores recurring monthly overall/category budget templates and their effective start month |
 | `ProcessedSms` | Tracks processed SMS records |
 | `RecurringSchedules` | Stores recurring transaction schedules and their next due dates |
 
@@ -138,6 +142,9 @@ Other screens, repositories, and features are maintained in their respective fol
 - Keep account balances consistent when creating, editing, or deleting transactions.
 - Internal transfers should update the source and destination accounts without changing the user's overall net worth.
 - Keep budget progress in sync with the transactions that contribute to each budget.
+- Recurring budget templates create budget-limit rows only; they must never create financial transactions or alter account balances.
+- Template edits apply from the selected effective month forward; previously generated monthly budgets remain historical snapshots.
+- Apply templates when opening the relevant month. Never overwrite a budget that already exists for that month.
 - Recurring schedules should generate transactions only when the user confirms a due occurrence.
 - Prevent duplicate recurring transactions for the same schedule and due date.
 - Regenerate Drift code after changing database definitions.

@@ -94,98 +94,16 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _loadBudget() {
-    _budgetSummaryFuture =
-        BudgetRepository(appDatabase).getMonthlyBudgetSummary(DateTime.now());
-  }
-
-  Future<void> _editMonthlyBudget() async {
     final repository = BudgetRepository(appDatabase);
     final now = DateTime.now();
-    final existing = await repository.getMonthlyBudget(now);
+    _budgetSummaryFuture = () async {
+      await repository.applyTemplatesForMonth(now);
+      return repository.getMonthlyBudgetSummary(now);
+    }();
+  }
 
-    if (!mounted) return;
-
-    final controller = TextEditingController(
-      text: existing == null
-          ? ''
-          : (existing.limitPaise / 100).toStringAsFixed(2),
-    );
-
-    final formKey = GlobalKey<FormState>();
-    final shouldSave = await showDialog<bool>(
-      context: context,
-      builder: (dialogContext) {
-        return AlertDialog(
-          title: const Text('Monthly spending budget'),
-          content: Form(
-            key: formKey,
-            child: TextFormField(
-              controller: controller,
-              autofocus: true,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
-              ),
-              decoration: const InputDecoration(
-                labelText: 'Budget amount',
-                prefixText: '₹ ',
-                hintText: 'e.g. 35000',
-                border: OutlineInputBorder(),
-              ),
-              validator: (value) {
-                final amount = double.tryParse(
-                  (value ?? '').trim().replaceAll(',', ''),
-                );
-                if (amount == null || amount <= 0) {
-                  return 'Enter an amount greater than zero';
-                }
-                if (amount > 100000000000) {
-                  return 'Enter a smaller amount';
-                }
-                return null;
-              },
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(dialogContext, false),
-              child: const Text('Cancel'),
-            ),
-            FilledButton(
-              onPressed: () {
-                if (formKey.currentState!.validate()) {
-                  Navigator.pop(dialogContext, true);
-                }
-              },
-              style: FilledButton.styleFrom(
-                backgroundColor: primaryGreen,
-              ),
-              child: const Text('Save budget'),
-            ),
-          ],
-        );
-      },
-    );
-
-    if (shouldSave == true) {
-      final amount = double.parse(
-        controller.text.trim().replaceAll(',', ''),
-      );
-      final amountPaise = (amount * 100).round();
-
-      await repository.saveMonthlyBudget(
-        month: now,
-        limitPaise: amountPaise,
-      );
-
-      if (!mounted) return;
-      setState(_loadBudget);
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Monthly budget saved')),
-      );
-    }
-
-    controller.dispose();
+  void _openBudgets() {
+    setState(() => selectedTab = 3);
   }
 
   String _currentMonthLabel() {
@@ -521,7 +439,7 @@ class _HomeScreenState extends State<HomeScreen> {
           onPressed: title == 'My accounts'
               ? _openAccounts
               : title == 'Monthly budget'
-                  ? _editMonthlyBudget
+                  ? _openBudgets
                   : () {},
           child: Text(
             action,
@@ -776,7 +694,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 const SizedBox(height: 14),
                 OutlinedButton.icon(
-                  onPressed: _editMonthlyBudget,
+                  onPressed: _openBudgets,
                   icon: const Icon(Icons.add_rounded),
                   label: const Text('Set monthly budget'),
                   style: OutlinedButton.styleFrom(
@@ -788,7 +706,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-        final budget = summary.budgetPaise;
+        final budget = summary.availableBudgetPaise;
         final expenses = summary.expensesPaise;
         final remaining = summary.remainingPaise;
         final rawProgress = summary.percentageUsed;
@@ -833,9 +751,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 5),
               Text(
-                'of ${_formatRupees(budget)} monthly budget',
+                'of ${_formatRupees(budget)} available this month',
                 style: const TextStyle(color: Colors.black54, fontSize: 12),
               ),
+              if (summary.rolloverPaise > 0 || summary.repeatsMonthly) ...[
+                const SizedBox(height: 4),
+                Text(
+                  [
+                    if (summary.rolloverPaise > 0)
+                      '${_formatRupees(summary.rolloverPaise)} carried forward',
+                    if (summary.repeatsMonthly) 'Repeats monthly',
+                  ].join(' · '),
+                  style: const TextStyle(color: primaryGreen, fontSize: 10),
+                ),
+              ],
               const SizedBox(height: 18),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),

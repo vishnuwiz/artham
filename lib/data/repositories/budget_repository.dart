@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
@@ -28,6 +30,7 @@ class MonthlyBudgetSummary {
   final int availableBudgetPaise;
   final int rolloverPaise;
   final bool rolloverEnabled;
+  final bool repeatsMonthly;
   final int expensesPaise;
   final int remainingPaise;
 
@@ -38,6 +41,7 @@ class MonthlyBudgetSummary {
     required this.rolloverEnabled,
     required this.expensesPaise,
     required this.remainingPaise,
+    this.repeatsMonthly = false,
   });
 
   double get percentageUsed {
@@ -52,6 +56,7 @@ class CategoryBudgetSummary {
   final int availableBudgetPaise;
   final int rolloverPaise;
   final bool rolloverEnabled;
+  final bool repeatsMonthly;
   final int expensesPaise;
 
   const CategoryBudgetSummary({
@@ -61,6 +66,7 @@ class CategoryBudgetSummary {
     int? availableBudgetPaise,
     this.rolloverPaise = 0,
     this.rolloverEnabled = false,
+    this.repeatsMonthly = false,
   }) : availableBudgetPaise = availableBudgetPaise ?? budgetPaise;
 
   int get remainingPaise => availableBudgetPaise - expensesPaise;
@@ -95,6 +101,9 @@ class MonthlyBudgetHistoryItem {
 }
 
 class BudgetRepository {
+  static final Expando<Future<void>> _templateApplyTails =
+      Expando<Future<void>>('budgetTemplateApplyTails');
+
   final AppDatabase database;
 
   BudgetRepository(this.database);
@@ -103,6 +112,181 @@ class BudgetRepository {
 
   DateTime _nextMonthStart(DateTime date) =>
       DateTime(date.year, date.month + 1, 1);
+
+  /// Returns the recurring template for the overall budget (null category)
+  /// or a specific category.
+  Future<BudgetTemplate?> getBudgetTemplate({
+    required int? categoryId,
+  }) async {
+    final query = database.select(database.budgetTemplates)
+      ..where(
+        (template) => categoryId == null
+            ? template.categoryId.isNull()
+            : template.categoryId.equals(categoryId),
+      )
+      ..orderBy([(template) => OrderingTerm.desc(template.id)])
+      ..limit(1);
+    return query.getSingleOrNull();
+  }
+
+  Future<List<BudgetTemplate>> getBudgetTemplates({
+    bool activeOnly = false,
+  }) {
+    final query = database.select(database.budgetTemplates)
+      ..orderBy([
+        (template) => OrderingTerm.asc(template.categoryId),
+        (template) => OrderingTerm.asc(template.id),
+      ]);
+    if (activeOnly) {
+      query.where((template) => template.isActive.equals(true));
+    }
+    return query.get();
+  }
+
+  /// Creates or updates the monthly template for one overall/category budget.
+  /// Editing a template establishes a new effective month for future copies.
+  Future<void> saveBudgetTemplate({
+    required int? categoryId,
+    required DateTime startMonth,
+    required int limitPaise,
+    required bool rolloverEnabled,
+    bool isActive = true,
+  }) async {
+    if (limitPaise <= 0) {
+      throw ArgumentError('Budget template amount must be greater than zero.');
+    }
+    final existing = await getBudgetTemplate(categoryId: categoryId);
+    // A template edit changes the plan from the selected month forward;
+    // budgets already created for earlier months remain historical snapshots.
+    final normalizedStart = _monthStart(startMonth);
+
+    if (existing == null) {
+      await database.into(database.budgetTemplates).insert(
+        BudgetTemplatesCompanion.insert(
+          categoryId: Value(categoryId),
+          startMonth: normalizedStart,
+          limitPaise: limitPaise,
+          rolloverEnabled: Value(rolloverEnabled),
+          isActive: Value(isActive),
+        ),
+      );
+    } else {
+      await (database.update(database.budgetTemplates)
+            ..where((template) => template.id.equals(existing.id)))
+          .write(BudgetTemplatesCompanion(
+        startMonth: Value(normalizedStart),
+        limitPaise: Value(limitPaise),
+        rolloverEnabled: Value(rolloverEnabled),
+        isActive: Value(isActive),
+      ));
+    }
+  }
+
+  /// Pauses an existing template. Budgets already generated for earlier
+  /// months are preserved; no new months will be populated while paused.
+  Future<void> setBudgetTemplateActive({
+    required int? categoryId,
+    required bool isActive,
+    int? limitPaise,
+    bool? rolloverEnabled,
+  }) async {
+    final existing = await getBudgetTemplate(categoryId: categoryId);
+    if (existing == null) return;
+
+    await (database.update(database.budgetTemplates)
+          ..where((template) => template.id.equals(existing.id)))
+        .write(BudgetTemplatesCompanion(
+      isActive: Value(isActive),
+      limitPaise: limitPaise == null
+          ? const Value.absent()
+          : Value(limitPaise),
+      rolloverEnabled: rolloverEnabled == null
+          ? const Value.absent()
+          : Value(rolloverEnabled),
+    ));
+  }
+
+  /// Applies active templates to [month], but never overwrites a budget the
+  /// user has already created or edited for that month.
+  ///
+  /// This is intentionally run when the app opens a budget view rather than
+  /// through a background task. It creates budget limits only, not transactions.
+  Future<int> applyTemplatesForMonth(DateTime month) async {
+    // The Home, Budgets, and Insights views can request template application
+    // close together. Serialize these operations per database so two screens
+    // cannot both observe a missing month and insert duplicate budget rows.
+    final previous = _templateApplyTails[database] ?? Future<void>.value();
+    final gate = Completer<void>();
+    _templateApplyTails[database] = gate.future;
+
+    await previous;
+    try {
+      return await _applyTemplatesForMonth(month);
+    } finally {
+      gate.complete();
+    }
+  }
+
+  Future<int> _applyTemplatesForMonth(DateTime month) async {
+    final targetMonth = _monthStart(month);
+    final templates = await (database.select(database.budgetTemplates)
+          ..where(
+            (template) =>
+                template.isActive.equals(true) &
+                template.startMonth.isSmallerOrEqualValue(targetMonth),
+          )
+          ..orderBy([(template) => OrderingTerm.asc(template.id)]))
+        .get();
+
+    var applied = 0;
+    await database.transaction(() async {
+      for (final template in templates) {
+        // Backfill any months missed while the app was not opened. This keeps
+        // the recurring plan consistent and makes the budget history complete.
+        var monthToApply = _monthStart(template.startMonth);
+        while (!monthToApply.isAfter(targetMonth)) {
+          if (template.categoryId == null) {
+            final existing = await getMonthlyBudget(monthToApply);
+            if (existing == null) {
+              await database.into(database.budgets).insert(
+                BudgetsCompanion.insert(
+                  categoryId: const Value(null),
+                  monthStart: monthToApply,
+                  limitPaise: template.limitPaise,
+                  rolloverEnabled: Value(template.rolloverEnabled),
+                ),
+              );
+              applied++;
+            }
+          } else {
+            final category = await (database.select(database.categories)
+                  ..where((item) => item.id.equals(template.categoryId!)))
+                .getSingleOrNull();
+            if (category != null && category.type == 'expense') {
+              final existing = await getCategoryBudget(
+                month: monthToApply,
+                categoryId: template.categoryId!,
+              );
+              if (existing == null) {
+                await database.into(database.budgets).insert(
+                  BudgetsCompanion.insert(
+                    categoryId: Value(template.categoryId),
+                    monthStart: monthToApply,
+                    limitPaise: template.limitPaise,
+                    rolloverEnabled: Value(template.rolloverEnabled),
+                  ),
+                );
+                applied++;
+              }
+            }
+          }
+
+          monthToApply = _nextMonthStart(monthToApply);
+        }
+      }
+    });
+    return applied;
+  }
 
   Future<Budget?> getMonthlyBudget(DateTime month) async {
     final start = _monthStart(month);
@@ -426,11 +610,15 @@ class BudgetRepository {
     final budget = await getMonthlyBudget(month);
     if (budget == null) return null;
 
+    final template = await getBudgetTemplate(categoryId: null);
     return MonthlyBudgetSummary(
       budgetPaise: amounts.baseBudgetPaise,
       availableBudgetPaise: amounts.availableBudgetPaise,
       rolloverPaise: amounts.rolloverPaise,
       rolloverEnabled: budget.rolloverEnabled,
+      repeatsMonthly: template != null &&
+              template.isActive &&
+              !_monthStart(template.startMonth).isAfter(_monthStart(month)),
       expensesPaise: amounts.expensesPaise,
       remainingPaise: amounts.remainingPaise,
     );
@@ -454,6 +642,7 @@ class BudgetRepository {
       final budget = amounts == null
           ? null
           : await getCategoryBudget(month: month, categoryId: category.id);
+      final template = await getBudgetTemplate(categoryId: category.id);
       final expenses =
           amounts?.expensesPaise ??
           await getCategoryExpensesPaise(month: month, categoryId: category.id);
@@ -465,6 +654,9 @@ class BudgetRepository {
           availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
           rolloverPaise: amounts?.rolloverPaise ?? 0,
           rolloverEnabled: budget?.rolloverEnabled ?? false,
+          repeatsMonthly: template != null &&
+              template.isActive &&
+              !_monthStart(template.startMonth).isAfter(_monthStart(month)),
           expensesPaise: expenses,
         ),
       );

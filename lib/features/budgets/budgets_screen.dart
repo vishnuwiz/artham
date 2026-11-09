@@ -26,11 +26,13 @@ class _BudgetDialogResult {
   final _BudgetDialogAction action;
   final String amount;
   final bool rolloverEnabled;
+  final bool repeatMonthly;
 
   const _BudgetDialogResult({
     required this.action,
     this.amount = '',
     this.rolloverEnabled = false,
+    this.repeatMonthly = false,
   });
 }
 
@@ -45,7 +47,12 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     super.initState();
     final now = DateTime.now();
     _selectedMonth = DateTime(now.year, now.month, 1);
-    _loadData();
+    _dataFuture = Future.value(
+      const _BudgetScreenData(overall: null, categories: []),
+    );
+    if (widget.isActive) {
+      _loadData();
+    }
   }
 
   @override
@@ -63,6 +70,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
   }
 
   Future<_BudgetScreenData> _fetchData() async {
+    await _repository.applyTemplatesForMonth(_selectedMonth);
     final overall = await _repository.getMonthlyBudgetSummary(_selectedMonth);
     final categories = await _repository.getCategoryBudgetSummaries(
       _selectedMonth,
@@ -107,6 +115,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     required int currentPaise,
     required bool currentRolloverEnabled,
   }) async {
+    final existingTemplate =
+        await _repository.getBudgetTemplate(categoryId: categoryId);
+    if (!mounted) return;
+
     final result = await showDialog<_BudgetDialogResult>(
       context: context,
       builder: (_) => _BudgetLimitDialog(
@@ -116,6 +128,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             : '',
         canRemove: currentPaise > 0,
         rolloverEnabled: currentRolloverEnabled,
+        repeatMonthly: existingTemplate?.isActive ?? false,
       ),
     );
 
@@ -129,6 +142,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           content: Text(
             'This will remove the ${categoryId == null ? 'overall' : 'category'} '
             'budget limit for ${_monthLabel(_selectedMonth)}. '
+            'Any recurring template for this budget will also be paused. '
             'Your transactions and account balances will not be changed.',
           ),
           actions: [
@@ -157,6 +171,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           categoryId: categoryId,
         );
       }
+      await _repository.setBudgetTemplateActive(
+        categoryId: categoryId,
+        isActive: false,
+      );
 
       if (!mounted) return;
       setState(_loadData);
@@ -178,6 +196,22 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       await _repository.saveCategoryBudget(
         month: _selectedMonth,
         categoryId: categoryId,
+        limitPaise: paise,
+        rolloverEnabled: result.rolloverEnabled,
+      );
+    }
+
+    if (result.repeatMonthly) {
+      await _repository.saveBudgetTemplate(
+        categoryId: categoryId,
+        startMonth: _selectedMonth,
+        limitPaise: paise,
+        rolloverEnabled: result.rolloverEnabled,
+      );
+    } else {
+      await _repository.setBudgetTemplateActive(
+        categoryId: categoryId,
+        isActive: false,
         limitPaise: paise,
         rolloverEnabled: result.rolloverEnabled,
       );
@@ -839,6 +873,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     final hasBudget = summary != null;
     final rolloverPaise = summary?.rolloverPaise ?? 0;
     final rolloverEnabled = summary?.rolloverEnabled ?? false;
+    final repeatsMonthly = summary?.repeatsMonthly ?? false;
     final ratio = hasBudget && available > 0 ? spent / available : 0.0;
     final over = hasBudget && remaining < 0;
 
@@ -874,6 +909,13 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               fontWeight: FontWeight.w800,
             ),
           ),
+          if (hasBudget && repeatsMonthly) ...[
+            const SizedBox(height: 5),
+            const Text(
+              'Repeats every month',
+              style: TextStyle(color: Colors.white70, fontSize: 11),
+            ),
+          ],
           if (hasBudget && (rolloverEnabled || rolloverPaise > 0)) ...[
             const SizedBox(height: 5),
             Text(
@@ -1027,6 +1069,16 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               ),
             ),
           ],
+          if (hasBudget && item.repeatsMonthly) ...[
+            const SizedBox(height: 3),
+            const Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                'Repeats every month',
+                style: TextStyle(color: _green, fontSize: 10),
+              ),
+            ),
+          ],
           if (hasBudget && item.rolloverEnabled) ...[
             const SizedBox(height: 3),
             const Align(
@@ -1103,12 +1155,14 @@ class _BudgetLimitDialog extends StatefulWidget {
   final String initialAmount;
   final bool canRemove;
   final bool rolloverEnabled;
+  final bool repeatMonthly;
 
   const _BudgetLimitDialog({
     required this.title,
     required this.initialAmount,
     required this.canRemove,
     required this.rolloverEnabled,
+    required this.repeatMonthly,
   });
 
   @override
@@ -1119,12 +1173,14 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
   late final TextEditingController _controller;
   final _formKey = GlobalKey<FormState>();
   late bool _rolloverEnabled;
+  late bool _repeatMonthly;
 
   @override
   void initState() {
     super.initState();
     _controller = TextEditingController(text: widget.initialAmount);
     _rolloverEnabled = widget.rolloverEnabled;
+    _repeatMonthly = widget.repeatMonthly;
   }
 
   @override
@@ -1137,11 +1193,12 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.title),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             TextFormField(
               controller: _controller,
               autofocus: true,
@@ -1181,7 +1238,24 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
               ),
               activeTrackColor: _green,
             ),
-          ],
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              value: _repeatMonthly,
+              onChanged: (value) {
+                setState(() => _repeatMonthly = value);
+              },
+              title: const Text(
+                'Repeat this budget monthly',
+                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              ),
+              subtitle: const Text(
+                'Create this budget automatically for future months when you open Artham.',
+                style: TextStyle(fontSize: 11),
+              ),
+              activeTrackColor: _green,
+            ),
+            ],
+          ),
         ),
       ),
       actions: [
@@ -1208,6 +1282,7 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
                   action: _BudgetDialogAction.save,
                   amount: _controller.text,
                   rolloverEnabled: _rolloverEnabled,
+                  repeatMonthly: _repeatMonthly,
                 ),
               );
             }
