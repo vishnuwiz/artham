@@ -4,7 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:artham/data/app_database.dart';
 
 void main() {
-  test('upgrades a version 2 budget and defaults rollover to off', () async {
+  test('upgrades a version 2 database to version 4 and preserves budgets', () async {
     final month = DateTime(2027, 4, 1);
     final monthStartSeconds = month.millisecondsSinceEpoch ~/ 1000;
 
@@ -43,10 +43,10 @@ void main() {
     );
     addTearDown(database.close);
 
-    // The first Drift query triggers the v2 -> v3 migration.
+    // The first Drift query triggers the v2 -> v4 migration.
     final migratedBudget = await database.select(database.budgets).getSingle();
 
-    expect(database.schemaVersion, 3);
+    expect(database.schemaVersion, 4);
     expect(migratedBudget.id, 1);
     expect(migratedBudget.monthStart, month);
     expect(migratedBudget.limitPaise, 250000);
@@ -55,6 +55,7 @@ void main() {
     final versionRow = await database
         .customSelect('PRAGMA user_version')
         .getSingle();
-    expect(versionRow.read<int>('user_version'), 3);
+    expect(versionRow.read<int>('user_version'), 4);
+    expect(await database.select(database.budgetTemplates).get(), isEmpty);
   });
 }
