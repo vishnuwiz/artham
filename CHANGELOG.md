@@ -7,6 +7,8 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 ## [Unreleased]
 
 ### Added
+- Added a reviewed bank-SMS import flow: parse one pasted bank/UPI alert, confirm the account and category, then create a local transaction with duplicate protection. The raw SMS body is not retained.
+- Added conservative parsing for common INR amounts, debit/credit direction, common date formats, UPI/UTR references, and basic category suggestions.
 - Added opt-in rollover for unused overall and category budget balances.
 - Added recurring monthly budget templates for overall and category budgets, with pause/resume controls.
 - Automatically populate missing monthly budgets from active templates when opening the app or budget view; existing month budgets are never overwritten.
