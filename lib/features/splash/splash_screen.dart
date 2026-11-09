@@ -65,99 +65,99 @@ class _SplashScreenState extends State<SplashScreen>
       ),
       child: Scaffold(
         backgroundColor: _night,
-      body: Stack(
-        fit: StackFit.expand,
-        children: [
-          const _AuroraBackground(),
-          SafeArea(
-            child: Center(
-              child: FadeTransition(
-                opacity: _fade,
-                child: ScaleTransition(
-                  scale: _scale,
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 28),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        const ArthamLogoMark(
-                          key: ValueKey('artham-splash-logo'),
-                          size: 178,
-                        ),
-                        const SizedBox(height: 38),
-                        const Text(
-                          'ARTHAM',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFFF6F5FF),
-                            fontSize: 29,
-                            fontWeight: FontWeight.w800,
-                            letterSpacing: 7.2,
+        body: Stack(
+          fit: StackFit.expand,
+          children: [
+            const _AuroraBackground(),
+            SafeArea(
+              child: Center(
+                child: FadeTransition(
+                  opacity: _fade,
+                  child: ScaleTransition(
+                    scale: _scale,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 28),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          const ArthamLogoMark(
+                            key: ValueKey('artham-splash-logo'),
+                            size: 178,
                           ),
-                        ),
-                        const SizedBox(height: 9),
-                        const Text(
-                          'അർഥം',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFFC8CBE5),
-                            fontSize: 18,
-                            fontWeight: FontWeight.w500,
-                            letterSpacing: 0.3,
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        const Text(
-                          'Your Personal Finance Companion',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: Color(0xFFB0B4D0),
-                            fontSize: 13,
-                            letterSpacing: 0.45,
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        const SizedBox(height: 36),
-                        Container(
-                          width: 54,
-                          height: 3,
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(4),
-                            gradient: const LinearGradient(
-                              colors: [_teal, Color(0xFF8D83E8), _pink],
+                          const SizedBox(height: 38),
+                          const Text(
+                            'ARTHAM',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFF6F5FF),
+                              fontSize: 29,
+                              fontWeight: FontWeight.w800,
+                              letterSpacing: 7.2,
                             ),
-                            boxShadow: [
-                              BoxShadow(
-                                color: _teal.withValues(alpha: 0.32),
-                                blurRadius: 12,
-                              ),
-                            ],
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 9),
+                          const Text(
+                            'അർഥം',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFC8CBE5),
+                              fontSize: 18,
+                              fontWeight: FontWeight.w500,
+                              letterSpacing: 0.3,
+                            ),
+                          ),
+                          const SizedBox(height: 24),
+                          const Text(
+                            'Your Personal Finance Companion',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: Color(0xFFB0B4D0),
+                              fontSize: 13,
+                              letterSpacing: 0.45,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                          const SizedBox(height: 36),
+                          Container(
+                            width: 54,
+                            height: 3,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(4),
+                              gradient: const LinearGradient(
+                                colors: [_teal, Color(0xFF8D83E8), _pink],
+                              ),
+                              boxShadow: [
+                                BoxShadow(
+                                  color: _teal.withValues(alpha: 0.32),
+                                  blurRadius: 12,
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
               ),
             ),
-          ),
-          const Positioned(
-            left: 0,
-            right: 0,
-            bottom: 26,
-            child: Text(
-              'PRIVATE BY DESIGN  •  YOUR DATA STAYS ON YOUR DEVICE',
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: Color(0xFF777C9B),
-                fontSize: 8,
-                letterSpacing: 1.25,
-                fontWeight: FontWeight.w600,
+            const Positioned(
+              left: 0,
+              right: 0,
+              bottom: 26,
+              child: Text(
+                'PRIVATE BY DESIGN  •  YOUR DATA STAYS ON YOUR DEVICE',
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  color: Color(0xFF777C9B),
+                  fontSize: 8,
+                  letterSpacing: 1.25,
+                  fontWeight: FontWeight.w600,
+                ),
               ),
             ),
-          ),
-        ],
-      ),
+          ],
+        ),
       ),
     );
   }
