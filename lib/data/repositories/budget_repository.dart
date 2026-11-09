@@ -120,9 +120,7 @@ class BudgetRepository {
               categoryId: const Value(null),
               monthStart: start,
               limitPaise: limitPaise,
-              rolloverEnabled: rolloverEnabled == null
-            ? const Value.absent()
-            : Value(rolloverEnabled),
+              rolloverEnabled: Value(rolloverEnabled ?? false),
             ),
           );
     }
@@ -157,7 +155,7 @@ class BudgetRepository {
     required DateTime month,
     required int categoryId,
     required int limitPaise,
-    bool rolloverEnabled = false,
+    bool? rolloverEnabled,
   }) async {
     if (limitPaise <= 0) {
       throw ArgumentError('Budget amount must be greater than zero.');
@@ -175,7 +173,9 @@ class BudgetRepository {
           .write(BudgetsCompanion(
         monthStart: Value(start),
         limitPaise: Value(limitPaise),
-        rolloverEnabled: Value(rolloverEnabled ?? false),
+        rolloverEnabled: rolloverEnabled == null
+            ? const Value.absent()
+            : Value(rolloverEnabled),
       ));
     } else {
       await database.into(database.budgets).insert(
@@ -183,7 +183,7 @@ class BudgetRepository {
               categoryId: Value(categoryId),
               monthStart: start,
               limitPaise: limitPaise,
-              rolloverEnabled: Value(rolloverEnabled),
+              rolloverEnabled: Value(rolloverEnabled ?? false),
             ),
           );
     }
