@@ -276,7 +276,7 @@ LazyDatabase _openConnection() {
 /// Returns a masked account identifier for display in the UI.
 String accountNumberLastFourLabel(String? lastFourDigits) {
   final digits = lastFourDigits?.trim() ?? '';
-  final valid = RegExp(r'^\d{4}.hasMatch(digits);
+  final valid = RegExp(r'^\d{4}$').hasMatch(digits);
   return '•••• ${valid ? digits : '----'}';
 }
 
