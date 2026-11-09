@@ -94,8 +94,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _loadBudget() {
-    _budgetSummaryFuture =
-        BudgetRepository(appDatabase).getMonthlyBudgetSummary(DateTime.now());
+    final repository = BudgetRepository(appDatabase);
+    final now = DateTime.now();
+    _budgetSummaryFuture = () async {
+      await repository.applyTemplatesForMonth(now);
+      return repository.getMonthlyBudgetSummary(now);
+    }();
   }
 
   Future<void> _editMonthlyBudget() async {
@@ -112,6 +116,8 @@ class _HomeScreenState extends State<HomeScreen> {
     );
 
     final formKey = GlobalKey<FormState>();
+    final existingTemplate =
+        await repository.getBudgetTemplate(categoryId: null);
     final shouldSave = await showDialog<bool>(
       context: context,
       builder: (dialogContext) {
@@ -175,6 +181,12 @@ class _HomeScreenState extends State<HomeScreen> {
       await repository.saveMonthlyBudget(
         month: now,
         limitPaise: amountPaise,
+      );
+      await repository.setBudgetTemplateActive(
+        categoryId: null,
+        isActive: existingTemplate?.isActive ?? false,
+        limitPaise: amountPaise,
+        rolloverEnabled: existing?.rolloverEnabled ?? false,
       );
 
       if (!mounted) return;
@@ -788,7 +800,7 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }
 
-        final budget = summary.budgetPaise;
+        final budget = summary.availableBudgetPaise;
         final expenses = summary.expensesPaise;
         final remaining = summary.remainingPaise;
         final rawProgress = summary.percentageUsed;
@@ -833,9 +845,20 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 5),
               Text(
-                'of ${_formatRupees(budget)} monthly budget',
+                'of ${_formatRupees(budget)} available this month',
                 style: const TextStyle(color: Colors.black54, fontSize: 12),
               ),
+              if (summary.rolloverPaise > 0 || summary.repeatsMonthly) ...[
+                const SizedBox(height: 4),
+                Text(
+                  [
+                    if (summary.rolloverPaise > 0)
+                      '${_formatRupees(summary.rolloverPaise)} carried forward',
+                    if (summary.repeatsMonthly) 'Repeats monthly',
+                  ].join(' · '),
+                  style: const TextStyle(color: primaryGreen, fontSize: 10),
+                ),
+              ],
               const SizedBox(height: 18),
               ClipRRect(
                 borderRadius: BorderRadius.circular(20),
