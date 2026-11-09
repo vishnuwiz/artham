@@ -2,8 +2,6 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:artham/data/sms_transaction_parser.dart';
 
 void main() {
-  const parser = SmsTransactionParser();
-
   test('parses a UPI debit with amount, date, reference and merchant', () {
     final result = SmsTransactionParser().parse(
       'Your A/c XX1234 was debited by Rs. 1,250.50 on 09-11-2026 '
