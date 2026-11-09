@@ -79,6 +79,7 @@ void main() {
       month: may,
       limitPaise: 120000,
     );
+    await addExpense(month: may, amountPaise: 20000);
 
     final result = await repository.getMonthlyBudgetRolloverAmounts(may);
 
@@ -86,7 +87,55 @@ void main() {
     expect(result!.baseBudgetPaise, 120000);
     expect(result.rolloverPaise, 30000);
     expect(result.availableBudgetPaise, 150000);
-    expect(result.remainingPaise, 150000);
+    expect(result.remainingPaise, 130000);
+  });
+
+  test('does not carry unused money when the prior budget opted out',
+      () async {
+    await repository.saveMonthlyBudget(
+      month: april,
+      limitPaise: 100000,
+    );
+    await addExpense(month: april, amountPaise: 25000);
+    await repository.saveMonthlyBudget(
+      month: may,
+      limitPaise: 80000,
+    );
+
+    final result = await repository.getMonthlyBudgetRolloverAmounts(may);
+
+    expect(result, isNotNull);
+    expect(result!.rolloverPaise, 0);
+    expect(result.availableBudgetPaise, 80000);
+  });
+
+  test('carries forward balances across consecutive enabled months', () async {
+    final january = DateTime(2027, 1, 1);
+    final february = DateTime(2027, 2, 1);
+    final march = DateTime(2027, 3, 1);
+
+    await repository.saveMonthlyBudget(
+      month: january,
+      limitPaise: 100000,
+      rolloverEnabled: true,
+    );
+    await addExpense(month: january, amountPaise: 70000);
+    await repository.saveMonthlyBudget(
+      month: february,
+      limitPaise: 50000,
+      rolloverEnabled: true,
+    );
+    await addExpense(month: february, amountPaise: 40000);
+    await repository.saveMonthlyBudget(
+      month: march,
+      limitPaise: 60000,
+    );
+
+    final result = await repository.getMonthlyBudgetRolloverAmounts(march);
+
+    expect(result, isNotNull);
+    expect(result!.rolloverPaise, 40000);
+    expect(result.availableBudgetPaise, 100000);
   });
 
   test('monthly budget never carries a negative balance', () async {
