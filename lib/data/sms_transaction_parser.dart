@@ -22,7 +22,7 @@ class ParsedSmsTransaction {
 /// debit/credit direction and one currency amount are not imported.
 class SmsTransactionParser {
   static final RegExp _debitPattern = RegExp(
-    r'\b(?:debited|debit|withdrawn|withdrawal|spent|paid|purchase|purchased|sent|transferred out|payment)\b',
+    r'\b(?:debited|debit|withdrawn|withdrawal|spent|paid|purchase|purchased|sent|transferred out)\b',
     caseSensitive: false,
   );
 
