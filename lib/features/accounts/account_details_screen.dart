@@ -521,74 +521,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
               ),
               validator: (value) {
                 final digits = value?.trim() ?? '';
-                if (!RegExp(r'^\d{4}
-              },
-            ),
-            const SizedBox(height: 8),
-            TextFormField(
-              controller: _balanceController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
-              decoration: _decoration('Opening balance (₹)'),
-              validator: (value) {
-                final amount = double.tryParse(value?.trim() ?? '');
-                if (amount == null || amount < 0) {
-                  return 'Enter a valid opening balance';
-                }
-                return null;
-              },
-            ),
-            const SizedBox(height: 16),
-            InkWell(
-              onTap: _selectDate,
-              borderRadius: BorderRadius.circular(14),
-              child: InputDecorator(
-                decoration: _decoration('Opening date'),
-                child: Row(
-                  children: [
-                    Expanded(child: Text(_formatDate(_openingDate))),
-                    const Icon(
-                      Icons.calendar_month_rounded,
-                      color: detailsGreen,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-            const SizedBox(height: 28),
-            SizedBox(
-              height: 54,
-              child: FilledButton(
-                onPressed: _isSaving ? null : _saveAccount,
-                style: FilledButton.styleFrom(
-                  backgroundColor: detailsGreen,
-                  foregroundColor: Colors.white,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(15),
-                  ),
-                ),
-                child: _isSaving
-                    ? const SizedBox(
-                        height: 22,
-                        width: 22,
-                        child: CircularProgressIndicator(
-                          color: Colors.white,
-                          strokeWidth: 2,
-                        ),
-                      )
-                    : const Text(
-                        'Save changes',
-                        style: TextStyle(fontWeight: FontWeight.w700),
-                      ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-}
-).hasMatch(digits)) {
+                if (!RegExp(r'^\d{4}$').hasMatch(digits)) {
                   return 'Enter exactly four digits';
                 }
                 return null;
