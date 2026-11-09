@@ -71,7 +71,6 @@ class CategoryBudgetSummary {
   }
 }
 
-
 class MonthlyBudgetHistoryItem {
   final DateTime month;
   final int? budgetPaise;
@@ -88,7 +87,7 @@ class MonthlyBudgetHistoryItem {
     this.rolloverPaise = 0,
     this.rolloverEnabled = false,
   }) : availableBudgetPaise =
-            availableBudgetPaise ?? (budgetPaise ?? 0) + rolloverPaise;
+           availableBudgetPaise ?? (budgetPaise ?? 0) + rolloverPaise;
 
   bool get hasBudget => budgetPaise != null && budgetPaise! > 0;
 
@@ -107,12 +106,16 @@ class BudgetRepository {
 
   Future<Budget?> getMonthlyBudget(DateTime month) async {
     final start = _monthStart(month);
-    final budgets = await (database.select(database.budgets)
-          ..where((budget) =>
-              budget.monthStart.equals(start) & budget.categoryId.isNull())
-          ..orderBy([(budget) => OrderingTerm.desc(budget.id)])
-          ..limit(1))
-        .get();
+    final budgets =
+        await (database.select(database.budgets)
+              ..where(
+                (budget) =>
+                    budget.monthStart.equals(start) &
+                    budget.categoryId.isNull(),
+              )
+              ..orderBy([(budget) => OrderingTerm.desc(budget.id)])
+              ..limit(1))
+            .get();
     return budgets.isEmpty ? null : budgets.first;
   }
 
@@ -129,17 +132,21 @@ class BudgetRepository {
     final existing = await getMonthlyBudget(start);
 
     if (existing != null) {
-      await (database.update(database.budgets)
-            ..where((budget) => budget.id.equals(existing.id)))
-          .write(BudgetsCompanion(
-        monthStart: Value(start),
-        limitPaise: Value(limitPaise),
-        rolloverEnabled: rolloverEnabled == null
-            ? const Value.absent()
-            : Value(rolloverEnabled),
-      ));
+      await (database.update(
+        database.budgets,
+      )..where((budget) => budget.id.equals(existing.id))).write(
+        BudgetsCompanion(
+          monthStart: Value(start),
+          limitPaise: Value(limitPaise),
+          rolloverEnabled: rolloverEnabled == null
+              ? const Value.absent()
+              : Value(rolloverEnabled),
+        ),
+      );
     } else {
-      await database.into(database.budgets).insert(
+      await database
+          .into(database.budgets)
+          .insert(
             BudgetsCompanion.insert(
               categoryId: const Value(null),
               monthStart: start,
@@ -155,13 +162,16 @@ class BudgetRepository {
     required int categoryId,
   }) async {
     final start = _monthStart(month);
-    final budgets = await (database.select(database.budgets)
-          ..where((budget) =>
-              budget.monthStart.equals(start) &
-              budget.categoryId.equals(categoryId))
-          ..orderBy([(budget) => OrderingTerm.desc(budget.id)])
-          ..limit(1))
-        .get();
+    final budgets =
+        await (database.select(database.budgets)
+              ..where(
+                (budget) =>
+                    budget.monthStart.equals(start) &
+                    budget.categoryId.equals(categoryId),
+              )
+              ..orderBy([(budget) => OrderingTerm.desc(budget.id)])
+              ..limit(1))
+            .get();
     return budgets.isEmpty ? null : budgets.first;
   }
 
@@ -169,9 +179,10 @@ class BudgetRepository {
   /// Transactions are not changed.
   Future<void> deleteMonthlyBudget(DateTime month) async {
     final start = _monthStart(month);
-    await (database.delete(database.budgets)
-          ..where((budget) =>
-              budget.monthStart.equals(start) & budget.categoryId.isNull()))
+    await (database.delete(database.budgets)..where(
+          (budget) =>
+              budget.monthStart.equals(start) & budget.categoryId.isNull(),
+        ))
         .go();
   }
 
@@ -192,17 +203,21 @@ class BudgetRepository {
     );
 
     if (existing != null) {
-      await (database.update(database.budgets)
-            ..where((budget) => budget.id.equals(existing.id)))
-          .write(BudgetsCompanion(
-        monthStart: Value(start),
-        limitPaise: Value(limitPaise),
-        rolloverEnabled: rolloverEnabled == null
-            ? const Value.absent()
-            : Value(rolloverEnabled),
-      ));
+      await (database.update(
+        database.budgets,
+      )..where((budget) => budget.id.equals(existing.id))).write(
+        BudgetsCompanion(
+          monthStart: Value(start),
+          limitPaise: Value(limitPaise),
+          rolloverEnabled: rolloverEnabled == null
+              ? const Value.absent()
+              : Value(rolloverEnabled),
+        ),
+      );
     } else {
-      await database.into(database.budgets).insert(
+      await database
+          .into(database.budgets)
+          .insert(
             BudgetsCompanion.insert(
               categoryId: Value(categoryId),
               monthStart: start,
@@ -220,22 +235,25 @@ class BudgetRepository {
     required int categoryId,
   }) async {
     final start = _monthStart(month);
-    await (database.delete(database.budgets)
-          ..where((budget) =>
+    await (database.delete(database.budgets)..where(
+          (budget) =>
               budget.monthStart.equals(start) &
-              budget.categoryId.equals(categoryId)))
+              budget.categoryId.equals(categoryId),
+        ))
         .go();
   }
 
   Future<int> getMonthlyExpensesPaise(DateTime month) async {
     final start = _monthStart(month);
     final end = _nextMonthStart(month);
-    final expenses = await (database.select(database.moneyTransactions)
-          ..where((transaction) =>
-              transaction.transactionType.equals('expense') &
-              transaction.transactionDate.isBiggerOrEqualValue(start) &
-              transaction.transactionDate.isSmallerThanValue(end)))
-        .get();
+    final expenses =
+        await (database.select(database.moneyTransactions)..where(
+              (transaction) =>
+                  transaction.transactionType.equals('expense') &
+                  transaction.transactionDate.isBiggerOrEqualValue(start) &
+                  transaction.transactionDate.isSmallerThanValue(end),
+            ))
+            .get();
 
     return expenses.fold<int>(
       0,
@@ -249,20 +267,21 @@ class BudgetRepository {
   }) async {
     final start = _monthStart(month);
     final end = _nextMonthStart(month);
-    final expenses = await (database.select(database.moneyTransactions)
-          ..where((transaction) =>
-              transaction.transactionType.equals('expense') &
-              transaction.categoryId.equals(categoryId) &
-              transaction.transactionDate.isBiggerOrEqualValue(start) &
-              transaction.transactionDate.isSmallerThanValue(end)))
-        .get();
+    final expenses =
+        await (database.select(database.moneyTransactions)..where(
+              (transaction) =>
+                  transaction.transactionType.equals('expense') &
+                  transaction.categoryId.equals(categoryId) &
+                  transaction.transactionDate.isBiggerOrEqualValue(start) &
+                  transaction.transactionDate.isSmallerThanValue(end),
+            ))
+            .get();
 
     return expenses.fold<int>(
       0,
       (total, transaction) => total + transaction.amountPaise,
     );
   }
-
 
   /// Returns the overall budget and actual expenses for the requested number
   /// of months, ending with [endingMonth] (or the current month).
@@ -286,19 +305,20 @@ class BudgetRepository {
       final expenses =
           amounts?.expensesPaise ?? await getMonthlyExpensesPaise(month);
 
-      history.add(MonthlyBudgetHistoryItem(
-        month: month,
-        budgetPaise: budget?.limitPaise,
-        availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
-        rolloverPaise: amounts?.rolloverPaise ?? 0,
-        rolloverEnabled: budget?.rolloverEnabled ?? false,
-        expensesPaise: expenses,
-      ));
+      history.add(
+        MonthlyBudgetHistoryItem(
+          month: month,
+          budgetPaise: budget?.limitPaise,
+          availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
+          rolloverPaise: amounts?.rolloverPaise ?? 0,
+          rolloverEnabled: budget?.rolloverEnabled ?? false,
+          expensesPaise: expenses,
+        ),
+      );
     }
 
     return history;
   }
-
 
   /// Returns carry-forward amounts for the selected overall monthly budget.
   /// Rollover is applied month-by-month and stops at the first missing budget
@@ -400,9 +420,7 @@ class BudgetRepository {
     return carryForward;
   }
 
-  Future<MonthlyBudgetSummary?> getMonthlyBudgetSummary(
-    DateTime month,
-  ) async {
+  Future<MonthlyBudgetSummary?> getMonthlyBudgetSummary(DateTime month) async {
     final amounts = await getMonthlyBudgetRolloverAmounts(month);
     if (amounts == null) return null;
     final budget = await getMonthlyBudget(month);
@@ -421,10 +439,11 @@ class BudgetRepository {
   Future<List<CategoryBudgetSummary>> getCategoryBudgetSummaries(
     DateTime month,
   ) async {
-    final categories = await (database.select(database.categories)
-          ..where((category) => category.type.equals('expense'))
-          ..orderBy([(category) => OrderingTerm.asc(category.name)]))
-        .get();
+    final categories =
+        await (database.select(database.categories)
+              ..where((category) => category.type.equals('expense'))
+              ..orderBy([(category) => OrderingTerm.asc(category.name)]))
+            .get();
 
     final results = <CategoryBudgetSummary>[];
     for (final category in categories) {
@@ -434,24 +453,21 @@ class BudgetRepository {
       );
       final budget = amounts == null
           ? null
-          : await getCategoryBudget(
-              month: month,
-              categoryId: category.id,
-            );
-      final expenses = amounts?.expensesPaise ??
-          await getCategoryExpensesPaise(
-            month: month,
-            categoryId: category.id,
-          );
+          : await getCategoryBudget(month: month, categoryId: category.id);
+      final expenses =
+          amounts?.expensesPaise ??
+          await getCategoryExpensesPaise(month: month, categoryId: category.id);
 
-      results.add(CategoryBudgetSummary(
-        category: category,
-        budgetPaise: amounts?.baseBudgetPaise ?? 0,
-        availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
-        rolloverPaise: amounts?.rolloverPaise ?? 0,
-        rolloverEnabled: budget?.rolloverEnabled ?? false,
-        expensesPaise: expenses,
-      ));
+      results.add(
+        CategoryBudgetSummary(
+          category: category,
+          budgetPaise: amounts?.baseBudgetPaise ?? 0,
+          availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
+          rolloverPaise: amounts?.rolloverPaise ?? 0,
+          rolloverEnabled: budget?.rolloverEnabled ?? false,
+          expensesPaise: expenses,
+        ),
+      );
     }
     return results;
   }

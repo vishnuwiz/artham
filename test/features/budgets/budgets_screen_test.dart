@@ -7,14 +7,14 @@ import 'package:artham/data/repositories/budget_repository.dart';
 import 'package:artham/features/budgets/budgets_screen.dart';
 
 void main() {
-  testWidgets('overall budget dialog saves the rollover setting', (tester) async {
+  testWidgets('overall budget dialog saves the rollover setting', (
+    tester,
+  ) async {
     final database = AppDatabase.forTesting(NativeDatabase.memory());
     addTearDown(database.close);
 
     await tester.pumpWidget(
-      MaterialApp(
-        home: BudgetsScreen(database: database),
-      ),
+      MaterialApp(home: BudgetsScreen(database: database)),
     );
     await tester.pumpAndSettle();
 
@@ -28,9 +28,8 @@ void main() {
     await tester.pumpAndSettle();
 
     final now = DateTime.now();
-    final budget = await BudgetRepository(database).getMonthlyBudget(
-      DateTime(now.year, now.month, 1),
-    );
+    final budget = await BudgetRepository(database)
+        .getMonthlyBudget(DateTime(now.year, now.month, 1));
 
     expect(budget, isNotNull);
     expect(budget!.limitPaise, 100000);
