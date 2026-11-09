@@ -25,7 +25,6 @@ class AddAccountScreen extends StatefulWidget {
 class _AddAccountScreenState extends State<AddAccountScreen> {
   final _formKey = GlobalKey<FormState>();
 
-  final _accountNameController = TextEditingController();
   final _lastFourController = TextEditingController();
   final _openingBalanceController = TextEditingController();
 
@@ -56,7 +55,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
     if (account != null) {
       _selectedBank = account.bankName;
       if (!_banks.contains(account.bankName)) _banks.add(account.bankName);
-      _accountNameController.text = account.accountName;
       _lastFourController.text = account.accountNumberLast4 ?? '';
       _openingBalanceController.text =
           (account.openingBalancePaise / 100).toStringAsFixed(2);
@@ -66,7 +64,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
   @override
   void dispose() {
-    _accountNameController.dispose();
     _lastFourController.dispose();
     _openingBalanceController.dispose();
     super.dispose();
@@ -127,7 +124,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       if (widget.account == null) {
         await _accountRepository.addAccount(
           bankName: _selectedBank!,
-          accountName: _accountNameController.text.trim(),
+          accountName: legacyAccountNameForStorage(_lastFourController.text),
           accountNumberLast4: _lastFourController.text.trim(),
           openingBalancePaise: balancePaise,
           openingDate: _openingDate,
@@ -136,7 +133,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         await _accountRepository.updateAccount(
           accountId: widget.account!.id,
           bankName: _selectedBank!,
-          accountName: _accountNameController.text.trim(),
+          accountName: legacyAccountNameForStorage(_lastFourController.text),
           accountNumberLast4: _lastFourController.text.trim(),
           openingBalancePaise: balancePaise,
           openingDate: _openingDate,
@@ -274,25 +271,6 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 validator: (value) {
                   if (value == null) {
                     return 'Please select a bank';
-                  }
-                  return null;
-                },
-              ),
-
-              const SizedBox(height: 20),
-
-              _buildLabel('Account name'),
-
-              TextFormField(
-                controller: _accountNameController,
-                textCapitalization: TextCapitalization.words,
-                decoration: _inputDecoration(
-                  hint: 'e.g. Personal Savings',
-                  icon: Icons.person_outline_rounded,
-                ),
-                validator: (value) {
-                  if (value == null || value.trim().isEmpty) {
-                    return 'Please enter an account name';
                   }
                   return null;
                 },

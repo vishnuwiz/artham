@@ -396,7 +396,7 @@ class _RecurringTransactionsScreenState
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      item.account.bankName,
+                      bankAccountDisplayLabel(item.account.bankName, item.account.accountNumberLast4),
                       style: const TextStyle(
                         color: Colors.black54,
                         fontSize: 12,
@@ -999,7 +999,7 @@ class _AddRecurringScheduleSheetState
                   (account) => DropdownMenuItem<int>(
                     value: account.id,
                     child: Text(
-                      '${account.bankName} · ${account.accountName}',
+                      bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),

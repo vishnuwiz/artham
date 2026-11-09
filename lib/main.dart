@@ -8,6 +8,7 @@ import 'data/repositories/account_repository.dart';
 import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'features/settings/settings_screen.dart';
 
 late final AppDatabase appDatabase;
 
@@ -69,7 +70,7 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int selectedTab = 0;
   bool showBalance = true;
 
@@ -81,7 +82,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadAccounts();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed && mounted) {
+      setState(_loadAccounts);
+    }
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
   }
 
   void _loadAccounts() {
@@ -148,7 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
             ActivityScreen(database: appDatabase),
             InsightsScreen(database: appDatabase, isActive: selectedTab == 2),
             BudgetsScreen(database: appDatabase, isActive: selectedTab == 3),
-            buildPlaceholder('Settings', Icons.settings),
+            SettingsScreen(database: appDatabase),
           ],
         ),
       ),

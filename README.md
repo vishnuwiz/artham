@@ -12,6 +12,8 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
+- **Automatic Android bank-SMS import (device validation pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are processed in the background and saved locally without paste or confirmation. Duplicate alerts are ignored, and the original SMS body is not retained. Alerts that cannot be mapped safely to a saved bank account wait in Settings for account assignment.
+- **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
@@ -29,9 +31,10 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
   - Confirm a due occurrence to add it to the normal transaction history.
   - Generated transactions are recorded with a recurring source and protected against duplicate generation for the same schedule occurrence.
 
-### Planned
+### Platform notes
 
-- SMS-based transaction import.
+- Android automatic SMS import is opt-in and listens only for new incoming SMS broadcasts; it does not read or scan the existing inbox and does not request `READ_SMS`. `RECEIVE_SMS` is a hard-restricted Android permission. Distribution through Google Play requires the applicable SMS-based money-management declaration and review/approval; a sideloaded APK may not be allowlisted to hold this permission.
+- iOS supports user-initiated SMS sharing/pasting only; ordinary third-party apps cannot read the full Messages inbox.
 - Bank statement import.
 - Database encryption and additional security improvements.
 - Expanded Settings options.
@@ -68,6 +71,8 @@ The database includes the following tables:
 | `BudgetTemplates` | Stores recurring monthly overall/category budget templates and their effective start month |
 | `ProcessedSms` | Tracks processed SMS records |
 | `RecurringSchedules` | Stores recurring transaction schedules and their next due dates |
+
+An auxiliary Android-only `pending_sms_imports` table stores structured transaction fields (never the original SMS body) when an alert cannot be matched safely to an account. Pending items are shown in Settings for account assignment.
 
 **Amount storage:** Monetary amounts are stored as integer paise to avoid floating-point precision issues. For example, ₹100.00 is stored as `10000`.
 

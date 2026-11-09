@@ -72,7 +72,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         title: const Text('Deactivate account?'),
         content: Text(
           'Are you sure you want to deactivate '
-          '${account.bankName} (${account.accountName})?\n\n'
+          '${bankAccountDisplayLabel(account.bankName, account.accountNumberLast4)}?\n\n'
           'The account will be hidden from your active accounts. '
           'Its saved information and transaction history will remain.',
         ),
@@ -217,8 +217,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     ),
                     const SizedBox(height: 5),
                     Text(
-                      account.accountName,
-                      style: const TextStyle(color: Colors.black54),
+                      accountNumberLastFourLabel(account.accountNumberLast4),
+                      style: const TextStyle(color: Colors.black54, letterSpacing: 1),
                     ),
                     const SizedBox(height: 22),
                     const Text(
@@ -261,8 +261,6 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                 child: Column(
                   children: [
                     _detailRow('Bank name', account.bankName),
-                    const Divider(height: 1),
-                    _detailRow('Account name', account.accountName),
                     const Divider(height: 1),
                     _detailRow(
                       'Account number',
@@ -346,7 +344,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   late final AccountRepository _repository;
   late final TextEditingController _bankNameController;
-  late final TextEditingController _accountNameController;
   late final TextEditingController _last4Controller;
   late final TextEditingController _balanceController;
 
@@ -372,8 +369,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     _repository = AccountRepository(widget.database);
     _bankNameController =
         TextEditingController(text: widget.account.bankName);
-    _accountNameController =
-        TextEditingController(text: widget.account.accountName);
     _last4Controller = TextEditingController(
       text: widget.account.accountNumberLast4 ?? '',
     );
@@ -386,7 +381,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
   @override
   void dispose() {
     _bankNameController.dispose();
-    _accountNameController.dispose();
     _last4Controller.dispose();
     _balanceController.dispose();
     super.dispose();
@@ -423,7 +417,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       final success = await _repository.updateAccount(
         accountId: widget.account.id,
         bankName: _bankNameController.text.trim(),
-        accountName: _accountNameController.text.trim(),
+        accountName: legacyAccountNameForStorage(_last4Controller.text),
         accountNumberLast4: _last4Controller.text.trim(),
         openingBalancePaise: (balance * 100).round(),
         openingDate: _openingDate,
@@ -518,15 +512,6 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
             ),
             const SizedBox(height: 16),
             TextFormField(
-              controller: _accountNameController,
-              decoration: _decoration('Account name'),
-              validator: (value) =>
-                  value == null || value.trim().isEmpty
-                      ? 'Please enter the account name'
-                      : null,
-            ),
-            const SizedBox(height: 16),
-            TextFormField(
               controller: _last4Controller,
               keyboardType: TextInputType.number,
               maxLength: 4,
@@ -536,9 +521,8 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
               ),
               validator: (value) {
                 final digits = value?.trim() ?? '';
-                if (digits.isNotEmpty &&
-                    !RegExp(r'^\d{4}$').hasMatch(digits)) {
-                  return 'Enter exactly four digits or leave blank';
+                if (!RegExp(r'^\d{4}$').hasMatch(digits)) {
+                  return 'Enter exactly four digits';
                 }
                 return null;
               },

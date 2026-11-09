@@ -161,7 +161,12 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
 
           final details = snapshot.data!;
           final categoryName = details.category?.name ?? 'Uncategorised';
-          final accountName = details.account?.accountName ?? 'Inactive account';
+          final accountName = details.account == null
+              ? 'Inactive account'
+              : bankAccountDisplayLabel(
+                  details.account!.bankName,
+                  details.account!.accountNumberLast4,
+                );
 
           return ListView(
             padding: const EdgeInsets.all(20),
@@ -538,7 +543,7 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                                     (account) => DropdownMenuItem<int>(
                                       value: account.id,
                                       child: Text(
-                                        '${account.bankName} · ${account.accountName}',
+                                        bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
                                         overflow: TextOverflow.ellipsis,
                                       ),
                                     ),

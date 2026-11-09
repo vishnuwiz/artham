@@ -276,10 +276,11 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      account.accountName,
+                      accountNumberLastFourLabel(account.accountNumberLast4),
                       style: const TextStyle(
                         color: Colors.black54,
                         fontSize: 12,
+                        letterSpacing: 1,
                       ),
                     ),
                   ],
@@ -308,17 +309,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
           ),
 
           const SizedBox(height: 20),
-
-          Text(
-            '•••• ${account.accountNumberLast4 ?? '----'}',
-            style: const TextStyle(
-              color: Colors.black54,
-              fontSize: 13,
-              letterSpacing: 1,
-            ),
-          ),
-
-          const SizedBox(height: 14),
 
           const Text(
             'CURRENT BALANCE',
