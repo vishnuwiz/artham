@@ -9,7 +9,7 @@ import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
 
-late final AppDatabase appDatabase;
+late AppDatabase appDatabase;
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
