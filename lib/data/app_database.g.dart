@@ -997,8 +997,7 @@ class $MerchantsTable extends Merchants
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('default_category_id')) {
-      context.handle(
+    if (data.containsKey('default_category_id')) {      context.handle(
         _defaultCategoryIdMeta,
         defaultCategoryId.isAcceptableOrUnknown(
           data['default_category_id']!,
@@ -1997,8 +1996,7 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
-    false,
-    hasAutoIncrement: true,
+    false,    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
@@ -2406,6 +2404,475 @@ class BudgetsCompanion extends UpdateCompanion<Budget> {
   }
 }
 
+class $BudgetTemplatesTable extends BudgetTemplates
+    with TableInfo<$BudgetTemplatesTable, BudgetTemplate> {
+  @override
+  final GeneratedDatabase attachedDatabase;
+  final String? _alias;
+  $BudgetTemplatesTable(this.attachedDatabase, [this._alias]);
+  static const VerificationMeta _idMeta = const VerificationMeta('id');
+  @override
+  late final GeneratedColumn<int> id = GeneratedColumn<int>(
+    'id',
+    aliasedName,
+    false,
+    hasAutoIncrement: true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'PRIMARY KEY AUTOINCREMENT',
+    ),
+  );
+  static const VerificationMeta _categoryIdMeta = const VerificationMeta(
+    'categoryId',
+  );
+  @override
+  late final GeneratedColumn<int> categoryId = GeneratedColumn<int>(
+    'category_id',
+    aliasedName,
+    true,
+    type: DriftSqlType.int,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'REFERENCES categories (id)',
+    ),
+  );
+  static const VerificationMeta _startMonthMeta = const VerificationMeta(
+    'startMonth',
+  );
+  @override
+  late final GeneratedColumn<DateTime> startMonth = GeneratedColumn<DateTime>(
+    'start_month',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _limitPaiseMeta = const VerificationMeta(
+    'limitPaise',
+  );
+  @override
+  late final GeneratedColumn<int> limitPaise = GeneratedColumn<int>(
+    'limit_paise',
+    aliasedName,
+    false,
+    type: DriftSqlType.int,
+    requiredDuringInsert: true,
+  );
+  static const VerificationMeta _rolloverEnabledMeta = const VerificationMeta(
+    'rolloverEnabled',
+  );
+  @override
+  late final GeneratedColumn<bool> rolloverEnabled = GeneratedColumn<bool>(
+    'rollover_enabled',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("rollover_enabled" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
+  static const VerificationMeta _isActiveMeta = const VerificationMeta(
+    'isActive',
+  );
+  @override
+  late final GeneratedColumn<bool> isActive = GeneratedColumn<bool>(
+    'is_active',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_active" IN (0, 1))',
+    ),
+    defaultValue: const Constant(true),
+  );
+  static const VerificationMeta _createdAtMeta = const VerificationMeta(
+    'createdAt',
+  );
+  @override
+  late final GeneratedColumn<DateTime> createdAt = GeneratedColumn<DateTime>(
+    'created_at',
+    aliasedName,
+    false,
+    type: DriftSqlType.dateTime,
+    requiredDuringInsert: false,
+    defaultValue: currentDateAndTime,
+  );
+  @override
+  List<GeneratedColumn> get $columns => [
+    id,
+    categoryId,
+    startMonth,
+    limitPaise,
+    rolloverEnabled,
+    isActive,
+    createdAt,
+  ];
+  @override
+  String get aliasedName => _alias ?? actualTableName;
+  @override
+  String get actualTableName => $name;
+  static const String $name = 'budget_templates';
+  @override
+  VerificationContext validateIntegrity(
+    Insertable<BudgetTemplate> instance, {
+    bool isInserting = false,
+  }) {
+    final context = VerificationContext();
+    final data = instance.toColumns(true);
+    if (data.containsKey('id')) {
+      context.handle(_idMeta, id.isAcceptableOrUnknown(data['id']!, _idMeta));
+    }
+    if (data.containsKey('category_id')) {
+      context.handle(
+        _categoryIdMeta,
+        categoryId.isAcceptableOrUnknown(data['category_id']!, _categoryIdMeta),
+      );
+    }
+    if (data.containsKey('start_month')) {
+      context.handle(
+        _startMonthMeta,
+        startMonth.isAcceptableOrUnknown(data['start_month']!, _startMonthMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_startMonthMeta);
+    }
+    if (data.containsKey('limit_paise')) {
+      context.handle(
+        _limitPaiseMeta,
+        limitPaise.isAcceptableOrUnknown(data['limit_paise']!, _limitPaiseMeta),
+      );
+    } else if (isInserting) {
+      context.missing(_limitPaiseMeta);
+    }
+    if (data.containsKey('rollover_enabled')) {
+      context.handle(
+        _rolloverEnabledMeta,
+        rolloverEnabled.isAcceptableOrUnknown(
+          data['rollover_enabled']!,
+          _rolloverEnabledMeta,
+        ),
+      );
+    }
+    if (data.containsKey('is_active')) {
+      context.handle(
+        _isActiveMeta,
+        isActive.isAcceptableOrUnknown(data['is_active']!, _isActiveMeta),
+      );
+    }
+    if (data.containsKey('created_at')) {
+      context.handle(
+        _createdAtMeta,
+        createdAt.isAcceptableOrUnknown(data['created_at']!, _createdAtMeta),
+      );
+    }
+    return context;
+  }
+
+  @override
+  Set<GeneratedColumn> get $primaryKey => {id};
+  @override
+  BudgetTemplate map(Map<String, dynamic> data, {String? tablePrefix}) {
+    final effectivePrefix = tablePrefix != null ? '$tablePrefix.' : '';
+    return BudgetTemplate(
+      id: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}id'],
+      )!,
+      categoryId: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}category_id'],
+      ),
+      startMonth: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}start_month'],
+      )!,
+      limitPaise: attachedDatabase.typeMapping.read(
+        DriftSqlType.int,
+        data['${effectivePrefix}limit_paise'],
+      )!,
+      rolloverEnabled: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}rollover_enabled'],
+      )!,
+      isActive: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_active'],
+      )!,
+      createdAt: attachedDatabase.typeMapping.read(
+        DriftSqlType.dateTime,
+        data['${effectivePrefix}created_at'],
+      )!,
+    );
+  }
+
+  @override
+  $BudgetTemplatesTable createAlias(String alias) {
+    return $BudgetTemplatesTable(attachedDatabase, alias);
+  }
+}
+
+class BudgetTemplate extends DataClass implements Insertable<BudgetTemplate> {
+  final int id;
+  final int? categoryId;
+  final DateTime startMonth;
+  final int limitPaise;
+  final bool rolloverEnabled;
+  final bool isActive;
+  final DateTime createdAt;
+  const BudgetTemplate({
+    required this.id,
+    this.categoryId,
+    required this.startMonth,
+    required this.limitPaise,
+    required this.rolloverEnabled,
+    required this.isActive,
+    required this.createdAt,
+  });
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    map['id'] = Variable<int>(id);
+    if (!nullToAbsent || categoryId != null) {
+      map['category_id'] = Variable<int>(categoryId);
+    }
+    map['start_month'] = Variable<DateTime>(startMonth);
+    map['limit_paise'] = Variable<int>(limitPaise);
+    map['rollover_enabled'] = Variable<bool>(rolloverEnabled);
+    map['is_active'] = Variable<bool>(isActive);
+    map['created_at'] = Variable<DateTime>(createdAt);
+    return map;
+  }
+
+  BudgetTemplatesCompanion toCompanion(bool nullToAbsent) {
+    return BudgetTemplatesCompanion(
+      id: Value(id),
+      categoryId: categoryId == null && nullToAbsent
+          ? const Value.absent()
+          : Value(categoryId),
+      startMonth: Value(startMonth),
+      limitPaise: Value(limitPaise),
+      rolloverEnabled: Value(rolloverEnabled),
+      isActive: Value(isActive),
+      createdAt: Value(createdAt),
+    );
+  }
+
+  factory BudgetTemplate.fromJson(
+    Map<String, dynamic> json, {
+    ValueSerializer? serializer,
+  }) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return BudgetTemplate(
+      id: serializer.fromJson<int>(json['id']),
+      categoryId: serializer.fromJson<int?>(json['categoryId']),
+      startMonth: serializer.fromJson<DateTime>(json['startMonth']),
+      limitPaise: serializer.fromJson<int>(json['limitPaise']),
+      rolloverEnabled: serializer.fromJson<bool>(json['rolloverEnabled']),
+      isActive: serializer.fromJson<bool>(json['isActive']),
+      createdAt: serializer.fromJson<DateTime>(json['createdAt']),
+    );
+  }
+  @override
+  Map<String, dynamic> toJson({ValueSerializer? serializer}) {
+    serializer ??= driftRuntimeOptions.defaultSerializer;
+    return <String, dynamic>{
+      'id': serializer.toJson<int>(id),
+      'categoryId': serializer.toJson<int?>(categoryId),
+      'startMonth': serializer.toJson<DateTime>(startMonth),
+      'limitPaise': serializer.toJson<int>(limitPaise),
+      'rolloverEnabled': serializer.toJson<bool>(rolloverEnabled),
+      'isActive': serializer.toJson<bool>(isActive),
+      'createdAt': serializer.toJson<DateTime>(createdAt),
+    };
+  }
+
+  BudgetTemplate copyWith({
+    int? id,
+    Value<int?> categoryId = const Value.absent(),
+    DateTime? startMonth,
+    int? limitPaise,
+    bool? rolloverEnabled,
+    bool? isActive,
+    DateTime? createdAt,
+  }) => BudgetTemplate(
+    id: id ?? this.id,
+    categoryId: categoryId.present ? categoryId.value : this.categoryId,
+    startMonth: startMonth ?? this.startMonth,
+    limitPaise: limitPaise ?? this.limitPaise,
+    rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
+    isActive: isActive ?? this.isActive,
+    createdAt: createdAt ?? this.createdAt,
+  );
+  BudgetTemplate copyWithCompanion(BudgetTemplatesCompanion data) {
+    return BudgetTemplate(
+      id: data.id.present ? data.id.value : this.id,
+      categoryId: data.categoryId.present
+          ? data.categoryId.value
+          : this.categoryId,
+      startMonth: data.startMonth.present
+          ? data.startMonth.value
+          : this.startMonth,
+      limitPaise: data.limitPaise.present
+          ? data.limitPaise.value
+          : this.limitPaise,
+      rolloverEnabled: data.rolloverEnabled.present
+          ? data.rolloverEnabled.value
+          : this.rolloverEnabled,
+      isActive: data.isActive.present ? data.isActive.value : this.isActive,
+      createdAt: data.createdAt.present ? data.createdAt.value : this.createdAt,
+    );
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetTemplate(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('startMonth: $startMonth, ')
+          ..write('limitPaise: $limitPaise, ')
+          ..write('rolloverEnabled: $rolloverEnabled, ')
+          ..write('isActive: $isActive, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+
+  @override
+  int get hashCode => Object.hash(
+    id,
+    categoryId,
+    startMonth,
+    limitPaise,
+    rolloverEnabled,
+    isActive,
+    createdAt,
+  );
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other is BudgetTemplate &&
+          other.id == this.id &&
+          other.categoryId == this.categoryId &&
+          other.startMonth == this.startMonth &&
+          other.limitPaise == this.limitPaise &&
+          other.rolloverEnabled == this.rolloverEnabled &&
+          other.isActive == this.isActive &&
+          other.createdAt == this.createdAt);
+}
+
+class BudgetTemplatesCompanion extends UpdateCompanion<BudgetTemplate> {
+  final Value<int> id;
+  final Value<int?> categoryId;
+  final Value<DateTime> startMonth;
+  final Value<int> limitPaise;
+  final Value<bool> rolloverEnabled;
+  final Value<bool> isActive;
+  final Value<DateTime> createdAt;
+  const BudgetTemplatesCompanion({
+    this.id = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    this.startMonth = const Value.absent(),
+    this.limitPaise = const Value.absent(),
+    this.rolloverEnabled = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  });
+  BudgetTemplatesCompanion.insert({
+    this.id = const Value.absent(),
+    this.categoryId = const Value.absent(),
+    required DateTime startMonth,
+    required int limitPaise,
+    this.rolloverEnabled = const Value.absent(),
+    this.isActive = const Value.absent(),
+    this.createdAt = const Value.absent(),
+  }) : startMonth = Value(startMonth),
+       limitPaise = Value(limitPaise);
+  static Insertable<BudgetTemplate> custom({
+    Expression<int>? id,
+    Expression<int>? categoryId,
+    Expression<DateTime>? startMonth,
+    Expression<int>? limitPaise,
+    Expression<bool>? rolloverEnabled,
+    Expression<bool>? isActive,
+    Expression<DateTime>? createdAt,
+  }) {
+    return RawValuesInsertable({
+      if (id != null) 'id': id,
+      if (categoryId != null) 'category_id': categoryId,
+      if (startMonth != null) 'start_month': startMonth,
+      if (limitPaise != null) 'limit_paise': limitPaise,
+      if (rolloverEnabled != null) 'rollover_enabled': rolloverEnabled,
+      if (isActive != null) 'is_active': isActive,
+      if (createdAt != null) 'created_at': createdAt,
+    });
+  }
+
+  BudgetTemplatesCompanion copyWith({
+    Value<int>? id,
+    Value<int?>? categoryId,
+    Value<DateTime>? startMonth,
+    Value<int>? limitPaise,
+    Value<bool>? rolloverEnabled,
+    Value<bool>? isActive,
+    Value<DateTime>? createdAt,
+  }) {
+    return BudgetTemplatesCompanion(
+      id: id ?? this.id,
+      categoryId: categoryId ?? this.categoryId,
+      startMonth: startMonth ?? this.startMonth,
+      limitPaise: limitPaise ?? this.limitPaise,
+      rolloverEnabled: rolloverEnabled ?? this.rolloverEnabled,
+      isActive: isActive ?? this.isActive,
+      createdAt: createdAt ?? this.createdAt,
+    );
+  }
+
+  @override
+  Map<String, Expression> toColumns(bool nullToAbsent) {
+    final map = <String, Expression>{};
+    if (id.present) {
+      map['id'] = Variable<int>(id.value);
+    }
+    if (categoryId.present) {
+      map['category_id'] = Variable<int>(categoryId.value);
+    }
+    if (startMonth.present) {
+      map['start_month'] = Variable<DateTime>(startMonth.value);
+    }
+    if (limitPaise.present) {
+      map['limit_paise'] = Variable<int>(limitPaise.value);
+    }
+    if (rolloverEnabled.present) {
+      map['rollover_enabled'] = Variable<bool>(rolloverEnabled.value);
+    }
+    if (isActive.present) {
+      map['is_active'] = Variable<bool>(isActive.value);
+    }
+    if (createdAt.present) {
+      map['created_at'] = Variable<DateTime>(createdAt.value);
+    }
+    return map;
+  }
+
+  @override
+  String toString() {
+    return (StringBuffer('BudgetTemplatesCompanion(')
+          ..write('id: $id, ')
+          ..write('categoryId: $categoryId, ')
+          ..write('startMonth: $startMonth, ')
+          ..write('limitPaise: $limitPaise, ')
+          ..write('rolloverEnabled: $rolloverEnabled, ')
+          ..write('isActive: $isActive, ')
+          ..write('createdAt: $createdAt')
+          ..write(')'))
+        .toString();
+  }
+}
+
 class $ProcessedSmsTable extends ProcessedSms
     with TableInfo<$ProcessedSmsTable, ProcessedSm> {
   @override
@@ -2528,8 +2995,7 @@ class $ProcessedSmsTable extends ProcessedSms
       )!,
       fingerprint: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}fingerprint'],
-      )!,
+        data['${effectivePrefix}fingerprint'],      )!,
       receivedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}received_at'],
@@ -3504,6 +3970,9 @@ abstract class _$AppDatabase extends GeneratedDatabase {
   late final $MoneyTransactionsTable moneyTransactions =
       $MoneyTransactionsTable(this);
   late final $BudgetsTable budgets = $BudgetsTable(this);
+  late final $BudgetTemplatesTable budgetTemplates = $BudgetTemplatesTable(
+    this,
+  );
   late final $ProcessedSmsTable processedSms = $ProcessedSmsTable(this);
   late final $RecurringSchedulesTable recurringSchedules =
       $RecurringSchedulesTable(this);
@@ -3517,6 +3986,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
     merchants,
     moneyTransactions,
     budgets,
+    budgetTemplates,
     processedSms,
     recurringSchedules,
   ];
@@ -3524,8 +3994,7 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$BankAccountsTableCreateCompanionBuilder =
     BankAccountsCompanion Function({
-      Value<int> id,
-      required String bankName,
+      Value<int> id,      required String bankName,
       required String accountName,
       Value<String?> accountNumberLast4,
       required int openingBalancePaise,
@@ -3968,6 +4437,26 @@ final class $$CategoriesTableReferences
     );
   }
 
+  static MultiTypedResultKey<$BudgetTemplatesTable, List<BudgetTemplate>>
+  _budgetTemplatesRefsTable(_$AppDatabase db) => MultiTypedResultKey.fromTable(
+    db.budgetTemplates,
+    aliasName: 'categories__id__budget_templates__category_id',
+  );
+
+  $$BudgetTemplatesTableProcessedTableManager get budgetTemplatesRefs {
+    final manager = $$BudgetTemplatesTableTableManager(
+      $_db,
+      $_db.budgetTemplates,
+    ).filter((f) => f.categoryId.id.sqlEquals($_itemColumn<int>('id')!));
+
+    final cache = $_typedResult.readTableOrNull(
+      _budgetTemplatesRefsTable($_db),
+    );
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: cache),
+    );
+  }
+
   static MultiTypedResultKey<$RecurringSchedulesTable, List<RecurringSchedule>>
   _recurringSchedulesRefsTable(_$AppDatabase db) =>
       MultiTypedResultKey.fromTable(
@@ -4095,6 +4584,31 @@ class $$CategoriesTableFilterComposer
           }) => $$BudgetsTableFilterComposer(
             $db: $db,
             $table: $db.budgets,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
+  Expression<bool> budgetTemplatesRefs(
+    Expression<bool> Function($$BudgetTemplatesTableFilterComposer f) f,
+  ) {
+    final $$BudgetTemplatesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetTemplates,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetTemplatesTableFilterComposer(
+            $db: $db,
+            $table: $db.budgetTemplates,
             $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
             joinBuilder: joinBuilder,
             $removeJoinBuilderFromRootComposer:
@@ -4273,6 +4787,31 @@ class $$CategoriesTableAnnotationComposer
     return f(composer);
   }
 
+  Expression<T> budgetTemplatesRefs<T extends Object>(
+    Expression<T> Function($$BudgetTemplatesTableAnnotationComposer a) f,
+  ) {
+    final $$BudgetTemplatesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.id,
+      referencedTable: $db.budgetTemplates,
+      getReferencedColumn: (t) => t.categoryId,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$BudgetTemplatesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.budgetTemplates,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return f(composer);
+  }
+
   Expression<T> recurringSchedulesRefs<T extends Object>(
     Expression<T> Function($$RecurringSchedulesTableAnnotationComposer a) f,
   ) {
@@ -4317,6 +4856,7 @@ class $$CategoriesTableTableManager
             bool merchantsRefs,
             bool moneyTransactionsRefs,
             bool budgetsRefs,
+            bool budgetTemplatesRefs,
             bool recurringSchedulesRefs,
           })
         > {
@@ -4376,6 +4916,7 @@ class $$CategoriesTableTableManager
                 merchantsRefs = false,
                 moneyTransactionsRefs = false,
                 budgetsRefs = false,
+                budgetTemplatesRefs = false,
                 recurringSchedulesRefs = false,
               }) {
                 return PrefetchHooks(
@@ -4384,6 +4925,7 @@ class $$CategoriesTableTableManager
                     if (merchantsRefs) db.merchants,
                     if (moneyTransactionsRefs) db.moneyTransactions,
                     if (budgetsRefs) db.budgets,
+                    if (budgetTemplatesRefs) db.budgetTemplates,
                     if (recurringSchedulesRefs) db.recurringSchedules,
                   ],
                   addJoins: null,
@@ -4449,6 +4991,25 @@ class $$CategoriesTableTableManager
                           referencedColumn: 'category_id',
                           typedResults: items,
                         ),
+                      if (budgetTemplatesRefs)
+                        await $_getPrefetchedDataByColumns<
+                          Category,                          $CategoriesTable,
+                          BudgetTemplate,
+                          $BudgetTemplatesTable
+                        >(
+                          currentTable: table,
+                          referencedTable: $$CategoriesTableReferences
+                              ._budgetTemplatesRefsTable(db),
+                          managerFromTypedResult: (p0) =>
+                              $$CategoriesTableReferences(
+                                db,
+                                table,
+                                p0,
+                              ).budgetTemplatesRefs,
+                          currentColumn: 'id',
+                          referencedColumn: 'category_id',
+                          typedResults: items,
+                        ),
                       if (recurringSchedulesRefs)
                         await $_getPrefetchedDataByColumns<
                           Category,
@@ -4493,6 +5054,7 @@ typedef $$CategoriesTableProcessedTableManager =
         bool merchantsRefs,
         bool moneyTransactionsRefs,
         bool budgetsRefs,
+        bool budgetTemplatesRefs,
         bool recurringSchedulesRefs,
       })
     >;
@@ -5430,8 +5992,7 @@ class $$MoneyTransactionsTableTableManager
           $$MoneyTransactionsTableCreateCompanionBuilder,
           $$MoneyTransactionsTableUpdateCompanionBuilder,
           (MoneyTransaction, $$MoneyTransactionsTableReferences),
-          MoneyTransaction,
-          PrefetchHooks Function({
+          MoneyTransaction,          PrefetchHooks Function({
             bool accountId,
             bool transferToAccountId,
             bool categoryId,
@@ -5955,6 +6516,366 @@ typedef $$BudgetsTableProcessedTableManager =
       Budget,
       PrefetchHooks Function({bool categoryId})
     >;
+typedef $$BudgetTemplatesTableCreateCompanionBuilder =
+    BudgetTemplatesCompanion Function({
+      Value<int> id,
+      Value<int?> categoryId,
+      required DateTime startMonth,
+      required int limitPaise,
+      Value<bool> rolloverEnabled,
+      Value<bool> isActive,
+      Value<DateTime> createdAt,
+    });
+typedef $$BudgetTemplatesTableUpdateCompanionBuilder =
+    BudgetTemplatesCompanion Function({
+      Value<int> id,
+      Value<int?> categoryId,
+      Value<DateTime> startMonth,
+      Value<int> limitPaise,
+      Value<bool> rolloverEnabled,
+      Value<bool> isActive,
+      Value<DateTime> createdAt,
+    });
+
+final class $$BudgetTemplatesTableReferences
+    extends
+        BaseReferences<_$AppDatabase, $BudgetTemplatesTable, BudgetTemplate> {
+  $$BudgetTemplatesTableReferences(
+    super.$_db,
+    super.$_table,
+    super.$_typedResult,
+  );
+
+  static $CategoriesTable _categoryIdTable(_$AppDatabase db) => db.categories
+      .createAlias('budget_templates__category_id__categories__id');
+
+  $$CategoriesTableProcessedTableManager? get categoryId {
+    final $_column = $_itemColumn<int>('category_id');
+    if ($_column == null) return null;
+    final manager = $$CategoriesTableTableManager(
+      $_db,
+      $_db.categories,
+    ).filter((f) => f.id.sqlEquals($_column));
+    final item = $_typedResult.readTableOrNull(_categoryIdTable($_db));
+    if (item == null) return manager;
+    return ProcessedTableManager(
+      manager.$state.copyWith(prefetchedData: [item]),
+    );
+  }
+}
+
+class $$BudgetTemplatesTableFilterComposer
+    extends Composer<_$AppDatabase, $BudgetTemplatesTable> {
+  $$BudgetTemplatesTableFilterComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnFilters<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get startMonth => $composableBuilder(
+    column: $table.startMonth,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<int> get limitPaise => $composableBuilder(
+    column: $table.limitPaise,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  $$CategoriesTableFilterComposer get categoryId {
+    final $$CategoriesTableFilterComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableFilterComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetTemplatesTableOrderingComposer
+    extends Composer<_$AppDatabase, $BudgetTemplatesTable> {
+  $$BudgetTemplatesTableOrderingComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  ColumnOrderings<int> get id => $composableBuilder(
+    column: $table.id,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get startMonth => $composableBuilder(
+    column: $table.startMonth,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<int> get limitPaise => $composableBuilder(
+    column: $table.limitPaise,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isActive => $composableBuilder(
+    column: $table.isActive,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<DateTime> get createdAt => $composableBuilder(
+    column: $table.createdAt,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  $$CategoriesTableOrderingComposer get categoryId {
+    final $$CategoriesTableOrderingComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableOrderingComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetTemplatesTableAnnotationComposer
+    extends Composer<_$AppDatabase, $BudgetTemplatesTable> {
+  $$BudgetTemplatesTableAnnotationComposer({
+    required super.$db,
+    required super.$table,
+    super.joinBuilder,
+    super.$addJoinBuilderToRootComposer,
+    super.$removeJoinBuilderFromRootComposer,
+  });
+  GeneratedColumn<int> get id =>
+      $composableBuilder(column: $table.id, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get startMonth => $composableBuilder(
+    column: $table.startMonth,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<int> get limitPaise => $composableBuilder(
+    column: $table.limitPaise,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get rolloverEnabled => $composableBuilder(
+    column: $table.rolloverEnabled,
+    builder: (column) => column,
+  );
+
+  GeneratedColumn<bool> get isActive =>
+      $composableBuilder(column: $table.isActive, builder: (column) => column);
+
+  GeneratedColumn<DateTime> get createdAt =>
+      $composableBuilder(column: $table.createdAt, builder: (column) => column);
+
+  $$CategoriesTableAnnotationComposer get categoryId {
+    final $$CategoriesTableAnnotationComposer composer = $composerBuilder(
+      composer: this,
+      getCurrentColumn: (t) => t.categoryId,
+      referencedTable: $db.categories,
+      getReferencedColumn: (t) => t.id,
+      builder:
+          (
+            joinBuilder, {
+            $addJoinBuilderToRootComposer,
+            $removeJoinBuilderFromRootComposer,
+          }) => $$CategoriesTableAnnotationComposer(
+            $db: $db,
+            $table: $db.categories,
+            $addJoinBuilderToRootComposer: $addJoinBuilderToRootComposer,
+            joinBuilder: joinBuilder,
+            $removeJoinBuilderFromRootComposer:
+                $removeJoinBuilderFromRootComposer,
+          ),
+    );
+    return composer;
+  }
+}
+
+class $$BudgetTemplatesTableTableManager
+    extends
+        RootTableManager<
+          _$AppDatabase,
+          $BudgetTemplatesTable,
+          BudgetTemplate,
+          $$BudgetTemplatesTableFilterComposer,
+          $$BudgetTemplatesTableOrderingComposer,
+          $$BudgetTemplatesTableAnnotationComposer,
+          $$BudgetTemplatesTableCreateCompanionBuilder,
+          $$BudgetTemplatesTableUpdateCompanionBuilder,
+          (BudgetTemplate, $$BudgetTemplatesTableReferences),
+          BudgetTemplate,
+          PrefetchHooks Function({bool categoryId})
+        > {
+  $$BudgetTemplatesTableTableManager(
+    _$AppDatabase db,
+    $BudgetTemplatesTable table,
+  ) : super(
+        TableManagerState(
+          db: db,
+          table: table,
+          createFilteringComposer: () =>
+              $$BudgetTemplatesTableFilterComposer($db: db, $table: table),
+          createOrderingComposer: () =>
+              $$BudgetTemplatesTableOrderingComposer($db: db, $table: table),
+          createComputedFieldComposer: () =>
+              $$BudgetTemplatesTableAnnotationComposer($db: db, $table: table),
+          updateCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                Value<DateTime> startMonth = const Value.absent(),
+                Value<int> limitPaise = const Value.absent(),
+                Value<bool> rolloverEnabled = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => BudgetTemplatesCompanion(
+                id: id,
+                categoryId: categoryId,
+                startMonth: startMonth,
+                limitPaise: limitPaise,
+                rolloverEnabled: rolloverEnabled,
+                isActive: isActive,
+                createdAt: createdAt,
+              ),
+          createCompanionCallback:
+              ({
+                Value<int> id = const Value.absent(),
+                Value<int?> categoryId = const Value.absent(),
+                required DateTime startMonth,
+                required int limitPaise,
+                Value<bool> rolloverEnabled = const Value.absent(),
+                Value<bool> isActive = const Value.absent(),
+                Value<DateTime> createdAt = const Value.absent(),
+              }) => BudgetTemplatesCompanion.insert(
+                id: id,
+                categoryId: categoryId,
+                startMonth: startMonth,
+                limitPaise: limitPaise,
+                rolloverEnabled: rolloverEnabled,
+                isActive: isActive,
+                createdAt: createdAt,
+              ),
+          withReferenceMapper: (p0) => p0
+              .map(
+                (e) => (
+                  e.readTable<$BudgetTemplatesTable, BudgetTemplate>(table),
+                  $$BudgetTemplatesTableReferences(db, table, e),
+                ),
+              )
+              .toList(),
+          prefetchHooksCallback: ({categoryId = false}) {
+            return PrefetchHooks(
+              db: db,
+              explicitlyWatchedTables: [],
+              addJoins:
+                  <
+                    T extends TableManagerState<
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic,
+                      dynamic
+                    >
+                  >(state) {
+                    if (categoryId) {
+                      state = state.withJoin(
+                        currentTable: table,
+                        currentColumn: table.categoryId,
+                        referencedTable: $$BudgetTemplatesTableReferences
+                            ._categoryIdTable(db),
+                        referencedColumn: $$BudgetTemplatesTableReferences
+                            ._categoryIdTable(db)
+                            .id,
+                      ) as T;
+                    }
+
+                    return state;
+                  },
+              getPrefetchedDataCallback: (items) async {
+                return [];
+              },
+            );
+          },
+        ),
+      );
+}
+
+typedef $$BudgetTemplatesTableProcessedTableManager =
+    ProcessedTableManager<
+      _$AppDatabase,
+      $BudgetTemplatesTable,
+      BudgetTemplate,
+      $$BudgetTemplatesTableFilterComposer,
+      $$BudgetTemplatesTableOrderingComposer,
+      $$BudgetTemplatesTableAnnotationComposer,
+      $$BudgetTemplatesTableCreateCompanionBuilder,
+      $$BudgetTemplatesTableUpdateCompanionBuilder,
+      (BudgetTemplate, $$BudgetTemplatesTableReferences),
+      BudgetTemplate,
+      PrefetchHooks Function({bool categoryId})
+    >;
 typedef $$ProcessedSmsTableCreateCompanionBuilder =
     ProcessedSmsCompanion Function({
       Value<int> id,
@@ -6070,8 +6991,7 @@ class $$ProcessedSmsTableTableManager
           $$ProcessedSmsTableCreateCompanionBuilder,
           $$ProcessedSmsTableUpdateCompanionBuilder,
           (
-            ProcessedSm,
-            BaseReferences<_$AppDatabase, $ProcessedSmsTable, ProcessedSm>,
+            ProcessedSm,            BaseReferences<_$AppDatabase, $ProcessedSmsTable, ProcessedSm>,
           ),
           ProcessedSm,
           PrefetchHooks Function()
@@ -6728,6 +7648,8 @@ class $AppDatabaseManager {
       $$MoneyTransactionsTableTableManager(_db, _db.moneyTransactions);
   $$BudgetsTableTableManager get budgets =>
       $$BudgetsTableTableManager(_db, _db.budgets);
+  $$BudgetTemplatesTableTableManager get budgetTemplates =>
+      $$BudgetTemplatesTableTableManager(_db, _db.budgetTemplates);
   $$ProcessedSmsTableTableManager get processedSms =>
       $$ProcessedSmsTableTableManager(_db, _db.processedSms);
   $$RecurringSchedulesTableTableManager get recurringSchedules =>
