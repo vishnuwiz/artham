@@ -515,7 +515,7 @@ class _SettingsScreenState extends State<SettingsScreen>
 class _PendingSmsImportTile extends StatefulWidget {
   final PendingSmsImport pending;
   final List<BankAccount> accounts;
-  final ValueChanged<int> onImport;
+  final Future<void> Function(int accountId) onImport,
 
   const _PendingSmsImportTile({
     required this.pending,
@@ -638,9 +638,12 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
                   ? null
                   : () async {
                       setState(() => _isImporting = true);
-                      widget.onImport(_selectedAccountId!);
-                      if (mounted) {
-                        setState(() => _isImporting = false);
+                      try {
+                        await widget.onImport(_selectedAccountId!);
+                      } finally {
+                        if (mounted) {
+                          setState(() => _isImporting = false);
+                        }
                       }
                     },
               icon: const Icon(Icons.check_rounded),
