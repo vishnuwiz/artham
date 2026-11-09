@@ -170,21 +170,25 @@ class SmsTransactionParser {
   }
 
   String? _extractCounterparty(String text) {
-    final match = RegExp(
+    final matches = RegExp(
       r'\b(?:to|from|at)\s+([A-Za-z][A-Za-z0-9 .&@_-]{1,35}?)(?=\s+(?:on|via|ref|utr|rrn|txn|transaction|available|avl|bal(?:ance)?|for|using)\b|[,.;\n]|$)',
       caseSensitive: false,
-    ).firstMatch(text);
-    final value = match?.group(1)?.trim();
-    if (value == null || value.isEmpty) return null;
+    ).allMatches(text);
 
-    final lower = value.toLowerCase();
-    if (lower.startsWith('your ') ||
-        lower.startsWith('a/c') ||
-        lower.startsWith('account ') ||
-        lower.startsWith('vpa ')) {
-      return null;
+    for (final match in matches) {
+      final value = match.group(1)?.trim();
+      if (value == null || value.isEmpty) continue;
+
+      final lower = value.toLowerCase();
+      if (lower.startsWith('your ') ||
+          lower.startsWith('a/c') ||
+          lower.startsWith('account ') ||
+          lower.startsWith('vpa ')) {
+        continue;
+      }
+      return value.length > 36 ? value.substring(0, 36).trim() : value;
     }
-    return value.length > 36 ? value.substring(0, 36).trim() : value;
+    return null;
   }
 
   String _suggestCategory(String text, String transactionType) {
