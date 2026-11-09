@@ -7,6 +7,7 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 ## [Unreleased]
 
 ### Added
+- Added opt-in rollover for unused overall and category budget balances.
 - Added recurring monthly budget templates for overall and category budgets, with pause/resume controls.
 - Automatically populate missing monthly budgets from active templates when opening the app or budget view; existing month budgets are never overwritten.
 - Added a planned-versus-actual budget performance dashboard with overall and category-level insights.
