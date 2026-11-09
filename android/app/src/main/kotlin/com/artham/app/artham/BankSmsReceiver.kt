@@ -39,7 +39,35 @@ class BankSmsReceiver : BroadcastReceiver() {
         val receivedAt = smsParts.maxOfOrNull { it.timestampMillis }
             ?: System.currentTimeMillis()
         val parsed = parseTransaction(body, receivedAt) ?: return
+        val defaultAccountId = preferences.getLong(KEY_DEFAULT_ACCOUNT_ID, -1L)
 
+        // Database access is disk I/O. Keep it off the broadcast main thread
+        // while completing the broadcast within Android's receiver time limit.
+        val pendingResult = goAsync()
+        Thread {
+            try {
+                processParsedSms(
+                    context = context.applicationContext,
+                    body = body,
+                    sender = sender,
+                    receivedAt = receivedAt,
+                    parsed = parsed,
+                    defaultAccountId = defaultAccountId,
+                )
+            } finally {
+                pendingResult.finish()
+            }
+        }.start()
+    }
+
+    private fun processParsedSms(
+        context: Context,
+        body: String,
+        sender: String,
+        receivedAt: Long,
+        parsed: ParsedTransaction,
+        defaultAccountId: Long,
+    ) {
         val databaseFile = File(
             PathUtils.getDataDirectory(context),
             DATABASE_NAME,
@@ -82,10 +110,7 @@ class BankSmsReceiver : BroadcastReceiver() {
                     accounts = accounts,
                     sender = sender,
                     body = body,
-                    defaultAccountId = preferences.getLong(
-                        KEY_DEFAULT_ACCOUNT_ID,
-                        -1L,
-                    ),
+                    defaultAccountId = defaultAccountId,
                 )
 
                 if (accountId == null) {
@@ -143,7 +168,6 @@ class BankSmsReceiver : BroadcastReceiver() {
                     put("source", "sms")
                     putNull("notes")
                     put("created_at", System.currentTimeMillis())
-                    // created_at is left to the database's existing default.
                 }
 
                 val transactionId = database.insert(
@@ -276,7 +300,7 @@ class BankSmsReceiver : BroadcastReceiver() {
             return suffixMatches.singleOrNull()?.id
         }
 
-        val searchableText = normalizeLetters("$sender $body")
+        val searchableText = normalizeLetters(sender)
         val bankMatches = accounts.filter { account ->
             bankAliases(account.bankName).any { alias ->
                 alias.length >= 2 && searchableText.contains(alias)
