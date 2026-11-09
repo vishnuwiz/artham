@@ -47,7 +47,12 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     super.initState();
     final now = DateTime.now();
     _selectedMonth = DateTime(now.year, now.month, 1);
-    _loadData();
+    _dataFuture = Future.value(
+      const _BudgetScreenData(overall: null, categories: []),
+    );
+    if (widget.isActive) {
+      _loadData();
+    }
   }
 
   @override
