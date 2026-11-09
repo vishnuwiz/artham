@@ -5,6 +5,7 @@ import '../../data/repositories/transaction_repository.dart';
 import 'add_transaction_screen.dart';
 import 'transaction_details_screen.dart';
 import 'recurring_transactions_screen.dart';
+import 'import_sms_screen.dart';
 
 const Color activityGreen = Color(0xFF13866A);
 const Color activityNavy = Color(0xFF142B35);
@@ -106,6 +107,19 @@ class _ActivityScreenState extends State<ActivityScreen> {
     );
 
     if (mounted) {
+      setState(_loadActivity);
+    }
+  }
+
+  Future<void> _openSmsImport() async {
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) => ImportSmsScreen(database: widget.database),
+      ),
+    );
+
+    if (result == true && mounted) {
       setState(_loadActivity);
     }
   }
@@ -457,6 +471,11 @@ class _ActivityScreenState extends State<ActivityScreen> {
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
         actions: [
+          IconButton(
+            tooltip: 'Import bank SMS',
+            onPressed: _openSmsImport,
+            icon: const Icon(Icons.sms_outlined),
+          ),
           IconButton(
             tooltip: 'Recurring transactions',
             onPressed: _openRecurringTransactions,
