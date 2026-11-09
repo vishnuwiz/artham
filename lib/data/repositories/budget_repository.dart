@@ -16,6 +16,11 @@ class BudgetRolloverAmounts {
     required this.expensesPaise,
     required this.remainingPaise,
   });
+
+  double get percentageUsed {
+    if (availableBudgetPaise <= 0) return 0;
+    return expensesPaise / availableBudgetPaise;
+  }
 }
 
 class MonthlyBudgetSummary {
