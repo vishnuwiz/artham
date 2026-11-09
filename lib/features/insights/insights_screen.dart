@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import '../../data/app_database.dart';
-import '../../data/repositories/transaction_repository.dart';
 import '../../data/repositories/budget_repository.dart';
+import '../../data/repositories/transaction_repository.dart';
 
 const Color _insightsGreen = Color(0xFF13866A);
 const Color _insightsNavy = Color(0xFF142B35);
