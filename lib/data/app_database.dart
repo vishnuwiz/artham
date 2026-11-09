@@ -197,6 +197,9 @@ class RecurringSchedules extends Table {
 class AppDatabase extends _$AppDatabase {
   AppDatabase() : super(_openConnection());
 
+  /// Creates an in-memory database for widget and repository tests.
+  AppDatabase.forTesting(QueryExecutor executor) : super(executor);
+
   @override
   int get schemaVersion => 3;
 
