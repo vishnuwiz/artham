@@ -182,7 +182,7 @@ class SmsImportRepository {
 /// The raw SMS text is not written to the database.
 String smsMessageFingerprint(String message) {
   final normalized = message.trim().toLowerCase().replaceAll(
-        RegExp(r'\\s+'),
+        RegExp(r'\s+'),
         ' ',
       );
   var forward = 0x345678;
