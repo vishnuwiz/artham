@@ -16,42 +16,43 @@ void main() {
 
     final now = DateTime.now();
     final month = DateTime(now.year, now.month, 1);
-    final accountId = await database.into(database.bankAccounts).insert(
-      BankAccountsCompanion.insert(
-        bankName: 'Test Bank',
-        accountName: 'Primary',
-        openingBalancePaise: 5000000,
-        openingDate: month,
-      ),
-    );
-    final foodCategoryId = await database.into(database.categories).insert(
-      CategoriesCompanion.insert(name: 'Food', type: 'expense'),
-    );
+    final accountId = await database
+        .into(database.bankAccounts)
+        .insert(
+          BankAccountsCompanion.insert(
+            bankName: 'Test Bank',
+            accountName: 'Primary',
+            openingBalancePaise: 5000000,
+            openingDate: month,
+          ),
+        );
+    final foodCategoryId = await database
+        .into(database.categories)
+        .insert(CategoriesCompanion.insert(name: 'Food', type: 'expense'));
 
     final budgets = BudgetRepository(database);
-    await budgets.saveMonthlyBudget(
-      month: month,
-      limitPaise: 10000000,
-    );
+    await budgets.saveMonthlyBudget(month: month, limitPaise: 10000000);
     await budgets.saveCategoryBudget(
       month: month,
       categoryId: foodCategoryId,
       limitPaise: 6000000,
     );
 
-    await database.into(database.moneyTransactions).insert(
-      MoneyTransactionsCompanion.insert(
-        accountId: accountId,
-        categoryId: Value(foodCategoryId),
-        amountPaise: 2500000,
-        transactionType: 'expense',
-        transactionDate: DateTime(
-          now.year,
-          now.month,
-          now.day > 1 ? now.day - 1 : now.day,
-        ),
-      ),
-    );
+    await database
+        .into(database.moneyTransactions)
+        .insert(
+          MoneyTransactionsCompanion.insert(
+            accountId: accountId,
+            categoryId: Value(foodCategoryId),
+            amountPaise: 2500000,
+            transactionType: 'expense',
+            transactionDate: DateTime(
+              now.year,
+              now.month,
+              now.day > 1 ? now.day - 1 : now.day,
+            ),
+          ),
+        );
 
     // Keep the full Insights content in the test viewport so assertions do
     // not depend on scrollable discovery or scroll timing.
