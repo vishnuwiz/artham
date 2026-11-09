@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../widgets/artham_logo.dart';
 
@@ -53,8 +54,17 @@ class _SplashScreenState extends State<SplashScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _night,
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: const SystemUiOverlayStyle(
+        statusBarColor: Colors.transparent,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemNavigationBarColor: _night,
+        systemNavigationBarIconBrightness: Brightness.light,
+        systemNavigationBarDividerColor: _night,
+      ),
+      child: Scaffold(
+        backgroundColor: _night,
       body: Stack(
         fit: StackFit.expand,
         children: [
@@ -147,6 +157,7 @@ class _SplashScreenState extends State<SplashScreen>
             ),
           ),
         ],
+      ),
       ),
     );
   }
