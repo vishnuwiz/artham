@@ -7,7 +7,11 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 ## [Unreleased]
 
 ### Added
-- Added a reviewed bank-SMS import flow: parse one pasted bank/UPI alert, confirm the account and category, then create a local transaction with duplicate protection. The raw SMS body is not retained.
+- Added Android automatic bank-SMS intake using the incoming SMS broadcast. Recognised new debit/credit alerts are parsed and saved to the existing local SQLite database in the background after explicit in-app consent and SMS permission.
+- Added a Settings control to enable/disable automatic SMS import, with an upfront disclosure and an optional default account for messages that do not identify a specific account.
+- Added account resolution using account suffix and bank/sender hints; ambiguous alerts are not assigned to an arbitrary account.
+- Added local duplicate detection shared between background intake and manual SMS import. The raw SMS body is not retained.
+- Retained the manual paste/share SMS import as a fallback, with editable review before saving.
 - Added conservative parsing for common INR amounts, debit/credit direction, common date formats, UPI/UTR references, and basic category suggestions.
 - Added opt-in rollover for unused overall and category budget balances.
 - Added recurring monthly budget templates for overall and category budgets, with pause/resume controls.
