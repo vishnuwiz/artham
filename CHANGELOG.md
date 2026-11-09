@@ -6,6 +6,34 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 5 — Automatic Android Bank SMS Import and Account Identification (2026-11-10)
+
+#### Added
+- Added an Android SMS broadcast receiver for newly received bank and UPI debit/credit alerts. Automatic import remains opt-in and requires the Android SMS permission.
+- Added account-suffix matching for masked and full account-number formats, including alerts such as `A/c XX1255`.
+- Added safe account resolution: an explicit unknown or duplicate suffix is not guessed or assigned to an arbitrary account; the alert is placed in the local pending-review queue.
+- Added consistent account labels using the bank name and masked last four digits across account cards, transaction details, account selectors, transfers, filters, recurring transactions, and SMS review.
+- Removed the separate account-nickname input from account creation and editing. Account identification in the UI now uses the bank name and last four digits.
+- Added native unit tests for account-suffix matching and Drift timestamp conversion, plus Dart tests for account display labels.
+
+#### Changed
+- Kept manual paste/share SMS import available as a fallback, with editable review before import.
+- Aligned Android receiver timestamps with Drift's Unix-seconds storage convention for `DateTime` columns.
+- Updated account dropdowns and transaction details to show the same masked account identifier.
+
+#### Fixed
+- Changed the Android SQLite `PRAGMA busy_timeout` call to use `rawQuery`, avoiding the SQLite exception caused by executing a row-returning pragma with `execSQL`.
+- Corrected the SMS-created transaction date storage unit so imported dates display correctly instead of appearing thousands of years in the future.
+- Preserved duplicate protection and ensured the original SMS body is not stored by the automatic import flow.
+
+#### Verification
+- GitHub Actions passed Dart formatting, `flutter analyze`, Flutter tests, Android release APK build, and native Kotlin unit tests for the merged Stage 5 changes.
+- Validated the incoming-SMS flow in the Android emulator: a new ₹7.00 Swiggy debit alert was imported as a Food & Dining expense and assigned to the saved Federal Bank account ending in 1255.
+- Confirmed the imported transaction displayed the expected date (10/11/2026) and UPI reference in the transaction details screen.
+- Verified account labels in My Accounts, transaction details, Add Transaction, Transfer Money, and Settings account selectors in the Android emulator.
+- Physical-device SMS permission and end-to-end validation remain pending.
+
+
 ### Added
 - Added Android automatic bank-SMS intake using the incoming SMS broadcast. Recognised new debit/credit alerts are parsed and saved to the existing local SQLite database in the background after explicit in-app consent and SMS permission.
 - Added a Settings control to enable/disable automatic SMS import, with an upfront disclosure and an optional default account for messages that do not identify a specific account.
