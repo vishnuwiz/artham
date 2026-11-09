@@ -98,9 +98,7 @@ class BudgetForecastCalculator {
       recommendedDailySpend = null;
     } else {
       final remaining = budgetPaise - spentToDatePaise;
-      recommendedDailySpend = remaining > 0
-          ? remaining ~/ daysRemaining
-          : 0;
+      recommendedDailySpend = remaining > 0 ? remaining ~/ daysRemaining : 0;
     }
 
     final BudgetForecastStatus status;
@@ -114,8 +112,7 @@ class BudgetForecastCalculator {
       status = BudgetForecastStatus.insufficientData;
     } else if (projectedSpend > budgetPaise) {
       status = BudgetForecastStatus.likelyOverBudget;
-    } else if (projectedSpend * 100 >=
-        budgetPaise * approachingLimitPercent) {
+    } else if (projectedSpend * 100 >= budgetPaise * approachingLimitPercent) {
       status = BudgetForecastStatus.approachingLimit;
     } else {
       status = BudgetForecastStatus.onTrack;
