@@ -139,7 +139,7 @@ class BudgetRepository {
   }
 
   /// Creates or updates the monthly template for one overall/category budget.
-  /// The first start month is retained when an existing template is edited.
+  /// Editing a template establishes a new effective month for future copies.
   Future<void> saveBudgetTemplate({
     required int? categoryId,
     required DateTime startMonth,
@@ -151,9 +151,9 @@ class BudgetRepository {
       throw ArgumentError('Budget template amount must be greater than zero.');
     }
     final existing = await getBudgetTemplate(categoryId: categoryId);
-    final normalizedStart = existing == null || !existing.isActive
-        ? _monthStart(startMonth)
-        : existing.startMonth;
+    // A template edit changes the plan from the selected month forward;
+    // budgets already created for earlier months remain historical snapshots.
+    final normalizedStart = _monthStart(startMonth);
 
     if (existing == null) {
       await database.into(database.budgetTemplates).insert(
