@@ -57,7 +57,7 @@ void main() {
     expect(find.text('Budget performance'), findsOneWidget);
     expect(find.text('Planned vs actual'), findsOneWidget);
     expect(find.text('Category budget insights'), findsOneWidget);
-    expect(find.text('Food'), findsOneWidget);
+    expect(find.text('Food'), findsNWidgets(2));
     expect(find.text('CATEGORIES ON TRACK'), findsOneWidget);
   });
 }
