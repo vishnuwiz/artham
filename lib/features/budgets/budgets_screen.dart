@@ -1188,11 +1188,12 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Text(widget.title),
-      content: Form(
-        key: _formKey,
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
+      content: SingleChildScrollView(
+        child: Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
             TextFormField(
               controller: _controller,
               autofocus: true,
@@ -1248,7 +1249,8 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
               ),
               activeTrackColor: _green,
             ),
-          ],
+            ],
+          ),
         ),
       ),
       actions: [
