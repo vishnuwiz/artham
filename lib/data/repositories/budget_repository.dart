@@ -25,37 +25,49 @@ class BudgetRolloverAmounts {
 
 class MonthlyBudgetSummary {
   final int budgetPaise;
+  final int availableBudgetPaise;
+  final int rolloverPaise;
+  final bool rolloverEnabled;
   final int expensesPaise;
   final int remainingPaise;
 
   const MonthlyBudgetSummary({
     required this.budgetPaise,
+    required this.availableBudgetPaise,
+    required this.rolloverPaise,
+    required this.rolloverEnabled,
     required this.expensesPaise,
     required this.remainingPaise,
   });
 
   double get percentageUsed {
-    if (budgetPaise <= 0) return 0;
-    return expensesPaise / budgetPaise;
+    if (availableBudgetPaise <= 0) return 0;
+    return expensesPaise / availableBudgetPaise;
   }
 }
 
 class CategoryBudgetSummary {
   final Category category;
   final int budgetPaise;
+  final int availableBudgetPaise;
+  final int rolloverPaise;
+  final bool rolloverEnabled;
   final int expensesPaise;
 
   const CategoryBudgetSummary({
     required this.category,
     required this.budgetPaise,
     required this.expensesPaise,
-  });
+    int? availableBudgetPaise,
+    this.rolloverPaise = 0,
+    this.rolloverEnabled = false,
+  }) : availableBudgetPaise = availableBudgetPaise ?? budgetPaise;
 
-  int get remainingPaise => budgetPaise - expensesPaise;
+  int get remainingPaise => availableBudgetPaise - expensesPaise;
 
   double get percentageUsed {
-    if (budgetPaise <= 0) return 0;
-    return expensesPaise / budgetPaise;
+    if (availableBudgetPaise <= 0) return 0;
+    return expensesPaise / availableBudgetPaise;
   }
 }
 
@@ -379,14 +391,18 @@ class BudgetRepository {
   Future<MonthlyBudgetSummary?> getMonthlyBudgetSummary(
     DateTime month,
   ) async {
+    final amounts = await getMonthlyBudgetRolloverAmounts(month);
+    if (amounts == null) return null;
     final budget = await getMonthlyBudget(month);
     if (budget == null) return null;
-    final expenses = await getMonthlyExpensesPaise(month);
 
     return MonthlyBudgetSummary(
-      budgetPaise: budget.limitPaise,
-      expensesPaise: expenses,
-      remainingPaise: budget.limitPaise - expenses,
+      budgetPaise: amounts.baseBudgetPaise,
+      availableBudgetPaise: amounts.availableBudgetPaise,
+      rolloverPaise: amounts.rolloverPaise,
+      rolloverEnabled: budget.rolloverEnabled,
+      expensesPaise: amounts.expensesPaise,
+      remainingPaise: amounts.remainingPaise,
     );
   }
 
@@ -400,18 +416,28 @@ class BudgetRepository {
 
     final results = <CategoryBudgetSummary>[];
     for (final category in categories) {
-      final budget = await getCategoryBudget(
+      final amounts = await getCategoryBudgetRolloverAmounts(
         month: month,
         categoryId: category.id,
       );
-      final expenses = await getCategoryExpensesPaise(
-        month: month,
-        categoryId: category.id,
-      );
+      final budget = amounts == null
+          ? null
+          : await getCategoryBudget(
+              month: month,
+              categoryId: category.id,
+            );
+      final expenses = amounts?.expensesPaise ??
+          await getCategoryExpensesPaise(
+            month: month,
+            categoryId: category.id,
+          );
 
       results.add(CategoryBudgetSummary(
         category: category,
-        budgetPaise: budget?.limitPaise ?? 0,
+        budgetPaise: amounts?.baseBudgetPaise ?? 0,
+        availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
+        rolloverPaise: amounts?.rolloverPaise ?? 0,
+        rolloverEnabled: budget?.rolloverEnabled ?? false,
         expensesPaise: expenses,
       ));
     }
