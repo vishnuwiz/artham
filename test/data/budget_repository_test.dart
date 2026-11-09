@@ -266,6 +266,29 @@ void main() {
     expect(food.rolloverEnabled, isFalse);
   });
 
+  test('repeated and concurrent template application is idempotent', () async {
+    await repository.saveBudgetTemplate(
+      categoryId: null,
+      startMonth: april,
+      limitPaise: 90000,
+      rolloverEnabled: false,
+    );
+
+    final results = await Future.wait([
+      repository.applyTemplatesForMonth(may),
+      repository.applyTemplatesForMonth(may),
+    ]);
+
+    expect(results.reduce((total, value) => total + value), 2);
+
+    final budgets = await (database.select(database.budgets)
+          ..where((budget) => budget.categoryId.isNull()))
+        .get();
+    expect(budgets, hasLength(2));
+
+    expect(await repository.applyTemplatesForMonth(may), 0);
+  });
+
   test('template does not populate months before its start month', () async {
     await repository.saveBudgetTemplate(
       categoryId: null,
