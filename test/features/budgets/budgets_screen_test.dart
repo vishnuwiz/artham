@@ -7,7 +7,7 @@ import 'package:artham/data/repositories/budget_repository.dart';
 import 'package:artham/features/budgets/budgets_screen.dart';
 
 void main() {
-  testWidgets('overall budget dialog saves the rollover setting', (
+  testWidgets('overall budget dialog saves rollover and monthly recurrence', (
     tester,
   ) async {
     final database = AppDatabase.forTesting(NativeDatabase.memory());
@@ -24,6 +24,8 @@ void main() {
     await tester.enterText(find.byType(TextFormField), '1000');
     await tester.tap(find.text('Carry unused budget forward'));
     await tester.pumpAndSettle();
+    await tester.tap(find.text('Repeat this budget monthly'));
+    await tester.pumpAndSettle();
     await tester.tap(find.text('Save'));
     await tester.pumpAndSettle();
 
@@ -34,5 +36,12 @@ void main() {
     expect(budget, isNotNull);
     expect(budget!.limitPaise, 100000);
     expect(budget.rolloverEnabled, isTrue);
+
+    final template = await BudgetRepository(database).getBudgetTemplate(
+      categoryId: null,
+    );
+    expect(template, isNotNull);
+    expect(template!.isActive, isTrue);
+    expect(template.limitPaise, 100000);
   });
 }
