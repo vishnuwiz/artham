@@ -60,6 +60,14 @@ void main() {
     expect(result, isNull);
   });
 
+  test('ignores a debit-like alert that includes an OTP/security code', () {
+    final result = SmsTransactionParser().parse(
+      'Rs. 500 debited from your account. OTP 481932 to authorise the payment.',
+    );
+
+    expect(result, isNull);
+  });
+
   test('returns null when debit and credit directions are both present', () {
     final result = SmsTransactionParser().parse(
       'Rs 500 debited and Rs 500 credited to your account.',
