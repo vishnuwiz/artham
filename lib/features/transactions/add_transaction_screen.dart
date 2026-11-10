@@ -420,6 +420,7 @@ class _AddTransactionScreenState
           const SizedBox(height: 16),
 
           DropdownButtonFormField<int>(
+            key: ValueKey<int?>(_selectedCategoryId),
             initialValue: _selectedCategoryId,
             isExpanded: true,
             decoration: _decoration(
