@@ -48,6 +48,9 @@ jobs:
       - name: Validate generated merchant catalogue
         run: python tool/generate_merchant_catalog.py --check
 
+      - name: Validate generated merchant catalogue
+        run: python tool/generate_merchant_catalog.py --check
+
       - name: Check Dart formatting
         run: dart format --output=none lib test
 
