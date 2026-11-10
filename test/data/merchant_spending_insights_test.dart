@@ -36,7 +36,7 @@ void main() {
           merchantName: 'Amazon',
           categoryName: 'Shopping',
           amountPaise: currentAmountPaise,
-          transactionDate: DateTime(2026, 11, 10),
+          transactionDate: DateTime(2026, 11, 10, 23),
         ),
       ];
     }
