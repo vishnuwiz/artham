@@ -189,9 +189,10 @@ class RecurringTransactionRepository {
     final patternTransactions = <RecurringPatternTransaction>[];
     for (final transaction in transactions) {
       final categoryId = transaction.categoryId;
+      if (categoryId == null) continue;
+
       final account = accountById[transaction.accountId];
-      final category =
-          categoryId == null ? null : categoryById[categoryId];
+      final category = categoryById[categoryId];
 
       if (account == null || category == null ||
           category.type != transaction.transactionType) {
