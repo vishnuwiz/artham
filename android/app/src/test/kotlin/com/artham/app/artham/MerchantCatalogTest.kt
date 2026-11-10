@@ -13,6 +13,23 @@ class MerchantCatalogTest {
     }
 
     @Test
+    fun recognisesEveryCanonicalMerchantAliasWithItsMappedCategory() {
+        var testedAliases = 0
+
+        MerchantCatalogData.rules.forEach { merchant ->
+            merchant.aliases.forEach { alias ->
+                val result = MerchantCatalog.recognize("UPI PAYMENT TO $alias")
+
+                assertEquals("Alias: $alias", merchant.name, result?.name)
+                assertEquals("Alias: $alias", merchant.categoryName, result?.categoryName)
+                testedAliases++
+            }
+        }
+
+        assertTrue("Expected at least 1,000 aliases", testedAliases >= 1000)
+    }
+
+    @Test
     fun recognisesMerchantInUpiDescription() {
         val result = MerchantCatalog.recognize("UPI/DR/123456789/SWIGGY*ORDER123")
 
