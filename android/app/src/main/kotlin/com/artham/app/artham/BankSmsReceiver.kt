@@ -137,6 +137,11 @@ class BankSmsReceiver : BroadcastReceiver() {
                     name = parsed.category,
                     type = parsed.type,
                 )
+                val merchantId = findOrCreateMerchant(
+                    database = database,
+                    name = parsed.merchantName,
+                    defaultCategoryId = categoryId,
+                )
 
                 val processedValues = ContentValues().apply {
                     put("fingerprint", fingerprint)
@@ -166,7 +171,8 @@ class BankSmsReceiver : BroadcastReceiver() {
                     putNull("transfer_to_account_id")
                     if (categoryId == null) putNull("category_id")
                     else put("category_id", categoryId)
-                    putNull("merchant_id")
+                    if (merchantId == null) putNull("merchant_id")
+                    else put("merchant_id", merchantId)
                     put("amount_paise", parsed.amountPaise)
                     put("transaction_type", parsed.type)
                     put("description", parsed.description)
@@ -271,6 +277,7 @@ class BankSmsReceiver : BroadcastReceiver() {
         val referenceNumber: String?,
         val description: String,
         val category: String,
+        val merchantName: String? = null,
     )
 
     private fun readActiveAccounts(database: SQLiteDatabase): List<AccountRow> {
@@ -403,7 +410,14 @@ class BankSmsReceiver : BroadcastReceiver() {
             RegexOption.IGNORE_CASE,
         ).find(body)?.groupValues?.getOrNull(1)
 
-        val description = extractCounterparty(body)
+        val counterparty = extractCounterparty(body)
+        val merchant = if (type == "expense") {
+            MerchantCatalog.recognize(counterparty ?: body)
+        } else {
+            null
+        }
+        val description = merchant?.name
+            ?: counterparty
             ?: if (type == "expense") "Bank SMS expense" else "Bank SMS credit"
 
         return ParsedTransaction(
@@ -412,7 +426,8 @@ class BankSmsReceiver : BroadcastReceiver() {
             transactionDate = extractDate(body) ?: receivedAt,
             referenceNumber = reference,
             description = description,
-            category = suggestCategory(body, type),
+            category = merchant?.categoryName ?: suggestCategory(counterparty ?: body, type),
+            merchantName = merchant?.name,
         )
     }
 
@@ -530,6 +545,38 @@ class BankSmsReceiver : BroadcastReceiver() {
                 "Travel"
             else -> "Other Expense"
         }
+    }
+
+    private fun findOrCreateMerchant(
+        database: SQLiteDatabase,
+        name: String?,
+        defaultCategoryId: Long?,
+    ): Long? {
+        if (name.isNullOrBlank()) return null
+
+        database.rawQuery(
+            "SELECT id, default_category_id FROM merchants WHERE name = ? COLLATE NOCASE LIMIT 1",
+            arrayOf(name),
+        ).use { cursor ->
+            if (cursor.moveToFirst()) {
+                val existingId = cursor.getLong(0)
+                if (cursor.isNull(1) && defaultCategoryId != null) {
+                    database.execSQL(
+                        "UPDATE merchants SET default_category_id = ? WHERE id = ?",
+                        arrayOf(defaultCategoryId, existingId),
+                    )
+                }
+                return existingId
+            }
+        }
+
+        val values = ContentValues().apply {
+            put("name", name)
+            if (defaultCategoryId == null) putNull("default_category_id")
+            else put("default_category_id", defaultCategoryId)
+        }
+        val insertedId = database.insert("merchants", null, values)
+        return if (insertedId > 0L) insertedId else null
     }
 
     private fun findOrCreateCategory(

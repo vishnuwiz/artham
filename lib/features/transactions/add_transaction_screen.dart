@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
+import '../../data/merchant_intelligence.dart';
 import '../../data/repositories/transaction_repository.dart';
 
 const Color transactionGreen = Color(0xFF13866A);
@@ -36,6 +37,9 @@ class _AddTransactionScreenState
 
   int? _selectedAccountId;
   int? _selectedCategoryId;
+  int? _defaultCategoryId;
+  bool _categoryWasManuallySelected = false;
+  MerchantRecognition? _merchantSuggestion;
 
   String _transactionType = 'expense';
   DateTime _transactionDate = DateTime.now();
@@ -72,8 +76,10 @@ class _AddTransactionScreenState
         _categories = categories;
         _selectedAccountId =
             accounts.isNotEmpty ? accounts.first.id : null;
-        _selectedCategoryId =
+        _defaultCategoryId =
             categories.isNotEmpty ? categories.first.id : null;
+        _selectedCategoryId = _defaultCategoryId;
+        _categoryWasManuallySelected = false;
         _isLoading = false;
       });
     } catch (e) {
@@ -93,6 +99,9 @@ class _AddTransactionScreenState
     setState(() {
       _transactionType = type;
       _selectedCategoryId = null;
+      _defaultCategoryId = null;
+      _categoryWasManuallySelected = false;
+      _merchantSuggestion = null;
       _categories = [];
       _isLoading = true;
     });
@@ -104,8 +113,9 @@ class _AddTransactionScreenState
 
       setState(() {
         _categories = categories;
-        _selectedCategoryId =
+        _defaultCategoryId =
             categories.isNotEmpty ? categories.first.id : null;
+        _selectedCategoryId = _defaultCategoryId;
         _isLoading = false;
       });
     } catch (e) {
@@ -117,6 +127,25 @@ class _AddTransactionScreenState
         SnackBar(content: Text('Unable to load categories: $e')),
       );
     }
+  }
+
+  void _handleDescriptionChanged(String value) {
+    final match = _transactionType == 'expense'
+        ? MerchantIntelligence.recognize(value)
+        : null;
+    final suggestedCategory = match == null
+        ? null
+        : _categories.where((item) => item.name == match.categoryName);
+
+    setState(() {
+      _merchantSuggestion = match;
+      if (!_categoryWasManuallySelected) {
+        _selectedCategoryId = suggestedCategory != null &&
+                suggestedCategory.isNotEmpty
+            ? suggestedCategory.first.id
+            : _defaultCategoryId;
+      }
+    });
   }
 
   Future<void> _selectDate() async {
@@ -391,6 +420,7 @@ class _AddTransactionScreenState
           const SizedBox(height: 16),
 
           DropdownButtonFormField<int>(
+            key: ValueKey<int?>(_selectedCategoryId),
             initialValue: _selectedCategoryId,
             isExpanded: true,
             decoration: _decoration(
@@ -407,7 +437,10 @@ class _AddTransactionScreenState
               );
             }).toList(),
             onChanged: (value) {
-              setState(() => _selectedCategoryId = value);
+              setState(() {
+                _selectedCategoryId = value;
+                _categoryWasManuallySelected = true;
+              });
             },
             validator: (value) =>
                 value == null ? 'Select a category' : null,
@@ -418,6 +451,7 @@ class _AddTransactionScreenState
           TextFormField(
             controller: _descriptionController,
             maxLength: 150,
+            onChanged: _handleDescriptionChanged,
             decoration: _decoration(
               'Description (optional)',
               hint: 'e.g. Lunch with friends',
@@ -427,6 +461,30 @@ class _AddTransactionScreenState
               ),
             ),
           ),
+          if (_merchantSuggestion != null) ...[
+            const SizedBox(height: 6),
+            Row(
+              children: [
+                const Icon(
+                  Icons.auto_awesome_rounded,
+                  size: 15,
+                  color: transactionGreen,
+                ),
+                const SizedBox(width: 6),
+                Expanded(
+                  child: Text(
+                    'Recognised ${_merchantSuggestion!.name} · '
+                    'suggested ${_merchantSuggestion!.categoryName}',
+                    style: const TextStyle(
+                      color: transactionGreen,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
 
           const SizedBox(height: 8),
 

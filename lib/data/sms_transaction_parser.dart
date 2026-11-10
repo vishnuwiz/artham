@@ -1,3 +1,5 @@
+import 'merchant_intelligence.dart';
+
 class ParsedSmsTransaction {
   final int amountPaise;
   final String transactionType;
@@ -5,6 +7,7 @@ class ParsedSmsTransaction {
   final String? referenceNumber;
   final String description;
   final String suggestedCategory;
+  final String? merchantName;
 
   const ParsedSmsTransaction({
     required this.amountPaise,
@@ -13,6 +16,7 @@ class ParsedSmsTransaction {
     required this.referenceNumber,
     required this.description,
     required this.suggestedCategory,
+    this.merchantName,
   });
 }
 
@@ -83,8 +87,21 @@ class SmsTransactionParser {
     final referenceNumber =
         _referencePattern.firstMatch(text)?.group(1)?.trim();
 
-    final suggestedCategory = _suggestCategory(text, transactionType);
-    final description = _extractCounterparty(text) ??
+    // Merchant recognition is a local, deterministic lookup. It is only
+    // applied to expenses; income counterparties require separate handling.
+    final counterparty = _extractCounterparty(text);
+    final merchant = transactionType == 'expense'
+        ? MerchantIntelligence.recognize(counterparty) ??
+            (counterparty == null
+                ? MerchantIntelligence.recognize(text)
+                : null)
+        : null;
+    final categorySource =
+        transactionType == 'expense' ? counterparty ?? text : text;
+    final suggestedCategory =
+        merchant?.categoryName ?? _suggestCategory(categorySource, transactionType);
+    final description = merchant?.name ??
+        counterparty ??
         (transactionType == 'expense' ? 'Bank SMS expense' : 'Bank SMS credit');
 
     return ParsedSmsTransaction(
@@ -94,6 +111,7 @@ class SmsTransactionParser {
       referenceNumber: referenceNumber,
       description: description,
       suggestedCategory: suggestedCategory,
+      merchantName: merchant?.name,
     );
   }
 

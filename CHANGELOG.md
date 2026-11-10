@@ -6,6 +6,35 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 6A — Offline Merchant Recognition and Smarter Categorisation (2026-11-10)
+
+#### Expanded merchant catalogue
+- Expanded the offline directory from 57 starter entries to 1,075 distinct merchant records across eight spending categories.
+- Added India-focused coverage for food outlets, supermarkets and quick-commerce, retail, mobility and fuel, telecom and utilities, entertainment, healthcare, and travel.
+- Consolidated merchant names, category mappings and recognition aliases into `tool/data/merchant_catalog.json`, with generated Dart and Kotlin catalogues to prevent platform drift.
+- Added catalogue-count and representative cross-category tests in both Flutter and Android.
+
+
+#### Added
+- Added an on-device merchant catalogue for over 1,000 India-focused merchants and payment descriptions across food delivery, groceries, shopping, travel, transport, utilities, entertainment, and health.
+- Added whole-token alias matching with more specific aliases checked first (for example, Swiggy Instamart is recognised as Groceries rather than Swiggy Food & Dining).
+- Added merchant-specific category suggestions while entering manual expense descriptions. Users can override the suggested category.
+- Added persistent merchant links for recognised manual transactions, reviewed SMS imports, recurring transaction confirmations, and automatic Android SMS imports.
+- Added a Merchant field to transaction details when a merchant is recognised.
+- Added Dart and Kotlin tests for merchant matching, category mapping, merchant persistence, and SMS parsing.
+
+#### Changed
+- Reused the existing `Merchants` and `MoneyTransactions.merchantId` database fields; no schema migration is required.
+- Limited merchant linking to expense transactions. Income transactions are not linked to expense merchants.
+- Prioritised the SMS payee/counterparty over the payment-provider name, avoiding false recognition when a provider (for example, Amazon Pay) appears in an alert for an unrelated shop.
+- Reset an automatically suggested category when the description changes to an unrecognised merchant, unless the user has manually selected a category.
+
+#### Verification
+- GitHub Actions validates formatting, `flutter analyze`, Flutter tests, Android release build, and native Kotlin unit tests.
+- Merchant recognition is deterministic and local; unknown merchants remain unclassified rather than being guessed.
+- Physical-device validation remains part of the Stage 6 acceptance checks.
+
+
 ### Stage 5 — Automatic Android Bank SMS Import and Account Identification (2026-11-10)
 
 #### Added

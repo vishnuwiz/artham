@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import 'merchant_repository.dart';
 
 class AccountBalanceSummary {
   final Map<int, int> accountBalancesPaise;
@@ -21,11 +22,13 @@ class RecentTransaction {
   final MoneyTransaction transaction;
   final BankAccount account;
   final Category? category;
+  final Merchant? merchant;
 
   const RecentTransaction({
     required this.transaction,
     required this.account,
     required this.category,
+    required this.merchant,
   });
 }
 
@@ -121,10 +124,18 @@ class TransactionRepository {
       );
     }
 
+    final merchantId = await MerchantRepository(database)
+        .findOrCreateForDescription(
+      description: description,
+      transactionType: transactionType,
+      fallbackCategoryId: categoryId,
+    );
+
     return database.into(database.moneyTransactions).insert(
           MoneyTransactionsCompanion.insert(
             accountId: accountId,
             categoryId: Value(categoryId),
+            merchantId: Value(merchantId),
             amountPaise: amountPaise,
             transactionType: transactionType,
             transactionDate: transactionDate,
@@ -158,12 +169,20 @@ class TransactionRepository {
       throw ArgumentError('Transaction amount must be greater than zero');
     }
 
+    final merchantId = await MerchantRepository(database)
+        .findOrCreateForDescription(
+      description: description,
+      transactionType: transactionType,
+      fallbackCategoryId: categoryId,
+    );
+
     final updatedRows = await (database.update(database.moneyTransactions)
           ..where((transaction) => transaction.id.equals(transactionId)))
         .write(
       MoneyTransactionsCompanion(
         accountId: Value(accountId),
         categoryId: Value(categoryId),
+        merchantId: Value(merchantId),
         amountPaise: Value(amountPaise),
         transactionType: Value(transactionType),
         transactionDate: Value(transactionDate),
@@ -308,6 +327,12 @@ class TransactionRepository {
           database.moneyTransactions.categoryId,
         ),
       ),
+      leftOuterJoin(
+        database.merchants,
+        database.merchants.id.equalsExp(
+          database.moneyTransactions.merchantId,
+        ),
+      ),
     ]);
 
     query
@@ -324,6 +349,7 @@ class TransactionRepository {
         transaction: row.readTable(database.moneyTransactions),
         account: row.readTable(database.bankAccounts),
         category: row.readTableOrNull(database.categories),
+        merchant: row.readTableOrNull(database.merchants),
       );
     }).toList();
   }

@@ -900,14 +900,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             final isIncome = transactionType == 'income';
             final isTransfer = transactionType == 'transfer';
 
-            final title = transaction.description?.trim().isNotEmpty == true
-                ? transaction.description!.trim()
-                : (categoryName ??
-                    (isIncome
-                        ? 'Income'
-                        : isTransfer
-                            ? 'Transfer'
-                            : 'Expense'));
+            final title = item.merchant?.name ??
+                (transaction.description?.trim().isNotEmpty == true
+                    ? transaction.description!.trim()
+                    : (categoryName ??
+                        (isIncome
+                            ? 'Income'
+                            : isTransfer
+                                ? 'Transfer'
+                                : 'Expense')));
 
             final categoryLabel = categoryName ??
                 (isIncome

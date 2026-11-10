@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart';
+import 'package:drift/drift.dart' show Value, Variable;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -60,6 +60,12 @@ void main() {
     expect(transaction.transactionType, 'expense');
     expect(transaction.source, 'sms');
     expect(transaction.referenceNumber, '123456789012');
+    expect(transaction.merchantId, isNotNull);
+    final merchant = await (database.select(database.merchants)
+          ..where((row) => row.id.equals(transaction.merchantId!)))
+        .getSingle();
+    expect(merchant.name, 'Swiggy');
+    expect(merchant.defaultCategoryId, categoryId);
     expect(processedSms, hasLength(1));
     expect(processedSms.single.fingerprint, 'sms-fingerprint-001');
     expect(processedSms.single.isProcessed, isTrue);

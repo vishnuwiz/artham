@@ -72,9 +72,14 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
         await widget.database.select(widget.database.bankAccounts).get();
     final categories =
         await widget.database.select(widget.database.categories).get();
+    final merchants =
+        await widget.database.select(widget.database.merchants).get();
 
     return _ActivityData(
       transactions: transactions,
+      merchantNames: {
+        for (final merchant in merchants) merchant.id: merchant.name,
+      },
       accountNames: {
         for (final account in accounts)
           account.id: bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
@@ -196,6 +201,8 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       }
       if (query.isNotEmpty) {
         final description = (tx.description ?? '').toLowerCase();
+        final merchant =
+            (data.merchantNames[tx.merchantId] ?? '').toLowerCase();
         final reference = (tx.referenceNumber ?? '').toLowerCase();
         final category =
             (data.categoryNames[tx.categoryId] ?? '').toLowerCase();
@@ -204,6 +211,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
         final destinationAccount =
             (data.accountNames[tx.transferToAccountId] ?? '').toLowerCase();
         if (!description.contains(query) &&
+            !merchant.contains(query) &&
             !reference.contains(query) &&
             !category.contains(query) &&
             !sourceAccount.contains(query) &&
@@ -884,9 +892,10 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        transaction.description?.isNotEmpty == true
-                            ? transaction.description!
-                            : categoryName,
+                        data.merchantNames[transaction.merchantId] ??
+                            (transaction.description?.isNotEmpty == true
+                                ? transaction.description!
+                                : categoryName),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
@@ -1006,6 +1015,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
 
 class _ActivityData {
   final List<MoneyTransaction> transactions;
+  final Map<int, String> merchantNames;
   final Map<int, String> accountNames;
   final Map<int, String> categoryNames;
   final List<BankAccount> accounts;
@@ -1013,6 +1023,7 @@ class _ActivityData {
 
   const _ActivityData({
     required this.transactions,
+    required this.merchantNames,
     required this.accountNames,
     required this.categoryNames,
     required this.accounts,
