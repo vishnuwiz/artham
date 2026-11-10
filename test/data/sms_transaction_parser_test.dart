@@ -29,6 +29,18 @@ void main() {
     expect(result.suggestedCategory, 'Groceries');
   });
 
+  test('does not mistake a payment provider for the actual payee', () {
+    final result = SmsTransactionParser().parse(
+      'Rs. 450 debited to Local Book Store using Amazon Pay on 10-11-2026. '
+      'UPI Ref No 123456789012',
+    );
+
+    expect(result, isNotNull);
+    expect(result!.description, 'Local Book Store');
+    expect(result.merchantName, isNull);
+    expect(result.suggestedCategory, 'Other Expense');
+  });
+
   test('parses an incoming bank credit and named-month date', () {
     final result = SmsTransactionParser().parse(
       'INR 35,000.00 credited to your account on 10 Nov 2026. '
