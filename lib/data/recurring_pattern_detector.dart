@@ -151,6 +151,17 @@ class RecurringPatternDetector {
         cadence.frequency,
         cadence.interval,
       );
+      final graceDays = cadence.frequency == 'weekly'
+          ? 14
+          : cadence.frequency == 'yearly'
+              ? 60
+              : 45;
+      if (nextExpected.isBefore(
+        today.subtract(Duration(days: graceDays)),
+      )) {
+        continue;
+      }
+
       final parts = entry.key.split('|');
       final label = recent.last.merchantName?.trim().isNotEmpty == true
           ? recent.last.merchantName!.trim()
@@ -209,7 +220,160 @@ class RecurringPatternDetector {
         .where((token) =>
             token.isNotEmpty &&
             !ignoredTokens.contains(token) &&
-            !RegExp(r'^\d+$').hasMatch(token));
+            !RegExp(r'^\d+
+
+    return tokens.join(' ').trim();
+  }
+
+  static int _median(List<int> values) {
+    final sorted = [...values]..sort();
+    final middle = sorted.length ~/ 2;
+    if (sorted.length.isOdd) return sorted[middle];
+    return (sorted[middle - 1] + sorted[middle]) ~/ 2;
+  }
+
+  static _RecurringCadence? _inferCadence(List<int> gaps) {
+    // Check monthly cadences first: a payment every 28-31 days is more
+    // naturally represented as monthly than as every four weeks.
+    for (var months = 1; months <= 6; months++) {
+      final expectedDays = 30.4375 * months;
+      final tolerance = _max(5, (months * 1.25).round());
+      if (gaps.every((gap) => (gap - expectedDays).abs() <= tolerance)) {
+        return _RecurringCadence('monthly', months);
+      }
+    }
+
+    if (gaps.every((gap) => gap >= 350 && gap <= 380)) {
+      return const _RecurringCadence('yearly', 1);
+    }
+
+    for (var weeks = 1; weeks <= 3; weeks++) {
+      final expectedDays = weeks * 7;
+      if (gaps.every((gap) => (gap - expectedDays).abs() <= 1)) {
+        return _RecurringCadence('weekly', weeks);
+      }
+    }
+
+    return null;
+  }
+
+  static DateTime _nextOccurrence(
+    DateTime current,
+    String frequency,
+    int interval,
+  ) {
+    if (frequency == 'weekly') {
+      return current.add(Duration(days: 7 * interval));
+    }
+
+    final targetYear = frequency == 'yearly' ? current.year + interval : current.year;
+    final targetMonth = frequency == 'monthly'
+        ? current.month + interval
+        : current.month;
+    final firstOfTargetMonth = DateTime(targetYear, targetMonth, 1);
+    final lastDay = DateTime(
+      firstOfTargetMonth.year,
+      firstOfTargetMonth.month + 1,
+      0,
+    ).day;
+    final day = current.day > lastDay ? lastDay : current.day;
+    return DateTime(
+      firstOfTargetMonth.year,
+      firstOfTargetMonth.month,
+      day,
+    );
+  }
+
+  static DateTime _dateOnly(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
+
+  static int _max(int first, int second) => first > second ? first : second;
+}
+
+class _RecurringCadence {
+  final String frequency;
+  final int interval;
+
+  const _RecurringCadence(this.frequency, this.interval);
+}
+).hasMatch(token) &&
+            !RegExp(r'^(ref|id|txn|utr)\d+
+
+    return tokens.join(' ').trim();
+  }
+
+  static int _median(List<int> values) {
+    final sorted = [...values]..sort();
+    final middle = sorted.length ~/ 2;
+    if (sorted.length.isOdd) return sorted[middle];
+    return (sorted[middle - 1] + sorted[middle]) ~/ 2;
+  }
+
+  static _RecurringCadence? _inferCadence(List<int> gaps) {
+    // Check monthly cadences first: a payment every 28-31 days is more
+    // naturally represented as monthly than as every four weeks.
+    for (var months = 1; months <= 6; months++) {
+      final expectedDays = 30.4375 * months;
+      final tolerance = _max(5, (months * 1.25).round());
+      if (gaps.every((gap) => (gap - expectedDays).abs() <= tolerance)) {
+        return _RecurringCadence('monthly', months);
+      }
+    }
+
+    if (gaps.every((gap) => gap >= 350 && gap <= 380)) {
+      return const _RecurringCadence('yearly', 1);
+    }
+
+    for (var weeks = 1; weeks <= 3; weeks++) {
+      final expectedDays = weeks * 7;
+      if (gaps.every((gap) => (gap - expectedDays).abs() <= 1)) {
+        return _RecurringCadence('weekly', weeks);
+      }
+    }
+
+    return null;
+  }
+
+  static DateTime _nextOccurrence(
+    DateTime current,
+    String frequency,
+    int interval,
+  ) {
+    if (frequency == 'weekly') {
+      return current.add(Duration(days: 7 * interval));
+    }
+
+    final targetYear = frequency == 'yearly' ? current.year + interval : current.year;
+    final targetMonth = frequency == 'monthly'
+        ? current.month + interval
+        : current.month;
+    final firstOfTargetMonth = DateTime(targetYear, targetMonth, 1);
+    final lastDay = DateTime(
+      firstOfTargetMonth.year,
+      firstOfTargetMonth.month + 1,
+      0,
+    ).day;
+    final day = current.day > lastDay ? lastDay : current.day;
+    return DateTime(
+      firstOfTargetMonth.year,
+      firstOfTargetMonth.month,
+      day,
+    );
+  }
+
+  static DateTime _dateOnly(DateTime value) =>
+      DateTime(value.year, value.month, value.day);
+
+  static int _max(int first, int second) => first > second ? first : second;
+}
+
+class _RecurringCadence {
+  final String frequency;
+  final int interval;
+
+  const _RecurringCadence(this.frequency, this.interval);
+}
+).hasMatch(token));
 
     return tokens.join(' ').trim();
   }
