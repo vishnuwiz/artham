@@ -14,7 +14,19 @@ void main() {
     expect(result.transactionDate, DateTime(2026, 11, 9));
     expect(result.referenceNumber, '123456789012');
     expect(result.description, 'Swiggy');
+    expect(result.merchantName, 'Swiggy');
     expect(result.suggestedCategory, 'Food & Dining');
+  });
+
+  test('recognises Instamart as groceries rather than regular Swiggy', () {
+    final result = SmsTransactionParser().parse(
+      'Rs. 650 debited to SWIGGY INSTAMART on 10-11-2026. UPI Ref 123456789012',
+    );
+
+    expect(result, isNotNull);
+    expect(result!.description, 'Swiggy Instamart');
+    expect(result.merchantName, 'Swiggy Instamart');
+    expect(result.suggestedCategory, 'Groceries');
   });
 
   test('parses an incoming bank credit and named-month date', () {
