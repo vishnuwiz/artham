@@ -46,7 +46,19 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           .getSingleOrNull();
     }
 
-    return _TransactionDetailsData(account: account, category: category);
+    Merchant? merchant;
+    final merchantId = widget.transaction.merchantId;
+    if (merchantId != null) {
+      merchant = await (widget.database.select(widget.database.merchants)
+            ..where((item) => item.id.equals(merchantId)))
+          .getSingleOrNull();
+    }
+
+    return _TransactionDetailsData(
+      account: account,
+      category: category,
+      merchant: merchant,
+    );
   }
 
   String _formatAmount(int paise) => '₹${(paise / 100).toStringAsFixed(2)}';
@@ -233,6 +245,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                 child: Column(
                   children: [
                     _detailRow('Category', categoryName),
+                    if (details.merchant != null)
+                      _detailRow('Merchant', details.merchant!.name),
                     _detailRow('Account', accountName),
                     _detailRow('Date', _formatDate(transaction.transactionDate)),
                     _detailRow('Type', isIncome ? 'Income' : 'Expense'),
@@ -300,10 +314,12 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
 class _TransactionDetailsData {
   final BankAccount? account;
   final Category? category;
+  final Merchant? merchant;
 
   const _TransactionDetailsData({
     required this.account,
     required this.category,
+    required this.merchant,
   });
 }
 
