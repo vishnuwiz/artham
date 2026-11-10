@@ -6,6 +6,29 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 7A — Local Bank Statement Import (CSV and Excel)
+
+#### Added
+- Added local file selection for CSV, XLSX, and XLS bank statements.
+- Added automatic header detection with editable worksheet, header row, and column mapping for transaction date, narration, debit, credit, signed amount, type, and reference.
+- Added a review preview with valid, skipped, and total row counts before any financial data is saved.
+- Added explicit account selection and a confirmation step before importing transactions.
+- Added duplicate detection against the selected account and within the selected statement batch.
+- Reused existing transaction, merchant, and account-balance logic; statement imports are labelled with source `statement`.
+
+#### Safety and data
+- Statement files are parsed locally and are not retained or uploaded.
+- Transactions are saved only after the user confirms the preview.
+- Rows with invalid dates/amounts, ambiguous debit and credit values, or dates before the account opening date are skipped.
+- Existing transactions and account balances are not changed by parsing or previewing. Confirmed imports update balances through the normal transaction table.
+- No database schema migration is required.
+
+#### Verification
+- Add parser tests for date, amount, header mapping, debit/credit direction, and invalid-row handling.
+- Add repository tests for duplicate prevention, account-opening-date checks, and statement transaction sources.
+- Add widget coverage for the import entry screen.
+
+
 ### Stage 6C — Merchant-Level Spending Insights (2026-11-10)
 
 #### Added

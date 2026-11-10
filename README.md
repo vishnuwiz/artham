@@ -15,6 +15,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - **Offline merchant recognition** — Recognise more than 1,000 India-focused merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue generated from a single version-controlled source. Suggest categories such as Food & Dining, Groceries, Shopping, Travel, Health, Bills & Utilities and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
 - **Automatic Android bank-SMS import (Android emulator validated; physical-device testing pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are parsed in the background and saved to the existing local database. The receiver uses the account suffix in the alert to match a saved account, ignores duplicate alerts, and does not retain the original SMS body. Alerts with an unknown or ambiguous account suffix wait in Settings for manual account assignment.
 - **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
+- **Bank statement import (CSV/XLSX/XLS)** — select a statement file, choose the account, verify detected date/description/debit/credit columns, preview parsed rows, and explicitly confirm import. Existing matches are skipped; the original statement file is not retained.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
@@ -39,7 +40,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - Android automatic SMS import is opt-in and listens only for new incoming SMS broadcasts; it does not read or scan the existing inbox and does not request `READ_SMS`. `RECEIVE_SMS` is a hard-restricted Android permission. The flow has been validated in the Android emulator; physical-device testing and distribution checks remain outstanding. Distribution through Google Play requires the applicable SMS-based money-management declaration and review/approval; a sideloaded APK may not be allowlisted to hold this permission.
 - iOS supports user-initiated SMS sharing/pasting only; ordinary third-party apps cannot read the full Messages inbox.
-- Bank statement import.
+- PDF bank statement import.
 - Database encryption and additional security improvements.
 - Expanded Settings options.
 - Further performance improvements.
