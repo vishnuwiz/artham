@@ -84,6 +84,7 @@ class MerchantSpendingAnalyzer {
   }) {
     if (limit <= 0) return const MerchantSpendingInsights();
 
+    final asOfDate = DateTime(asOf.year, asOf.month, asOf.day);
     final currentMonth = DateTime(asOf.year, asOf.month, 1);
     final nextMonth = DateTime(asOf.year, asOf.month + 1, 1);
     final historyStart = DateTime(
@@ -96,7 +97,11 @@ class MerchantSpendingAnalyzer {
     for (final expense in expenses) {
       if (expense.amountPaise <= 0 ||
           expense.merchantName.trim().isEmpty ||
-          expense.transactionDate.isAfter(asOf) ||
+          DateTime(
+            expense.transactionDate.year,
+            expense.transactionDate.month,
+            expense.transactionDate.day,
+          ).isAfter(asOfDate) ||
           expense.transactionDate.isBefore(historyStart) ||
           !expense.transactionDate.isBefore(nextMonth)) {
         continue;
