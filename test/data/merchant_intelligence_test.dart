@@ -3,6 +3,10 @@ import 'package:artham/data/merchant_intelligence.dart';
 
 void main() {
   group('MerchantIntelligence', () {
+    test('catalogue supports at least 500 distinct merchants', () {
+      expect(MerchantIntelligence.merchantCount, greaterThanOrEqualTo(500));
+    });
+
     test('recognises a merchant from a masked UPI-style description', () {
       final result = MerchantIntelligence.recognize(
         'UPI/DR/123456789/SWIGGY*ORDER123',
@@ -32,6 +36,14 @@ void main() {
         'KSEB bill payment': ('KSEB', 'Bills & Utilities'),
         'Tata 1mg order': ('Tata 1mg', 'Health'),
         'MakeMyTrip booking': ('MakeMyTrip', 'Travel'),
+        'Lulu Hypermarket purchase': ('Lulu Hypermarket', 'Groceries'),
+        'Decathlon store': ('Decathlon', 'Shopping'),
+        'Kochi Metro ticket': ('Kochi Metro', 'Transportation'),
+        'Kerala Vision Broadband': ('Kerala Vision Broadband', 'Bills & Utilities'),
+        'Amrita Hospital payment': ('Amrita Hospital', 'Health'),
+        'IndiGo flight': ('IndiGo', 'Travel'),
+        'Third Wave Coffee': ('Third Wave Coffee', 'Food & Dining'),
+        'ManoramaMAX subscription': ('ManoramaMAX', 'Entertainment'),
       };
 
       for (final entry in cases.entries) {
