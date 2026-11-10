@@ -59,6 +59,22 @@ void main() {
       expect(BankStatementParser.parseDate('46335'), DateTime(2026, 11, 9));
     });
 
+    test('keeps large currency values exact to the paise', () {
+      final headers = ['Date', 'Description', 'Amount', 'Type'];
+      final mapping = BankStatementParser.detectMapping(headers);
+      final result = BankStatementParser.parse(
+        headers: headers,
+        mapping: mapping,
+        rows: [
+          ['10/11/2026', 'Large transfer', '9876543210987.65', 'Dr'],
+        ],
+      );
+
+      expect(result.transactions, hasLength(1));
+      expect(result.transactions.single.amountPaise, 987654321098765);
+      expect(result.transactions.single.transactionType, 'expense');
+    });
+
     test('uses signed amount or explicit Dr/Cr type safely', () {
       final headers = ['Date', 'Description', 'Amount', 'Type'];
       final mapping = BankStatementParser.detectMapping(headers);
