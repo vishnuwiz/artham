@@ -54,6 +54,39 @@ void main() {
           ),
         );
 
+    final merchantId = await database.into(database.merchants).insert(
+      MerchantsCompanion.insert(
+        name: 'Amazon',
+        defaultCategoryId: Value(foodCategoryId),
+      ),
+    );
+    for (var offset = 3; offset >= 1; offset--) {
+      await database.into(database.moneyTransactions).insert(
+        MoneyTransactionsCompanion.insert(
+          accountId: accountId,
+          categoryId: Value(foodCategoryId),
+          merchantId: Value(merchantId),
+          amountPaise: 100000,
+          transactionType: 'expense',
+          transactionDate: DateTime(
+            now.year,
+            now.month - offset,
+            now.day > 28 ? 28 : now.day,
+          ),
+        ),
+      );
+    }
+    await database.into(database.moneyTransactions).insert(
+      MoneyTransactionsCompanion.insert(
+        accountId: accountId,
+        categoryId: Value(foodCategoryId),
+        merchantId: Value(merchantId),
+        amountPaise: 200000,
+        transactionType: 'expense',
+        transactionDate: DateTime(now.year, now.month, now.day),
+      ),
+    );
+
     // Keep the full Insights content in the test viewport so assertions do
     // not depend on scrollable discovery or scroll timing.
     tester.view.physicalSize = const Size(430, 4000);
@@ -79,6 +112,10 @@ void main() {
     expect(find.text('Food'), findsWidgets);
     expect(find.text('Planned vs actual'), findsOneWidget);
     expect(find.text('Category budget insights'), findsOneWidget);
+    expect(find.text('Merchant spending'), findsOneWidget);
+    expect(find.text('Unusual spending'), findsOneWidget);
+    expect(find.text('Amazon'), findsWidgets);
+    expect(find.textContaining('above usual'), findsOneWidget);
     expect(find.text('Food'), findsWidgets);
   });
 }

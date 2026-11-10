@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../data/app_database.dart';
 import '../../data/budget_forecast.dart';
+import '../../data/merchant_spending_insights.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -40,6 +41,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         categoryBudgets: [],
         categoryForecasts: [],
         budgetHistory: [],
+        merchantInsights: MerchantSpendingInsights.empty(),
       ),
     );
     if (widget.isActive) {
@@ -66,6 +68,36 @@ class _InsightsScreenState extends State<InsightsScreen> {
     final categories = await repository.getCategories('expense');
     final now = DateTime.now();
     final currentMonth = DateTime(now.year, now.month, 1);
+    final merchants = await widget.database.select(widget.database.merchants).get();
+    final merchantsById = {
+      for (final merchant in merchants) merchant.id: merchant,
+    };
+    final categoryNamesById = {
+      for (final category in categories) category.id: category.name,
+    };
+    final merchantExpenses = <MerchantExpenseRecord>[];
+    for (final transaction in transactions) {
+      if (transaction.transactionType != 'expense') continue;
+      final merchantId = transaction.merchantId;
+      if (merchantId == null) continue;
+      final merchant = merchantsById[merchantId];
+      if (merchant == null) continue;
+      merchantExpenses.add(
+        MerchantExpenseRecord(
+          merchantId: merchant.id,
+          merchantName: merchant.name,
+          categoryName: transaction.categoryId == null
+              ? null
+              : categoryNamesById[transaction.categoryId!],
+          amountPaise: transaction.amountPaise,
+          transactionDate: transaction.transactionDate,
+        ),
+      );
+    }
+    final merchantInsights = MerchantSpendingAnalyzer.calculate(
+      expenses: merchantExpenses,
+      asOf: now,
+    );
 
     await budgetRepository.applyTemplatesForMonth(currentMonth);
     final overallBudget = await budgetRepository.getMonthlyBudgetSummary(
@@ -188,6 +220,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
       categoryBudgets: categoryBudgets,
       categoryForecasts: categoryForecasts,
       budgetHistory: budgetHistory,
+      merchantInsights: merchantInsights,
     );
   }
 
@@ -318,6 +351,17 @@ class _InsightsScreenState extends State<InsightsScreen> {
                           data.categoryTotals,
                           data.currentExpenses,
                         ),
+                        const SizedBox(height: 25),
+                        _sectionTitle('Merchant spending', 'This month'),
+                        const SizedBox(height: 12),
+                        _buildMerchantSpending(data.merchantInsights),
+                        const SizedBox(height: 25),
+                        _sectionTitle(
+                          'Unusual spending',
+                          'Compared with recent history',
+                        ),
+                        const SizedBox(height: 12),
+                        _buildUnusualSpend(data.merchantInsights),
                         const SizedBox(height: 20),
                         const Text(
                           'Insights are based on transactions saved in Artham. Transfers are excluded.',
@@ -1170,6 +1214,204 @@ class _InsightsScreenState extends State<InsightsScreen> {
     );
   }
 
+  Widget _buildMerchantSpending(MerchantSpendingInsights insights) {
+    final items = insights.topMerchants;
+    if (items.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Text(
+          'Merchant spending insights will appear for recognised merchants.',
+          style: TextStyle(color: Colors.black54, fontSize: 11),
+        ),
+      );
+    }
+
+    final largestSpend = items.first.currentMonthSpendPaise;
+    return Container(
+      padding: const EdgeInsets.all(17),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
+      child: Column(
+        children: items.map((item) {
+          final share = largestSpend > 0
+              ? item.currentMonthSpendPaise / largestSpend
+              : 0.0;
+          final countLabel = item.currentMonthTransactionCount == 1
+              ? '1 transaction'
+              : '${item.currentMonthTransactionCount} transactions';
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 15),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.merchantName,
+                        style: const TextStyle(
+                          color: _insightsNavy,
+                          fontSize: 13,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    Text(
+                      _money(item.currentMonthSpendPaise),
+                      style: const TextStyle(
+                        color: _insightsNavy,
+                        fontSize: 12,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  '${item.categoryName ?? 'Uncategorised'} · $countLabel',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(height: 8),
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: LinearProgressIndicator(
+                    value: share.clamp(0.0, 1.0).toDouble(),
+                    minHeight: 7,
+                    backgroundColor: const Color(0xFFE9EEEC),
+                    color: _insightsGreen,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
+  Widget _buildUnusualSpend(MerchantSpendingInsights insights) {
+    final items = insights.unusualMerchants;
+    if (items.isEmpty) {
+      return Container(
+        width: double.infinity,
+        padding: const EdgeInsets.all(18),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: const Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Icon(
+                  Icons.check_circle_outline_rounded,
+                  color: _insightsGreen,
+                  size: 20,
+                ),
+                SizedBox(width: 8),
+                Expanded(
+                  child: Text(
+                    'No unusual merchant spend flagged',
+                    style: TextStyle(
+                      color: _insightsNavy,
+                      fontSize: 12,
+                      fontWeight: FontWeight.w800,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 7),
+            Text(
+              'Flags appear after at least three prior payment dates across two months, when spending is more than 50% and ₹500 above the usual amount by this date.',
+              style: TextStyle(color: Colors.black54, fontSize: 10),
+            ),
+          ],
+        ),
+      );
+    }
+
+    return Container(
+      padding: const EdgeInsets.all(17),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(21),
+      ),
+      child: Column(
+        children: items.map((item) {
+          return Padding(
+            padding: const EdgeInsets.only(bottom: 13),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        item.merchantName,
+                        style: const TextStyle(
+                          color: _insightsNavy,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 9,
+                        vertical: 5,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFFBEDEC),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Text(
+                        '+${item.percentageAboveUsual}% above usual',
+                        style: const TextStyle(
+                          color: Color(0xFFC45D58),
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  '${item.categoryName ?? 'Uncategorised'} · ${item.currentMonthTransactionCount} current-month payments',
+                  style: const TextStyle(
+                    color: Colors.black54,
+                    fontSize: 10,
+                  ),
+                ),
+                const SizedBox(height: 5),
+                Text(
+                  'Spent ${_money(item.currentMonthSpendPaise)} · Usual by today ${_money(item.expectedSpendToDatePaise)}',
+                  style: const TextStyle(
+                    color: Color(0xFFC45D58),
+                    fontSize: 10,
+                    fontWeight: FontWeight.w700,
+                  ),
+                ),
+              ],
+            ),
+          );
+        }).toList(),
+      ),
+    );
+  }
+
   Widget _buildCategoryBreakdown(List<_CategoryTotal> categories, int total) {
     if (categories.isEmpty) {
       return Container(
@@ -1276,6 +1518,7 @@ class _InsightsData {
   final List<CategoryBudgetSummary> categoryBudgets;
   final List<_CategoryForecast> categoryForecasts;
   final List<MonthlyBudgetHistoryItem> budgetHistory;
+  final MerchantSpendingInsights merchantInsights;
 
   const _InsightsData({
     required this.monthTotals,
@@ -1287,6 +1530,7 @@ class _InsightsData {
     required this.categoryBudgets,
     required this.categoryForecasts,
     required this.budgetHistory,
+    required this.merchantInsights,
   });
 }
 

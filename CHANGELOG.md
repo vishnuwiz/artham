@@ -6,6 +6,22 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 6C — Merchant-Level Spending Insights (2026-11-10)
+
+#### Added
+- Added a current-month ranking of recognised merchants by total spend, with category and transaction-count context.
+- Added local unusual-spend indicators comparing month-to-date merchant spending with the average through the same calendar day in the previous three completed months.
+- Require at least three distinct historical payment dates across two or more months, a rise greater than 50%, and at least ₹500 above the historical same-date average before flagging unusual spend.
+
+#### Safety and data
+- Analytics use existing local merchant and transaction records; transfers, future-dated entries, unrecognised merchants, and nonpositive amounts are excluded.
+- The analysis is read-only and does not alter transactions, recurring schedules, account balances, or the database schema.
+
+#### Verification
+- Add unit coverage for merchant ranking, unusual-spend thresholds, minimum history, future-dated entries, and result limits.
+- Extend the Insights widget test to verify merchant rankings and an unusual-spend indicator.
+
+
 ### Pastel branding refresh
 - Use the supplied pastel Artham mark for Android and iOS launcher icons.
 - Add a short animated Flutter startup splash with the pastel A mark, rupee coin, Malayalam wordmark, and tagline.

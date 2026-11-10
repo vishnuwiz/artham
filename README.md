@@ -26,6 +26,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - **Automatic budget refresh** — Budget progress updates when relevant transactions change.
 - **Activity screen** — Review, search, filter, and sort transaction activity.
 - **Insights screen** — View financial insights.
+- **Merchant spending insights** — Rank recognised merchants by current-month spend and flag unusual increases against the same day-of-month in the previous three completed months. Flags require sufficient history, a rise of more than 50%, and at least ₹500 above the usual amount.
 - **Recurring transactions** — Create recurring income or expense schedules with daily, weekly, monthly, or yearly frequencies and a custom interval.
   - **Pattern suggestions** — Detect likely weekly, monthly, quarterly, half-yearly, and yearly payments from at least three similar local transactions. Review the proposed amount, account, category, frequency, and next expected date; Artham never creates a schedule or transaction from a detected pattern without your action.
   - Set a start date and an optional end date.
