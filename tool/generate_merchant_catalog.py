@@ -24,8 +24,12 @@ def normalize(value: str) -> str:
     return re.sub(r"\s+", " ", re.sub(r"[^a-z0-9]+", " ", value.lower())).strip()
 
 
-def quote(value: str) -> str:
-    # JSON double-quoted strings are valid Dart and Kotlin string literals.
+def quote_dart(value: str) -> str:
+    escaped = value.replace("\\\\", "\\\\\\\\").replace("'", "\\\\'").replace("$", "\\\\$")
+    return "'" + escaped + "'"
+
+
+def quote_kotlin(value: str) -> str:
     return json.dumps(value, ensure_ascii=True)
 
 
@@ -72,11 +76,11 @@ def render_dart(records: list[dict]) -> str:
         "const List<MerchantCatalogEntry> merchantCatalogData = [",
     ]
     for record in records:
-        aliases = ", ".join(quote(alias) for alias in record["aliases"])
+        aliases = ", ".join(quote_dart(alias) for alias in record["aliases"])
         lines.extend([
             "  MerchantCatalogEntry(",
-            f"    name: {quote(record['name'])},",
-            f"    categoryName: {quote(record['category'])},",
+            f"    name: {quote_dart(record['name'])},",
+            f"    categoryName: {quote_dart(record['category'])},",
             f"    aliases: [{aliases}],",
             "  ),",
         ])
@@ -101,11 +105,11 @@ def render_kotlin(records: list[dict]) -> str:
         "    val rules = listOf(",
     ]
     for record in records:
-        aliases = ", ".join(quote(alias) for alias in record["aliases"])
+        aliases = ", ".join(quote_kotlin(alias) for alias in record["aliases"])
         lines.extend([
             "        MerchantCatalogRuleData(",
-            f"            name = {quote(record['name'])},",
-            f"            categoryName = {quote(record['category'])},",
+            f"            name = {quote_kotlin(record['name'])},",
+            f"            categoryName = {quote_kotlin(record['category'])},",
             f"            aliases = listOf({aliases}),",
             "        ),",
         ])
