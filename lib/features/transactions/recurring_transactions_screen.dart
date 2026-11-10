@@ -1112,12 +1112,12 @@ class _AddRecurringScheduleSheetState
               padding: const EdgeInsets.fromLTRB(20, 16, 12, 12),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       widget.suggestion == null
                           ? 'New recurring schedule'
                           : 'Review detected pattern',
-                      style: TextStyle(
+                      style: const TextStyle(
                         color: recurringNavy,
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
