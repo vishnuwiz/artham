@@ -1,0 +1,7574 @@
+[
+  {
+    "name": "Swiggy",
+    "category": "Food & Dining",
+    "aliases": [
+      "Swiggy"
+    ]
+  },
+  {
+    "name": "Zomato",
+    "category": "Food & Dining",
+    "aliases": [
+      "Zomato"
+    ]
+  },
+  {
+    "name": "EatSure",
+    "category": "Food & Dining",
+    "aliases": [
+      "EatSure"
+    ]
+  },
+  {
+    "name": "Dominos",
+    "category": "Food & Dining",
+    "aliases": [
+      "Dominos",
+      "Domino's",
+      "Domino's Pizza",
+      "Domino Pizza"
+    ]
+  },
+  {
+    "name": "Pizza Hut",
+    "category": "Food & Dining",
+    "aliases": [
+      "Pizza Hut"
+    ]
+  },
+  {
+    "name": "McDonalds",
+    "category": "Food & Dining",
+    "aliases": [
+      "McDonalds",
+      "McDonald",
+      "McDonald's",
+      "McDonald's India"
+    ]
+  },
+  {
+    "name": "KFC",
+    "category": "Food & Dining",
+    "aliases": [
+      "KFC"
+    ]
+  },
+  {
+    "name": "Starbucks",
+    "category": "Food & Dining",
+    "aliases": [
+      "Starbucks"
+    ]
+  },
+  {
+    "name": "Subway",
+    "category": "Food & Dining",
+    "aliases": [
+      "Subway"
+    ]
+  },
+  {
+    "name": "Burger King",
+    "category": "Food & Dining",
+    "aliases": [
+      "Burger King"
+    ]
+  },
+  {
+    "name": "Uber Eats",
+    "category": "Food & Dining",
+    "aliases": [
+      "Uber Eats"
+    ]
+  },
+  {
+    "name": "Taco Bell",
+    "category": "Food & Dining",
+    "aliases": [
+      "Taco Bell"
+    ]
+  },
+  {
+    "name": "Wendy's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Wendy's"
+    ]
+  },
+  {
+    "name": "Popeyes",
+    "category": "Food & Dining",
+    "aliases": [
+      "Popeyes"
+    ]
+  },
+  {
+    "name": "Dunkin'",
+    "category": "Food & Dining",
+    "aliases": [
+      "Dunkin'"
+    ]
+  },
+  {
+    "name": "Krispy Kreme",
+    "category": "Food & Dining",
+    "aliases": [
+      "Krispy Kreme"
+    ]
+  },
+  {
+    "name": "Tim Hortons",
+    "category": "Food & Dining",
+    "aliases": [
+      "Tim Hortons"
+    ]
+  },
+  {
+    "name": "Costa Coffee",
+    "category": "Food & Dining",
+    "aliases": [
+      "Costa Coffee"
+    ]
+  },
+  {
+    "name": "Cafe Coffee Day",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cafe Coffee Day"
+    ]
+  },
+  {
+    "name": "Barista",
+    "category": "Food & Dining",
+    "aliases": [
+      "Barista"
+    ]
+  },
+  {
+    "name": "Third Wave Coffee",
+    "category": "Food & Dining",
+    "aliases": [
+      "Third Wave Coffee"
+    ]
+  },
+  {
+    "name": "Blue Tokai",
+    "category": "Food & Dining",
+    "aliases": [
+      "Blue Tokai"
+    ]
+  },
+  {
+    "name": "Tea Post",
+    "category": "Food & Dining",
+    "aliases": [
+      "Tea Post"
+    ]
+  },
+  {
+    "name": "Chaayos",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chaayos"
+    ]
+  },
+  {
+    "name": "Chai Point",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chai Point"
+    ]
+  },
+  {
+    "name": "Chai Sutta Bar",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chai Sutta Bar"
+    ]
+  },
+  {
+    "name": "Tea Trails",
+    "category": "Food & Dining",
+    "aliases": [
+      "Tea Trails"
+    ]
+  },
+  {
+    "name": "Mad Over Donuts",
+    "category": "Food & Dining",
+    "aliases": [
+      "Mad Over Donuts"
+    ]
+  },
+  {
+    "name": "The Belgian Waffle",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Belgian Waffle",
+      "Belgian Waffle"
+    ]
+  },
+  {
+    "name": "Wow! Momo",
+    "category": "Food & Dining",
+    "aliases": [
+      "Wow! Momo"
+    ]
+  },
+  {
+    "name": "Wow! China",
+    "category": "Food & Dining",
+    "aliases": [
+      "Wow! China"
+    ]
+  },
+  {
+    "name": "Wow! Chicken",
+    "category": "Food & Dining",
+    "aliases": [
+      "Wow! Chicken"
+    ]
+  },
+  {
+    "name": "Behrouz Biryani",
+    "category": "Food & Dining",
+    "aliases": [
+      "Behrouz Biryani"
+    ]
+  },
+  {
+    "name": "Faasos",
+    "category": "Food & Dining",
+    "aliases": [
+      "Faasos"
+    ]
+  },
+  {
+    "name": "Oven Story",
+    "category": "Food & Dining",
+    "aliases": [
+      "Oven Story"
+    ]
+  },
+  {
+    "name": "LunchBox",
+    "category": "Food & Dining",
+    "aliases": [
+      "LunchBox"
+    ]
+  },
+  {
+    "name": "The Good Bowl",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Good Bowl"
+    ]
+  },
+  {
+    "name": "Sweet Truth",
+    "category": "Food & Dining",
+    "aliases": [
+      "Sweet Truth"
+    ]
+  },
+  {
+    "name": "Firangi Bake",
+    "category": "Food & Dining",
+    "aliases": [
+      "Firangi Bake"
+    ]
+  },
+  {
+    "name": "Mojo Pizza",
+    "category": "Food & Dining",
+    "aliases": [
+      "Mojo Pizza"
+    ]
+  },
+  {
+    "name": "EatFit",
+    "category": "Food & Dining",
+    "aliases": [
+      "EatFit"
+    ]
+  },
+  {
+    "name": "FreshMenu",
+    "category": "Food & Dining",
+    "aliases": [
+      "FreshMenu"
+    ]
+  },
+  {
+    "name": "Box8",
+    "category": "Food & Dining",
+    "aliases": [
+      "Box8"
+    ]
+  },
+  {
+    "name": "California Burrito",
+    "category": "Food & Dining",
+    "aliases": [
+      "California Burrito"
+    ]
+  },
+  {
+    "name": "Smoor",
+    "category": "Food & Dining",
+    "aliases": [
+      "Smoor"
+    ]
+  },
+  {
+    "name": "Haldiram's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Haldiram's"
+    ]
+  },
+  {
+    "name": "Bikanervala",
+    "category": "Food & Dining",
+    "aliases": [
+      "Bikanervala"
+    ]
+  },
+  {
+    "name": "Barbeque Nation",
+    "category": "Food & Dining",
+    "aliases": [
+      "Barbeque Nation"
+    ]
+  },
+  {
+    "name": "Absolute Barbecues",
+    "category": "Food & Dining",
+    "aliases": [
+      "Absolute Barbecues"
+    ]
+  },
+  {
+    "name": "Mainland China",
+    "category": "Food & Dining",
+    "aliases": [
+      "Mainland China"
+    ]
+  },
+  {
+    "name": "Social",
+    "category": "Food & Dining",
+    "aliases": [
+      "Social"
+    ]
+  },
+  {
+    "name": "Toit",
+    "category": "Food & Dining",
+    "aliases": [
+      "Toit"
+    ]
+  },
+  {
+    "name": "Toscano",
+    "category": "Food & Dining",
+    "aliases": [
+      "Toscano"
+    ]
+  },
+  {
+    "name": "Punjab Grill",
+    "category": "Food & Dining",
+    "aliases": [
+      "Punjab Grill"
+    ]
+  },
+  {
+    "name": "Naturals Ice Cream",
+    "category": "Food & Dining",
+    "aliases": [
+      "Naturals Ice Cream",
+      "Naturals"
+    ]
+  },
+  {
+    "name": "NIC Ice Creams",
+    "category": "Food & Dining",
+    "aliases": [
+      "NIC Ice Creams"
+    ]
+  },
+  {
+    "name": "Baskin Robbins",
+    "category": "Food & Dining",
+    "aliases": [
+      "Baskin Robbins",
+      "Baskin-Robbins"
+    ]
+  },
+  {
+    "name": "Cream Stone",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cream Stone"
+    ]
+  },
+  {
+    "name": "Giani's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Giani's"
+    ]
+  },
+  {
+    "name": "Nirula's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Nirula's"
+    ]
+  },
+  {
+    "name": "Kwality Wall's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Kwality Wall's"
+    ]
+  },
+  {
+    "name": "Amul Ice Cream",
+    "category": "Food & Dining",
+    "aliases": [
+      "Amul Ice Cream"
+    ]
+  },
+  {
+    "name": "A2B",
+    "category": "Food & Dining",
+    "aliases": [
+      "A2B"
+    ]
+  },
+  {
+    "name": "Adyar Ananda Bhavan",
+    "category": "Food & Dining",
+    "aliases": [
+      "Adyar Ananda Bhavan"
+    ]
+  },
+  {
+    "name": "Sangeetha",
+    "category": "Food & Dining",
+    "aliases": [
+      "Sangeetha"
+    ]
+  },
+  {
+    "name": "Saravana Bhavan",
+    "category": "Food & Dining",
+    "aliases": [
+      "Saravana Bhavan"
+    ]
+  },
+  {
+    "name": "Murugan Idli Shop",
+    "category": "Food & Dining",
+    "aliases": [
+      "Murugan Idli Shop"
+    ]
+  },
+  {
+    "name": "Anand Sweets",
+    "category": "Food & Dining",
+    "aliases": [
+      "Anand Sweets"
+    ]
+  },
+  {
+    "name": "Kanti Sweets",
+    "category": "Food & Dining",
+    "aliases": [
+      "Kanti Sweets"
+    ]
+  },
+  {
+    "name": "Biryani By Kilo",
+    "category": "Food & Dining",
+    "aliases": [
+      "Biryani By Kilo"
+    ]
+  },
+  {
+    "name": "Meghana Foods",
+    "category": "Food & Dining",
+    "aliases": [
+      "Meghana Foods"
+    ]
+  },
+  {
+    "name": "Paradise Biryani",
+    "category": "Food & Dining",
+    "aliases": [
+      "Paradise Biryani"
+    ]
+  },
+  {
+    "name": "Dindigul Thalappakatti",
+    "category": "Food & Dining",
+    "aliases": [
+      "Dindigul Thalappakatti"
+    ]
+  },
+  {
+    "name": "Arsalan",
+    "category": "Food & Dining",
+    "aliases": [
+      "Arsalan"
+    ]
+  },
+  {
+    "name": "Aminia",
+    "category": "Food & Dining",
+    "aliases": [
+      "Aminia"
+    ]
+  },
+  {
+    "name": "Chicking",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chicking"
+    ]
+  },
+  {
+    "name": "Al Taza",
+    "category": "Food & Dining",
+    "aliases": [
+      "Al Taza"
+    ]
+  },
+  {
+    "name": "Paragon Restaurant",
+    "category": "Food & Dining",
+    "aliases": [
+      "Paragon Restaurant"
+    ]
+  },
+  {
+    "name": "Rahmathullah Hotel",
+    "category": "Food & Dining",
+    "aliases": [
+      "Rahmathullah Hotel"
+    ]
+  },
+  {
+    "name": "Kayees Rahmath",
+    "category": "Food & Dining",
+    "aliases": [
+      "Kayees Rahmath"
+    ]
+  },
+  {
+    "name": "Salkara",
+    "category": "Food & Dining",
+    "aliases": [
+      "Salkara"
+    ]
+  },
+  {
+    "name": "Malabar Paragon",
+    "category": "Food & Dining",
+    "aliases": [
+      "Malabar Paragon"
+    ]
+  },
+  {
+    "name": "PappaRoti",
+    "category": "Food & Dining",
+    "aliases": [
+      "PappaRoti"
+    ]
+  },
+  {
+    "name": "Theobroma",
+    "category": "Food & Dining",
+    "aliases": [
+      "Theobroma"
+    ]
+  },
+  {
+    "name": "Monginis",
+    "category": "Food & Dining",
+    "aliases": [
+      "Monginis"
+    ]
+  },
+  {
+    "name": "Mio Amore",
+    "category": "Food & Dining",
+    "aliases": [
+      "Mio Amore"
+    ]
+  },
+  {
+    "name": "Cafe Delhi Heights",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cafe Delhi Heights"
+    ]
+  },
+  {
+    "name": "Burma Burma",
+    "category": "Food & Dining",
+    "aliases": [
+      "Burma Burma"
+    ]
+  },
+  {
+    "name": "Mamagoto",
+    "category": "Food & Dining",
+    "aliases": [
+      "Mamagoto"
+    ]
+  },
+  {
+    "name": "Farzi Cafe",
+    "category": "Food & Dining",
+    "aliases": [
+      "Farzi Cafe"
+    ]
+  },
+  {
+    "name": "Bastian",
+    "category": "Food & Dining",
+    "aliases": [
+      "Bastian"
+    ]
+  },
+  {
+    "name": "Smoke House Deli",
+    "category": "Food & Dining",
+    "aliases": [
+      "Smoke House Deli"
+    ]
+  },
+  {
+    "name": "Olive Bar & Kitchen",
+    "category": "Food & Dining",
+    "aliases": [
+      "Olive Bar & Kitchen"
+    ]
+  },
+  {
+    "name": "TGI Fridays",
+    "category": "Food & Dining",
+    "aliases": [
+      "TGI Fridays"
+    ]
+  },
+  {
+    "name": "Chili's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chili's"
+    ]
+  },
+  {
+    "name": "Hard Rock Cafe",
+    "category": "Food & Dining",
+    "aliases": [
+      "Hard Rock Cafe"
+    ]
+  },
+  {
+    "name": "Nando's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Nando's"
+    ]
+  },
+  {
+    "name": "P.F. Chang's",
+    "category": "Food & Dining",
+    "aliases": [
+      "P.F. Chang's",
+      "PF Changs"
+    ]
+  },
+  {
+    "name": "HungerBox",
+    "category": "Food & Dining",
+    "aliases": [
+      "HungerBox"
+    ]
+  },
+  {
+    "name": "Sodexo Food",
+    "category": "Food & Dining",
+    "aliases": [
+      "Sodexo Food"
+    ]
+  },
+  {
+    "name": "Goli Vada Pav",
+    "category": "Food & Dining",
+    "aliases": [
+      "Goli Vada Pav"
+    ]
+  },
+  {
+    "name": "Jumbo King",
+    "category": "Food & Dining",
+    "aliases": [
+      "Jumbo King"
+    ]
+  },
+  {
+    "name": "Rolls Mania",
+    "category": "Food & Dining",
+    "aliases": [
+      "Rolls Mania"
+    ]
+  },
+  {
+    "name": "The Shawarma Company",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Shawarma Company"
+    ]
+  },
+  {
+    "name": "Kathi Junction",
+    "category": "Food & Dining",
+    "aliases": [
+      "Kathi Junction"
+    ]
+  },
+  {
+    "name": "Burger Singh",
+    "category": "Food & Dining",
+    "aliases": [
+      "Burger Singh"
+    ]
+  },
+  {
+    "name": "Good Flippin' Burgers",
+    "category": "Food & Dining",
+    "aliases": [
+      "Good Flippin' Burgers"
+    ]
+  },
+  {
+    "name": "Louis Burger",
+    "category": "Food & Dining",
+    "aliases": [
+      "Louis Burger"
+    ]
+  },
+  {
+    "name": "Madras Coffee House",
+    "category": "Food & Dining",
+    "aliases": [
+      "Madras Coffee House"
+    ]
+  },
+  {
+    "name": "Indian Coffee House",
+    "category": "Food & Dining",
+    "aliases": [
+      "Indian Coffee House"
+    ]
+  },
+  {
+    "name": "Cafe Niloufer",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cafe Niloufer"
+    ]
+  },
+  {
+    "name": "Chai Kings",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chai Kings"
+    ]
+  },
+  {
+    "name": "Tea Villa Cafe",
+    "category": "Food & Dining",
+    "aliases": [
+      "Tea Villa Cafe"
+    ]
+  },
+  {
+    "name": "The Coffee Bean & Tea Leaf",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Coffee Bean & Tea Leaf"
+    ]
+  },
+  {
+    "name": "Pret A Manger",
+    "category": "Food & Dining",
+    "aliases": [
+      "Pret A Manger"
+    ]
+  },
+  {
+    "name": "Paul Bakery",
+    "category": "Food & Dining",
+    "aliases": [
+      "Paul Bakery"
+    ]
+  },
+  {
+    "name": "Cinnabon",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cinnabon"
+    ]
+  },
+  {
+    "name": "Auntie Anne's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Auntie Anne's"
+    ]
+  },
+  {
+    "name": "Dairy Queen",
+    "category": "Food & Dining",
+    "aliases": [
+      "Dairy Queen"
+    ]
+  },
+  {
+    "name": "California Pizza Kitchen",
+    "category": "Food & Dining",
+    "aliases": [
+      "California Pizza Kitchen"
+    ]
+  },
+  {
+    "name": "Sbarro",
+    "category": "Food & Dining",
+    "aliases": [
+      "Sbarro"
+    ]
+  },
+  {
+    "name": "Papa John's",
+    "category": "Food & Dining",
+    "aliases": [
+      "Papa John's"
+    ]
+  },
+  {
+    "name": "Little Caesars",
+    "category": "Food & Dining",
+    "aliases": [
+      "Little Caesars"
+    ]
+  },
+  {
+    "name": "Carl's Jr.",
+    "category": "Food & Dining",
+    "aliases": [
+      "Carl's Jr."
+    ]
+  },
+  {
+    "name": "Johnny Rockets",
+    "category": "Food & Dining",
+    "aliases": [
+      "Johnny Rockets"
+    ]
+  },
+  {
+    "name": "The Pizza Bakery",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Pizza Bakery"
+    ]
+  },
+  {
+    "name": "La Pino'z Pizza",
+    "category": "Food & Dining",
+    "aliases": [
+      "La Pino'z Pizza"
+    ]
+  },
+  {
+    "name": "Olio Pizza",
+    "category": "Food & Dining",
+    "aliases": [
+      "Olio Pizza"
+    ]
+  },
+  {
+    "name": "Chicago Pizza",
+    "category": "Food & Dining",
+    "aliases": [
+      "Chicago Pizza"
+    ]
+  },
+  {
+    "name": "Tossin Pizza",
+    "category": "Food & Dining",
+    "aliases": [
+      "Tossin Pizza"
+    ]
+  },
+  {
+    "name": "PizzaExpress",
+    "category": "Food & Dining",
+    "aliases": [
+      "PizzaExpress"
+    ]
+  },
+  {
+    "name": "LeanCrust Pizza",
+    "category": "Food & Dining",
+    "aliases": [
+      "LeanCrust Pizza"
+    ]
+  },
+  {
+    "name": "Goila Butter Chicken",
+    "category": "Food & Dining",
+    "aliases": [
+      "Goila Butter Chicken"
+    ]
+  },
+  {
+    "name": "The Biryani Life",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Biryani Life"
+    ]
+  },
+  {
+    "name": "Biryani Blues",
+    "category": "Food & Dining",
+    "aliases": [
+      "Biryani Blues"
+    ]
+  },
+  {
+    "name": "Moti Mahal Delux",
+    "category": "Food & Dining",
+    "aliases": [
+      "Moti Mahal Delux"
+    ]
+  },
+  {
+    "name": "The Yellow Chilli",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Yellow Chilli"
+    ]
+  },
+  {
+    "name": "Biryani Central",
+    "category": "Food & Dining",
+    "aliases": [
+      "Biryani Central"
+    ]
+  },
+  {
+    "name": "Copper Chimney",
+    "category": "Food & Dining",
+    "aliases": [
+      "Copper Chimney"
+    ]
+  },
+  {
+    "name": "Oh! Calcutta",
+    "category": "Food & Dining",
+    "aliases": [
+      "Oh! Calcutta"
+    ]
+  },
+  {
+    "name": "Pind Balluchi",
+    "category": "Food & Dining",
+    "aliases": [
+      "Pind Balluchi"
+    ]
+  },
+  {
+    "name": "Flechazo",
+    "category": "Food & Dining",
+    "aliases": [
+      "Flechazo"
+    ]
+  },
+  {
+    "name": "Glocal Junction",
+    "category": "Food & Dining",
+    "aliases": [
+      "Glocal Junction"
+    ]
+  },
+  {
+    "name": "The Irish House",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Irish House"
+    ]
+  },
+  {
+    "name": "The Beer Cafe",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Beer Cafe"
+    ]
+  },
+  {
+    "name": "Udupi Upahar",
+    "category": "Food & Dining",
+    "aliases": [
+      "Udupi Upahar"
+    ]
+  },
+  {
+    "name": "Sree Krishna Inn",
+    "category": "Food & Dining",
+    "aliases": [
+      "Sree Krishna Inn"
+    ]
+  },
+  {
+    "name": "Dhe Puttu",
+    "category": "Food & Dining",
+    "aliases": [
+      "Dhe Puttu"
+    ]
+  },
+  {
+    "name": "Hotel Aryaas",
+    "category": "Food & Dining",
+    "aliases": [
+      "Hotel Aryaas"
+    ]
+  },
+  {
+    "name": "Thakkaaram",
+    "category": "Food & Dining",
+    "aliases": [
+      "Thakkaaram"
+    ]
+  },
+  {
+    "name": "Kochi Kitchen",
+    "category": "Food & Dining",
+    "aliases": [
+      "Kochi Kitchen"
+    ]
+  },
+  {
+    "name": "Ceylon Bake House",
+    "category": "Food & Dining",
+    "aliases": [
+      "Ceylon Bake House"
+    ]
+  },
+  {
+    "name": "French Toast",
+    "category": "Food & Dining",
+    "aliases": [
+      "French Toast"
+    ]
+  },
+  {
+    "name": "Pandhal Cake Shop",
+    "category": "Food & Dining",
+    "aliases": [
+      "Pandhal Cake Shop"
+    ]
+  },
+  {
+    "name": "Pai Brothers",
+    "category": "Food & Dining",
+    "aliases": [
+      "Pai Brothers"
+    ]
+  },
+  {
+    "name": "MRA Bakery",
+    "category": "Food & Dining",
+    "aliases": [
+      "MRA Bakery"
+    ]
+  },
+  {
+    "name": "Best Bakers",
+    "category": "Food & Dining",
+    "aliases": [
+      "Best Bakers"
+    ]
+  },
+  {
+    "name": "Cochin Bakery",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cochin Bakery"
+    ]
+  },
+  {
+    "name": "Supreme Bakers",
+    "category": "Food & Dining",
+    "aliases": [
+      "Supreme Bakers"
+    ]
+  },
+  {
+    "name": "Aasife Biriyani",
+    "category": "Food & Dining",
+    "aliases": [
+      "Aasife Biriyani"
+    ]
+  },
+  {
+    "name": "Anjappar Chettinad",
+    "category": "Food & Dining",
+    "aliases": [
+      "Anjappar Chettinad"
+    ]
+  },
+  {
+    "name": "Nagarjuna Restaurant",
+    "category": "Food & Dining",
+    "aliases": [
+      "Nagarjuna Restaurant"
+    ]
+  },
+  {
+    "name": "Andhra Spice",
+    "category": "Food & Dining",
+    "aliases": [
+      "Andhra Spice"
+    ]
+  },
+  {
+    "name": "Rayalaseema Ruchulu",
+    "category": "Food & Dining",
+    "aliases": [
+      "Rayalaseema Ruchulu"
+    ]
+  },
+  {
+    "name": "Bawarchi Biryani",
+    "category": "Food & Dining",
+    "aliases": [
+      "Bawarchi Biryani"
+    ]
+  },
+  {
+    "name": "Shah Ghouse",
+    "category": "Food & Dining",
+    "aliases": [
+      "Shah Ghouse"
+    ]
+  },
+  {
+    "name": "Pista House",
+    "category": "Food & Dining",
+    "aliases": [
+      "Pista House"
+    ]
+  },
+  {
+    "name": "Cafe Bahar",
+    "category": "Food & Dining",
+    "aliases": [
+      "Cafe Bahar"
+    ]
+  },
+  {
+    "name": "Keventers",
+    "category": "Food & Dining",
+    "aliases": [
+      "Keventers"
+    ]
+  },
+  {
+    "name": "The Waffle Co",
+    "category": "Food & Dining",
+    "aliases": [
+      "The Waffle Co"
+    ]
+  },
+  {
+    "name": "Frozen Bottle",
+    "category": "Food & Dining",
+    "aliases": [
+      "Frozen Bottle"
+    ]
+  },
+  {
+    "name": "Drunken Monkey",
+    "category": "Food & Dining",
+    "aliases": [
+      "Drunken Monkey"
+    ]
+  },
+  {
+    "name": "Apsara Ice Creams",
+    "category": "Food & Dining",
+    "aliases": [
+      "Apsara Ice Creams"
+    ]
+  },
+  {
+    "name": "Haagen-Dazs",
+    "category": "Food & Dining",
+    "aliases": [
+      "Haagen-Dazs"
+    ]
+  },
+  {
+    "name": "London Dairy",
+    "category": "Food & Dining",
+    "aliases": [
+      "London Dairy"
+    ]
+  },
+  {
+    "name": "Creambell",
+    "category": "Food & Dining",
+    "aliases": [
+      "Creambell"
+    ]
+  },
+  {
+    "name": "Mother Dairy",
+    "category": "Food & Dining",
+    "aliases": [
+      "Mother Dairy"
+    ]
+  },
+  {
+    "name": "Swiggy Instamart",
+    "category": "Groceries",
+    "aliases": [
+      "Swiggy Instamart",
+      "Instamart"
+    ]
+  },
+  {
+    "name": "JioMart",
+    "category": "Groceries",
+    "aliases": [
+      "JioMart",
+      "Jio Mart"
+    ]
+  },
+  {
+    "name": "BigBasket",
+    "category": "Groceries",
+    "aliases": [
+      "BigBasket",
+      "Big Basket"
+    ]
+  },
+  {
+    "name": "Blinkit",
+    "category": "Groceries",
+    "aliases": [
+      "Blinkit",
+      "Grofers"
+    ]
+  },
+  {
+    "name": "Zepto",
+    "category": "Groceries",
+    "aliases": [
+      "Zepto",
+      "Zepto Market"
+    ]
+  },
+  {
+    "name": "DMart",
+    "category": "Groceries",
+    "aliases": [
+      "DMart",
+      "D Mart",
+      "D-MART"
+    ]
+  },
+  {
+    "name": "DMart Ready",
+    "category": "Groceries",
+    "aliases": [
+      "DMart Ready"
+    ]
+  },
+  {
+    "name": "Reliance Smart",
+    "category": "Groceries",
+    "aliases": [
+      "Reliance Smart"
+    ]
+  },
+  {
+    "name": "Smart Bazaar",
+    "category": "Groceries",
+    "aliases": [
+      "Smart Bazaar"
+    ]
+  },
+  {
+    "name": "More Retail",
+    "category": "Groceries",
+    "aliases": [
+      "More Retail"
+    ]
+  },
+  {
+    "name": "Spencer's Retail",
+    "category": "Groceries",
+    "aliases": [
+      "Spencer's Retail"
+    ]
+  },
+  {
+    "name": "Star Bazaar",
+    "category": "Groceries",
+    "aliases": [
+      "Star Bazaar"
+    ]
+  },
+  {
+    "name": "Nature's Basket",
+    "category": "Groceries",
+    "aliases": [
+      "Nature's Basket"
+    ]
+  },
+  {
+    "name": "Ratnadeep Supermarket",
+    "category": "Groceries",
+    "aliases": [
+      "Ratnadeep Supermarket"
+    ]
+  },
+  {
+    "name": "Nilgiris",
+    "category": "Groceries",
+    "aliases": [
+      "Nilgiris"
+    ]
+  },
+  {
+    "name": "Lulu Hypermarket",
+    "category": "Groceries",
+    "aliases": [
+      "Lulu Hypermarket"
+    ]
+  },
+  {
+    "name": "Nesto Hypermarket",
+    "category": "Groceries",
+    "aliases": [
+      "Nesto Hypermarket"
+    ]
+  },
+  {
+    "name": "Lulu Daily",
+    "category": "Groceries",
+    "aliases": [
+      "Lulu Daily"
+    ]
+  },
+  {
+    "name": "Reliance Fresh",
+    "category": "Groceries",
+    "aliases": [
+      "Reliance Fresh"
+    ]
+  },
+  {
+    "name": "Heritage Fresh",
+    "category": "Groceries",
+    "aliases": [
+      "Heritage Fresh"
+    ]
+  },
+  {
+    "name": "FreshToHome",
+    "category": "Groceries",
+    "aliases": [
+      "FreshToHome"
+    ]
+  },
+  {
+    "name": "Country Delight",
+    "category": "Groceries",
+    "aliases": [
+      "Country Delight"
+    ]
+  },
+  {
+    "name": "Milky Mist",
+    "category": "Groceries",
+    "aliases": [
+      "Milky Mist"
+    ]
+  },
+  {
+    "name": "Milma",
+    "category": "Groceries",
+    "aliases": [
+      "Milma"
+    ]
+  },
+  {
+    "name": "Akshayakalpa",
+    "category": "Groceries",
+    "aliases": [
+      "Akshayakalpa"
+    ]
+  },
+  {
+    "name": "BB Now",
+    "category": "Groceries",
+    "aliases": [
+      "BB Now"
+    ]
+  },
+  {
+    "name": "Amazon Fresh",
+    "category": "Groceries",
+    "aliases": [
+      "Amazon Fresh"
+    ]
+  },
+  {
+    "name": "Flipkart Minutes",
+    "category": "Groceries",
+    "aliases": [
+      "Flipkart Minutes"
+    ]
+  },
+  {
+    "name": "Dunzo Daily",
+    "category": "Groceries",
+    "aliases": [
+      "Dunzo Daily"
+    ]
+  },
+  {
+    "name": "Jumbotail",
+    "category": "Groceries",
+    "aliases": [
+      "Jumbotail"
+    ]
+  },
+  {
+    "name": "Udaan",
+    "category": "Groceries",
+    "aliases": [
+      "Udaan"
+    ]
+  },
+  {
+    "name": "Ninjacart",
+    "category": "Groceries",
+    "aliases": [
+      "Ninjacart"
+    ]
+  },
+  {
+    "name": "DeHaat",
+    "category": "Groceries",
+    "aliases": [
+      "DeHaat"
+    ]
+  },
+  {
+    "name": "Farmley",
+    "category": "Groceries",
+    "aliases": [
+      "Farmley"
+    ]
+  },
+  {
+    "name": "Licious",
+    "category": "Groceries",
+    "aliases": [
+      "Licious"
+    ]
+  },
+  {
+    "name": "Meatigo",
+    "category": "Groceries",
+    "aliases": [
+      "Meatigo"
+    ]
+  },
+  {
+    "name": "TenderCuts",
+    "category": "Groceries",
+    "aliases": [
+      "TenderCuts"
+    ]
+  },
+  {
+    "name": "Fipola",
+    "category": "Groceries",
+    "aliases": [
+      "Fipola"
+    ]
+  },
+  {
+    "name": "Zappfresh",
+    "category": "Groceries",
+    "aliases": [
+      "Zappfresh"
+    ]
+  },
+  {
+    "name": "BigBasket BB Daily",
+    "category": "Groceries",
+    "aliases": [
+      "BigBasket BB Daily"
+    ]
+  },
+  {
+    "name": "Supr Daily",
+    "category": "Groceries",
+    "aliases": [
+      "Supr Daily"
+    ]
+  },
+  {
+    "name": "DailyNinja",
+    "category": "Groceries",
+    "aliases": [
+      "DailyNinja"
+    ]
+  },
+  {
+    "name": "Dunzo",
+    "category": "Groceries",
+    "aliases": [
+      "Dunzo"
+    ]
+  },
+  {
+    "name": "Pincode",
+    "category": "Groceries",
+    "aliases": [
+      "Pincode"
+    ]
+  },
+  {
+    "name": "Otipy",
+    "category": "Groceries",
+    "aliases": [
+      "Otipy"
+    ]
+  },
+  {
+    "name": "KiranaPro",
+    "category": "Groceries",
+    "aliases": [
+      "KiranaPro"
+    ]
+  },
+  {
+    "name": "KisanKonnect",
+    "category": "Groceries",
+    "aliases": [
+      "KisanKonnect"
+    ]
+  },
+  {
+    "name": "WayCool",
+    "category": "Groceries",
+    "aliases": [
+      "WayCool"
+    ]
+  },
+  {
+    "name": "Sahaja Aharam",
+    "category": "Groceries",
+    "aliases": [
+      "Sahaja Aharam"
+    ]
+  },
+  {
+    "name": "Anveshan Farm",
+    "category": "Groceries",
+    "aliases": [
+      "Anveshan Farm"
+    ]
+  },
+  {
+    "name": "iD Fresh Food",
+    "category": "Groceries",
+    "aliases": [
+      "iD Fresh Food"
+    ]
+  },
+  {
+    "name": "Tata Sampann",
+    "category": "Groceries",
+    "aliases": [
+      "Tata Sampann"
+    ]
+  },
+  {
+    "name": "Organic India Store",
+    "category": "Groceries",
+    "aliases": [
+      "Organic India Store"
+    ]
+  },
+  {
+    "name": "Organic Tattva",
+    "category": "Groceries",
+    "aliases": [
+      "Organic Tattva"
+    ]
+  },
+  {
+    "name": "24 Mantra Organic",
+    "category": "Groceries",
+    "aliases": [
+      "24 Mantra Organic"
+    ]
+  },
+  {
+    "name": "Conscious Food",
+    "category": "Groceries",
+    "aliases": [
+      "Conscious Food"
+    ]
+  },
+  {
+    "name": "Two Brothers Organic Farms",
+    "category": "Groceries",
+    "aliases": [
+      "Two Brothers Organic Farms"
+    ]
+  },
+  {
+    "name": "Farmizen",
+    "category": "Groceries",
+    "aliases": [
+      "Farmizen"
+    ]
+  },
+  {
+    "name": "BigHaat",
+    "category": "Groceries",
+    "aliases": [
+      "BigHaat"
+    ]
+  },
+  {
+    "name": "AgroStar",
+    "category": "Groceries",
+    "aliases": [
+      "AgroStar"
+    ]
+  },
+  {
+    "name": "Vishal Mega Mart",
+    "category": "Groceries",
+    "aliases": [
+      "Vishal Mega Mart"
+    ]
+  },
+  {
+    "name": "V Mart",
+    "category": "Groceries",
+    "aliases": [
+      "V Mart"
+    ]
+  },
+  {
+    "name": "V2 Retail",
+    "category": "Groceries",
+    "aliases": [
+      "V2 Retail"
+    ]
+  },
+  {
+    "name": "Easyday Club",
+    "category": "Groceries",
+    "aliases": [
+      "Easyday Club"
+    ]
+  },
+  {
+    "name": "Foodhall",
+    "category": "Groceries",
+    "aliases": [
+      "Foodhall"
+    ]
+  },
+  {
+    "name": "Spar Hypermarket",
+    "category": "Groceries",
+    "aliases": [
+      "Spar Hypermarket"
+    ]
+  },
+  {
+    "name": "Metro Wholesale",
+    "category": "Groceries",
+    "aliases": [
+      "Metro Wholesale"
+    ]
+  },
+  {
+    "name": "Best Price Wholesale",
+    "category": "Groceries",
+    "aliases": [
+      "Best Price Wholesale"
+    ]
+  },
+  {
+    "name": "HyperCITY",
+    "category": "Groceries",
+    "aliases": [
+      "HyperCITY"
+    ]
+  },
+  {
+    "name": "Qmart",
+    "category": "Groceries",
+    "aliases": [
+      "Qmart"
+    ]
+  },
+  {
+    "name": "Kochi Fresh",
+    "category": "Groceries",
+    "aliases": [
+      "Kochi Fresh"
+    ]
+  },
+  {
+    "name": "Nesto Daily",
+    "category": "Groceries",
+    "aliases": [
+      "Nesto Daily"
+    ]
+  },
+  {
+    "name": "Freshpik",
+    "category": "Groceries",
+    "aliases": [
+      "Freshpik"
+    ]
+  },
+  {
+    "name": "Milkbasket",
+    "category": "Groceries",
+    "aliases": [
+      "Milkbasket"
+    ]
+  },
+  {
+    "name": "Doodhwala",
+    "category": "Groceries",
+    "aliases": [
+      "Doodhwala"
+    ]
+  },
+  {
+    "name": "Nandini Milk",
+    "category": "Groceries",
+    "aliases": [
+      "Nandini Milk"
+    ]
+  },
+  {
+    "name": "Aavin Milk",
+    "category": "Groceries",
+    "aliases": [
+      "Aavin Milk"
+    ]
+  },
+  {
+    "name": "Verka Milk",
+    "category": "Groceries",
+    "aliases": [
+      "Verka Milk"
+    ]
+  },
+  {
+    "name": "Sudha Dairy",
+    "category": "Groceries",
+    "aliases": [
+      "Sudha Dairy"
+    ]
+  },
+  {
+    "name": "Jersey Dairy",
+    "category": "Groceries",
+    "aliases": [
+      "Jersey Dairy"
+    ]
+  },
+  {
+    "name": "Dodla Dairy",
+    "category": "Groceries",
+    "aliases": [
+      "Dodla Dairy"
+    ]
+  },
+  {
+    "name": "Hatsun Daily",
+    "category": "Groceries",
+    "aliases": [
+      "Hatsun Daily"
+    ]
+  },
+  {
+    "name": "Arun Icecreams",
+    "category": "Groceries",
+    "aliases": [
+      "Arun Icecreams"
+    ]
+  },
+  {
+    "name": "Cavins",
+    "category": "Groceries",
+    "aliases": [
+      "Cavins"
+    ]
+  },
+  {
+    "name": "Heritage Dairy",
+    "category": "Groceries",
+    "aliases": [
+      "Heritage Dairy"
+    ]
+  },
+  {
+    "name": "Puresh Daily",
+    "category": "Groceries",
+    "aliases": [
+      "Puresh Daily"
+    ]
+  },
+  {
+    "name": "Organic Mandya",
+    "category": "Groceries",
+    "aliases": [
+      "Organic Mandya"
+    ]
+  },
+  {
+    "name": "JioMart Express",
+    "category": "Groceries",
+    "aliases": [
+      "JioMart Express"
+    ]
+  },
+  {
+    "name": "Nature's Basket Gourmet",
+    "category": "Groceries",
+    "aliases": [
+      "Nature's Basket Gourmet"
+    ]
+  },
+  {
+    "name": "Farmley Foods",
+    "category": "Groceries",
+    "aliases": [
+      "Farmley Foods"
+    ]
+  },
+  {
+    "name": "Happilo",
+    "category": "Groceries",
+    "aliases": [
+      "Happilo"
+    ]
+  },
+  {
+    "name": "RiteBite Max Protein",
+    "category": "Groceries",
+    "aliases": [
+      "RiteBite Max Protein"
+    ]
+  },
+  {
+    "name": "Yoga Bar",
+    "category": "Groceries",
+    "aliases": [
+      "Yoga Bar"
+    ]
+  },
+  {
+    "name": "The Whole Truth Foods",
+    "category": "Groceries",
+    "aliases": [
+      "The Whole Truth Foods"
+    ]
+  },
+  {
+    "name": "Epigamia",
+    "category": "Groceries",
+    "aliases": [
+      "Epigamia"
+    ]
+  },
+  {
+    "name": "Paper Boat",
+    "category": "Groceries",
+    "aliases": [
+      "Paper Boat"
+    ]
+  },
+  {
+    "name": "Raw Pressery",
+    "category": "Groceries",
+    "aliases": [
+      "Raw Pressery"
+    ]
+  },
+  {
+    "name": "Sleepy Owl Coffee",
+    "category": "Groceries",
+    "aliases": [
+      "Sleepy Owl Coffee"
+    ]
+  },
+  {
+    "name": "Subko Coffee",
+    "category": "Groceries",
+    "aliases": [
+      "Subko Coffee"
+    ]
+  },
+  {
+    "name": "Tata Consumer Products",
+    "category": "Groceries",
+    "aliases": [
+      "Tata Consumer Products"
+    ]
+  },
+  {
+    "name": "Aashirvaad Store",
+    "category": "Groceries",
+    "aliases": [
+      "Aashirvaad Store"
+    ]
+  },
+  {
+    "name": "ITC Store",
+    "category": "Groceries",
+    "aliases": [
+      "ITC Store"
+    ]
+  },
+  {
+    "name": "Patanjali Store",
+    "category": "Groceries",
+    "aliases": [
+      "Patanjali Store"
+    ]
+  },
+  {
+    "name": "Amul Store",
+    "category": "Groceries",
+    "aliases": [
+      "Amul Store"
+    ]
+  },
+  {
+    "name": "Mother Dairy Store",
+    "category": "Groceries",
+    "aliases": [
+      "Mother Dairy Store"
+    ]
+  },
+  {
+    "name": "Milky Mist Dairy",
+    "category": "Groceries",
+    "aliases": [
+      "Milky Mist Dairy"
+    ]
+  },
+  {
+    "name": "FTH Daily",
+    "category": "Groceries",
+    "aliases": [
+      "FTH Daily"
+    ]
+  },
+  {
+    "name": "BigHaat Agro",
+    "category": "Groceries",
+    "aliases": [
+      "BigHaat Agro"
+    ]
+  },
+  {
+    "name": "FreshToHome Fish",
+    "category": "Groceries",
+    "aliases": [
+      "FreshToHome Fish"
+    ]
+  },
+  {
+    "name": "Zappfresh Meat",
+    "category": "Groceries",
+    "aliases": [
+      "Zappfresh Meat"
+    ]
+  },
+  {
+    "name": "Amazon",
+    "category": "Shopping",
+    "aliases": [
+      "Amazon"
+    ]
+  },
+  {
+    "name": "Flipkart",
+    "category": "Shopping",
+    "aliases": [
+      "Flipkart"
+    ]
+  },
+  {
+    "name": "Myntra",
+    "category": "Shopping",
+    "aliases": [
+      "Myntra"
+    ]
+  },
+  {
+    "name": "AJIO",
+    "category": "Shopping",
+    "aliases": [
+      "AJIO",
+      "Ajio.com"
+    ]
+  },
+  {
+    "name": "Meesho",
+    "category": "Shopping",
+    "aliases": [
+      "Meesho"
+    ]
+  },
+  {
+    "name": "Nykaa",
+    "category": "Shopping",
+    "aliases": [
+      "Nykaa"
+    ]
+  },
+  {
+    "name": "Croma",
+    "category": "Shopping",
+    "aliases": [
+      "Croma"
+    ]
+  },
+  {
+    "name": "Reliance Digital",
+    "category": "Shopping",
+    "aliases": [
+      "Reliance Digital"
+    ]
+  },
+  {
+    "name": "Tata CLiQ",
+    "category": "Shopping",
+    "aliases": [
+      "Tata CLiQ",
+      "Tata Cliq"
+    ]
+  },
+  {
+    "name": "Tata CLiQ Luxury",
+    "category": "Shopping",
+    "aliases": [
+      "Tata CLiQ Luxury"
+    ]
+  },
+  {
+    "name": "Snapdeal",
+    "category": "Shopping",
+    "aliases": [
+      "Snapdeal"
+    ]
+  },
+  {
+    "name": "ShopClues",
+    "category": "Shopping",
+    "aliases": [
+      "ShopClues"
+    ]
+  },
+  {
+    "name": "IndiaMART",
+    "category": "Shopping",
+    "aliases": [
+      "IndiaMART"
+    ]
+  },
+  {
+    "name": "Alibaba",
+    "category": "Shopping",
+    "aliases": [
+      "Alibaba"
+    ]
+  },
+  {
+    "name": "eBay",
+    "category": "Shopping",
+    "aliases": [
+      "eBay"
+    ]
+  },
+  {
+    "name": "Etsy",
+    "category": "Shopping",
+    "aliases": [
+      "Etsy"
+    ]
+  },
+  {
+    "name": "LimeRoad",
+    "category": "Shopping",
+    "aliases": [
+      "LimeRoad"
+    ]
+  },
+  {
+    "name": "Shopsy",
+    "category": "Shopping",
+    "aliases": [
+      "Shopsy"
+    ]
+  },
+  {
+    "name": "Purplle",
+    "category": "Shopping",
+    "aliases": [
+      "Purplle"
+    ]
+  },
+  {
+    "name": "Sephora",
+    "category": "Shopping",
+    "aliases": [
+      "Sephora"
+    ]
+  },
+  {
+    "name": "FirstCry",
+    "category": "Shopping",
+    "aliases": [
+      "FirstCry"
+    ]
+  },
+  {
+    "name": "Hopscotch",
+    "category": "Shopping",
+    "aliases": [
+      "Hopscotch"
+    ]
+  },
+  {
+    "name": "Pepperfry",
+    "category": "Shopping",
+    "aliases": [
+      "Pepperfry"
+    ]
+  },
+  {
+    "name": "Home Centre",
+    "category": "Shopping",
+    "aliases": [
+      "Home Centre"
+    ]
+  },
+  {
+    "name": "Urban Ladder",
+    "category": "Shopping",
+    "aliases": [
+      "Urban Ladder"
+    ]
+  },
+  {
+    "name": "WoodenStreet",
+    "category": "Shopping",
+    "aliases": [
+      "WoodenStreet"
+    ]
+  },
+  {
+    "name": "Wakefit",
+    "category": "Shopping",
+    "aliases": [
+      "Wakefit"
+    ]
+  },
+  {
+    "name": "SleepyCat",
+    "category": "Shopping",
+    "aliases": [
+      "SleepyCat"
+    ]
+  },
+  {
+    "name": "IKEA",
+    "category": "Shopping",
+    "aliases": [
+      "IKEA"
+    ]
+  },
+  {
+    "name": "Vijay Sales",
+    "category": "Shopping",
+    "aliases": [
+      "Vijay Sales"
+    ]
+  },
+  {
+    "name": "Sangeetha Mobiles",
+    "category": "Shopping",
+    "aliases": [
+      "Sangeetha Mobiles"
+    ]
+  },
+  {
+    "name": "Poorvika Mobiles",
+    "category": "Shopping",
+    "aliases": [
+      "Poorvika Mobiles"
+    ]
+  },
+  {
+    "name": "LOT Mobiles",
+    "category": "Shopping",
+    "aliases": [
+      "LOT Mobiles"
+    ]
+  },
+  {
+    "name": "Bajaj Electronics",
+    "category": "Shopping",
+    "aliases": [
+      "Bajaj Electronics"
+    ]
+  },
+  {
+    "name": "Pai International",
+    "category": "Shopping",
+    "aliases": [
+      "Pai International"
+    ]
+  },
+  {
+    "name": "Kohinoor Electronics",
+    "category": "Shopping",
+    "aliases": [
+      "Kohinoor Electronics"
+    ]
+  },
+  {
+    "name": "Girias",
+    "category": "Shopping",
+    "aliases": [
+      "Girias"
+    ]
+  },
+  {
+    "name": "Viveks",
+    "category": "Shopping",
+    "aliases": [
+      "Viveks"
+    ]
+  },
+  {
+    "name": "Decathlon",
+    "category": "Shopping",
+    "aliases": [
+      "Decathlon"
+    ]
+  },
+  {
+    "name": "H&M",
+    "category": "Shopping",
+    "aliases": [
+      "H&M"
+    ]
+  },
+  {
+    "name": "Zara",
+    "category": "Shopping",
+    "aliases": [
+      "Zara"
+    ]
+  },
+  {
+    "name": "Uniqlo",
+    "category": "Shopping",
+    "aliases": [
+      "Uniqlo"
+    ]
+  },
+  {
+    "name": "Westside",
+    "category": "Shopping",
+    "aliases": [
+      "Westside"
+    ]
+  },
+  {
+    "name": "Lifestyle",
+    "category": "Shopping",
+    "aliases": [
+      "Lifestyle"
+    ]
+  },
+  {
+    "name": "Shoppers Stop",
+    "category": "Shopping",
+    "aliases": [
+      "Shoppers Stop"
+    ]
+  },
+  {
+    "name": "Max Fashion",
+    "category": "Shopping",
+    "aliases": [
+      "Max Fashion"
+    ]
+  },
+  {
+    "name": "Pantaloons",
+    "category": "Shopping",
+    "aliases": [
+      "Pantaloons"
+    ]
+  },
+  {
+    "name": "Reliance Trends",
+    "category": "Shopping",
+    "aliases": [
+      "Reliance Trends"
+    ]
+  },
+  {
+    "name": "Zudio",
+    "category": "Shopping",
+    "aliases": [
+      "Zudio"
+    ]
+  },
+  {
+    "name": "FabIndia",
+    "category": "Shopping",
+    "aliases": [
+      "FabIndia"
+    ]
+  },
+  {
+    "name": "Biba",
+    "category": "Shopping",
+    "aliases": [
+      "Biba"
+    ]
+  },
+  {
+    "name": "W for Woman",
+    "category": "Shopping",
+    "aliases": [
+      "W for Woman"
+    ]
+  },
+  {
+    "name": "Manyavar",
+    "category": "Shopping",
+    "aliases": [
+      "Manyavar"
+    ]
+  },
+  {
+    "name": "Aurelia",
+    "category": "Shopping",
+    "aliases": [
+      "Aurelia"
+    ]
+  },
+  {
+    "name": "Global Desi",
+    "category": "Shopping",
+    "aliases": [
+      "Global Desi"
+    ]
+  },
+  {
+    "name": "AND",
+    "category": "Shopping",
+    "aliases": [
+      "AND"
+    ]
+  },
+  {
+    "name": "Soch",
+    "category": "Shopping",
+    "aliases": [
+      "Soch"
+    ]
+  },
+  {
+    "name": "Libas",
+    "category": "Shopping",
+    "aliases": [
+      "Libas"
+    ]
+  },
+  {
+    "name": "Bewakoof",
+    "category": "Shopping",
+    "aliases": [
+      "Bewakoof"
+    ]
+  },
+  {
+    "name": "The Souled Store",
+    "category": "Shopping",
+    "aliases": [
+      "The Souled Store"
+    ]
+  },
+  {
+    "name": "Snitch",
+    "category": "Shopping",
+    "aliases": [
+      "Snitch"
+    ]
+  },
+  {
+    "name": "Rare Rabbit",
+    "category": "Shopping",
+    "aliases": [
+      "Rare Rabbit"
+    ]
+  },
+  {
+    "name": "Urbanic",
+    "category": "Shopping",
+    "aliases": [
+      "Urbanic"
+    ]
+  },
+  {
+    "name": "Campus Sutra",
+    "category": "Shopping",
+    "aliases": [
+      "Campus Sutra"
+    ]
+  },
+  {
+    "name": "Allen Solly",
+    "category": "Shopping",
+    "aliases": [
+      "Allen Solly"
+    ]
+  },
+  {
+    "name": "Peter England",
+    "category": "Shopping",
+    "aliases": [
+      "Peter England"
+    ]
+  },
+  {
+    "name": "Van Heusen",
+    "category": "Shopping",
+    "aliases": [
+      "Van Heusen"
+    ]
+  },
+  {
+    "name": "Louis Philippe",
+    "category": "Shopping",
+    "aliases": [
+      "Louis Philippe"
+    ]
+  },
+  {
+    "name": "Raymond",
+    "category": "Shopping",
+    "aliases": [
+      "Raymond"
+    ]
+  },
+  {
+    "name": "Blackberrys",
+    "category": "Shopping",
+    "aliases": [
+      "Blackberrys"
+    ]
+  },
+  {
+    "name": "Levi's",
+    "category": "Shopping",
+    "aliases": [
+      "Levi's"
+    ]
+  },
+  {
+    "name": "Wrangler",
+    "category": "Shopping",
+    "aliases": [
+      "Wrangler"
+    ]
+  },
+  {
+    "name": "Lee",
+    "category": "Shopping",
+    "aliases": [
+      "Lee"
+    ]
+  },
+  {
+    "name": "Pepe Jeans",
+    "category": "Shopping",
+    "aliases": [
+      "Pepe Jeans"
+    ]
+  },
+  {
+    "name": "U.S. Polo Assn.",
+    "category": "Shopping",
+    "aliases": [
+      "U.S. Polo Assn.",
+      "US Polo",
+      "US Polo Assn"
+    ]
+  },
+  {
+    "name": "Tommy Hilfiger",
+    "category": "Shopping",
+    "aliases": [
+      "Tommy Hilfiger"
+    ]
+  },
+  {
+    "name": "Calvin Klein",
+    "category": "Shopping",
+    "aliases": [
+      "Calvin Klein"
+    ]
+  },
+  {
+    "name": "Adidas",
+    "category": "Shopping",
+    "aliases": [
+      "Adidas"
+    ]
+  },
+  {
+    "name": "Nike",
+    "category": "Shopping",
+    "aliases": [
+      "Nike"
+    ]
+  },
+  {
+    "name": "Puma",
+    "category": "Shopping",
+    "aliases": [
+      "Puma"
+    ]
+  },
+  {
+    "name": "Reebok",
+    "category": "Shopping",
+    "aliases": [
+      "Reebok"
+    ]
+  },
+  {
+    "name": "Skechers",
+    "category": "Shopping",
+    "aliases": [
+      "Skechers"
+    ]
+  },
+  {
+    "name": "ASICS",
+    "category": "Shopping",
+    "aliases": [
+      "ASICS"
+    ]
+  },
+  {
+    "name": "New Balance",
+    "category": "Shopping",
+    "aliases": [
+      "New Balance"
+    ]
+  },
+  {
+    "name": "Bata",
+    "category": "Shopping",
+    "aliases": [
+      "Bata"
+    ]
+  },
+  {
+    "name": "Metro Shoes",
+    "category": "Shopping",
+    "aliases": [
+      "Metro Shoes"
+    ]
+  },
+  {
+    "name": "Mochi",
+    "category": "Shopping",
+    "aliases": [
+      "Mochi"
+    ]
+  },
+  {
+    "name": "Hush Puppies",
+    "category": "Shopping",
+    "aliases": [
+      "Hush Puppies"
+    ]
+  },
+  {
+    "name": "Crocs",
+    "category": "Shopping",
+    "aliases": [
+      "Crocs"
+    ]
+  },
+  {
+    "name": "Mamaearth",
+    "category": "Shopping",
+    "aliases": [
+      "Mamaearth"
+    ]
+  },
+  {
+    "name": "Minimalist",
+    "category": "Shopping",
+    "aliases": [
+      "Minimalist"
+    ]
+  },
+  {
+    "name": "Plum Goodness",
+    "category": "Shopping",
+    "aliases": [
+      "Plum Goodness"
+    ]
+  },
+  {
+    "name": "Forest Essentials",
+    "category": "Shopping",
+    "aliases": [
+      "Forest Essentials"
+    ]
+  },
+  {
+    "name": "Kama Ayurveda",
+    "category": "Shopping",
+    "aliases": [
+      "Kama Ayurveda"
+    ]
+  },
+  {
+    "name": "Sugar Cosmetics",
+    "category": "Shopping",
+    "aliases": [
+      "Sugar Cosmetics"
+    ]
+  },
+  {
+    "name": "Lakme",
+    "category": "Shopping",
+    "aliases": [
+      "Lakme"
+    ]
+  },
+  {
+    "name": "MAC Cosmetics",
+    "category": "Shopping",
+    "aliases": [
+      "MAC Cosmetics"
+    ]
+  },
+  {
+    "name": "Maybelline",
+    "category": "Shopping",
+    "aliases": [
+      "Maybelline"
+    ]
+  },
+  {
+    "name": "L'Oreal Paris",
+    "category": "Shopping",
+    "aliases": [
+      "L'Oreal Paris",
+      "Loreal Paris"
+    ]
+  },
+  {
+    "name": "Faces Canada",
+    "category": "Shopping",
+    "aliases": [
+      "Faces Canada"
+    ]
+  },
+  {
+    "name": "Colorbar",
+    "category": "Shopping",
+    "aliases": [
+      "Colorbar"
+    ]
+  },
+  {
+    "name": "Renee Cosmetics",
+    "category": "Shopping",
+    "aliases": [
+      "Renee Cosmetics"
+    ]
+  },
+  {
+    "name": "Dot & Key",
+    "category": "Shopping",
+    "aliases": [
+      "Dot & Key"
+    ]
+  },
+  {
+    "name": "Foxtale",
+    "category": "Shopping",
+    "aliases": [
+      "Foxtale"
+    ]
+  },
+  {
+    "name": "Deconstruct Skincare",
+    "category": "Shopping",
+    "aliases": [
+      "Deconstruct Skincare"
+    ]
+  },
+  {
+    "name": "Pilgrim",
+    "category": "Shopping",
+    "aliases": [
+      "Pilgrim"
+    ]
+  },
+  {
+    "name": "The Man Company",
+    "category": "Shopping",
+    "aliases": [
+      "The Man Company"
+    ]
+  },
+  {
+    "name": "Beardo",
+    "category": "Shopping",
+    "aliases": [
+      "Beardo"
+    ]
+  },
+  {
+    "name": "Bombay Shaving Company",
+    "category": "Shopping",
+    "aliases": [
+      "Bombay Shaving Company"
+    ]
+  },
+  {
+    "name": "Nivea",
+    "category": "Shopping",
+    "aliases": [
+      "Nivea"
+    ]
+  },
+  {
+    "name": "Dove",
+    "category": "Shopping",
+    "aliases": [
+      "Dove"
+    ]
+  },
+  {
+    "name": "Ponds",
+    "category": "Shopping",
+    "aliases": [
+      "Ponds"
+    ]
+  },
+  {
+    "name": "Himalaya Wellness",
+    "category": "Shopping",
+    "aliases": [
+      "Himalaya Wellness"
+    ]
+  },
+  {
+    "name": "VLCC",
+    "category": "Shopping",
+    "aliases": [
+      "VLCC"
+    ]
+  },
+  {
+    "name": "Enrich Salon",
+    "category": "Shopping",
+    "aliases": [
+      "Enrich Salon"
+    ]
+  },
+  {
+    "name": "Tanishq",
+    "category": "Shopping",
+    "aliases": [
+      "Tanishq"
+    ]
+  },
+  {
+    "name": "CaratLane",
+    "category": "Shopping",
+    "aliases": [
+      "CaratLane"
+    ]
+  },
+  {
+    "name": "Malabar Gold & Diamonds",
+    "category": "Shopping",
+    "aliases": [
+      "Malabar Gold & Diamonds"
+    ]
+  },
+  {
+    "name": "Kalyan Jewellers",
+    "category": "Shopping",
+    "aliases": [
+      "Kalyan Jewellers"
+    ]
+  },
+  {
+    "name": "Joyalukkas",
+    "category": "Shopping",
+    "aliases": [
+      "Joyalukkas"
+    ]
+  },
+  {
+    "name": "PC Jeweller",
+    "category": "Shopping",
+    "aliases": [
+      "PC Jeweller"
+    ]
+  },
+  {
+    "name": "Senco Gold",
+    "category": "Shopping",
+    "aliases": [
+      "Senco Gold"
+    ]
+  },
+  {
+    "name": "TBZ The Original",
+    "category": "Shopping",
+    "aliases": [
+      "TBZ The Original"
+    ]
+  },
+  {
+    "name": "PNG Jewellers",
+    "category": "Shopping",
+    "aliases": [
+      "PNG Jewellers"
+    ]
+  },
+  {
+    "name": "P N Gadgil Jewellers",
+    "category": "Shopping",
+    "aliases": [
+      "P N Gadgil Jewellers"
+    ]
+  },
+  {
+    "name": "Candere",
+    "category": "Shopping",
+    "aliases": [
+      "Candere"
+    ]
+  },
+  {
+    "name": "BlueStone",
+    "category": "Shopping",
+    "aliases": [
+      "BlueStone"
+    ]
+  },
+  {
+    "name": "GIVA",
+    "category": "Shopping",
+    "aliases": [
+      "GIVA"
+    ]
+  },
+  {
+    "name": "Melorra",
+    "category": "Shopping",
+    "aliases": [
+      "Melorra"
+    ]
+  },
+  {
+    "name": "Mia by Tanishq",
+    "category": "Shopping",
+    "aliases": [
+      "Mia by Tanishq"
+    ]
+  },
+  {
+    "name": "Reliance Jewels",
+    "category": "Shopping",
+    "aliases": [
+      "Reliance Jewels"
+    ]
+  },
+  {
+    "name": "Titan Eyeplus",
+    "category": "Shopping",
+    "aliases": [
+      "Titan Eyeplus"
+    ]
+  },
+  {
+    "name": "Lenskart",
+    "category": "Shopping",
+    "aliases": [
+      "Lenskart"
+    ]
+  },
+  {
+    "name": "Specsmakers",
+    "category": "Shopping",
+    "aliases": [
+      "Specsmakers"
+    ]
+  },
+  {
+    "name": "John Jacobs",
+    "category": "Shopping",
+    "aliases": [
+      "John Jacobs"
+    ]
+  },
+  {
+    "name": "Ray-Ban",
+    "category": "Shopping",
+    "aliases": [
+      "Ray-Ban"
+    ]
+  },
+  {
+    "name": "Fastrack",
+    "category": "Shopping",
+    "aliases": [
+      "Fastrack"
+    ]
+  },
+  {
+    "name": "Titan",
+    "category": "Shopping",
+    "aliases": [
+      "Titan"
+    ]
+  },
+  {
+    "name": "boAt",
+    "category": "Shopping",
+    "aliases": [
+      "boAt",
+      "Boat Lifestyle"
+    ]
+  },
+  {
+    "name": "Noise",
+    "category": "Shopping",
+    "aliases": [
+      "Noise"
+    ]
+  },
+  {
+    "name": "Fire-Boltt",
+    "category": "Shopping",
+    "aliases": [
+      "Fire-Boltt"
+    ]
+  },
+  {
+    "name": "OnePlus Store",
+    "category": "Shopping",
+    "aliases": [
+      "OnePlus Store"
+    ]
+  },
+  {
+    "name": "Samsung Store",
+    "category": "Shopping",
+    "aliases": [
+      "Samsung Store"
+    ]
+  },
+  {
+    "name": "Apple Store",
+    "category": "Shopping",
+    "aliases": [
+      "Apple Store"
+    ]
+  },
+  {
+    "name": "Mi Store",
+    "category": "Shopping",
+    "aliases": [
+      "Mi Store"
+    ]
+  },
+  {
+    "name": "Xiaomi Store",
+    "category": "Shopping",
+    "aliases": [
+      "Xiaomi Store"
+    ]
+  },
+  {
+    "name": "Nothing Store",
+    "category": "Shopping",
+    "aliases": [
+      "Nothing Store"
+    ]
+  },
+  {
+    "name": "HP World",
+    "category": "Shopping",
+    "aliases": [
+      "HP World"
+    ]
+  },
+  {
+    "name": "Dell Store",
+    "category": "Shopping",
+    "aliases": [
+      "Dell Store"
+    ]
+  },
+  {
+    "name": "Lenovo Store",
+    "category": "Shopping",
+    "aliases": [
+      "Lenovo Store"
+    ]
+  },
+  {
+    "name": "Asus Store",
+    "category": "Shopping",
+    "aliases": [
+      "Asus Store"
+    ]
+  },
+  {
+    "name": "Acer Store",
+    "category": "Shopping",
+    "aliases": [
+      "Acer Store"
+    ]
+  },
+  {
+    "name": "Sony Center",
+    "category": "Shopping",
+    "aliases": [
+      "Sony Center"
+    ]
+  },
+  {
+    "name": "LG Best Shop",
+    "category": "Shopping",
+    "aliases": [
+      "LG Best Shop"
+    ]
+  },
+  {
+    "name": "Haier Store",
+    "category": "Shopping",
+    "aliases": [
+      "Haier Store"
+    ]
+  },
+  {
+    "name": "Godrej Appliances",
+    "category": "Shopping",
+    "aliases": [
+      "Godrej Appliances"
+    ]
+  },
+  {
+    "name": "Bosch Home",
+    "category": "Shopping",
+    "aliases": [
+      "Bosch Home"
+    ]
+  },
+  {
+    "name": "IFB Point",
+    "category": "Shopping",
+    "aliases": [
+      "IFB Point"
+    ]
+  },
+  {
+    "name": "Havells Store",
+    "category": "Shopping",
+    "aliases": [
+      "Havells Store"
+    ]
+  },
+  {
+    "name": "Central Mall",
+    "category": "Shopping",
+    "aliases": [
+      "Central Mall"
+    ]
+  },
+  {
+    "name": "Fashion Factory",
+    "category": "Shopping",
+    "aliases": [
+      "Fashion Factory"
+    ]
+  },
+  {
+    "name": "Brand Factory",
+    "category": "Shopping",
+    "aliases": [
+      "Brand Factory"
+    ]
+  },
+  {
+    "name": "V-Mart Fashion",
+    "category": "Shopping",
+    "aliases": [
+      "V-Mart Fashion"
+    ]
+  },
+  {
+    "name": "V2 Fashion",
+    "category": "Shopping",
+    "aliases": [
+      "V2 Fashion"
+    ]
+  },
+  {
+    "name": "Jockey India",
+    "category": "Shopping",
+    "aliases": [
+      "Jockey India"
+    ]
+  },
+  {
+    "name": "Enamor",
+    "category": "Shopping",
+    "aliases": [
+      "Enamor"
+    ]
+  },
+  {
+    "name": "Zivame",
+    "category": "Shopping",
+    "aliases": [
+      "Zivame"
+    ]
+  },
+  {
+    "name": "Clovia",
+    "category": "Shopping",
+    "aliases": [
+      "Clovia"
+    ]
+  },
+  {
+    "name": "Amante",
+    "category": "Shopping",
+    "aliases": [
+      "Amante"
+    ]
+  },
+  {
+    "name": "Janasya",
+    "category": "Shopping",
+    "aliases": [
+      "Janasya"
+    ]
+  },
+  {
+    "name": "Nykaa Fashion",
+    "category": "Shopping",
+    "aliases": [
+      "Nykaa Fashion"
+    ]
+  },
+  {
+    "name": "Tata Neu",
+    "category": "Shopping",
+    "aliases": [
+      "Tata Neu"
+    ]
+  },
+  {
+    "name": "HealthKart Store",
+    "category": "Shopping",
+    "aliases": [
+      "HealthKart Store"
+    ]
+  },
+  {
+    "name": "GNC India",
+    "category": "Shopping",
+    "aliases": [
+      "GNC India"
+    ]
+  },
+  {
+    "name": "MuscleBlaze",
+    "category": "Shopping",
+    "aliases": [
+      "MuscleBlaze"
+    ]
+  },
+  {
+    "name": "MyProtein India",
+    "category": "Shopping",
+    "aliases": [
+      "MyProtein India"
+    ]
+  },
+  {
+    "name": "Cultsport",
+    "category": "Shopping",
+    "aliases": [
+      "Cultsport"
+    ]
+  },
+  {
+    "name": "HRX",
+    "category": "Shopping",
+    "aliases": [
+      "HRX"
+    ]
+  },
+  {
+    "name": "Woodland",
+    "category": "Shopping",
+    "aliases": [
+      "Woodland"
+    ]
+  },
+  {
+    "name": "Red Tape",
+    "category": "Shopping",
+    "aliases": [
+      "Red Tape"
+    ]
+  },
+  {
+    "name": "Campus Shoes",
+    "category": "Shopping",
+    "aliases": [
+      "Campus Shoes"
+    ]
+  },
+  {
+    "name": "Relaxo",
+    "category": "Shopping",
+    "aliases": [
+      "Relaxo"
+    ]
+  },
+  {
+    "name": "Paragon Footwear",
+    "category": "Shopping",
+    "aliases": [
+      "Paragon Footwear"
+    ]
+  },
+  {
+    "name": "Liberty Shoes",
+    "category": "Shopping",
+    "aliases": [
+      "Liberty Shoes"
+    ]
+  },
+  {
+    "name": "Bacca Bucci",
+    "category": "Shopping",
+    "aliases": [
+      "Bacca Bucci"
+    ]
+  },
+  {
+    "name": "Asian Footwear",
+    "category": "Shopping",
+    "aliases": [
+      "Asian Footwear"
+    ]
+  },
+  {
+    "name": "Inc.5",
+    "category": "Shopping",
+    "aliases": [
+      "Inc.5"
+    ]
+  },
+  {
+    "name": "Aldo India",
+    "category": "Shopping",
+    "aliases": [
+      "Aldo India"
+    ]
+  },
+  {
+    "name": "Charles & Keith",
+    "category": "Shopping",
+    "aliases": [
+      "Charles & Keith"
+    ]
+  },
+  {
+    "name": "Hidesign",
+    "category": "Shopping",
+    "aliases": [
+      "Hidesign"
+    ]
+  },
+  {
+    "name": "Lavie",
+    "category": "Shopping",
+    "aliases": [
+      "Lavie"
+    ]
+  },
+  {
+    "name": "Da Milano",
+    "category": "Shopping",
+    "aliases": [
+      "Da Milano"
+    ]
+  },
+  {
+    "name": "Caprese",
+    "category": "Shopping",
+    "aliases": [
+      "Caprese"
+    ]
+  },
+  {
+    "name": "Mokobara",
+    "category": "Shopping",
+    "aliases": [
+      "Mokobara"
+    ]
+  },
+  {
+    "name": "Safari Bags",
+    "category": "Shopping",
+    "aliases": [
+      "Safari Bags"
+    ]
+  },
+  {
+    "name": "VIP Bags",
+    "category": "Shopping",
+    "aliases": [
+      "VIP Bags"
+    ]
+  },
+  {
+    "name": "American Tourister",
+    "category": "Shopping",
+    "aliases": [
+      "American Tourister"
+    ]
+  },
+  {
+    "name": "Samsonite India",
+    "category": "Shopping",
+    "aliases": [
+      "Samsonite India"
+    ]
+  },
+  {
+    "name": "Skybags",
+    "category": "Shopping",
+    "aliases": [
+      "Skybags"
+    ]
+  },
+  {
+    "name": "Wildcraft",
+    "category": "Shopping",
+    "aliases": [
+      "Wildcraft"
+    ]
+  },
+  {
+    "name": "Uppercase Bags",
+    "category": "Shopping",
+    "aliases": [
+      "Uppercase Bags"
+    ]
+  },
+  {
+    "name": "DailyObjects",
+    "category": "Shopping",
+    "aliases": [
+      "DailyObjects"
+    ]
+  },
+  {
+    "name": "Superdry India",
+    "category": "Shopping",
+    "aliases": [
+      "Superdry India"
+    ]
+  },
+  {
+    "name": "Marks & Spencer India",
+    "category": "Shopping",
+    "aliases": [
+      "Marks & Spencer India"
+    ]
+  },
+  {
+    "name": "GAP India",
+    "category": "Shopping",
+    "aliases": [
+      "GAP India"
+    ]
+  },
+  {
+    "name": "Mango India",
+    "category": "Shopping",
+    "aliases": [
+      "Mango India"
+    ]
+  },
+  {
+    "name": "Forever 21 India",
+    "category": "Shopping",
+    "aliases": [
+      "Forever 21 India"
+    ]
+  },
+  {
+    "name": "Jack & Jones",
+    "category": "Shopping",
+    "aliases": [
+      "Jack & Jones"
+    ]
+  },
+  {
+    "name": "ONLY",
+    "category": "Shopping",
+    "aliases": [
+      "ONLY"
+    ]
+  },
+  {
+    "name": "Vero Moda",
+    "category": "Shopping",
+    "aliases": [
+      "Vero Moda"
+    ]
+  },
+  {
+    "name": "Selected Homme",
+    "category": "Shopping",
+    "aliases": [
+      "Selected Homme"
+    ]
+  },
+  {
+    "name": "Celio",
+    "category": "Shopping",
+    "aliases": [
+      "Celio"
+    ]
+  },
+  {
+    "name": "Indian Terrain",
+    "category": "Shopping",
+    "aliases": [
+      "Indian Terrain"
+    ]
+  },
+  {
+    "name": "Rareism",
+    "category": "Shopping",
+    "aliases": [
+      "Rareism"
+    ]
+  },
+  {
+    "name": "Park Avenue",
+    "category": "Shopping",
+    "aliases": [
+      "Park Avenue"
+    ]
+  },
+  {
+    "name": "ColorPlus",
+    "category": "Shopping",
+    "aliases": [
+      "ColorPlus"
+    ]
+  },
+  {
+    "name": "Spykar",
+    "category": "Shopping",
+    "aliases": [
+      "Spykar"
+    ]
+  },
+  {
+    "name": "Flying Machine",
+    "category": "Shopping",
+    "aliases": [
+      "Flying Machine"
+    ]
+  },
+  {
+    "name": "Mufti",
+    "category": "Shopping",
+    "aliases": [
+      "Mufti"
+    ]
+  },
+  {
+    "name": "Numero Uno",
+    "category": "Shopping",
+    "aliases": [
+      "Numero Uno"
+    ]
+  },
+  {
+    "name": "Killer Jeans",
+    "category": "Shopping",
+    "aliases": [
+      "Killer Jeans"
+    ]
+  },
+  {
+    "name": "Lee Cooper",
+    "category": "Shopping",
+    "aliases": [
+      "Lee Cooper"
+    ]
+  },
+  {
+    "name": "GAS Jeans",
+    "category": "Shopping",
+    "aliases": [
+      "GAS Jeans"
+    ]
+  },
+  {
+    "name": "United Colors of Benetton",
+    "category": "Shopping",
+    "aliases": [
+      "United Colors of Benetton"
+    ]
+  },
+  {
+    "name": "Gini & Jony",
+    "category": "Shopping",
+    "aliases": [
+      "Gini & Jony"
+    ]
+  },
+  {
+    "name": "Koovs",
+    "category": "Shopping",
+    "aliases": [
+      "Koovs"
+    ]
+  },
+  {
+    "name": "Mojarto",
+    "category": "Shopping",
+    "aliases": [
+      "Mojarto"
+    ]
+  },
+  {
+    "name": "The June Shop",
+    "category": "Shopping",
+    "aliases": [
+      "The June Shop"
+    ]
+  },
+  {
+    "name": "The Postbox",
+    "category": "Shopping",
+    "aliases": [
+      "The Postbox"
+    ]
+  },
+  {
+    "name": "Nestasia",
+    "category": "Shopping",
+    "aliases": [
+      "Nestasia"
+    ]
+  },
+  {
+    "name": "Ellementry",
+    "category": "Shopping",
+    "aliases": [
+      "Ellementry"
+    ]
+  },
+  {
+    "name": "Chumbak",
+    "category": "Shopping",
+    "aliases": [
+      "Chumbak"
+    ]
+  },
+  {
+    "name": "Miniso",
+    "category": "Shopping",
+    "aliases": [
+      "Miniso"
+    ]
+  },
+  {
+    "name": "Hamleys",
+    "category": "Shopping",
+    "aliases": [
+      "Hamleys"
+    ]
+  },
+  {
+    "name": "Archies",
+    "category": "Shopping",
+    "aliases": [
+      "Archies"
+    ]
+  },
+  {
+    "name": "Crossword Bookstores",
+    "category": "Shopping",
+    "aliases": [
+      "Crossword Bookstores"
+    ]
+  },
+  {
+    "name": "Sapna Book House",
+    "category": "Shopping",
+    "aliases": [
+      "Sapna Book House"
+    ]
+  },
+  {
+    "name": "Bookswagon",
+    "category": "Shopping",
+    "aliases": [
+      "Bookswagon"
+    ]
+  },
+  {
+    "name": "Ferns N Petals",
+    "category": "Shopping",
+    "aliases": [
+      "Ferns N Petals"
+    ]
+  },
+  {
+    "name": "IGP",
+    "category": "Shopping",
+    "aliases": [
+      "IGP"
+    ]
+  },
+  {
+    "name": "FlowerAura",
+    "category": "Shopping",
+    "aliases": [
+      "FlowerAura"
+    ]
+  },
+  {
+    "name": "Winni",
+    "category": "Shopping",
+    "aliases": [
+      "Winni"
+    ]
+  },
+  {
+    "name": "Printo",
+    "category": "Shopping",
+    "aliases": [
+      "Printo"
+    ]
+  },
+  {
+    "name": "VistaPrint India",
+    "category": "Shopping",
+    "aliases": [
+      "VistaPrint India"
+    ]
+  },
+  {
+    "name": "Zoomin",
+    "category": "Shopping",
+    "aliases": [
+      "Zoomin"
+    ]
+  },
+  {
+    "name": "Photojaanic",
+    "category": "Shopping",
+    "aliases": [
+      "Photojaanic"
+    ]
+  },
+  {
+    "name": "R for Rabbit",
+    "category": "Shopping",
+    "aliases": [
+      "R for Rabbit"
+    ]
+  },
+  {
+    "name": "Babyoye",
+    "category": "Shopping",
+    "aliases": [
+      "Babyoye"
+    ]
+  },
+  {
+    "name": "The Moms Co",
+    "category": "Shopping",
+    "aliases": [
+      "The Moms Co"
+    ]
+  },
+  {
+    "name": "MyGlamm",
+    "category": "Shopping",
+    "aliases": [
+      "MyGlamm"
+    ]
+  },
+  {
+    "name": "Kay Beauty",
+    "category": "Shopping",
+    "aliases": [
+      "Kay Beauty"
+    ]
+  },
+  {
+    "name": "Tira Beauty",
+    "category": "Shopping",
+    "aliases": [
+      "Tira Beauty"
+    ]
+  },
+  {
+    "name": "Smytten",
+    "category": "Shopping",
+    "aliases": [
+      "Smytten"
+    ]
+  },
+  {
+    "name": "Maccaron",
+    "category": "Shopping",
+    "aliases": [
+      "Maccaron"
+    ]
+  },
+  {
+    "name": "Kiro Beauty",
+    "category": "Shopping",
+    "aliases": [
+      "Kiro Beauty"
+    ]
+  },
+  {
+    "name": "Swiss Beauty",
+    "category": "Shopping",
+    "aliases": [
+      "Swiss Beauty"
+    ]
+  },
+  {
+    "name": "Insight Cosmetics",
+    "category": "Shopping",
+    "aliases": [
+      "Insight Cosmetics"
+    ]
+  },
+  {
+    "name": "Mars Cosmetics",
+    "category": "Shopping",
+    "aliases": [
+      "Mars Cosmetics"
+    ]
+  },
+  {
+    "name": "PAC Cosmetics",
+    "category": "Shopping",
+    "aliases": [
+      "PAC Cosmetics"
+    ]
+  },
+  {
+    "name": "Tjori",
+    "category": "Shopping",
+    "aliases": [
+      "Tjori"
+    ]
+  },
+  {
+    "name": "Jaypore",
+    "category": "Shopping",
+    "aliases": [
+      "Jaypore"
+    ]
+  },
+  {
+    "name": "Okhai",
+    "category": "Shopping",
+    "aliases": [
+      "Okhai"
+    ]
+  },
+  {
+    "name": "FabAlley",
+    "category": "Shopping",
+    "aliases": [
+      "FabAlley"
+    ]
+  },
+  {
+    "name": "Fynd",
+    "category": "Shopping",
+    "aliases": [
+      "Fynd"
+    ]
+  },
+  {
+    "name": "Anouk",
+    "category": "Shopping",
+    "aliases": [
+      "Anouk"
+    ]
+  },
+  {
+    "name": "House of Pataudi",
+    "category": "Shopping",
+    "aliases": [
+      "House of Pataudi"
+    ]
+  },
+  {
+    "name": "Indya",
+    "category": "Shopping",
+    "aliases": [
+      "Indya"
+    ]
+  },
+  {
+    "name": "Wrogn",
+    "category": "Shopping",
+    "aliases": [
+      "Wrogn"
+    ]
+  },
+  {
+    "name": "Highlander",
+    "category": "Shopping",
+    "aliases": [
+      "Highlander"
+    ]
+  },
+  {
+    "name": "The Bear House",
+    "category": "Shopping",
+    "aliases": [
+      "The Bear House"
+    ]
+  },
+  {
+    "name": "XYXX",
+    "category": "Shopping",
+    "aliases": [
+      "XYXX"
+    ]
+  },
+  {
+    "name": "DaMENSCH",
+    "category": "Shopping",
+    "aliases": [
+      "DaMENSCH"
+    ]
+  },
+  {
+    "name": "Aqualogica",
+    "category": "Shopping",
+    "aliases": [
+      "Aqualogica"
+    ]
+  },
+  {
+    "name": "Foxtale Beauty",
+    "category": "Shopping",
+    "aliases": [
+      "Foxtale Beauty"
+    ]
+  },
+  {
+    "name": "The Decor Remedy",
+    "category": "Shopping",
+    "aliases": [
+      "The Decor Remedy"
+    ]
+  },
+  {
+    "name": "Sleepwell",
+    "category": "Shopping",
+    "aliases": [
+      "Sleepwell"
+    ]
+  },
+  {
+    "name": "Duroflex",
+    "category": "Shopping",
+    "aliases": [
+      "Duroflex"
+    ]
+  },
+  {
+    "name": "The Sleep Company",
+    "category": "Shopping",
+    "aliases": [
+      "The Sleep Company"
+    ]
+  },
+  {
+    "name": "Nilkamal",
+    "category": "Shopping",
+    "aliases": [
+      "Nilkamal"
+    ]
+  },
+  {
+    "name": "Godrej Interio",
+    "category": "Shopping",
+    "aliases": [
+      "Godrej Interio"
+    ]
+  },
+  {
+    "name": "Durian Furniture",
+    "category": "Shopping",
+    "aliases": [
+      "Durian Furniture"
+    ]
+  },
+  {
+    "name": "HomeTown",
+    "category": "Shopping",
+    "aliases": [
+      "HomeTown"
+    ]
+  },
+  {
+    "name": "HomeLane",
+    "category": "Shopping",
+    "aliases": [
+      "HomeLane"
+    ]
+  },
+  {
+    "name": "Livspace",
+    "category": "Shopping",
+    "aliases": [
+      "Livspace"
+    ]
+  },
+  {
+    "name": "Asian Paints Beautiful Homes",
+    "category": "Shopping",
+    "aliases": [
+      "Asian Paints Beautiful Homes"
+    ]
+  },
+  {
+    "name": "Berger Paints",
+    "category": "Shopping",
+    "aliases": [
+      "Berger Paints"
+    ]
+  },
+  {
+    "name": "Jaquar",
+    "category": "Shopping",
+    "aliases": [
+      "Jaquar"
+    ]
+  },
+  {
+    "name": "Cera Sanitaryware",
+    "category": "Shopping",
+    "aliases": [
+      "Cera Sanitaryware"
+    ]
+  },
+  {
+    "name": "Hindware",
+    "category": "Shopping",
+    "aliases": [
+      "Hindware"
+    ]
+  },
+  {
+    "name": "Uber",
+    "category": "Transportation",
+    "aliases": [
+      "Uber",
+      "Uber India"
+    ]
+  },
+  {
+    "name": "Ola",
+    "category": "Transportation",
+    "aliases": [
+      "Ola",
+      "Ola Cabs"
+    ]
+  },
+  {
+    "name": "Rapido",
+    "category": "Transportation",
+    "aliases": [
+      "Rapido"
+    ]
+  },
+  {
+    "name": "Namma Yatri",
+    "category": "Transportation",
+    "aliases": [
+      "Namma Yatri",
+      "NammaYatri"
+    ]
+  },
+  {
+    "name": "IRCTC",
+    "category": "Transportation",
+    "aliases": [
+      "IRCTC"
+    ]
+  },
+  {
+    "name": "RedBus",
+    "category": "Transportation",
+    "aliases": [
+      "RedBus",
+      "Red Bus"
+    ]
+  },
+  {
+    "name": "Indian Oil",
+    "category": "Transportation",
+    "aliases": [
+      "Indian Oil",
+      "IndianOil",
+      "IOCL"
+    ]
+  },
+  {
+    "name": "HPCL",
+    "category": "Transportation",
+    "aliases": [
+      "HPCL",
+      "HP Petrol Pump"
+    ]
+  },
+  {
+    "name": "BPCL",
+    "category": "Transportation",
+    "aliases": [
+      "BPCL",
+      "Bharat Petroleum"
+    ]
+  },
+  {
+    "name": "Shell",
+    "category": "Transportation",
+    "aliases": [
+      "Shell"
+    ]
+  },
+  {
+    "name": "Nayara Energy",
+    "category": "Transportation",
+    "aliases": [
+      "Nayara Energy"
+    ]
+  },
+  {
+    "name": "Reliance Petroleum",
+    "category": "Transportation",
+    "aliases": [
+      "Reliance Petroleum"
+    ]
+  },
+  {
+    "name": "Jio-bp",
+    "category": "Transportation",
+    "aliases": [
+      "Jio-bp"
+    ]
+  },
+  {
+    "name": "KSRTC",
+    "category": "Transportation",
+    "aliases": [
+      "KSRTC"
+    ]
+  },
+  {
+    "name": "Kerala RTC",
+    "category": "Transportation",
+    "aliases": [
+      "Kerala RTC"
+    ]
+  },
+  {
+    "name": "Karnataka RTC",
+    "category": "Transportation",
+    "aliases": [
+      "Karnataka RTC"
+    ]
+  },
+  {
+    "name": "BMTC",
+    "category": "Transportation",
+    "aliases": [
+      "BMTC"
+    ]
+  },
+  {
+    "name": "BEST Bus",
+    "category": "Transportation",
+    "aliases": [
+      "BEST Bus"
+    ]
+  },
+  {
+    "name": "Delhi Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Delhi Metro"
+    ]
+  },
+  {
+    "name": "Kochi Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Kochi Metro"
+    ]
+  },
+  {
+    "name": "Chennai Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Chennai Metro"
+    ]
+  },
+  {
+    "name": "Bengaluru Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Bengaluru Metro"
+    ]
+  },
+  {
+    "name": "Hyderabad Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Hyderabad Metro"
+    ]
+  },
+  {
+    "name": "Mumbai Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Mumbai Metro"
+    ]
+  },
+  {
+    "name": "BluSmart",
+    "category": "Transportation",
+    "aliases": [
+      "BluSmart"
+    ]
+  },
+  {
+    "name": "Quick Ride",
+    "category": "Transportation",
+    "aliases": [
+      "Quick Ride"
+    ]
+  },
+  {
+    "name": "Savaari",
+    "category": "Transportation",
+    "aliases": [
+      "Savaari"
+    ]
+  },
+  {
+    "name": "Zoomcar",
+    "category": "Transportation",
+    "aliases": [
+      "Zoomcar"
+    ]
+  },
+  {
+    "name": "Revv",
+    "category": "Transportation",
+    "aliases": [
+      "Revv"
+    ]
+  },
+  {
+    "name": "Drivezy",
+    "category": "Transportation",
+    "aliases": [
+      "Drivezy"
+    ]
+  },
+  {
+    "name": "MyChoize",
+    "category": "Transportation",
+    "aliases": [
+      "MyChoize"
+    ]
+  },
+  {
+    "name": "Avis India",
+    "category": "Transportation",
+    "aliases": [
+      "Avis India"
+    ]
+  },
+  {
+    "name": "Hertz India",
+    "category": "Transportation",
+    "aliases": [
+      "Hertz India"
+    ]
+  },
+  {
+    "name": "ECO Rent a Car",
+    "category": "Transportation",
+    "aliases": [
+      "ECO Rent a Car"
+    ]
+  },
+  {
+    "name": "Meru Cabs",
+    "category": "Transportation",
+    "aliases": [
+      "Meru Cabs"
+    ]
+  },
+  {
+    "name": "Mega Cabs",
+    "category": "Transportation",
+    "aliases": [
+      "Mega Cabs"
+    ]
+  },
+  {
+    "name": "Goa Miles",
+    "category": "Transportation",
+    "aliases": [
+      "Goa Miles"
+    ]
+  },
+  {
+    "name": "Yatri Sathi",
+    "category": "Transportation",
+    "aliases": [
+      "Yatri Sathi"
+    ]
+  },
+  {
+    "name": "Chalo Bus",
+    "category": "Transportation",
+    "aliases": [
+      "Chalo Bus"
+    ]
+  },
+  {
+    "name": "Tummoc",
+    "category": "Transportation",
+    "aliases": [
+      "Tummoc"
+    ]
+  },
+  {
+    "name": "Cityflo",
+    "category": "Transportation",
+    "aliases": [
+      "Cityflo"
+    ]
+  },
+  {
+    "name": "Shuttl",
+    "category": "Transportation",
+    "aliases": [
+      "Shuttl"
+    ]
+  },
+  {
+    "name": "IntrCity SmartBus",
+    "category": "Transportation",
+    "aliases": [
+      "IntrCity SmartBus"
+    ]
+  },
+  {
+    "name": "AbhiBus",
+    "category": "Transportation",
+    "aliases": [
+      "AbhiBus"
+    ]
+  },
+  {
+    "name": "Zingbus",
+    "category": "Transportation",
+    "aliases": [
+      "Zingbus"
+    ]
+  },
+  {
+    "name": "FlixBus India",
+    "category": "Transportation",
+    "aliases": [
+      "FlixBus India"
+    ]
+  },
+  {
+    "name": "Ather Grid",
+    "category": "Transportation",
+    "aliases": [
+      "Ather Grid"
+    ]
+  },
+  {
+    "name": "Tata Power EZ Charge",
+    "category": "Transportation",
+    "aliases": [
+      "Tata Power EZ Charge"
+    ]
+  },
+  {
+    "name": "Statiq",
+    "category": "Transportation",
+    "aliases": [
+      "Statiq"
+    ]
+  },
+  {
+    "name": "ChargeZone",
+    "category": "Transportation",
+    "aliases": [
+      "ChargeZone"
+    ]
+  },
+  {
+    "name": "Fortum Charge & Drive",
+    "category": "Transportation",
+    "aliases": [
+      "Fortum Charge & Drive"
+    ]
+  },
+  {
+    "name": "Zeon Charging",
+    "category": "Transportation",
+    "aliases": [
+      "Zeon Charging"
+    ]
+  },
+  {
+    "name": "Kazam",
+    "category": "Transportation",
+    "aliases": [
+      "Kazam"
+    ]
+  },
+  {
+    "name": "Namma Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Namma Metro"
+    ]
+  },
+  {
+    "name": "Pune Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Pune Metro"
+    ]
+  },
+  {
+    "name": "Nagpur Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Nagpur Metro"
+    ]
+  },
+  {
+    "name": "Lucknow Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Lucknow Metro"
+    ]
+  },
+  {
+    "name": "Ahmedabad Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Ahmedabad Metro"
+    ]
+  },
+  {
+    "name": "Jaipur Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Jaipur Metro"
+    ]
+  },
+  {
+    "name": "Noida Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Noida Metro"
+    ]
+  },
+  {
+    "name": "Kolkata Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Kolkata Metro"
+    ]
+  },
+  {
+    "name": "Maha Metro",
+    "category": "Transportation",
+    "aliases": [
+      "Maha Metro"
+    ]
+  },
+  {
+    "name": "Chalo",
+    "category": "Transportation",
+    "aliases": [
+      "Chalo"
+    ]
+  },
+  {
+    "name": "Park+",
+    "category": "Transportation",
+    "aliases": [
+      "Park+"
+    ]
+  },
+  {
+    "name": "ParkMate",
+    "category": "Transportation",
+    "aliases": [
+      "ParkMate"
+    ]
+  },
+  {
+    "name": "ParkSmart",
+    "category": "Transportation",
+    "aliases": [
+      "ParkSmart"
+    ]
+  },
+  {
+    "name": "ParkQwik",
+    "category": "Transportation",
+    "aliases": [
+      "ParkQwik"
+    ]
+  },
+  {
+    "name": "DriveU",
+    "category": "Transportation",
+    "aliases": [
+      "DriveU"
+    ]
+  },
+  {
+    "name": "GoMechanic",
+    "category": "Transportation",
+    "aliases": [
+      "GoMechanic"
+    ]
+  },
+  {
+    "name": "Pitstop",
+    "category": "Transportation",
+    "aliases": [
+      "Pitstop"
+    ]
+  },
+  {
+    "name": "Spinny",
+    "category": "Transportation",
+    "aliases": [
+      "Spinny"
+    ]
+  },
+  {
+    "name": "Cars24",
+    "category": "Transportation",
+    "aliases": [
+      "Cars24"
+    ]
+  },
+  {
+    "name": "CarDekho",
+    "category": "Transportation",
+    "aliases": [
+      "CarDekho"
+    ]
+  },
+  {
+    "name": "Droom",
+    "category": "Transportation",
+    "aliases": [
+      "Droom"
+    ]
+  },
+  {
+    "name": "OLX Autos",
+    "category": "Transportation",
+    "aliases": [
+      "OLX Autos"
+    ]
+  },
+  {
+    "name": "BikeDekho",
+    "category": "Transportation",
+    "aliases": [
+      "BikeDekho"
+    ]
+  },
+  {
+    "name": "Porter",
+    "category": "Transportation",
+    "aliases": [
+      "Porter"
+    ]
+  },
+  {
+    "name": "Borzo",
+    "category": "Transportation",
+    "aliases": [
+      "Borzo"
+    ]
+  },
+  {
+    "name": "Shadowfax",
+    "category": "Transportation",
+    "aliases": [
+      "Shadowfax"
+    ]
+  },
+  {
+    "name": "Delhivery",
+    "category": "Transportation",
+    "aliases": [
+      "Delhivery"
+    ]
+  },
+  {
+    "name": "Blue Dart",
+    "category": "Transportation",
+    "aliases": [
+      "Blue Dart"
+    ]
+  },
+  {
+    "name": "DTDC",
+    "category": "Transportation",
+    "aliases": [
+      "DTDC"
+    ]
+  },
+  {
+    "name": "Professional Couriers",
+    "category": "Transportation",
+    "aliases": [
+      "Professional Couriers"
+    ]
+  },
+  {
+    "name": "Trackon Couriers",
+    "category": "Transportation",
+    "aliases": [
+      "Trackon Couriers"
+    ]
+  },
+  {
+    "name": "XpressBees",
+    "category": "Transportation",
+    "aliases": [
+      "XpressBees"
+    ]
+  },
+  {
+    "name": "Ecom Express",
+    "category": "Transportation",
+    "aliases": [
+      "Ecom Express"
+    ]
+  },
+  {
+    "name": "Ekart Logistics",
+    "category": "Transportation",
+    "aliases": [
+      "Ekart Logistics"
+    ]
+  },
+  {
+    "name": "India Post",
+    "category": "Transportation",
+    "aliases": [
+      "India Post"
+    ]
+  },
+  {
+    "name": "Gati",
+    "category": "Transportation",
+    "aliases": [
+      "Gati"
+    ]
+  },
+  {
+    "name": "Safexpress",
+    "category": "Transportation",
+    "aliases": [
+      "Safexpress"
+    ]
+  },
+  {
+    "name": "VRL Logistics",
+    "category": "Transportation",
+    "aliases": [
+      "VRL Logistics"
+    ]
+  },
+  {
+    "name": "TCI Express",
+    "category": "Transportation",
+    "aliases": [
+      "TCI Express"
+    ]
+  },
+  {
+    "name": "Mahindra Logistics",
+    "category": "Transportation",
+    "aliases": [
+      "Mahindra Logistics"
+    ]
+  },
+  {
+    "name": "BlackBuck",
+    "category": "Transportation",
+    "aliases": [
+      "BlackBuck"
+    ]
+  },
+  {
+    "name": "Loadshare",
+    "category": "Transportation",
+    "aliases": [
+      "Loadshare"
+    ]
+  },
+  {
+    "name": "LetsTransport",
+    "category": "Transportation",
+    "aliases": [
+      "LetsTransport"
+    ]
+  },
+  {
+    "name": "Shiprocket",
+    "category": "Transportation",
+    "aliases": [
+      "Shiprocket"
+    ]
+  },
+  {
+    "name": "Airtel",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Airtel"
+    ]
+  },
+  {
+    "name": "Jio",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Jio"
+    ]
+  },
+  {
+    "name": "Vi",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Vodafone Idea",
+      "Vi Recharge"
+    ]
+  },
+  {
+    "name": "KSEB",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "KSEB",
+      "Kerala State Electricity Board"
+    ]
+  },
+  {
+    "name": "BESCOM",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "BESCOM"
+    ]
+  },
+  {
+    "name": "ACT Fibernet",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "ACT Fibernet"
+    ]
+  },
+  {
+    "name": "JioFiber",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "JioFiber",
+      "Jio Fiber"
+    ]
+  },
+  {
+    "name": "Airtel Xstream Fiber",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Airtel Xstream Fiber",
+      "Airtel Broadband"
+    ]
+  },
+  {
+    "name": "BSNL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "BSNL"
+    ]
+  },
+  {
+    "name": "Tata Play Fiber",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Tata Play Fiber"
+    ]
+  },
+  {
+    "name": "Hathway",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Hathway"
+    ]
+  },
+  {
+    "name": "Asianet Broadband",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Asianet Broadband"
+    ]
+  },
+  {
+    "name": "RailWire",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "RailWire"
+    ]
+  },
+  {
+    "name": "GTPL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "GTPL"
+    ]
+  },
+  {
+    "name": "Tikona",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Tikona"
+    ]
+  },
+  {
+    "name": "You Broadband",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "You Broadband"
+    ]
+  },
+  {
+    "name": "Tata Play",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Tata Play"
+    ]
+  },
+  {
+    "name": "Dish TV",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Dish TV"
+    ]
+  },
+  {
+    "name": "Sun Direct",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Sun Direct"
+    ]
+  },
+  {
+    "name": "d2h",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "d2h"
+    ]
+  },
+  {
+    "name": "Tata Power",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Tata Power"
+    ]
+  },
+  {
+    "name": "Adani Electricity",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Adani Electricity"
+    ]
+  },
+  {
+    "name": "Torrent Power",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Torrent Power"
+    ]
+  },
+  {
+    "name": "MSEDCL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "MSEDCL"
+    ]
+  },
+  {
+    "name": "TNEB",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "TNEB"
+    ]
+  },
+  {
+    "name": "TANGEDCO",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "TANGEDCO"
+    ]
+  },
+  {
+    "name": "Kerala Water Authority",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Kerala Water Authority"
+    ]
+  },
+  {
+    "name": "Chennai Metro Water",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Chennai Metro Water"
+    ]
+  },
+  {
+    "name": "BWSSB",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "BWSSB"
+    ]
+  },
+  {
+    "name": "Delhi Jal Board",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Delhi Jal Board"
+    ]
+  },
+  {
+    "name": "Indane Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Indane Gas"
+    ]
+  },
+  {
+    "name": "Bharat Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Bharat Gas"
+    ]
+  },
+  {
+    "name": "HP Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "HP Gas"
+    ]
+  },
+  {
+    "name": "Mahanagar Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Mahanagar Gas"
+    ]
+  },
+  {
+    "name": "Indraprastha Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Indraprastha Gas"
+    ]
+  },
+  {
+    "name": "Adani Total Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Adani Total Gas"
+    ]
+  },
+  {
+    "name": "GAIL Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "GAIL Gas"
+    ]
+  },
+  {
+    "name": "Gujarat Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Gujarat Gas"
+    ]
+  },
+  {
+    "name": "Think Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Think Gas"
+    ]
+  },
+  {
+    "name": "MGL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "MGL"
+    ]
+  },
+  {
+    "name": "CESC",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "CESC"
+    ]
+  },
+  {
+    "name": "WBSEDCL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "WBSEDCL"
+    ]
+  },
+  {
+    "name": "TSSPDCL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "TSSPDCL"
+    ]
+  },
+  {
+    "name": "APSPDCL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "APSPDCL"
+    ]
+  },
+  {
+    "name": "APEPDCL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "APEPDCL"
+    ]
+  },
+  {
+    "name": "JVVNL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "JVVNL"
+    ]
+  },
+  {
+    "name": "AVVNL",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "AVVNL"
+    ]
+  },
+  {
+    "name": "BSES Rajdhani",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "BSES Rajdhani"
+    ]
+  },
+  {
+    "name": "BSES Yamuna",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "BSES Yamuna"
+    ]
+  },
+  {
+    "name": "Noida Power Company",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Noida Power Company"
+    ]
+  },
+  {
+    "name": "Haryana City Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Haryana City Gas"
+    ]
+  },
+  {
+    "name": "Vadodara Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Vadodara Gas"
+    ]
+  },
+  {
+    "name": "Sabarmati Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Sabarmati Gas"
+    ]
+  },
+  {
+    "name": "Torrent Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Torrent Gas"
+    ]
+  },
+  {
+    "name": "Maharashtra Natural Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Maharashtra Natural Gas"
+    ]
+  },
+  {
+    "name": "Central U.P. Gas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Central U.P. Gas"
+    ]
+  },
+  {
+    "name": "Green Gas Limited",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Green Gas Limited"
+    ]
+  },
+  {
+    "name": "Indane",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Indane"
+    ]
+  },
+  {
+    "name": "Bharatgas",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Bharatgas"
+    ]
+  },
+  {
+    "name": "HP Gas Booking",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "HP Gas Booking"
+    ]
+  },
+  {
+    "name": "BSNL Recharge",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "BSNL Recharge"
+    ]
+  },
+  {
+    "name": "Airtel Recharge",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Airtel Recharge"
+    ]
+  },
+  {
+    "name": "Jio Recharge",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Jio Recharge"
+    ]
+  },
+  {
+    "name": "Asianet Digital",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Asianet Digital"
+    ]
+  },
+  {
+    "name": "Kerala Vision Broadband",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Kerala Vision Broadband"
+    ]
+  },
+  {
+    "name": "Kerala Vision Digital TV",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Kerala Vision Digital TV"
+    ]
+  },
+  {
+    "name": "DEN Networks",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "DEN Networks"
+    ]
+  },
+  {
+    "name": "Siti Networks",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Siti Networks"
+    ]
+  },
+  {
+    "name": "Fastway Cable",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Fastway Cable"
+    ]
+  },
+  {
+    "name": "GTPL Hathway",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "GTPL Hathway"
+    ]
+  },
+  {
+    "name": "Spectra Broadband",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Spectra Broadband"
+    ]
+  },
+  {
+    "name": "Excitel Broadband",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Excitel Broadband"
+    ]
+  },
+  {
+    "name": "Mach1 Broadband",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Mach1 Broadband"
+    ]
+  },
+  {
+    "name": "Gigatel Networks",
+    "category": "Bills & Utilities",
+    "aliases": [
+      "Gigatel Networks"
+    ]
+  },
+  {
+    "name": "Amazon Prime Video",
+    "category": "Entertainment",
+    "aliases": [
+      "Amazon Prime Video",
+      "Prime Video"
+    ]
+  },
+  {
+    "name": "BookMyShow",
+    "category": "Entertainment",
+    "aliases": [
+      "BookMyShow",
+      "Book My Show"
+    ]
+  },
+  {
+    "name": "Netflix",
+    "category": "Entertainment",
+    "aliases": [
+      "Netflix"
+    ]
+  },
+  {
+    "name": "Spotify",
+    "category": "Entertainment",
+    "aliases": [
+      "Spotify"
+    ]
+  },
+  {
+    "name": "YouTube Premium",
+    "category": "Entertainment",
+    "aliases": [
+      "YouTube Premium"
+    ]
+  },
+  {
+    "name": "JioHotstar",
+    "category": "Entertainment",
+    "aliases": [
+      "JioHotstar",
+      "Jio Hotstar",
+      "Hotstar"
+    ]
+  },
+  {
+    "name": "PVR INOX",
+    "category": "Entertainment",
+    "aliases": [
+      "PVR INOX",
+      "PVR",
+      "INOX"
+    ]
+  },
+  {
+    "name": "Sony LIV",
+    "category": "Entertainment",
+    "aliases": [
+      "Sony LIV"
+    ]
+  },
+  {
+    "name": "ZEE5",
+    "category": "Entertainment",
+    "aliases": [
+      "ZEE5",
+      "Zee 5"
+    ]
+  },
+  {
+    "name": "JioCinema",
+    "category": "Entertainment",
+    "aliases": [
+      "JioCinema"
+    ]
+  },
+  {
+    "name": "Apple TV+",
+    "category": "Entertainment",
+    "aliases": [
+      "Apple TV+"
+    ]
+  },
+  {
+    "name": "Apple Music",
+    "category": "Entertainment",
+    "aliases": [
+      "Apple Music"
+    ]
+  },
+  {
+    "name": "Gaana",
+    "category": "Entertainment",
+    "aliases": [
+      "Gaana"
+    ]
+  },
+  {
+    "name": "JioSaavn",
+    "category": "Entertainment",
+    "aliases": [
+      "JioSaavn",
+      "Jio Saavn"
+    ]
+  },
+  {
+    "name": "Wynk Music",
+    "category": "Entertainment",
+    "aliases": [
+      "Wynk Music"
+    ]
+  },
+  {
+    "name": "Hungama Music",
+    "category": "Entertainment",
+    "aliases": [
+      "Hungama Music"
+    ]
+  },
+  {
+    "name": "Audible",
+    "category": "Entertainment",
+    "aliases": [
+      "Audible"
+    ]
+  },
+  {
+    "name": "Kindle Unlimited",
+    "category": "Entertainment",
+    "aliases": [
+      "Kindle Unlimited"
+    ]
+  },
+  {
+    "name": "aha",
+    "category": "Entertainment",
+    "aliases": [
+      "aha"
+    ]
+  },
+  {
+    "name": "Sun NXT",
+    "category": "Entertainment",
+    "aliases": [
+      "Sun NXT"
+    ]
+  },
+  {
+    "name": "Hoichoi",
+    "category": "Entertainment",
+    "aliases": [
+      "Hoichoi"
+    ]
+  },
+  {
+    "name": "Eros Now",
+    "category": "Entertainment",
+    "aliases": [
+      "Eros Now"
+    ]
+  },
+  {
+    "name": "MUBI",
+    "category": "Entertainment",
+    "aliases": [
+      "MUBI"
+    ]
+  },
+  {
+    "name": "Lionsgate Play",
+    "category": "Entertainment",
+    "aliases": [
+      "Lionsgate Play"
+    ]
+  },
+  {
+    "name": "Discovery+",
+    "category": "Entertainment",
+    "aliases": [
+      "Discovery+"
+    ]
+  },
+  {
+    "name": "Voot",
+    "category": "Entertainment",
+    "aliases": [
+      "Voot"
+    ]
+  },
+  {
+    "name": "MX Player",
+    "category": "Entertainment",
+    "aliases": [
+      "MX Player"
+    ]
+  },
+  {
+    "name": "ALTBalaji",
+    "category": "Entertainment",
+    "aliases": [
+      "ALTBalaji"
+    ]
+  },
+  {
+    "name": "Epic On",
+    "category": "Entertainment",
+    "aliases": [
+      "Epic On"
+    ]
+  },
+  {
+    "name": "Chaupal",
+    "category": "Entertainment",
+    "aliases": [
+      "Chaupal"
+    ]
+  },
+  {
+    "name": "ShemarooMe",
+    "category": "Entertainment",
+    "aliases": [
+      "ShemarooMe"
+    ]
+  },
+  {
+    "name": "FanCode",
+    "category": "Entertainment",
+    "aliases": [
+      "FanCode"
+    ]
+  },
+  {
+    "name": "Cricbuzz Plus",
+    "category": "Entertainment",
+    "aliases": [
+      "Cricbuzz Plus"
+    ]
+  },
+  {
+    "name": "Dream11",
+    "category": "Entertainment",
+    "aliases": [
+      "Dream11"
+    ]
+  },
+  {
+    "name": "MPL",
+    "category": "Entertainment",
+    "aliases": [
+      "MPL"
+    ]
+  },
+  {
+    "name": "Games24x7",
+    "category": "Entertainment",
+    "aliases": [
+      "Games24x7"
+    ]
+  },
+  {
+    "name": "Steam",
+    "category": "Entertainment",
+    "aliases": [
+      "Steam"
+    ]
+  },
+  {
+    "name": "PlayStation Store",
+    "category": "Entertainment",
+    "aliases": [
+      "PlayStation Store"
+    ]
+  },
+  {
+    "name": "Xbox Store",
+    "category": "Entertainment",
+    "aliases": [
+      "Xbox Store"
+    ]
+  },
+  {
+    "name": "Nintendo eShop",
+    "category": "Entertainment",
+    "aliases": [
+      "Nintendo eShop"
+    ]
+  },
+  {
+    "name": "Google Play",
+    "category": "Entertainment",
+    "aliases": [
+      "Google Play"
+    ]
+  },
+  {
+    "name": "Apple Services",
+    "category": "Entertainment",
+    "aliases": [
+      "Apple Services"
+    ]
+  },
+  {
+    "name": "Roblox",
+    "category": "Entertainment",
+    "aliases": [
+      "Roblox"
+    ]
+  },
+  {
+    "name": "Free Fire",
+    "category": "Entertainment",
+    "aliases": [
+      "Free Fire"
+    ]
+  },
+  {
+    "name": "PUBG Mobile",
+    "category": "Entertainment",
+    "aliases": [
+      "PUBG Mobile"
+    ]
+  },
+  {
+    "name": "BGMI",
+    "category": "Entertainment",
+    "aliases": [
+      "BGMI"
+    ]
+  },
+  {
+    "name": "Call of Duty Mobile",
+    "category": "Entertainment",
+    "aliases": [
+      "Call of Duty Mobile"
+    ]
+  },
+  {
+    "name": "Minecraft",
+    "category": "Entertainment",
+    "aliases": [
+      "Minecraft"
+    ]
+  },
+  {
+    "name": "Riot Games",
+    "category": "Entertainment",
+    "aliases": [
+      "Riot Games"
+    ]
+  },
+  {
+    "name": "Valorant Points",
+    "category": "Entertainment",
+    "aliases": [
+      "Valorant Points"
+    ]
+  },
+  {
+    "name": "Epic Games Store",
+    "category": "Entertainment",
+    "aliases": [
+      "Epic Games Store"
+    ]
+  },
+  {
+    "name": "EA Play",
+    "category": "Entertainment",
+    "aliases": [
+      "EA Play"
+    ]
+  },
+  {
+    "name": "Ubisoft Store",
+    "category": "Entertainment",
+    "aliases": [
+      "Ubisoft Store"
+    ]
+  },
+  {
+    "name": "GOG.com",
+    "category": "Entertainment",
+    "aliases": [
+      "GOG.com"
+    ]
+  },
+  {
+    "name": "Garena",
+    "category": "Entertainment",
+    "aliases": [
+      "Garena"
+    ]
+  },
+  {
+    "name": "Junglee Games",
+    "category": "Entertainment",
+    "aliases": [
+      "Junglee Games"
+    ]
+  },
+  {
+    "name": "RummyCircle",
+    "category": "Entertainment",
+    "aliases": [
+      "RummyCircle"
+    ]
+  },
+  {
+    "name": "PokerBaazi",
+    "category": "Entertainment",
+    "aliases": [
+      "PokerBaazi"
+    ]
+  },
+  {
+    "name": "WinZO",
+    "category": "Entertainment",
+    "aliases": [
+      "WinZO"
+    ]
+  },
+  {
+    "name": "A23 Games",
+    "category": "Entertainment",
+    "aliases": [
+      "A23 Games"
+    ]
+  },
+  {
+    "name": "My11Circle",
+    "category": "Entertainment",
+    "aliases": [
+      "My11Circle"
+    ]
+  },
+  {
+    "name": "Paramount+",
+    "category": "Entertainment",
+    "aliases": [
+      "Paramount+"
+    ]
+  },
+  {
+    "name": "Crunchyroll",
+    "category": "Entertainment",
+    "aliases": [
+      "Crunchyroll"
+    ]
+  },
+  {
+    "name": "Curiosity Stream",
+    "category": "Entertainment",
+    "aliases": [
+      "Curiosity Stream"
+    ]
+  },
+  {
+    "name": "BritBox",
+    "category": "Entertainment",
+    "aliases": [
+      "BritBox"
+    ]
+  },
+  {
+    "name": "Tata Play Binge",
+    "category": "Entertainment",
+    "aliases": [
+      "Tata Play Binge"
+    ]
+  },
+  {
+    "name": "OTTplay",
+    "category": "Entertainment",
+    "aliases": [
+      "OTTplay"
+    ]
+  },
+  {
+    "name": "JioTV Premium",
+    "category": "Entertainment",
+    "aliases": [
+      "JioTV Premium"
+    ]
+  },
+  {
+    "name": "Airtel Xstream",
+    "category": "Entertainment",
+    "aliases": [
+      "Airtel Xstream"
+    ]
+  },
+  {
+    "name": "ManoramaMAX",
+    "category": "Entertainment",
+    "aliases": [
+      "ManoramaMAX"
+    ]
+  },
+  {
+    "name": "Saina Play",
+    "category": "Entertainment",
+    "aliases": [
+      "Saina Play"
+    ]
+  },
+  {
+    "name": "Stage OTT",
+    "category": "Entertainment",
+    "aliases": [
+      "Stage OTT"
+    ]
+  },
+  {
+    "name": "Planet Marathi OTT",
+    "category": "Entertainment",
+    "aliases": [
+      "Planet Marathi OTT"
+    ]
+  },
+  {
+    "name": "Ullu App",
+    "category": "Entertainment",
+    "aliases": [
+      "Ullu App"
+    ]
+  },
+  {
+    "name": "Kuku FM",
+    "category": "Entertainment",
+    "aliases": [
+      "Kuku FM"
+    ]
+  },
+  {
+    "name": "Pocket FM",
+    "category": "Entertainment",
+    "aliases": [
+      "Pocket FM"
+    ]
+  },
+  {
+    "name": "Pratilipi FM",
+    "category": "Entertainment",
+    "aliases": [
+      "Pratilipi FM"
+    ]
+  },
+  {
+    "name": "Storytel",
+    "category": "Entertainment",
+    "aliases": [
+      "Storytel"
+    ]
+  },
+  {
+    "name": "YouTube Music",
+    "category": "Entertainment",
+    "aliases": [
+      "YouTube Music"
+    ]
+  },
+  {
+    "name": "Apple Podcasts",
+    "category": "Entertainment",
+    "aliases": [
+      "Apple Podcasts"
+    ]
+  },
+  {
+    "name": "Amazon Music",
+    "category": "Entertainment",
+    "aliases": [
+      "Amazon Music"
+    ]
+  },
+  {
+    "name": "Tidal",
+    "category": "Entertainment",
+    "aliases": [
+      "Tidal"
+    ]
+  },
+  {
+    "name": "Deezer",
+    "category": "Entertainment",
+    "aliases": [
+      "Deezer"
+    ]
+  },
+  {
+    "name": "BookMyShow Stream",
+    "category": "Entertainment",
+    "aliases": [
+      "BookMyShow Stream"
+    ]
+  },
+  {
+    "name": "Paytm Insider",
+    "category": "Entertainment",
+    "aliases": [
+      "Paytm Insider"
+    ]
+  },
+  {
+    "name": "District by Zomato",
+    "category": "Entertainment",
+    "aliases": [
+      "District by Zomato"
+    ]
+  },
+  {
+    "name": "Insider.in",
+    "category": "Entertainment",
+    "aliases": [
+      "Insider.in"
+    ]
+  },
+  {
+    "name": "TicketNew",
+    "category": "Entertainment",
+    "aliases": [
+      "TicketNew"
+    ]
+  },
+  {
+    "name": "Townscript",
+    "category": "Entertainment",
+    "aliases": [
+      "Townscript"
+    ]
+  },
+  {
+    "name": "SkillBox",
+    "category": "Entertainment",
+    "aliases": [
+      "SkillBox"
+    ]
+  },
+  {
+    "name": "Saregama Carvaan",
+    "category": "Entertainment",
+    "aliases": [
+      "Saregama Carvaan"
+    ]
+  },
+  {
+    "name": "Saregama Music",
+    "category": "Entertainment",
+    "aliases": [
+      "Saregama Music"
+    ]
+  },
+  {
+    "name": "JioGames",
+    "category": "Entertainment",
+    "aliases": [
+      "JioGames"
+    ]
+  },
+  {
+    "name": "Xbox Game Pass",
+    "category": "Entertainment",
+    "aliases": [
+      "Xbox Game Pass"
+    ]
+  },
+  {
+    "name": "PlayStation Plus",
+    "category": "Entertainment",
+    "aliases": [
+      "PlayStation Plus"
+    ]
+  },
+  {
+    "name": "Twitch",
+    "category": "Entertainment",
+    "aliases": [
+      "Twitch"
+    ]
+  },
+  {
+    "name": "Discord Nitro",
+    "category": "Entertainment",
+    "aliases": [
+      "Discord Nitro"
+    ]
+  },
+  {
+    "name": "Patreon",
+    "category": "Entertainment",
+    "aliases": [
+      "Patreon"
+    ]
+  },
+  {
+    "name": "Substack",
+    "category": "Entertainment",
+    "aliases": [
+      "Substack"
+    ]
+  },
+  {
+    "name": "The Ken",
+    "category": "Entertainment",
+    "aliases": [
+      "The Ken"
+    ]
+  },
+  {
+    "name": "The Morning Context",
+    "category": "Entertainment",
+    "aliases": [
+      "The Morning Context"
+    ]
+  },
+  {
+    "name": "The Hindu ePaper",
+    "category": "Entertainment",
+    "aliases": [
+      "The Hindu ePaper"
+    ]
+  },
+  {
+    "name": "The Economic Times Prime",
+    "category": "Entertainment",
+    "aliases": [
+      "The Economic Times Prime"
+    ]
+  },
+  {
+    "name": "Apollo Pharmacy",
+    "category": "Health",
+    "aliases": [
+      "Apollo Pharmacy"
+    ]
+  },
+  {
+    "name": "Tata 1mg",
+    "category": "Health",
+    "aliases": [
+      "Tata 1mg",
+      "1mg"
+    ]
+  },
+  {
+    "name": "PharmEasy",
+    "category": "Health",
+    "aliases": [
+      "PharmEasy",
+      "Pharm Easy"
+    ]
+  },
+  {
+    "name": "Netmeds",
+    "category": "Health",
+    "aliases": [
+      "Netmeds",
+      "Net Meds"
+    ]
+  },
+  {
+    "name": "MedPlus",
+    "category": "Health",
+    "aliases": [
+      "MedPlus"
+    ]
+  },
+  {
+    "name": "Wellness Forever",
+    "category": "Health",
+    "aliases": [
+      "Wellness Forever"
+    ]
+  },
+  {
+    "name": "Guardian Pharmacy",
+    "category": "Health",
+    "aliases": [
+      "Guardian Pharmacy"
+    ]
+  },
+  {
+    "name": "Noble Plus",
+    "category": "Health",
+    "aliases": [
+      "Noble Plus"
+    ]
+  },
+  {
+    "name": "Frank Ross",
+    "category": "Health",
+    "aliases": [
+      "Frank Ross"
+    ]
+  },
+  {
+    "name": "Jan Aushadhi",
+    "category": "Health",
+    "aliases": [
+      "Jan Aushadhi"
+    ]
+  },
+  {
+    "name": "Medkart",
+    "category": "Health",
+    "aliases": [
+      "Medkart"
+    ]
+  },
+  {
+    "name": "Truemeds",
+    "category": "Health",
+    "aliases": [
+      "Truemeds"
+    ]
+  },
+  {
+    "name": "Practo",
+    "category": "Health",
+    "aliases": [
+      "Practo"
+    ]
+  },
+  {
+    "name": "Healthians",
+    "category": "Health",
+    "aliases": [
+      "Healthians"
+    ]
+  },
+  {
+    "name": "Dr Lal PathLabs",
+    "category": "Health",
+    "aliases": [
+      "Dr Lal PathLabs"
+    ]
+  },
+  {
+    "name": "Metropolis Healthcare",
+    "category": "Health",
+    "aliases": [
+      "Metropolis Healthcare"
+    ]
+  },
+  {
+    "name": "Thyrocare",
+    "category": "Health",
+    "aliases": [
+      "Thyrocare"
+    ]
+  },
+  {
+    "name": "SRL Diagnostics",
+    "category": "Health",
+    "aliases": [
+      "SRL Diagnostics"
+    ]
+  },
+  {
+    "name": "Redcliffe Labs",
+    "category": "Health",
+    "aliases": [
+      "Redcliffe Labs"
+    ]
+  },
+  {
+    "name": "Orange Health Labs",
+    "category": "Health",
+    "aliases": [
+      "Orange Health Labs"
+    ]
+  },
+  {
+    "name": "Apollo Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Apollo Hospitals"
+    ]
+  },
+  {
+    "name": "Fortis Healthcare",
+    "category": "Health",
+    "aliases": [
+      "Fortis Healthcare"
+    ]
+  },
+  {
+    "name": "Manipal Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Manipal Hospitals"
+    ]
+  },
+  {
+    "name": "Aster Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Aster Hospitals"
+    ]
+  },
+  {
+    "name": "Max Healthcare",
+    "category": "Health",
+    "aliases": [
+      "Max Healthcare"
+    ]
+  },
+  {
+    "name": "Narayana Health",
+    "category": "Health",
+    "aliases": [
+      "Narayana Health"
+    ]
+  },
+  {
+    "name": "KIMS Hospitals",
+    "category": "Health",
+    "aliases": [
+      "KIMS Hospitals"
+    ]
+  },
+  {
+    "name": "Amrita Hospital",
+    "category": "Health",
+    "aliases": [
+      "Amrita Hospital"
+    ]
+  },
+  {
+    "name": "VPS Lakeshore",
+    "category": "Health",
+    "aliases": [
+      "VPS Lakeshore"
+    ]
+  },
+  {
+    "name": "Aster Medcity",
+    "category": "Health",
+    "aliases": [
+      "Aster Medcity"
+    ]
+  },
+  {
+    "name": "Baby Memorial Hospital",
+    "category": "Health",
+    "aliases": [
+      "Baby Memorial Hospital"
+    ]
+  },
+  {
+    "name": "Rajagiri Hospital",
+    "category": "Health",
+    "aliases": [
+      "Rajagiri Hospital"
+    ]
+  },
+  {
+    "name": "Medical Trust Hospital",
+    "category": "Health",
+    "aliases": [
+      "Medical Trust Hospital"
+    ]
+  },
+  {
+    "name": "Lisie Hospital",
+    "category": "Health",
+    "aliases": [
+      "Lisie Hospital"
+    ]
+  },
+  {
+    "name": "Sunrise Hospital",
+    "category": "Health",
+    "aliases": [
+      "Sunrise Hospital"
+    ]
+  },
+  {
+    "name": "Welcare Hospital",
+    "category": "Health",
+    "aliases": [
+      "Welcare Hospital"
+    ]
+  },
+  {
+    "name": "PVS Hospital",
+    "category": "Health",
+    "aliases": [
+      "PVS Hospital"
+    ]
+  },
+  {
+    "name": "Renai Medicity",
+    "category": "Health",
+    "aliases": [
+      "Renai Medicity"
+    ]
+  },
+  {
+    "name": "Caritas Hospital",
+    "category": "Health",
+    "aliases": [
+      "Caritas Hospital"
+    ]
+  },
+  {
+    "name": "Jubilee Mission Hospital",
+    "category": "Health",
+    "aliases": [
+      "Jubilee Mission Hospital"
+    ]
+  },
+  {
+    "name": "Westfort Hospital",
+    "category": "Health",
+    "aliases": [
+      "Westfort Hospital"
+    ]
+  },
+  {
+    "name": "Kokilaben Hospital",
+    "category": "Health",
+    "aliases": [
+      "Kokilaben Hospital"
+    ]
+  },
+  {
+    "name": "Kauvery Hospital",
+    "category": "Health",
+    "aliases": [
+      "Kauvery Hospital"
+    ]
+  },
+  {
+    "name": "Sakra World Hospital",
+    "category": "Health",
+    "aliases": [
+      "Sakra World Hospital"
+    ]
+  },
+  {
+    "name": "Sparsh Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Sparsh Hospitals"
+    ]
+  },
+  {
+    "name": "Yashoda Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Yashoda Hospitals"
+    ]
+  },
+  {
+    "name": "Rainbow Children's Hospital",
+    "category": "Health",
+    "aliases": [
+      "Rainbow Children's Hospital"
+    ]
+  },
+  {
+    "name": "Cloudnine Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Cloudnine Hospitals"
+    ]
+  },
+  {
+    "name": "Motherhood Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Motherhood Hospitals"
+    ]
+  },
+  {
+    "name": "CARE Hospitals",
+    "category": "Health",
+    "aliases": [
+      "CARE Hospitals"
+    ]
+  },
+  {
+    "name": "Medanta",
+    "category": "Health",
+    "aliases": [
+      "Medanta"
+    ]
+  },
+  {
+    "name": "HCG Cancer Centre",
+    "category": "Health",
+    "aliases": [
+      "HCG Cancer Centre"
+    ]
+  },
+  {
+    "name": "AIG Hospitals",
+    "category": "Health",
+    "aliases": [
+      "AIG Hospitals"
+    ]
+  },
+  {
+    "name": "Continental Hospitals",
+    "category": "Health",
+    "aliases": [
+      "Continental Hospitals"
+    ]
+  },
+  {
+    "name": "Dr Agarwals Eye Hospital",
+    "category": "Health",
+    "aliases": [
+      "Dr Agarwals Eye Hospital"
+    ]
+  },
+  {
+    "name": "Sankara Nethralaya",
+    "category": "Health",
+    "aliases": [
+      "Sankara Nethralaya"
+    ]
+  },
+  {
+    "name": "Aravind Eye Hospital",
+    "category": "Health",
+    "aliases": [
+      "Aravind Eye Hospital"
+    ]
+  },
+  {
+    "name": "Centre for Sight",
+    "category": "Health",
+    "aliases": [
+      "Centre for Sight"
+    ]
+  },
+  {
+    "name": "Nethradhama",
+    "category": "Health",
+    "aliases": [
+      "Nethradhama"
+    ]
+  },
+  {
+    "name": "Vasan Eye Care",
+    "category": "Health",
+    "aliases": [
+      "Vasan Eye Care"
+    ]
+  },
+  {
+    "name": "Pristyn Care",
+    "category": "Health",
+    "aliases": [
+      "Pristyn Care"
+    ]
+  },
+  {
+    "name": "Clove Dental",
+    "category": "Health",
+    "aliases": [
+      "Clove Dental"
+    ]
+  },
+  {
+    "name": "Sabka Dentist",
+    "category": "Health",
+    "aliases": [
+      "Sabka Dentist"
+    ]
+  },
+  {
+    "name": "Apollo Dental",
+    "category": "Health",
+    "aliases": [
+      "Apollo Dental"
+    ]
+  },
+  {
+    "name": "Cult.fit",
+    "category": "Health",
+    "aliases": [
+      "Cult.fit"
+    ]
+  },
+  {
+    "name": "Fittr",
+    "category": "Health",
+    "aliases": [
+      "Fittr"
+    ]
+  },
+  {
+    "name": "Ultrahuman",
+    "category": "Health",
+    "aliases": [
+      "Ultrahuman"
+    ]
+  },
+  {
+    "name": "GOQii",
+    "category": "Health",
+    "aliases": [
+      "GOQii"
+    ]
+  },
+  {
+    "name": "Tata 1mg Labs",
+    "category": "Health",
+    "aliases": [
+      "Tata 1mg Labs"
+    ]
+  },
+  {
+    "name": "Apollo Diagnostics",
+    "category": "Health",
+    "aliases": [
+      "Apollo Diagnostics"
+    ]
+  },
+  {
+    "name": "Max Lab",
+    "category": "Health",
+    "aliases": [
+      "Max Lab"
+    ]
+  },
+  {
+    "name": "Pathkind Labs",
+    "category": "Health",
+    "aliases": [
+      "Pathkind Labs"
+    ]
+  },
+  {
+    "name": "Neuberg Diagnostics",
+    "category": "Health",
+    "aliases": [
+      "Neuberg Diagnostics"
+    ]
+  },
+  {
+    "name": "Vijaya Diagnostic Centre",
+    "category": "Health",
+    "aliases": [
+      "Vijaya Diagnostic Centre"
+    ]
+  },
+  {
+    "name": "Lucid Medical Diagnostics",
+    "category": "Health",
+    "aliases": [
+      "Lucid Medical Diagnostics"
+    ]
+  },
+  {
+    "name": "Tenet Diagnostics",
+    "category": "Health",
+    "aliases": [
+      "Tenet Diagnostics"
+    ]
+  },
+  {
+    "name": "Aarthi Scans",
+    "category": "Health",
+    "aliases": [
+      "Aarthi Scans"
+    ]
+  },
+  {
+    "name": "Anderson Diagnostics",
+    "category": "Health",
+    "aliases": [
+      "Anderson Diagnostics"
+    ]
+  },
+  {
+    "name": "MedGenome",
+    "category": "Health",
+    "aliases": [
+      "MedGenome"
+    ]
+  },
+  {
+    "name": "MediBuddy",
+    "category": "Health",
+    "aliases": [
+      "MediBuddy"
+    ]
+  },
+  {
+    "name": "Even Healthcare",
+    "category": "Health",
+    "aliases": [
+      "Even Healthcare"
+    ]
+  },
+  {
+    "name": "Loop Health",
+    "category": "Health",
+    "aliases": [
+      "Loop Health"
+    ]
+  },
+  {
+    "name": "Care Health Insurance",
+    "category": "Health",
+    "aliases": [
+      "Care Health Insurance"
+    ]
+  },
+  {
+    "name": "Niva Bupa Health Insurance",
+    "category": "Health",
+    "aliases": [
+      "Niva Bupa Health Insurance"
+    ]
+  },
+  {
+    "name": "Star Health Insurance",
+    "category": "Health",
+    "aliases": [
+      "Star Health Insurance"
+    ]
+  },
+  {
+    "name": "ICICI Lombard Health",
+    "category": "Health",
+    "aliases": [
+      "ICICI Lombard Health"
+    ]
+  },
+  {
+    "name": "HDFC ERGO Health",
+    "category": "Health",
+    "aliases": [
+      "HDFC ERGO Health"
+    ]
+  },
+  {
+    "name": "Aditya Birla Health",
+    "category": "Health",
+    "aliases": [
+      "Aditya Birla Health"
+    ]
+  },
+  {
+    "name": "HealthKart",
+    "category": "Health",
+    "aliases": [
+      "HealthKart"
+    ]
+  },
+  {
+    "name": "Nutrabay",
+    "category": "Health",
+    "aliases": [
+      "Nutrabay"
+    ]
+  },
+  {
+    "name": "Wellbeing Nutrition",
+    "category": "Health",
+    "aliases": [
+      "Wellbeing Nutrition"
+    ]
+  },
+  {
+    "name": "OZiva",
+    "category": "Health",
+    "aliases": [
+      "OZiva"
+    ]
+  },
+  {
+    "name": "Kapiva",
+    "category": "Health",
+    "aliases": [
+      "Kapiva"
+    ]
+  },
+  {
+    "name": "Fast&Up",
+    "category": "Health",
+    "aliases": [
+      "Fast&Up"
+    ]
+  },
+  {
+    "name": "Dabur",
+    "category": "Health",
+    "aliases": [
+      "Dabur"
+    ]
+  },
+  {
+    "name": "Patanjali Ayurved",
+    "category": "Health",
+    "aliases": [
+      "Patanjali Ayurved"
+    ]
+  },
+  {
+    "name": "Baidyanath",
+    "category": "Health",
+    "aliases": [
+      "Baidyanath"
+    ]
+  },
+  {
+    "name": "Zandu Care",
+    "category": "Health",
+    "aliases": [
+      "Zandu Care"
+    ]
+  },
+  {
+    "name": "Organic India Wellness",
+    "category": "Health",
+    "aliases": [
+      "Organic India Wellness"
+    ]
+  },
+  {
+    "name": "Boldfit",
+    "category": "Health",
+    "aliases": [
+      "Boldfit"
+    ]
+  },
+  {
+    "name": "Optimum Nutrition India",
+    "category": "Health",
+    "aliases": [
+      "Optimum Nutrition India"
+    ]
+  },
+  {
+    "name": "MakeMyTrip",
+    "category": "Travel",
+    "aliases": [
+      "MakeMyTrip",
+      "Make My Trip"
+    ]
+  },
+  {
+    "name": "Goibibo",
+    "category": "Travel",
+    "aliases": [
+      "Goibibo"
+    ]
+  },
+  {
+    "name": "Cleartrip",
+    "category": "Travel",
+    "aliases": [
+      "Cleartrip"
+    ]
+  },
+  {
+    "name": "Booking.com",
+    "category": "Travel",
+    "aliases": [
+      "Booking.com"
+    ]
+  },
+  {
+    "name": "Airbnb",
+    "category": "Travel",
+    "aliases": [
+      "Airbnb"
+    ]
+  },
+  {
+    "name": "Agoda",
+    "category": "Travel",
+    "aliases": [
+      "Agoda"
+    ]
+  },
+  {
+    "name": "Yatra",
+    "category": "Travel",
+    "aliases": [
+      "Yatra"
+    ]
+  },
+  {
+    "name": "EaseMyTrip",
+    "category": "Travel",
+    "aliases": [
+      "EaseMyTrip"
+    ]
+  },
+  {
+    "name": "ixigo",
+    "category": "Travel",
+    "aliases": [
+      "ixigo"
+    ]
+  },
+  {
+    "name": "IndiGo",
+    "category": "Travel",
+    "aliases": [
+      "IndiGo"
+    ]
+  },
+  {
+    "name": "Air India",
+    "category": "Travel",
+    "aliases": [
+      "Air India"
+    ]
+  },
+  {
+    "name": "Air India Express",
+    "category": "Travel",
+    "aliases": [
+      "Air India Express"
+    ]
+  },
+  {
+    "name": "Akasa Air",
+    "category": "Travel",
+    "aliases": [
+      "Akasa Air"
+    ]
+  },
+  {
+    "name": "SpiceJet",
+    "category": "Travel",
+    "aliases": [
+      "SpiceJet"
+    ]
+  },
+  {
+    "name": "Alliance Air",
+    "category": "Travel",
+    "aliases": [
+      "Alliance Air"
+    ]
+  },
+  {
+    "name": "Star Air",
+    "category": "Travel",
+    "aliases": [
+      "Star Air"
+    ]
+  },
+  {
+    "name": "Fly91",
+    "category": "Travel",
+    "aliases": [
+      "Fly91"
+    ]
+  },
+  {
+    "name": "Emirates",
+    "category": "Travel",
+    "aliases": [
+      "Emirates"
+    ]
+  },
+  {
+    "name": "Qatar Airways",
+    "category": "Travel",
+    "aliases": [
+      "Qatar Airways"
+    ]
+  },
+  {
+    "name": "Etihad Airways",
+    "category": "Travel",
+    "aliases": [
+      "Etihad Airways"
+    ]
+  },
+  {
+    "name": "Singapore Airlines",
+    "category": "Travel",
+    "aliases": [
+      "Singapore Airlines"
+    ]
+  },
+  {
+    "name": "Malaysia Airlines",
+    "category": "Travel",
+    "aliases": [
+      "Malaysia Airlines"
+    ]
+  },
+  {
+    "name": "SriLankan Airlines",
+    "category": "Travel",
+    "aliases": [
+      "SriLankan Airlines"
+    ]
+  },
+  {
+    "name": "British Airways",
+    "category": "Travel",
+    "aliases": [
+      "British Airways"
+    ]
+  },
+  {
+    "name": "Lufthansa",
+    "category": "Travel",
+    "aliases": [
+      "Lufthansa"
+    ]
+  },
+  {
+    "name": "AirAsia",
+    "category": "Travel",
+    "aliases": [
+      "AirAsia"
+    ]
+  },
+  {
+    "name": "Thai Airways",
+    "category": "Travel",
+    "aliases": [
+      "Thai Airways"
+    ]
+  },
+  {
+    "name": "Turkish Airlines",
+    "category": "Travel",
+    "aliases": [
+      "Turkish Airlines"
+    ]
+  },
+  {
+    "name": "Oman Air",
+    "category": "Travel",
+    "aliases": [
+      "Oman Air"
+    ]
+  },
+  {
+    "name": "Gulf Air",
+    "category": "Travel",
+    "aliases": [
+      "Gulf Air"
+    ]
+  },
+  {
+    "name": "Kuwait Airways",
+    "category": "Travel",
+    "aliases": [
+      "Kuwait Airways"
+    ]
+  },
+  {
+    "name": "FlyDubai",
+    "category": "Travel",
+    "aliases": [
+      "FlyDubai"
+    ]
+  },
+  {
+    "name": "Saudia",
+    "category": "Travel",
+    "aliases": [
+      "Saudia"
+    ]
+  },
+  {
+    "name": "Japan Airlines",
+    "category": "Travel",
+    "aliases": [
+      "Japan Airlines"
+    ]
+  },
+  {
+    "name": "Cathay Pacific",
+    "category": "Travel",
+    "aliases": [
+      "Cathay Pacific"
+    ]
+  },
+  {
+    "name": "Qantas",
+    "category": "Travel",
+    "aliases": [
+      "Qantas"
+    ]
+  },
+  {
+    "name": "Air France",
+    "category": "Travel",
+    "aliases": [
+      "Air France"
+    ]
+  },
+  {
+    "name": "KLM",
+    "category": "Travel",
+    "aliases": [
+      "KLM"
+    ]
+  },
+  {
+    "name": "Swiss International Air Lines",
+    "category": "Travel",
+    "aliases": [
+      "Swiss International Air Lines"
+    ]
+  },
+  {
+    "name": "Austrian Airlines",
+    "category": "Travel",
+    "aliases": [
+      "Austrian Airlines"
+    ]
+  },
+  {
+    "name": "Finnair",
+    "category": "Travel",
+    "aliases": [
+      "Finnair"
+    ]
+  },
+  {
+    "name": "Virgin Atlantic",
+    "category": "Travel",
+    "aliases": [
+      "Virgin Atlantic"
+    ]
+  },
+  {
+    "name": "United Airlines",
+    "category": "Travel",
+    "aliases": [
+      "United Airlines"
+    ]
+  },
+  {
+    "name": "American Airlines",
+    "category": "Travel",
+    "aliases": [
+      "American Airlines"
+    ]
+  },
+  {
+    "name": "Delta Air Lines",
+    "category": "Travel",
+    "aliases": [
+      "Delta Air Lines"
+    ]
+  },
+  {
+    "name": "Air Canada",
+    "category": "Travel",
+    "aliases": [
+      "Air Canada"
+    ]
+  },
+  {
+    "name": "Nepal Airlines",
+    "category": "Travel",
+    "aliases": [
+      "Nepal Airlines"
+    ]
+  },
+  {
+    "name": "Biman Bangladesh",
+    "category": "Travel",
+    "aliases": [
+      "Biman Bangladesh"
+    ]
+  },
+  {
+    "name": "Taj Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Taj Hotels"
+    ]
+  },
+  {
+    "name": "ITC Hotels",
+    "category": "Travel",
+    "aliases": [
+      "ITC Hotels"
+    ]
+  },
+  {
+    "name": "Marriott Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Marriott Hotels"
+    ]
+  },
+  {
+    "name": "Hyatt Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Hyatt Hotels"
+    ]
+  },
+  {
+    "name": "Hilton Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Hilton Hotels"
+    ]
+  },
+  {
+    "name": "Accor Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Accor Hotels"
+    ]
+  },
+  {
+    "name": "Radisson Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Radisson Hotels"
+    ]
+  },
+  {
+    "name": "The Oberoi Group",
+    "category": "Travel",
+    "aliases": [
+      "The Oberoi Group"
+    ]
+  },
+  {
+    "name": "The Leela Palaces",
+    "category": "Travel",
+    "aliases": [
+      "The Leela Palaces"
+    ]
+  },
+  {
+    "name": "Club Mahindra",
+    "category": "Travel",
+    "aliases": [
+      "Club Mahindra"
+    ]
+  },
+  {
+    "name": "Sterling Holidays",
+    "category": "Travel",
+    "aliases": [
+      "Sterling Holidays"
+    ]
+  },
+  {
+    "name": "OYO",
+    "category": "Travel",
+    "aliases": [
+      "OYO"
+    ]
+  },
+  {
+    "name": "Treebo Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Treebo Hotels"
+    ]
+  },
+  {
+    "name": "FabHotels",
+    "category": "Travel",
+    "aliases": [
+      "FabHotels"
+    ]
+  },
+  {
+    "name": "Lemon Tree Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Lemon Tree Hotels"
+    ]
+  },
+  {
+    "name": "Trident Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Trident Hotels"
+    ]
+  },
+  {
+    "name": "Ginger Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Ginger Hotels"
+    ]
+  },
+  {
+    "name": "Vivanta Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Vivanta Hotels"
+    ]
+  },
+  {
+    "name": "SeleQtions Hotels",
+    "category": "Travel",
+    "aliases": [
+      "SeleQtions Hotels"
+    ]
+  },
+  {
+    "name": "Welcomhotel",
+    "category": "Travel",
+    "aliases": [
+      "Welcomhotel"
+    ]
+  },
+  {
+    "name": "Fortune Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Fortune Hotels"
+    ]
+  },
+  {
+    "name": "The Fern Hotels",
+    "category": "Travel",
+    "aliases": [
+      "The Fern Hotels"
+    ]
+  },
+  {
+    "name": "Royal Orchid Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Royal Orchid Hotels"
+    ]
+  },
+  {
+    "name": "Country Inn Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Country Inn Hotels"
+    ]
+  },
+  {
+    "name": "Sarovar Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Sarovar Hotels"
+    ]
+  },
+  {
+    "name": "Park Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Park Hotels"
+    ]
+  },
+  {
+    "name": "Ramada Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Ramada Hotels"
+    ]
+  },
+  {
+    "name": "Novotel Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Novotel Hotels"
+    ]
+  },
+  {
+    "name": "ibis Hotels",
+    "category": "Travel",
+    "aliases": [
+      "ibis Hotels"
+    ]
+  },
+  {
+    "name": "Courtyard by Marriott",
+    "category": "Travel",
+    "aliases": [
+      "Courtyard by Marriott"
+    ]
+  },
+  {
+    "name": "Holiday Inn",
+    "category": "Travel",
+    "aliases": [
+      "Holiday Inn"
+    ]
+  },
+  {
+    "name": "InterContinental Hotels",
+    "category": "Travel",
+    "aliases": [
+      "InterContinental Hotels"
+    ]
+  },
+  {
+    "name": "Sheraton Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Sheraton Hotels"
+    ]
+  },
+  {
+    "name": "Westin Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Westin Hotels"
+    ]
+  },
+  {
+    "name": "CGH Earth",
+    "category": "Travel",
+    "aliases": [
+      "CGH Earth"
+    ]
+  },
+  {
+    "name": "Brunton Boatyard",
+    "category": "Travel",
+    "aliases": [
+      "Brunton Boatyard"
+    ]
+  },
+  {
+    "name": "Kumarakom Lake Resort",
+    "category": "Travel",
+    "aliases": [
+      "Kumarakom Lake Resort"
+    ]
+  },
+  {
+    "name": "The Zuri Kumarakom",
+    "category": "Travel",
+    "aliases": [
+      "The Zuri Kumarakom"
+    ]
+  },
+  {
+    "name": "Kochi Marriott Hotel",
+    "category": "Travel",
+    "aliases": [
+      "Kochi Marriott Hotel"
+    ]
+  },
+  {
+    "name": "Grand Hyatt Kochi",
+    "category": "Travel",
+    "aliases": [
+      "Grand Hyatt Kochi"
+    ]
+  },
+  {
+    "name": "Taj Malabar Resort",
+    "category": "Travel",
+    "aliases": [
+      "Taj Malabar Resort"
+    ]
+  },
+  {
+    "name": "Le Meridien Kochi",
+    "category": "Travel",
+    "aliases": [
+      "Le Meridien Kochi"
+    ]
+  },
+  {
+    "name": "Crowne Plaza Kochi",
+    "category": "Travel",
+    "aliases": [
+      "Crowne Plaza Kochi"
+    ]
+  },
+  {
+    "name": "Gokulam Grand",
+    "category": "Travel",
+    "aliases": [
+      "Gokulam Grand"
+    ]
+  },
+  {
+    "name": "Casino Hotel Kochi",
+    "category": "Travel",
+    "aliases": [
+      "Casino Hotel Kochi"
+    ]
+  },
+  {
+    "name": "Fragrant Nature Kochi",
+    "category": "Travel",
+    "aliases": [
+      "Fragrant Nature Kochi"
+    ]
+  },
+  {
+    "name": "Niraamaya Retreats",
+    "category": "Travel",
+    "aliases": [
+      "Niraamaya Retreats"
+    ]
+  },
+  {
+    "name": "Abad Hotels",
+    "category": "Travel",
+    "aliases": [
+      "Abad Hotels"
+    ]
+  },
+  {
+    "name": "KTDC Hotels",
+    "category": "Travel",
+    "aliases": [
+      "KTDC Hotels"
+    ]
+  },
+  {
+    "name": "Thomas Cook India",
+    "category": "Travel",
+    "aliases": [
+      "Thomas Cook India"
+    ]
+  },
+  {
+    "name": "SOTC Travel",
+    "category": "Travel",
+    "aliases": [
+      "SOTC Travel"
+    ]
+  },
+  {
+    "name": "Kesari Tours",
+    "category": "Travel",
+    "aliases": [
+      "Kesari Tours"
+    ]
+  },
+  {
+    "name": "Veena World",
+    "category": "Travel",
+    "aliases": [
+      "Veena World"
+    ]
+  },
+  {
+    "name": "Thrillophilia",
+    "category": "Travel",
+    "aliases": [
+      "Thrillophilia"
+    ]
+  },
+  {
+    "name": "TravelTriangle",
+    "category": "Travel",
+    "aliases": [
+      "TravelTriangle"
+    ]
+  },
+  {
+    "name": "Pickyourtrail",
+    "category": "Travel",
+    "aliases": [
+      "Pickyourtrail"
+    ]
+  },
+  {
+    "name": "Klook",
+    "category": "Travel",
+    "aliases": [
+      "Klook"
+    ]
+  },
+  {
+    "name": "GetYourGuide",
+    "category": "Travel",
+    "aliases": [
+      "GetYourGuide"
+    ]
+  },
+  {
+    "name": "Viator",
+    "category": "Travel",
+    "aliases": [
+      "Viator"
+    ]
+  },
+  {
+    "name": "Trip.com",
+    "category": "Travel",
+    "aliases": [
+      "Trip.com"
+    ]
+  },
+  {
+    "name": "Tripadvisor",
+    "category": "Travel",
+    "aliases": [
+      "Tripadvisor"
+    ]
+  },
+  {
+    "name": "TBO.com",
+    "category": "Travel",
+    "aliases": [
+      "TBO.com"
+    ]
+  },
+  {
+    "name": "Riya Travel",
+    "category": "Travel",
+    "aliases": [
+      "Riya Travel"
+    ]
+  },
+  {
+    "name": "Akbar Travels",
+    "category": "Travel",
+    "aliases": [
+      "Akbar Travels"
+    ]
+  },
+  {
+    "name": "Musafir.com",
+    "category": "Travel",
+    "aliases": [
+      "Musafir.com"
+    ]
+  },
+  {
+    "name": "RailYatri",
+    "category": "Travel",
+    "aliases": [
+      "RailYatri"
+    ]
+  },
+  {
+    "name": "ConfirmTkt",
+    "category": "Travel",
+    "aliases": [
+      "ConfirmTkt"
+    ]
+  },
+  {
+    "name": "Trainman",
+    "category": "Travel",
+    "aliases": [
+      "Trainman"
+    ]
+  },
+  {
+    "name": "Holidify",
+    "category": "Travel",
+    "aliases": [
+      "Holidify"
+    ]
+  },
+  {
+    "name": "Travelxp",
+    "category": "Travel",
+    "aliases": [
+      "Travelxp"
+    ]
+  },
+  {
+    "name": "Cox & Kings",
+    "category": "Travel",
+    "aliases": [
+      "Cox & Kings"
+    ]
+  },
+  {
+    "name": "FCM Travel",
+    "category": "Travel",
+    "aliases": [
+      "FCM Travel"
+    ]
+  },
+  {
+    "name": "CWT India",
+    "category": "Travel",
+    "aliases": [
+      "CWT India"
+    ]
+  },
+  {
+    "name": "DreamSetGo",
+    "category": "Travel",
+    "aliases": [
+      "DreamSetGo"
+    ]
+  },
+  {
+    "name": "BookMyForex",
+    "category": "Travel",
+    "aliases": [
+      "BookMyForex"
+    ]
+  },
+  {
+    "name": "ExTravelMoney",
+    "category": "Travel",
+    "aliases": [
+      "ExTravelMoney"
+    ]
+  }
+]
