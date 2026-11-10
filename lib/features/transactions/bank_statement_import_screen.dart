@@ -759,10 +759,8 @@ class _BankStatementImportScreenState extends State<BankStatementImportScreen> {
                     style: const TextStyle(color: Color(0xFFC45D58), fontSize: 12),
                   ),
                 ],
-                if (_accounts.isNotEmpty) ...[
-                  const SizedBox(height: 14),
-                  _buildAccountCard(),
-                ],
+                const SizedBox(height: 14),
+                _buildAccountCard(),
                 if (_mapping != null) ...[
                   const SizedBox(height: 14),
                   _buildMappingCard(),
