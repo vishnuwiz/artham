@@ -160,6 +160,7 @@ class SmsImportRepository {
       final merchantId = await MerchantRepository(database)
           .findOrCreateForDescription(
         description: description,
+        transactionType: transactionType,
         fallbackCategoryId: categoryId,
       );
 
