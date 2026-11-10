@@ -71,7 +71,7 @@ void main() {
       );
       final second = await repository.importTransactions(
         accountId: accountId,
-        transactions: const [transaction],
+        transactions: [transaction],
       );
 
       expect(second.importedCount, 0);
