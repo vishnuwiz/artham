@@ -254,6 +254,7 @@ class RecurringTransactionRepository {
       final merchantId = await MerchantRepository(database)
           .findOrCreateForDescription(
         description: description,
+        transactionType: schedule.transactionType,
         fallbackCategoryId: schedule.categoryId,
       );
 
