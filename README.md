@@ -27,6 +27,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - **Activity screen** — Review, search, filter, and sort transaction activity.
 - **Insights screen** — View financial insights.
 - **Recurring transactions** — Create recurring income or expense schedules with daily, weekly, monthly, or yearly frequencies and a custom interval.
+- **Recurring-payment pattern suggestions** — Detect likely weekly, monthly, quarterly, half-yearly, and yearly payments from at least three similar local transactions. Review the proposed amount, account, category, frequency, and next expected date; Artham never creates a schedule or transaction from a detected pattern without your action.
   - Set a start date and an optional end date.
   - Pause, resume, or delete a schedule.
   - Review schedules that are due.
