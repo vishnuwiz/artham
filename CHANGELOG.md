@@ -6,6 +6,12 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Pastel branding refresh
+- Use the supplied pastel Artham mark for Android and iOS launcher icons.
+- Add a short animated Flutter startup splash with the pastel A mark, rupee coin, Malayalam wordmark, and tagline.
+- Change the native Android/iOS launch screen to a soft lavender background so it transitions into the animated splash.
+
+
 ### Stage 6A — Offline Merchant Recognition and Smarter Categorisation (2026-11-10)
 
 #### Expanded merchant catalogue
