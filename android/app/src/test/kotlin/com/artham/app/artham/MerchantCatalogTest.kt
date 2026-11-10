@@ -8,6 +8,11 @@ import org.junit.Test
 
 class MerchantCatalogTest {
     @Test
+    fun catalogueSupportsAtLeast500DistinctMerchants() {
+        assertTrue("Expected at least 500 merchants", MerchantCatalog.merchantCount >= 500)
+    }
+
+    @Test
     fun recognisesMerchantInUpiDescription() {
         val result = MerchantCatalog.recognize("UPI/DR/123456789/SWIGGY*ORDER123")
 
@@ -33,6 +38,14 @@ class MerchantCatalogTest {
             "KSEB bill payment" to ("KSEB" to "Bills & Utilities"),
             "Tata 1mg order" to ("Tata 1mg" to "Health"),
             "MakeMyTrip booking" to ("MakeMyTrip" to "Travel"),
+            "Lulu Hypermarket purchase" to ("Lulu Hypermarket" to "Groceries"),
+            "Decathlon store" to ("Decathlon" to "Shopping"),
+            "Kochi Metro ticket" to ("Kochi Metro" to "Transportation"),
+            "Kerala Vision Broadband" to ("Kerala Vision Broadband" to "Bills & Utilities"),
+            "Amrita Hospital payment" to ("Amrita Hospital" to "Health"),
+            "IndiGo flight" to ("IndiGo" to "Travel"),
+            "Third Wave Coffee" to ("Third Wave Coffee" to "Food & Dining"),
+            "ManoramaMAX subscription" to ("ManoramaMAX" to "Entertainment"),
         )
 
         cases.forEach { (input, expected) ->
