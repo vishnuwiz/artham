@@ -410,13 +410,14 @@ class BankSmsReceiver : BroadcastReceiver() {
             RegexOption.IGNORE_CASE,
         ).find(body)?.groupValues?.getOrNull(1)
 
+        val counterparty = extractCounterparty(body)
         val merchant = if (type == "expense") {
-            MerchantCatalog.recognize(body)
+            MerchantCatalog.recognize(counterparty ?: body)
         } else {
             null
         }
         val description = merchant?.name
-            ?: extractCounterparty(body)
+            ?: counterparty
             ?: if (type == "expense") "Bank SMS expense" else "Bank SMS credit"
 
         return ParsedTransaction(
