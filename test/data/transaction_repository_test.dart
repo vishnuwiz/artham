@@ -66,6 +66,10 @@ void main() {
     expect(transaction.merchantId, isNotNull);
     expect(merchant.name, 'Swiggy');
     expect(merchant.defaultCategoryId, foodCategoryId);
+
+    final recent = await repository.getRecentTransactions();
+    expect(recent, hasLength(1));
+    expect(recent.single.merchant?.name, 'Swiggy');
   });
 
   test('does not create a merchant record for an unknown description',
