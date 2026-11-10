@@ -62,7 +62,7 @@ void main() {
             amountPaise: 12345,
             transactionType: 'expense',
             transactionDate: DateTime(2026, 11, 2, 9, 30),
-            description: 'Cafe Sample, Fort Kochi',
+            description: const Value('Cafe Sample, Fort Kochi'),
             referenceNumber: const Value('UTR123'),
             notes: const Value('Lunch'),
             source: const Value('sms'),
@@ -106,7 +106,7 @@ void main() {
             amountPaise: 100,
             transactionType: 'expense',
             transactionDate: DateTime(2026, 11, 2, 9),
-            description: '=1+1',
+            description: const Value('=1+1'),
           ),
         );
     await database.into(database.moneyTransactions).insert(
@@ -116,7 +116,7 @@ void main() {
             amountPaise: 200,
             transactionType: 'expense',
             transactionDate: DateTime(2026, 11, 4, 23, 59),
-            description: 'Late purchase',
+            description: const Value('Late purchase'),
           ),
         );
     await database.into(database.moneyTransactions).insert(
@@ -126,7 +126,7 @@ void main() {
             amountPaise: 300,
             transactionType: 'expense',
             transactionDate: DateTime(2026, 11, 5),
-            description: 'Outside range',
+            description: const Value('Outside range'),
           ),
         );
 
