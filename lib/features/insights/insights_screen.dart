@@ -41,7 +41,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         categoryBudgets: [],
         categoryForecasts: [],
         budgetHistory: [],
-        merchantInsights: MerchantSpendingInsights.empty(),
+        merchantInsights: const MerchantSpendingInsights(),
       ),
     );
     if (widget.isActive) {
