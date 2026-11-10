@@ -15,8 +15,12 @@ class MerchantRepository {
 
   Future<int?> findOrCreateForDescription({
     required String? description,
+    required String transactionType,
     int? fallbackCategoryId,
   }) async {
+    // Merchant rules currently describe spending counterparties only.
+    if (transactionType != 'expense') return null;
+
     final match = MerchantIntelligence.recognize(description);
     if (match == null) return null;
 
