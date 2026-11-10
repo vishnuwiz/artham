@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import 'merchant_repository.dart';
 
 class AccountBalanceSummary {
   final Map<int, int> accountBalancesPaise;
@@ -121,10 +122,17 @@ class TransactionRepository {
       );
     }
 
+    final merchantId = await MerchantRepository(database)
+        .findOrCreateForDescription(
+      description: description,
+      fallbackCategoryId: categoryId,
+    );
+
     return database.into(database.moneyTransactions).insert(
           MoneyTransactionsCompanion.insert(
             accountId: accountId,
             categoryId: Value(categoryId),
+            merchantId: Value(merchantId),
             amountPaise: amountPaise,
             transactionType: transactionType,
             transactionDate: transactionDate,
@@ -158,12 +166,19 @@ class TransactionRepository {
       throw ArgumentError('Transaction amount must be greater than zero');
     }
 
+    final merchantId = await MerchantRepository(database)
+        .findOrCreateForDescription(
+      description: description,
+      fallbackCategoryId: categoryId,
+    );
+
     final updatedRows = await (database.update(database.moneyTransactions)
           ..where((transaction) => transaction.id.equals(transactionId)))
         .write(
       MoneyTransactionsCompanion(
         accountId: Value(accountId),
         categoryId: Value(categoryId),
+        merchantId: Value(merchantId),
         amountPaise: Value(amountPaise),
         transactionType: Value(transactionType),
         transactionDate: Value(transactionDate),
