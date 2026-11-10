@@ -29,7 +29,7 @@ void main() {
     });
 
     test('imports statement rows and skips duplicates in the same batch', () async {
-      const transaction = StatementTransaction(
+      final transaction = StatementTransaction(
         transactionDate: DateTime(2026, 11, 10),
         description: 'Swiggy',
         amountPaise: 25000,
@@ -40,7 +40,7 @@ void main() {
       final result = await BankStatementImportRepository(database)
           .importTransactions(
         accountId: accountId,
-        transactions: const [transaction, transaction],
+        transactions: [transaction, transaction],
       );
 
       expect(result.importedCount, 1);
@@ -56,7 +56,7 @@ void main() {
     });
 
     test('detects rows already imported for the account', () async {
-      const transaction = StatementTransaction(
+      final transaction = StatementTransaction(
         transactionDate: DateTime(2026, 11, 10),
         description: 'Amazon',
         amountPaise: 99000,
@@ -67,7 +67,7 @@ void main() {
 
       await repository.importTransactions(
         accountId: accountId,
-        transactions: const [transaction],
+        transactions: [transaction],
       );
       final second = await repository.importTransactions(
         accountId: accountId,
@@ -82,7 +82,7 @@ void main() {
       final result = await BankStatementImportRepository(database)
           .importTransactions(
         accountId: accountId,
-        transactions: const [
+        transactions: [
           StatementTransaction(
             transactionDate: DateTime(2025, 12, 31),
             description: 'Before account opened',
@@ -106,7 +106,7 @@ void main() {
       await expectLater(
         BankStatementImportRepository(database).importTransactions(
           accountId: -1,
-          transactions: const [],
+          transactions: [],
         ),
         throwsStateError,
       );
