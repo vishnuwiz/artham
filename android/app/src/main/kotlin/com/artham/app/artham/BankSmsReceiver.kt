@@ -426,7 +426,7 @@ class BankSmsReceiver : BroadcastReceiver() {
             transactionDate = extractDate(body) ?: receivedAt,
             referenceNumber = reference,
             description = description,
-            category = merchant?.categoryName ?: suggestCategory(body, type),
+            category = merchant?.categoryName ?: suggestCategory(counterparty ?: body, type),
             merchantName = merchant?.name,
         )
     }
