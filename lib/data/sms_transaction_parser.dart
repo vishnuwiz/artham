@@ -89,13 +89,17 @@ class SmsTransactionParser {
 
     // Merchant recognition is a local, deterministic lookup. It is only
     // applied to expenses; income counterparties require separate handling.
+    final counterparty = _extractCounterparty(text);
     final merchant = transactionType == 'expense'
-        ? MerchantIntelligence.recognize(text)
+        ? MerchantIntelligence.recognize(counterparty) ??
+            (counterparty == null
+                ? MerchantIntelligence.recognize(text)
+                : null)
         : null;
     final suggestedCategory =
         merchant?.categoryName ?? _suggestCategory(text, transactionType);
     final description = merchant?.name ??
-        _extractCounterparty(text) ??
+        counterparty ??
         (transactionType == 'expense' ? 'Bank SMS expense' : 'Bank SMS credit');
 
     return ParsedSmsTransaction(
