@@ -1,6 +1,6 @@
-import 'package:cross_file/cross_file.dart';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/rendering.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../data/app_database.dart';
@@ -124,6 +124,8 @@ class _DataExportScreenState extends State<DataExportScreen> {
               endDate: _useDateRange ? _endDate : null,
             );
 
+      if (!mounted) return;
+
       final renderObject = context.findRenderObject();
       final box = renderObject is RenderBox ? renderObject : null;
       final origin = box == null
@@ -137,7 +139,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
               ? 'Artham financial backup'
               : 'Artham transaction export',
           files: [
-            XFile.fromData(file.bytes, mimeType: file.mimeType),
+            XFile.fromData(Uint8List.fromList(file.bytes), mimeType: file.mimeType),
           ],
           fileNameOverrides: [file.fileName],
           sharePositionOrigin: origin,
