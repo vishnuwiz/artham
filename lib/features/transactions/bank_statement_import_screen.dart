@@ -1,6 +1,6 @@
 import 'dart:convert';
 
-import 'package:excel_plus/excel_plus.dart';
+import 'package:excel_plus/excel_plus.dart' hide Border;
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 
