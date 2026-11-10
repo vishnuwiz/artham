@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
+import 'data_export_screen.dart';
 import '../../data/repositories/sms_import_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -294,6 +295,8 @@ class _SettingsScreenState extends State<SettingsScreen>
           : ListView(
               padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
               children: [
+                _buildExportDataCard(),
+                const SizedBox(height: 16),
                 _buildAutomaticSmsCard(),
                 if (_pendingImports.isNotEmpty) ...[
                   const SizedBox(height: 16),
@@ -310,6 +313,52 @@ class _SettingsScreenState extends State<SettingsScreen>
                 _buildPrivacyCard(),
               ],
             ),
+    );
+  }
+
+  Widget _buildExportDataCard() {
+    return _SettingsCard(
+      child: ListTile(
+        contentPadding: EdgeInsets.zero,
+        leading: Container(
+          width: 42,
+          height: 42,
+          decoration: BoxDecoration(
+            color: const Color(0xFFE5F5EE),
+            borderRadius: BorderRadius.circular(13),
+          ),
+          child: const Icon(
+            Icons.file_upload_outlined,
+            color: Color(0xFF13866A),
+          ),
+        ),
+        title: const Text(
+          'Export your data',
+          style: TextStyle(
+            color: Color(0xFF142B35),
+            fontWeight: FontWeight.w800,
+          ),
+        ),
+        subtitle: const Text(
+          'Download a transaction spreadsheet or a full financial backup',
+          style: TextStyle(
+            color: Color(0xFF52636A),
+            fontSize: 12,
+            height: 1.4,
+          ),
+        ),
+        trailing: const Icon(
+          Icons.chevron_right_rounded,
+          color: Color(0xFF68777D),
+        ),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute<void>(
+              builder: (_) => DataExportScreen(database: widget.database),
+            ),
+          );
+        },
+      ),
     );
   }
 
