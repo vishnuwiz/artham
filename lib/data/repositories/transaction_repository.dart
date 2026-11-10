@@ -22,11 +22,13 @@ class RecentTransaction {
   final MoneyTransaction transaction;
   final BankAccount account;
   final Category? category;
+  final Merchant? merchant;
 
   const RecentTransaction({
     required this.transaction,
     required this.account,
     required this.category,
+    required this.merchant,
   });
 }
 
@@ -325,6 +327,12 @@ class TransactionRepository {
           database.moneyTransactions.categoryId,
         ),
       ),
+      leftOuterJoin(
+        database.merchants,
+        database.merchants.id.equalsExp(
+          database.moneyTransactions.merchantId,
+        ),
+      ),
     ]);
 
     query
@@ -341,6 +349,7 @@ class TransactionRepository {
         transaction: row.readTable(database.moneyTransactions),
         account: row.readTable(database.bankAccounts),
         category: row.readTableOrNull(database.categories),
+        merchant: row.readTableOrNull(database.merchants),
       );
     }).toList();
   }
