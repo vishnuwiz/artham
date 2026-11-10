@@ -44,6 +44,51 @@ void main() {
     expect(suggestions.single.nextExpectedDate, DateTime(2026, 11, 5));
   });
 
+  test('detects quarterly payments as every three months', () {
+    final suggestions = detector.detect(
+      [
+        transaction(DateTime(2026, 1, 5)),
+        transaction(DateTime(2026, 4, 5)),
+        transaction(DateTime(2026, 7, 5)),
+      ],
+      asOf: DateTime(2026, 7, 6),
+    );
+
+    expect(suggestions, hasLength(1));
+    expect(suggestions.single.frequency, 'monthly');
+    expect(suggestions.single.interval, 3);
+    expect(suggestions.single.nextExpectedDate, DateTime(2026, 10, 5));
+  });
+
+  test('detects yearly payments', () {
+    final suggestions = detector.detect(
+      [
+        transaction(DateTime(2024, 11, 10)),
+        transaction(DateTime(2025, 11, 10)),
+        transaction(DateTime(2026, 11, 10)),
+      ],
+      asOf: DateTime(2026, 11, 10),
+    );
+
+    expect(suggestions, hasLength(1));
+    expect(suggestions.single.frequency, 'yearly');
+    expect(suggestions.single.interval, 1);
+    expect(suggestions.single.nextExpectedDate, DateTime(2027, 11, 10));
+  });
+
+  test('does not revive a pattern whose next payment is long overdue', () {
+    final suggestions = detector.detect(
+      [
+        transaction(DateTime(2025, 8, 5)),
+        transaction(DateTime(2025, 9, 5)),
+        transaction(DateTime(2025, 10, 5)),
+      ],
+      asOf: DateTime(2026, 11, 1),
+    );
+
+    expect(suggestions, isEmpty);
+  });
+
   test('detects a fortnightly payment as every two weeks', () {
     final suggestions = detector.detect(
       [
