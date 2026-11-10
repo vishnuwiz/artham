@@ -37,6 +37,7 @@ void main() {
   test('creates a merchant with its catalogue category', () async {
     final id = await repository.findOrCreateForDescription(
       description: 'SWIGGY*ORDER123',
+      transactionType: 'expense',
       fallbackCategoryId: shoppingCategoryId,
     );
 
@@ -54,10 +55,12 @@ void main() {
       () async {
     final firstId = await repository.findOrCreateForDescription(
       description: 'Swiggy',
+      transactionType: 'expense',
       fallbackCategoryId: foodCategoryId,
     );
     final secondId = await repository.findOrCreateForDescription(
       description: 'Payment to SWIGGY',
+      transactionType: 'expense',
       fallbackCategoryId: shoppingCategoryId,
     );
 
@@ -68,9 +71,21 @@ void main() {
     expect(merchant.defaultCategoryId, foodCategoryId);
   });
 
+  test('does not classify income descriptions as merchants', () async {
+    final id = await repository.findOrCreateForDescription(
+      description: 'Salary from Amazon',
+      transactionType: 'income',
+      fallbackCategoryId: shoppingCategoryId,
+    );
+
+    expect(id, isNull);
+    expect(await database.select(database.merchants).get(), isEmpty);
+  });
+
   test('leaves unknown merchants unlinked', () async {
     final id = await repository.findOrCreateForDescription(
       description: 'Payment to Local Book Store',
+      transactionType: 'expense',
       fallbackCategoryId: shoppingCategoryId,
     );
 
@@ -84,6 +99,7 @@ void main() {
 
     final id = await repository.findOrCreateForDescription(
       description: 'Swiggy',
+      transactionType: 'expense',
       fallbackCategoryId: shoppingCategoryId,
     );
 
