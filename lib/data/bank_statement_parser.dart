@@ -396,10 +396,17 @@ class BankStatementParser {
         RegExp(r'\bDR\b|DR$', caseSensitive: false).hasMatch(value);
     final match = RegExp(r'\d+(?:\.\d{1,2})?').firstMatch(value);
     if (match == null) return null;
-    final number = double.tryParse(match.group(0)!);
-    if (number == null || !number.isFinite) return null;
+    final amountParts = match.group(0)!.split('.');
+    final rupees = int.tryParse(amountParts.first);
+    final paiseText = amountParts.length > 1
+        ? amountParts[1].padRight(2, '0')
+        : '00';
+    final paise = int.tryParse(paiseText);
+    if (rupees == null || paise == null) return null;
+    if (rupees > (0x7fffffffffffffff - paise) ~/ 100) return null;
+
     return _ParsedMoney(
-      amountPaise: (number * 100).round().abs(),
+      amountPaise: rupees * 100 + paise,
       isNegative: isNegative,
       explicitDirection: explicitDirection,
     );
