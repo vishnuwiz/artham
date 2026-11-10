@@ -25,7 +25,7 @@ def normalize(value: str) -> str:
 
 
 def quote_dart(value: str) -> str:
-    escaped = value.replace("\\\\", "\\\\\\\\").replace("'", "\\\\'").replace("$", "\\\\$")
+    escaped = value.replace("\\", "\\\\").replace("'", "\\'").replace("$", "\\$")
     return "'" + escaped + "'"
 
 
