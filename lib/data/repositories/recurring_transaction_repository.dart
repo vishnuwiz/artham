@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import '../recurring_pattern_detector.dart';
 import 'merchant_repository.dart';
 
 /// A recurring schedule together with its account and category.
@@ -164,6 +165,99 @@ class RecurringTransactionRepository {
               );
         })
         .toList();
+  }
+
+  /// Finds conservative, local-only recurrence suggestions from transaction
+  /// history. Existing schedules (including paused ones) suppress duplicates.
+  ///
+  /// This method is read-only: it never creates schedules or transactions.
+  Future<List<RecurringPatternSuggestion>> getPatternSuggestions({
+    DateTime? asOf,
+  }) async {
+    final accounts = await (database.select(database.bankAccounts)
+          ..where((account) => account.isActive.equals(true)))
+        .get();
+    final categories = await database.select(database.categories).get();
+    final merchants = await database.select(database.merchants).get();
+    final transactions = await database.select(database.moneyTransactions).get();
+    final schedules = await database.select(database.recurringSchedules).get();
+
+    final accountById = {for (final item in accounts) item.id: item};
+    final categoryById = {for (final item in categories) item.id: item};
+    final merchantById = {for (final item in merchants) item.id: item};
+
+    final patternTransactions = <RecurringPatternTransaction>[];
+    for (final transaction in transactions) {
+      final categoryId = transaction.categoryId;
+      if (categoryId == null) continue;
+
+      final account = accountById[transaction.accountId];
+      final category = categoryById[categoryId];
+
+      if (account == null || category == null ||
+          category.type != transaction.transactionType) {
+        continue;
+      }
+
+      patternTransactions.add(
+        RecurringPatternTransaction(
+          accountId: transaction.accountId,
+          categoryId: categoryId,
+          amountPaise: transaction.amountPaise,
+          transactionType: transaction.transactionType,
+          transactionDate: transaction.transactionDate,
+          description: transaction.description,
+          merchantName: merchantById[transaction.merchantId]?.name,
+          source: transaction.source,
+        ),
+      );
+    }
+
+    final detected = const RecurringPatternDetector().detect(
+      patternTransactions,
+      asOf: asOf ?? DateTime.now(),
+    );
+
+    return detected.where((suggestion) {
+      final identity = suggestion.patternIdentity;
+      return !schedules.any((schedule) {
+        if (schedule.accountId != suggestion.accountId ||
+            schedule.categoryId != suggestion.categoryId ||
+            schedule.transactionType != suggestion.transactionType ||
+            schedule.frequency != suggestion.frequency ||
+            schedule.interval != suggestion.interval) {
+          return false;
+        }
+
+        final scheduleIdentity =
+            RecurringPatternDetector.normalizeIdentity(
+          schedule.description ?? '',
+        );
+        return scheduleIdentity == identity ||
+            (identity.isNotEmpty && scheduleIdentity.contains(identity));
+      });
+    }).map((suggestion) {
+      final account = accountById[suggestion.accountId]!;
+      final category = categoryById[suggestion.categoryId]!;
+      return RecurringPatternSuggestion(
+        accountId: suggestion.accountId,
+        categoryId: suggestion.categoryId,
+        amountPaise: suggestion.amountPaise,
+        transactionType: suggestion.transactionType,
+        frequency: suggestion.frequency,
+        interval: suggestion.interval,
+        description: suggestion.description,
+        patternIdentity: suggestion.patternIdentity,
+        accountLabel: bankAccountDisplayLabel(
+          account.bankName,
+          account.accountNumberLast4,
+        ),
+        categoryName: category.name,
+        occurrenceCount: suggestion.occurrenceCount,
+        lastOccurrence: suggestion.lastOccurrence,
+        nextExpectedDate: suggestion.nextExpectedDate,
+      );
+    }).toList();
   }
 
   /// Pauses or resumes a schedule without changing its next due date.

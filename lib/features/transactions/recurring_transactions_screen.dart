@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:drift/drift.dart' hide Column;
 
 import '../../data/app_database.dart';
+import '../../data/recurring_pattern_detector.dart';
 import '../../data/repositories/recurring_transaction_repository.dart';
 
 const Color recurringGreen = Color(0xFF13866A);
@@ -42,10 +43,12 @@ class _RecurringTransactionsScreenState
   Future<_RecurringScreenData> _fetchSchedules() async {
     final schedules = await _repository.getSchedules();
     final dueSchedules = await _repository.getDueSchedules();
+    final suggestions = await _repository.getPatternSuggestions();
 
     return _RecurringScreenData(
       schedules: schedules,
       dueScheduleIds: dueSchedules.map((item) => item.schedule.id).toSet(),
+      suggestions: suggestions,
     );
   }
 
@@ -54,7 +57,9 @@ class _RecurringTransactionsScreenState
     await _screenData;
   }
 
-  Future<void> _addSchedule() async {
+  Future<void> _addSchedule({
+    RecurringPatternSuggestion? suggestion,
+  }) async {
     final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -63,11 +68,21 @@ class _RecurringTransactionsScreenState
       builder: (_) => _AddRecurringScheduleSheet(
         database: widget.database,
         repository: _repository,
+        suggestion: suggestion,
       ),
     );
 
     if (created == true && mounted) {
       setState(_loadSchedules);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            suggestion == null
+                ? 'Recurring schedule created.'
+                : 'Pattern reviewed and recurring schedule created.',
+          ),
+        ),
+      );
     }
   }
 
@@ -244,7 +259,7 @@ class _RecurringTransactionsScreenState
           }
 
           final data = snapshot.data!;
-          if (data.schedules.isEmpty) {
+          if (data.schedules.isEmpty && data.suggestions.isEmpty) {
             return _buildEmptyState();
           }
 
@@ -255,23 +270,30 @@ class _RecurringTransactionsScreenState
               padding: const EdgeInsets.fromLTRB(18, 10, 18, 30),
               children: [
                 _buildSummary(data),
+                if (data.suggestions.isNotEmpty) ...[
+                  const SizedBox(height: 22),
+                  _buildSuggestionSection(data.suggestions),
+                ],
                 const SizedBox(height: 22),
-                const Text(
-                  'YOUR SCHEDULES',
-                  style: TextStyle(
-                    color: Colors.black54,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w800,
-                    letterSpacing: 1,
+                if (data.schedules.isNotEmpty) ...[
+                  const Text(
+                    'YOUR SCHEDULES',
+                    style: TextStyle(
+                      color: Colors.black54,
+                      fontSize: 11,
+                      fontWeight: FontWeight.w800,
+                      letterSpacing: 1,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 12),
-                ...data.schedules.map(
-                  (item) => _buildScheduleCard(
-                    item,
-                    isDue: data.dueScheduleIds.contains(item.schedule.id),
+                  const SizedBox(height: 12),
+                  ...data.schedules.map(
+                    (item) => _buildScheduleCard(
+                      item,
+                      isDue: data.dueScheduleIds.contains(item.schedule.id),
+                    ),
                   ),
-                ),
+                ] else
+                  _buildNoSchedulesNotice(),
               ],
             ),
           );
@@ -340,6 +362,172 @@ class _RecurringTransactionsScreenState
           style: const TextStyle(color: Colors.white70, fontSize: 12),
         ),
       ],
+    );
+  }
+
+  Widget _buildSuggestionSection(
+    List<RecurringPatternSuggestion> suggestions,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          'POSSIBLE RECURRING PAYMENTS',
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 11,
+            fontWeight: FontWeight.w800,
+            letterSpacing: 1,
+          ),
+        ),
+        const SizedBox(height: 6),
+        const Text(
+          'Artham found patterns in your past transactions. Review each one '
+          'before saving a schedule.',
+          style: TextStyle(
+            color: Colors.black54,
+            fontSize: 12,
+            height: 1.4,
+          ),
+        ),
+        const SizedBox(height: 12),
+        ...suggestions.map(_buildSuggestionCard),
+      ],
+    );
+  }
+
+  Widget _buildSuggestionCard(RecurringPatternSuggestion suggestion) {
+    final isIncome = suggestion.transactionType == 'income';
+    final accent = isIncome ? recurringGreen : const Color(0xFFC45D58);
+
+    return Container(
+      margin: const EdgeInsets.only(bottom: 12),
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+        border: Border.all(color: const Color(0xFFE8ECEE)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 42,
+                height: 42,
+                decoration: BoxDecoration(
+                  color: accent.withValues(alpha: 0.10),
+                  borderRadius: BorderRadius.circular(13),
+                ),
+                child: Icon(
+                  isIncome
+                      ? Icons.south_west_rounded
+                      : Icons.north_east_rounded,
+                  color: accent,
+                ),
+              ),
+              const SizedBox(width: 12),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      suggestion.description,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: recurringNavy,
+                        fontSize: 15,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 3),
+                    Text(
+                      '${suggestion.categoryName} · ${suggestion.accountLabel}',
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                      style: const TextStyle(
+                        color: Colors.black54,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 8),
+              Text(
+                _formatAmount(suggestion.amountPaise),
+                style: TextStyle(
+                  color: accent,
+                  fontSize: 15,
+                  fontWeight: FontWeight.w800,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 7,
+            runSpacing: 7,
+            children: [
+              _infoChip(_suggestionFrequencyLabel(suggestion)),
+              _infoChip('${suggestion.occurrenceCount} payments found'),
+              _infoChip('Last: ${_formatDate(suggestion.lastOccurrence)}'),
+            ],
+          ),
+          const SizedBox(height: 9),
+          Text(
+            'Next expected: ${_formatDate(suggestion.nextExpectedDate)}. '
+            'This is an estimate based on transaction history.',
+            style: const TextStyle(
+              color: Colors.black54,
+              fontSize: 11,
+              height: 1.4,
+            ),
+          ),
+          const SizedBox(height: 12),
+          SizedBox(
+            width: double.infinity,
+            child: FilledButton.icon(
+              onPressed: () => _addSchedule(suggestion: suggestion),
+              style: FilledButton.styleFrom(
+                backgroundColor: recurringGreen,
+                foregroundColor: Colors.white,
+              ),
+              icon: const Icon(Icons.edit_calendar_outlined),
+              label: const Text('Review & set up'),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  String _suggestionFrequencyLabel(RecurringPatternSuggestion suggestion) {
+    final unit = suggestion.frequency == 'weekly'
+        ? 'week'
+        : suggestion.frequency == 'yearly'
+            ? 'year'
+            : 'month';
+    return suggestion.interval == 1
+        ? 'Every $unit'
+        : 'Every ${suggestion.interval} ${unit}s';
+  }
+
+  Widget _buildNoSchedulesNotice() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(18),
+      ),
+      child: const Text(
+        'No schedules created yet. You can review a detected pattern above '
+        'or create a schedule manually.',
+        style: TextStyle(color: Colors.black54, fontSize: 12, height: 1.4),
+      ),
     );
   }
 
@@ -579,20 +767,24 @@ class _RecurringTransactionsScreenState
 class _RecurringScreenData {
   final List<RecurringScheduleDetails> schedules;
   final Set<int> dueScheduleIds;
+  final List<RecurringPatternSuggestion> suggestions;
 
   const _RecurringScreenData({
     required this.schedules,
     required this.dueScheduleIds,
+    required this.suggestions,
   });
 }
 
 class _AddRecurringScheduleSheet extends StatefulWidget {
   final AppDatabase database;
   final RecurringTransactionRepository repository;
+  final RecurringPatternSuggestion? suggestion;
 
   const _AddRecurringScheduleSheet({
     required this.database,
     required this.repository,
+    this.suggestion,
   });
 
   @override
@@ -622,6 +814,13 @@ class _AddRecurringScheduleSheetState
   @override
   void initState() {
     super.initState();
+    final suggestion = widget.suggestion;
+    if (suggestion != null) {
+      _transactionType = suggestion.transactionType;
+      _frequency = suggestion.frequency;
+      _interval = suggestion.interval;
+      _startDate = suggestion.nextExpectedDate;
+    }
     _loadFormData();
   }
 
@@ -646,14 +845,26 @@ class _AddRecurringScheduleSheetState
           .get();
 
       if (!mounted) return;
+      final suggestion = widget.suggestion;
+      final suggestedAccountId = suggestion?.accountId;
+      final suggestedCategoryId = suggestion?.categoryId;
       setState(() {
         _accounts = accounts;
         _categories = categoryRows;
-        _accountId = accounts.isEmpty ? null : accounts.first.id;
+        _accountId = accounts.any((item) => item.id == suggestedAccountId)
+            ? suggestedAccountId
+            : (accounts.isEmpty ? null : accounts.first.id);
         _categoryId =
-            categoryRows.isEmpty ? null : categoryRows.first.id;
+            categoryRows.any((item) => item.id == suggestedCategoryId)
+                ? suggestedCategoryId
+                : (categoryRows.isEmpty ? null : categoryRows.first.id);
         _isLoading = false;
       });
+      if (suggestion != null) {
+        _amountController.text =
+            (suggestion.amountPaise / 100).toStringAsFixed(2);
+        _descriptionController.text = suggestion.description;
+      }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
@@ -901,10 +1112,12 @@ class _AddRecurringScheduleSheetState
               padding: const EdgeInsets.fromLTRB(20, 16, 12, 12),
               child: Row(
                 children: [
-                  const Expanded(
+                  Expanded(
                     child: Text(
-                      'New recurring schedule',
-                      style: TextStyle(
+                      widget.suggestion == null
+                          ? 'New recurring schedule'
+                          : 'Review detected pattern',
+                      style: const TextStyle(
                         color: recurringNavy,
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -948,6 +1161,26 @@ class _AddRecurringScheduleSheetState
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(20, 18, 20, 24),
         children: [
+          if (widget.suggestion != null) ...[
+            Container(
+              padding: const EdgeInsets.all(13),
+              decoration: BoxDecoration(
+                color: recurringGreen.withValues(alpha: 0.08),
+                borderRadius: BorderRadius.circular(13),
+              ),
+              child: Text(
+                'Found in ${widget.suggestion!.occurrenceCount} similar '
+                'transactions. Check the amount, account, category and '
+                'frequency. No schedule is created until you save.',
+                style: const TextStyle(
+                  color: recurringNavy,
+                  fontSize: 12,
+                  height: 1.45,
+                ),
+              ),
+            ),
+            const SizedBox(height: 16),
+          ],
           SegmentedButton<String>(
             segments: const [
               ButtonSegment(
