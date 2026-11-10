@@ -45,7 +45,7 @@ class _State extends State<ArthamSplashPastel>
     return Scaffold(
       body: AnimatedBuilder(
         animation: _c,
-        builder: (_, __) {
+        builder: (_, _) {
           final word = _p(0.66, 0.9, Curves.easeOut);
           return Container(
             decoration: const BoxDecoration(
