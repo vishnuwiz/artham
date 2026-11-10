@@ -12,6 +12,25 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 - Change the native Android/iOS launch screen to a soft lavender background so it transitions into the animated splash.
 
 
+### Stage 6B — Recurring Payment Pattern Detection (2026-11-10)
+
+#### Added
+- Added conservative on-device detection of likely recurring income and expense patterns from transaction history.
+- Require at least three distinct transaction dates, a stable weekly/monthly cadence (including multi-month and yearly intervals), and amounts within a tolerance before suggesting a pattern.
+- Group candidate transactions by bank account, transaction type, category, and recognised merchant or normalised description.
+- Ignore transfers, future-dated entries, generated recurring transactions, and patterns already covered by an existing schedule.
+- Show detected patterns in Recurring Transactions with the observed amount, account, category, occurrence count, last payment, and next expected date.
+- Prefill the existing schedule form so the user can review and edit all details before explicitly saving.
+
+#### Safety and data
+- Detection runs locally against the existing transaction database; no external service or new permission is used.
+- Detection is read-only. It does not create schedules, post transactions, or change account balances automatically.
+- No database schema migration is required.
+
+#### Verification
+- Add unit tests for monthly and fortnightly cadence, minimum occurrence count, duplicate same-day entries, unstable amounts, irregular intervals, excluded transfers/recurring entries, and account separation.
+- Add repository tests for suggestion metadata, existing-schedule suppression, and inactive-account exclusion.
+
 ### Stage 6A — Offline Merchant Recognition and Smarter Categorisation (2026-11-10)
 
 #### Expanded merchant catalogue
