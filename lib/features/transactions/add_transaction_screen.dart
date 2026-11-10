@@ -37,6 +37,7 @@ class _AddTransactionScreenState
 
   int? _selectedAccountId;
   int? _selectedCategoryId;
+  int? _defaultCategoryId;
   bool _categoryWasManuallySelected = false;
   MerchantRecognition? _merchantSuggestion;
 
@@ -75,8 +76,9 @@ class _AddTransactionScreenState
         _categories = categories;
         _selectedAccountId =
             accounts.isNotEmpty ? accounts.first.id : null;
-        _selectedCategoryId =
+        _defaultCategoryId =
             categories.isNotEmpty ? categories.first.id : null;
+        _selectedCategoryId = _defaultCategoryId;
         _categoryWasManuallySelected = false;
         _isLoading = false;
       });
@@ -97,6 +99,7 @@ class _AddTransactionScreenState
     setState(() {
       _transactionType = type;
       _selectedCategoryId = null;
+      _defaultCategoryId = null;
       _categoryWasManuallySelected = false;
       _merchantSuggestion = null;
       _categories = [];
@@ -110,8 +113,9 @@ class _AddTransactionScreenState
 
       setState(() {
         _categories = categories;
-        _selectedCategoryId =
+        _defaultCategoryId =
             categories.isNotEmpty ? categories.first.id : null;
+        _selectedCategoryId = _defaultCategoryId;
         _isLoading = false;
       });
     } catch (e) {
@@ -135,10 +139,11 @@ class _AddTransactionScreenState
 
     setState(() {
       _merchantSuggestion = match;
-      if (!_categoryWasManuallySelected &&
-          suggestedCategory != null &&
-          suggestedCategory.isNotEmpty) {
-        _selectedCategoryId = suggestedCategory.first.id;
+      if (!_categoryWasManuallySelected) {
+        _selectedCategoryId = suggestedCategory != null &&
+                suggestedCategory.isNotEmpty
+            ? suggestedCategory.first.id
+            : _defaultCategoryId;
       }
     });
   }
