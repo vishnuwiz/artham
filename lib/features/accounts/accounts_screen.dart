@@ -1,5 +1,6 @@
 
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
@@ -8,9 +9,9 @@ import 'add_account_screen.dart';
 import 'transfer_money_screen.dart';
 import 'account_history_screen.dart';
 
-const Color accountsGreen = Color(0xFF13866A);
-const Color accountsNavy = Color(0xFF142B35);
-const Color accountsBackground = Color(0xFFF5F7F8);
+const Color accountsGreen = ArthamColors.lavender;
+const Color accountsNavy = ArthamColors.text;
+const Color accountsBackground = Colors.transparent;
 
 class AccountsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -96,10 +97,9 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: accountsBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: accountsBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: accountsNavy,
         elevation: 0,
         title: const Text(
@@ -152,7 +152,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   '${accounts.length} active '
                   '${accounts.length == 1 ? 'account' : 'accounts'}',
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: ArthamColors.muted,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
                   ),
@@ -161,7 +161,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                 Container(
                   padding: const EdgeInsets.all(18),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF164F49),
+                    gradient: ArthamColors.heroGradient,
+                    border: ArthamColors.glassBorder,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
@@ -215,7 +216,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
       floatingActionButton: FloatingActionButton(
         onPressed: _addAccount,
         backgroundColor: accountsGreen,
-        foregroundColor: Colors.white,
+        foregroundColor: ArthamColors.onAccent,
         child: const Icon(Icons.add_rounded),
       ),
     );
@@ -240,7 +241,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
       margin: const EdgeInsets.only(bottom: 14),
       padding: const EdgeInsets.all(19),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -278,7 +280,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     Text(
                       accountNumberLastFourLabel(account.accountNumberLast4),
                       style: const TextStyle(
-                        color: Colors.black54,
+                        color: ArthamColors.muted,
                         fontSize: 12,
                         letterSpacing: 1,
                       ),
@@ -313,7 +315,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
           const Text(
             'CURRENT BALANCE',
             style: TextStyle(
-              color: Colors.black45,
+              color: ArthamColors.muted,
               fontSize: 10,
               letterSpacing: 1,
               fontWeight: FontWeight.w600,
@@ -338,13 +340,13 @@ class _AccountsScreenState extends State<AccountsScreen> {
               const Icon(
                 Icons.calendar_today_outlined,
                 size: 13,
-                color: Colors.black45,
+                color: ArthamColors.muted,
               ),
               const SizedBox(width: 6),
               Text(
                 'Opening date: ${_formatDate(account.openingDate)}',
                 style: const TextStyle(
-                  color: Colors.black54,
+                  color: ArthamColors.muted,
                   fontSize: 11,
                 ),
               ),
@@ -383,7 +385,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
               'managing your finances.',
               textAlign: TextAlign.center,
               style: TextStyle(
-                color: Colors.black54,
+                color: ArthamColors.muted,
                 fontSize: 13,
               ),
             ),
@@ -394,7 +396,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
               label: const Text('Add Bank Account'),
               style: ElevatedButton.styleFrom(
                 backgroundColor: accountsGreen,
-                foregroundColor: Colors.white,
+                foregroundColor: ArthamColors.onAccent,
               ),
             ),
           ],

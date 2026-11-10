@@ -1,12 +1,13 @@
 
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
 
-const Color detailsGreen = Color(0xFF13866A);
-const Color detailsNavy = Color(0xFF142B35);
-const Color detailsBackground = Color(0xFFF5F7F8);
+const Color detailsGreen = ArthamColors.lavender;
+const Color detailsNavy = ArthamColors.text;
+const Color detailsBackground = Colors.transparent;
 
 class AccountDetailsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -83,7 +84,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: Colors.red.shade700,
+              backgroundColor: ArthamColors.debit,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Deactivate'),
@@ -128,7 +129,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
             child: Text(
               label,
               style: const TextStyle(
-                color: Colors.black54,
+                color: ArthamColors.muted,
                 fontSize: 14,
               ),
             ),
@@ -152,10 +153,9 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: detailsBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: detailsBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: detailsNavy,
         elevation: 0,
         title: const Text(
@@ -188,7 +188,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               Container(
                 padding: const EdgeInsets.all(22),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  gradient: ArthamColors.glassGradient,
+                  border: ArthamColors.glassBorder,
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Column(
@@ -218,13 +219,13 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     const SizedBox(height: 5),
                     Text(
                       accountNumberLastFourLabel(account.accountNumberLast4),
-                      style: const TextStyle(color: Colors.black54, letterSpacing: 1),
+                      style: const TextStyle(color: ArthamColors.muted, letterSpacing: 1),
                     ),
                     const SizedBox(height: 22),
                     const Text(
                       'OPENING BALANCE',
                       style: TextStyle(
-                        color: Colors.black45,
+                        color: ArthamColors.muted,
                         fontSize: 11,
                         letterSpacing: 1,
                         fontWeight: FontWeight.w600,
@@ -244,7 +245,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                       'This is the recorded opening balance, not the live bank balance.',
                       textAlign: TextAlign.center,
                       style: TextStyle(
-                        color: Colors.black45,
+                        color: ArthamColors.muted,
                         fontSize: 11,
                       ),
                     ),
@@ -255,7 +256,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  gradient: ArthamColors.glassGradient,
+                  border: ArthamColors.glassBorder,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -292,7 +294,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                   onPressed: () => _editAccount(account),
                   style: FilledButton.styleFrom(
                     backgroundColor: detailsGreen,
-                    foregroundColor: Colors.white,
+                    foregroundColor: ArthamColors.onAccent,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -307,9 +309,9 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     ? () => _deactivateAccount(account)
                     : null,
                 style: OutlinedButton.styleFrom(
-                  foregroundColor: Colors.red.shade700,
+                  foregroundColor: ArthamColors.debit,
                   minimumSize: const Size(double.infinity, 50),
-                  side: BorderSide(color: Colors.red.shade200),
+                  side: BorderSide(color: ArthamColors.debit),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -450,14 +452,14 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       labelText: label,
       hintText: hint,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: ArthamColors.glass,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: Color(0xFFE5E9EB)),
+        borderSide: const BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
@@ -468,10 +470,9 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: detailsBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: detailsBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: detailsNavy,
         elevation: 0,
         title: const Text(
@@ -565,7 +566,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                 onPressed: _isSaving ? null : _saveAccount,
                 style: FilledButton.styleFrom(
                   backgroundColor: detailsGreen,
-                  foregroundColor: Colors.white,
+                  foregroundColor: ArthamColors.onAccent,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(15),
                   ),
@@ -575,7 +576,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                         height: 22,
                         width: 22,
                         child: CircularProgressIndicator(
-                          color: Colors.white,
+                          color: ArthamColors.onAccent,
                           strokeWidth: 2,
                         ),
                       )

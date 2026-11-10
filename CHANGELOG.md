@@ -6,6 +6,18 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Dark glass redesign (2026-11-10)
+
+#### Changed
+- Replaced the light green theme with a dark purple "glass" look across every screen: translucent cards and inputs tinted with the logo's lavender, mint and peach over a glowing purple ground.
+- Added `lib/theme/artham_theme.dart` as the single source for colours, the Material theme, the screen background and the glass tab bar; screens no longer define their own palette values.
+- Replaced the Material navigation bar with a floating glass tab bar. Unselected tabs are white; the selected tab is a white capsule with dark icon and label.
+- Debit amounts and over-budget states are shown in red; income is shown in mint.
+- The dashboard header shows the Artham logo.
+
+#### Safety and data
+- Presentation only: no schema, repository, SMS import or balance logic changed.
+
 ### Stage 6C — Merchant-Level Spending Insights (2026-11-10)
 
 #### Added

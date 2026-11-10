@@ -1,9 +1,9 @@
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
 import 'package:artham/main.dart';
+import 'package:artham/theme/artham_theme.dart';
 
 void main() {
   late AppDatabase testDatabase;
@@ -26,10 +26,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 500));
 
     expect(find.text('Artham'), findsOneWidget);
-    expect(find.byType(NavigationBar), findsOneWidget);
+    expect(find.byType(ArthamTabBar), findsOneWidget);
 
     final activityDestination = find.descendant(
-      of: find.byType(NavigationBar),
+      of: find.byType(ArthamTabBar),
       matching: find.text('Activity'),
     );
     await tester.tap(activityDestination);

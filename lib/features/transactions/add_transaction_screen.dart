@@ -1,14 +1,15 @@
 
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
 import '../../data/merchant_intelligence.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transactionGreen = Color(0xFF13866A);
-const Color transactionNavy = Color(0xFF142B35);
-const Color transactionBackground = Color(0xFFF5F7F8);
+const Color transactionGreen = ArthamColors.lavender;
+const Color transactionNavy = ArthamColors.text;
+const Color transactionBackground = Colors.transparent;
 
 class AddTransactionScreen extends StatefulWidget {
   final AppDatabase database;
@@ -231,14 +232,14 @@ class _AddTransactionScreenState
       hintText: hint,
       prefixIcon: prefix,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: ArthamColors.glass,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: Color(0xFFE5E9EB)),
+        borderSide: const BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
@@ -253,12 +254,11 @@ class _AddTransactionScreenState
   @override
   Widget build(BuildContext context) {
     final isIncome = _transactionType == 'income';
-    final accent = isIncome ? transactionGreen : const Color(0xFFC45D58);
+    final accent = isIncome ? transactionGreen : ArthamColors.debit;
 
-    return Scaffold(
-      backgroundColor: transactionBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: transactionBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: transactionNavy,
         elevation: 0,
         title: const Text(
@@ -312,9 +312,9 @@ class _AddTransactionScreenState
           Container(
             padding: const EdgeInsets.all(22),
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: ArthamColors.glass,
               borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: const Color(0xFFE5E9EB)),
+              border: Border.all(color: ArthamColors.line),
             ),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -322,7 +322,7 @@ class _AddTransactionScreenState
                 Text(
                   isIncome ? 'INCOME AMOUNT' : 'EXPENSE AMOUNT',
                   style: const TextStyle(
-                    color: Colors.black45,
+                    color: ArthamColors.muted,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                     letterSpacing: 1,
@@ -382,7 +382,7 @@ class _AddTransactionScreenState
           const Text(
             'TRANSACTION DETAILS',
             style: TextStyle(
-              color: Colors.black54,
+              color: ArthamColors.muted,
               fontSize: 11,
               fontWeight: FontWeight.w700,
               letterSpacing: 1,
@@ -521,7 +521,7 @@ class _AddTransactionScreenState
               onPressed: _isSaving ? null : _saveTransaction,
               style: FilledButton.styleFrom(
                 backgroundColor: accent,
-                foregroundColor: Colors.white,
+                foregroundColor: ArthamColors.onAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(16),
                 ),
@@ -531,7 +531,7 @@ class _AddTransactionScreenState
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
-                        color: Colors.white,
+                        color: ArthamColors.onAccent,
                         strokeWidth: 2,
                       ),
                     )
@@ -575,7 +575,7 @@ class _AddTransactionScreenState
             const Text(
               'Please add an active bank account before recording a transaction.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54),
+              style: TextStyle(color: ArthamColors.muted),
             ),
             const SizedBox(height: 20),
             OutlinedButton(

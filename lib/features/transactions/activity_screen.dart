@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
@@ -7,9 +8,9 @@ import 'transaction_details_screen.dart';
 import 'recurring_transactions_screen.dart';
 import 'import_sms_screen.dart';
 
-const Color activityGreen = Color(0xFF13866A);
-const Color activityNavy = Color(0xFF142B35);
-const Color activityBackground = Color(0xFFF5F7F8);
+const Color activityGreen = ArthamColors.lavender;
+const Color activityNavy = ArthamColors.text;
+const Color activityBackground = Colors.transparent;
 
 enum _TransactionSort {
   newest,
@@ -288,7 +289,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                   22 + MediaQuery.of(context).viewInsets.bottom,
                 ),
                 decoration: const BoxDecoration(
-                  color: activityBackground,
+                  color: ArthamColors.glassSoft,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
                 ),
                 child: SingleChildScrollView(
@@ -301,7 +302,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                           width: 42,
                           height: 4,
                           decoration: BoxDecoration(
-                            color: Colors.black26,
+                            color: ArthamColors.line,
                             borderRadius: BorderRadius.circular(5),
                           ),
                         ),
@@ -337,7 +338,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                           labelText: 'Category',
                           border: OutlineInputBorder(),
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: ArthamColors.glass,
                         ),
                         items: [
                           const DropdownMenuItem<int?>(
@@ -364,7 +365,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                           labelText: 'Bank account',
                           border: OutlineInputBorder(),
                           filled: true,
-                          fillColor: Colors.white,
+                          fillColor: ArthamColors.glass,
                         ),
                         items: [
                           const DropdownMenuItem<int?>(
@@ -442,7 +443,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
   Future<void> _openSortSheet() async {
     final selected = await showModalBottomSheet<_TransactionSort>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ArthamColors.sheet,
       builder: (context) => SafeArea(
         child: Column(
           mainAxisSize: MainAxisSize.min,
@@ -482,10 +483,9 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: activityBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: activityBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: activityNavy,
         elevation: 0,
         title: const Text(
@@ -509,7 +509,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addTransaction,
         backgroundColor: activityGreen,
-        foregroundColor: Colors.white,
+        foregroundColor: ArthamColors.onAccent,
         icon: const Icon(Icons.add_rounded),
         label: const Text('Add Transaction'),
       ),
@@ -528,7 +528,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, color: Colors.red, size: 40),
+                    const Icon(Icons.error_outline, color: ArthamColors.debit, size: 40),
                     const SizedBox(height: 12),
                     Text(
                       'Unable to load transactions:\n${snapshot.error}',
@@ -575,7 +575,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                             icon: const Icon(Icons.close_rounded),
                           ),
                     filled: true,
-                    fillColor: Colors.white,
+                    fillColor: ArthamColors.glass,
                     contentPadding: const EdgeInsets.symmetric(vertical: 14),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -629,7 +629,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                     Text(
                       '${transactions.length} records',
                       style: const TextStyle(
-                        color: Colors.black45,
+                        color: ArthamColors.muted,
                         fontSize: 12,
                       ),
                     ),
@@ -681,16 +681,16 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                     onSelected: (_) =>
                         setState(() => _selectedType = item.$2),
                     selectedColor: activityGreen.withValues(alpha: 0.13),
-                    backgroundColor: Colors.white,
+                    backgroundColor: ArthamColors.glass,
                     labelStyle: TextStyle(
-                      color: selected ? activityGreen : Colors.black54,
+                      color: selected ? activityGreen : ArthamColors.muted,
                       fontWeight: FontWeight.w700,
                       fontSize: 12,
                     ),
                     side: BorderSide(
                       color: selected
                           ? activityGreen.withValues(alpha: 0.3)
-                          : const Color(0xFFE5E9EB),
+                          : ArthamColors.line,
                     ),
                     showCheckmark: false,
                   ),
@@ -704,7 +704,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
           tooltip: 'Filter by category, account or date',
           onPressed: () => _openFilterSheet(data),
           style: IconButton.styleFrom(
-            backgroundColor: Colors.white,
+            backgroundColor: ArthamColors.glass,
             foregroundColor: activityGreen,
           ),
           icon: Badge(
@@ -731,11 +731,8 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(23),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF142B35), Color(0xFF176B59)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: ArthamColors.heroGradient,
+        border: ArthamColors.glassBorder,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -766,7 +763,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                   'Expenses',
                   _formatAmount(expenses),
                   Icons.trending_down_rounded,
-                  const Color(0xFFFFA69A),
+                  ArthamColors.debit,
                 ),
               ),
             ],
@@ -840,10 +837,10 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
     final isTransfer = transaction.transactionType == 'transfer';
     final isIncome = transaction.transactionType == 'income';
     final color = isTransfer
-        ? const Color(0xFF54758A)
+        ? ArthamColors.lavender
         : isIncome
-            ? activityGreen
-            : const Color(0xFFC45D58);
+            ? ArthamColors.mint
+            : ArthamColors.debit;
     final categoryName = isTransfer
         ? 'Transfer'
         : data.categoryNames[transaction.categoryId] ?? 'Uncategorised';
@@ -859,7 +856,8 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
     return Container(
       margin: const EdgeInsets.only(bottom: 11),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(18),
       ),
       child: Material(
@@ -910,7 +908,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
                         style: const TextStyle(
-                          color: Colors.black54,
+                          color: ArthamColors.muted,
                           fontSize: 10,
                         ),
                       ),
@@ -918,7 +916,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                       Text(
                         _formatDate(transaction.transactionDate),
                         style: const TextStyle(
-                          color: Colors.black38,
+                          color: ArthamColors.faint,
                           fontSize: 10,
                         ),
                       ),
@@ -977,7 +975,8 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       width: double.infinity,
       padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 38),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -1000,7 +999,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
           const Text(
             'Try changing your search or filters.',
             textAlign: TextAlign.center,
-            style: TextStyle(color: Colors.black54, fontSize: 12),
+            style: TextStyle(color: ArthamColors.muted, fontSize: 12),
           ),
           const SizedBox(height: 14),
           TextButton(

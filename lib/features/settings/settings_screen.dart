@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
@@ -269,17 +270,16 @@ class _SettingsScreenState extends State<SettingsScreen>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F8),
+    return ArthamScaffold(
       appBar: AppBar(
         title: const Text(
           'Settings',
           style: TextStyle(
-            color: Color(0xFF142B35),
+            color: ArthamColors.text,
             fontWeight: FontWeight.w800,
           ),
         ),
-        backgroundColor: const Color(0xFFF5F7F8),
+        backgroundColor: Colors.transparent,
         elevation: 0,
         actions: [
           IconButton(
@@ -303,7 +303,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                   const SizedBox(height: 12),
                   Text(
                     _error!,
-                    style: const TextStyle(color: Colors.red),
+                    style: const TextStyle(color: ArthamColors.debit),
                   ),
                 ],
                 const SizedBox(height: 18),
@@ -328,7 +328,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               'Automatic incoming-SMS import is available on Android only. '
               'On iPhone, use the existing paste/share import option.',
               style: TextStyle(
-                color: Color(0xFF52636A),
+                color: ArthamColors.muted,
                 height: 1.5,
               ),
             ),
@@ -351,7 +351,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             'message includes account digits, Artham matches the final four '
             'digits to your saved bank accounts.',
             style: TextStyle(
-              color: Color(0xFF52636A),
+              color: ArthamColors.muted,
               height: 1.5,
             ),
           ),
@@ -361,7 +361,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             title: const Text(
               'Enable automatic import',
               style: TextStyle(
-                color: Color(0xFF142B35),
+                color: ArthamColors.text,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -372,20 +372,20 @@ class _SettingsScreenState extends State<SettingsScreen>
                       : 'SMS permission granted; import is turned off')
                   : 'Permission required',
               style: const TextStyle(
-                color: Color(0xFF68777D),
+                color: ArthamColors.muted,
                 fontSize: 12,
               ),
             ),
             value: _isEnabled,
             onChanged: _accounts.isEmpty ? null : _toggleAutomaticImport,
-            activeTrackColor: const Color(0xFF13866A),
+            activeTrackColor: ArthamColors.lavender,
           ),
           if (_accounts.isNotEmpty) ...[
             const Divider(height: 22),
             const Text(
               'Default bank account',
               style: TextStyle(
-                color: Color(0xFF142B35),
+                color: ArthamColors.text,
                 fontWeight: FontWeight.w700,
               ),
             ),
@@ -395,7 +395,7 @@ class _SettingsScreenState extends State<SettingsScreen>
               'identify a saved account. A suffix that is unknown or shared by '
               'multiple accounts waits for your review.',
               style: TextStyle(
-                color: Color(0xFF68777D),
+                color: ArthamColors.muted,
                 fontSize: 12,
                 height: 1.4,
               ),
@@ -439,7 +439,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             const Text(
               'Add a bank account before enabling automatic transaction import.',
               style: TextStyle(
-                color: Color(0xFFB45C28),
+                color: ArthamColors.peach,
                 fontSize: 12,
               ),
             ),
@@ -463,7 +463,7 @@ class _SettingsScreenState extends State<SettingsScreen>
             '${_pendingImports.length} transaction(s) could not be assigned '
             'automatically. Choose the correct bank account to finish importing.',
             style: const TextStyle(
-              color: Color(0xFF52636A),
+              color: ArthamColors.muted,
               fontSize: 12,
               height: 1.45,
             ),
@@ -542,9 +542,9 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
     return Container(
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: const Color(0xFFF7F9FA),
+        color: ArthamColors.glassSoft,
         borderRadius: BorderRadius.circular(15),
-        border: Border.all(color: const Color(0xFFE5EAEC)),
+        border: Border.all(color: ArthamColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -557,7 +557,7 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
                   style: const TextStyle(
-                    color: Color(0xFF142B35),
+                    color: ArthamColors.text,
                     fontWeight: FontWeight.w700,
                   ),
                 ),
@@ -566,8 +566,8 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
                 '${isIncome ? '+' : '-'}₹${(pending.amountPaise / 100).toStringAsFixed(2)}',
                 style: TextStyle(
                   color: isIncome
-                      ? const Color(0xFF13866A)
-                      : const Color(0xFFC45D58),
+                      ? ArthamColors.lavender
+                      : ArthamColors.debit,
                   fontWeight: FontWeight.w800,
                   fontSize: 15,
                 ),
@@ -581,7 +581,7 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
             '${pending.transactionDate.month.toString().padLeft(2, '0')}/'
             '${pending.transactionDate.year}',
             style: const TextStyle(
-              color: Color(0xFF68777D),
+              color: ArthamColors.muted,
               fontSize: 11,
             ),
           ),
@@ -590,7 +590,7 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
             'Sender: ${pending.sender.isEmpty ? 'Unknown' : pending.sender} · '
             'Suggested: ${pending.suggestedCategory}',
             style: const TextStyle(
-              color: Color(0xFF68777D),
+              color: ArthamColors.muted,
               fontSize: 11,
             ),
           ),
@@ -599,7 +599,7 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
             Text(
               'Reference: ${pending.referenceNumber}',
               style: const TextStyle(
-                color: Color(0xFF68777D),
+                color: ArthamColors.muted,
                 fontSize: 11,
               ),
             ),
@@ -652,8 +652,8 @@ class _PendingSmsImportTileState extends State<_PendingSmsImportTile> {
               icon: const Icon(Icons.check_rounded),
               label: const Text('Import transaction'),
               style: FilledButton.styleFrom(
-                backgroundColor: const Color(0xFF13866A),
-                foregroundColor: Colors.white,
+                backgroundColor: ArthamColors.lavender,
+                foregroundColor: ArthamColors.onAccent,
               ),
             ),
           ),
@@ -673,9 +673,9 @@ class _SettingsCard extends StatelessWidget {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ArthamColors.glass,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE8ECEE)),
+        border: Border.all(color: ArthamColors.line),
       ),
       child: child,
     );
@@ -695,13 +695,13 @@ class _SectionHeading extends StatelessWidget {
   Widget build(BuildContext context) {
     return Row(
       children: [
-        Icon(icon, color: const Color(0xFF13866A)),
+        Icon(icon, color: ArthamColors.lavender),
         const SizedBox(width: 10),
         Expanded(
           child: Text(
             title,
             style: const TextStyle(
-              color: Color(0xFF142B35),
+              color: ArthamColors.text,
               fontWeight: FontWeight.w800,
               fontSize: 16,
             ),
@@ -729,7 +729,7 @@ class _PrivacyLine extends StatelessWidget {
             child: Icon(
               Icons.check_circle_outline,
               size: 15,
-              color: Color(0xFF13866A),
+              color: ArthamColors.lavender,
             ),
           ),
           const SizedBox(width: 9),
@@ -737,7 +737,7 @@ class _PrivacyLine extends StatelessWidget {
             child: Text(
               text,
               style: const TextStyle(
-                color: Color(0xFF52636A),
+                color: ArthamColors.muted,
                 fontSize: 12,
                 height: 1.45,
               ),
