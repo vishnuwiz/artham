@@ -1,10 +1,34 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:artham/data/merchant_intelligence.dart';
+import 'package:artham/data/merchant_catalog_data.dart';
 
 void main() {
   group('MerchantIntelligence', () {
     test('catalogue supports at least 500 distinct merchants', () {
       expect(MerchantIntelligence.merchantCount, greaterThanOrEqualTo(500));
+    });
+
+    test('recognises every canonical merchant alias with its mapped category', () {
+      var testedAliases = 0;
+
+      for (final merchant in merchantCatalogData) {
+        for (final alias in merchant.aliases) {
+          final result = MerchantIntelligence.recognize(
+            'UPI PAYMENT TO $alias',
+          );
+
+          expect(result, isNotNull, reason: 'Alias: $alias');
+          expect(result!.name, merchant.name, reason: 'Alias: $alias');
+          expect(
+            result.categoryName,
+            merchant.categoryName,
+            reason: 'Alias: $alias',
+          );
+          testedAliases++;
+        }
+      }
+
+      expect(testedAliases, greaterThanOrEqualTo(1000));
     });
 
     test('recognises a merchant from a masked UPI-style description', () {
