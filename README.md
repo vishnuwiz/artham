@@ -184,7 +184,7 @@ No license has been specified yet. Until a license is added to this repository, 
 
 ## App icon and splash screen
 
-The same 1024×1024 Artham artwork is configured for the Android/iOS launcher icon and native launch screen. Place the supplied image at `assets/branding/artham_app_icon_ios_1024.png`, then run:
+The supplied pastel Artham artwork is used for Android and iOS launcher icons. Save `icon-1024.png` from the supplied branding ZIP as `assets/branding/artham_app_icon_ios_1024.png`. The native launch screen uses a soft lavender background, then the animated in-app intro in `lib/features/splash/artham_splash_pastel.dart` takes over. Regenerate platform assets with:
 
 ```powershell
 flutter pub get

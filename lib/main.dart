@@ -9,12 +9,15 @@ import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'features/settings/settings_screen.dart';
+import 'features/splash/artham_splash_pastel.dart';
 
 late final AppDatabase appDatabase;
+bool _skipStartupSplashForTests = false;
 
 /// Allows widget tests to install an in-memory database before building the app.
 void initializeAppDatabaseForTesting(AppDatabase database) {
   appDatabase = database;
+  _skipStartupSplashForTests = true;
 }
 
 Future<void> main() async {
@@ -58,7 +61,32 @@ class ArthamApp extends StatelessWidget {
         ),
         fontFamily: 'Roboto',
       ),
-      home: const HomeScreen(),
+      home: _skipStartupSplashForTests
+          ? const HomeScreen()
+          : const ArthamStartupScreen(),
+    );
+  }
+}
+
+/// Shows the animated brand intro once at app startup, then opens the dashboard.
+class ArthamStartupScreen extends StatefulWidget {
+  const ArthamStartupScreen({super.key});
+
+  @override
+  State<ArthamStartupScreen> createState() => _ArthamStartupScreenState();
+}
+
+class _ArthamStartupScreenState extends State<ArthamStartupScreen> {
+  bool _splashComplete = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_splashComplete) return const HomeScreen();
+
+    return ArthamSplashPastel(
+      onDone: () {
+        if (mounted) setState(() => _splashComplete = true);
+      },
     );
   }
 }
