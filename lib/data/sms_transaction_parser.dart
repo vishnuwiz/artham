@@ -96,8 +96,10 @@ class SmsTransactionParser {
                 ? MerchantIntelligence.recognize(text)
                 : null)
         : null;
+    final categorySource =
+        transactionType == 'expense' ? counterparty ?? text : text;
     final suggestedCategory =
-        merchant?.categoryName ?? _suggestCategory(text, transactionType);
+        merchant?.categoryName ?? _suggestCategory(categorySource, transactionType);
     final description = merchant?.name ??
         counterparty ??
         (transactionType == 'expense' ? 'Bank SMS expense' : 'Bank SMS credit');
