@@ -125,6 +125,7 @@ class TransactionRepository {
     final merchantId = await MerchantRepository(database)
         .findOrCreateForDescription(
       description: description,
+      transactionType: transactionType,
       fallbackCategoryId: categoryId,
     );
 
@@ -169,6 +170,7 @@ class TransactionRepository {
     final merchantId = await MerchantRepository(database)
         .findOrCreateForDescription(
       description: description,
+      transactionType: transactionType,
       fallbackCategoryId: categoryId,
     );
 
