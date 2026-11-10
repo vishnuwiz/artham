@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import 'merchant_repository.dart';
 
 class DuplicateSmsImportException implements Exception {
   const DuplicateSmsImportException();
@@ -156,10 +157,17 @@ class SmsImportRepository {
             ),
           );
 
+      final merchantId = await MerchantRepository(database)
+          .findOrCreateForDescription(
+        description: description,
+        fallbackCategoryId: categoryId,
+      );
+
       return database.into(database.moneyTransactions).insert(
             MoneyTransactionsCompanion.insert(
               accountId: accountId,
               categoryId: Value(categoryId),
+              merchantId: Value(merchantId),
               amountPaise: amountPaise,
               transactionType: transactionType,
               transactionDate: transactionDate,
