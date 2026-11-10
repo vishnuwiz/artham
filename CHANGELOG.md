@@ -8,8 +8,15 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ### Stage 6A — Offline Merchant Recognition and Smarter Categorisation (2026-11-10)
 
+#### Expanded merchant catalogue
+- Expanded the offline directory from 57 starter entries to 1,075 distinct merchant records across eight spending categories.
+- Added India-focused coverage for food outlets, supermarkets and quick-commerce, retail, mobility and fuel, telecom and utilities, entertainment, healthcare, and travel.
+- Consolidated merchant names, category mappings and recognition aliases into `tool/data/merchant_catalog.json`, with generated Dart and Kotlin catalogues to prevent platform drift.
+- Added catalogue-count and representative cross-category tests in both Flutter and Android.
+
+
 #### Added
-- Added an on-device merchant catalogue for common Indian merchants and payment descriptions across food delivery, groceries, shopping, travel, transport, utilities, entertainment, and health.
+- Added an on-device merchant catalogue for over 1,000 India-focused merchants and payment descriptions across food delivery, groceries, shopping, travel, transport, utilities, entertainment, and health.
 - Added whole-token alias matching with more specific aliases checked first (for example, Swiggy Instamart is recognised as Groceries rather than Swiggy Food & Dining).
 - Added merchant-specific category suggestions while entering manual expense descriptions. Users can override the suggested category.
 - Added persistent merchant links for recognised manual transactions, reviewed SMS imports, recurring transaction confirmations, and automatic Android SMS imports.
