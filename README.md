@@ -12,7 +12,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
-- **Offline merchant recognition** — Recognise common Indian merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue. Suggest categories such as Food & Dining, Groceries, Shopping, Travel, Health, Bills & Utilities and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
+- **Offline merchant recognition** — Recognise more than 1,000 India-focused merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue generated from a single version-controlled source. Suggest categories such as Food & Dining, Groceries, Shopping, Travel, Health, Bills & Utilities and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
 - **Automatic Android bank-SMS import (Android emulator validated; physical-device testing pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are parsed in the background and saved to the existing local database. The receiver uses the account suffix in the alert to match a saved account, ignores duplicate alerts, and does not retain the original SMS body. Alerts with an unknown or ambiguous account suffix wait in Settings for manual account assignment.
 - **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
 - **Live account balances** — Keep account balances updated as transactions change.
@@ -146,7 +146,7 @@ Other screens, repositories, and features are maintained in their respective fol
 ## Development Notes
 
 - Store monetary values as integer paise, not floating-point rupees.
-- Keep the Dart and Android Kotlin merchant catalogues in sync when adding aliases or categories; merchant recognition must remain on-device and deterministic.
+- Maintain `tool/data/merchant_catalog.json` as the single source of truth for merchant names, categories and aliases. Run `python tool/generate_merchant_catalog.py` after edits and `python tool/generate_merchant_catalog.py --check` to verify the generated Dart and Kotlin catalogues; recognition must remain on-device and deterministic.
 - Prefer an explicit payee/counterparty extracted from a bank alert over provider names elsewhere in the SMS.
 - Keep account balances consistent when creating, editing, or deleting transactions.
 - Display saved bank accounts using the bank name and masked last four digits; do not depend on a user-entered nickname for account identification.
