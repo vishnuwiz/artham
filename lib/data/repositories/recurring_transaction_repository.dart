@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import 'merchant_repository.dart';
 
 /// A recurring schedule together with its account and category.
 class RecurringScheduleDetails {
@@ -246,19 +247,25 @@ class RecurringTransactionRepository {
         throw StateError('The bank account for this schedule is unavailable.');
       }
 
+      final description = _cleanText(schedule.description) ??
+          (schedule.transactionType == 'income'
+              ? 'Recurring income'
+              : 'Recurring expense');
+      final merchantId = await MerchantRepository(database)
+          .findOrCreateForDescription(
+        description: description,
+        fallbackCategoryId: schedule.categoryId,
+      );
+
       await database.into(database.moneyTransactions).insert(
             MoneyTransactionsCompanion.insert(
               accountId: schedule.accountId,
               categoryId: Value(schedule.categoryId),
+              merchantId: Value(merchantId),
               amountPaise: schedule.amountPaise,
               transactionType: schedule.transactionType,
               transactionDate: dueDate,
-              description: Value(
-                _cleanText(schedule.description) ??
-                    (schedule.transactionType == 'income'
-                        ? 'Recurring income'
-                        : 'Recurring expense'),
-              ),
+              description: Value(description),
               referenceNumber: Value(occurrenceKey),
               source: const Value('recurring'),
             ),
