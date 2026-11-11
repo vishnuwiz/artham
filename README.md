@@ -12,6 +12,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
+- **Data export** — Share all transaction history as an Excel-friendly CSV, or create a structured JSON backup of all Drift tables and the Android pending-SMS review queue when present. Exports are generated locally; JSON backups are unencrypted and should be stored securely.
 - **Offline merchant recognition** — Recognise more than 1,000 India-focused merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue generated from a single version-controlled source. Suggest categories such as Food & Dining, Groceries, Shopping, Travel, Health, Bills & Utilities and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
 - **Automatic Android bank-SMS import (Android emulator validated; physical-device testing pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are parsed in the background and saved to the existing local database. The receiver uses the account suffix in the alert to match a saved account, ignores duplicate alerts, and does not retain the original SMS body. Alerts with an unknown or ambiguous account suffix wait in Settings for manual account assignment.
 - **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
@@ -41,6 +42,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - iOS supports user-initiated SMS sharing/pasting only; ordinary third-party apps cannot read the full Messages inbox.
 - Bank statement import.
 - Database encryption and additional security improvements.
+- JSON backup restore/import (export is implemented first; restore is not included yet).
 - Expanded Settings options.
 - Further performance improvements.
 
@@ -135,6 +137,7 @@ lib/
 ├── data/
 │   ├── app_database.dart
 │   ├── app_database.g.dart
+│   ├── data_export_service.dart
 │   └── repositories/
 │       └── recurring_transaction_repository.dart
 └── features/
