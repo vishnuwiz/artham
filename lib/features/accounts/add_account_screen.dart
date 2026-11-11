@@ -1,12 +1,13 @@
 
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
 
-const Color arthamGreen = Color(0xFF13866A);
-const Color arthamNavy = Color(0xFF142B35);
-const Color arthamBackground = Color(0xFFF5F7F8);
+const Color arthamGreen = ArthamColors.lavender;
+const Color arthamNavy = ArthamColors.text;
+const Color arthamBackground = Colors.transparent;
 
 class AddAccountScreen extends StatefulWidget {
   final AppDatabase database;
@@ -78,10 +79,10 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.light(
+            colorScheme: const ColorScheme.dark(
               primary: arthamGreen,
-              onPrimary: Colors.white,
-              surface: Colors.white,
+              onPrimary: ArthamColors.onAccent,
+              surface: ArthamColors.sheet,
               onSurface: arthamNavy,
             ),
           ),
@@ -158,7 +159,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Unable to save account: $e'),
-          backgroundColor: Colors.red,
+          backgroundColor: ArthamColors.debit,
         ),
       );
     } finally {
@@ -172,10 +173,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: arthamBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: arthamBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: arthamNavy,
         elevation: 0,
         title: Text(
@@ -195,7 +195,8 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
               Container(
                 padding: const EdgeInsets.all(20),
                 decoration: BoxDecoration(
-                  color: arthamNavy,
+                  gradient: ArthamColors.heroGradient,
+                  border: ArthamColors.glassBorder,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -342,10 +343,10 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                     vertical: 17,
                   ),
                   decoration: BoxDecoration(
-                    color: Colors.white,
+                    color: ArthamColors.glass,
                     borderRadius: BorderRadius.circular(14),
                     border: Border.all(
-                      color: Colors.grey.shade200,
+                      color: ArthamColors.line,
                     ),
                   ),
                   child: Row(
@@ -366,7 +367,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                       ),
                       const Icon(
                         Icons.keyboard_arrow_down_rounded,
-                        color: Colors.grey,
+                        color: ArthamColors.muted,
                       ),
                     ],
                   ),
@@ -381,7 +382,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   onPressed: _isSaving ? null : _saveAccount,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: arthamGreen,
-                    foregroundColor: Colors.white,
+                    foregroundColor: ArthamColors.onAccent,
                     disabledBackgroundColor: arthamGreen.withValues(
                       alpha: 0.6,
                     ),
@@ -399,7 +400,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                           height: 19,
                           child: CircularProgressIndicator(
                             strokeWidth: 2,
-                            color: Colors.white,
+                            color: ArthamColors.onAccent,
                           ),
                         )
                       else
@@ -426,7 +427,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 'Never enter your PIN, CVV or internet banking password.',
                 textAlign: TextAlign.center,
                 style: TextStyle(
-                  color: Colors.grey,
+                  color: ArthamColors.muted,
                   fontSize: 12,
                 ),
               ),
@@ -462,7 +463,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         color: arthamGreen,
       ),
       filled: true,
-      fillColor: Colors.white,
+      fillColor: ArthamColors.glass,
       contentPadding: const EdgeInsets.symmetric(
         horizontal: 15,
         vertical: 16,
@@ -474,7 +475,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide(
-          color: Colors.grey.shade200,
+          color: ArthamColors.line,
         ),
       ),
       focusedBorder: OutlineInputBorder(
@@ -487,13 +488,13 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(
-          color: Colors.red,
+          color: ArthamColors.debit,
         ),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: const BorderSide(
-          color: Colors.red,
+          color: ArthamColors.debit,
         ),
       ),
     );

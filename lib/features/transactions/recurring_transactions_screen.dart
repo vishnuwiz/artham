@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:drift/drift.dart' hide Column;
@@ -7,9 +8,9 @@ import '../../data/app_database.dart';
 import '../../data/recurring_pattern_detector.dart';
 import '../../data/repositories/recurring_transaction_repository.dart';
 
-const Color recurringGreen = Color(0xFF13866A);
-const Color recurringNavy = Color(0xFF142B35);
-const Color recurringBackground = Color(0xFFF5F7F8);
+const Color recurringGreen = ArthamColors.lavender;
+const Color recurringNavy = ArthamColors.text;
+const Color recurringBackground = Colors.transparent;
 
 class RecurringTransactionsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -175,7 +176,7 @@ class _RecurringTransactionsScreenState
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFC45D58),
+              backgroundColor: ArthamColors.debit,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Delete'),
@@ -226,10 +227,9 @@ class _RecurringTransactionsScreenState
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: recurringBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: recurringBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: recurringNavy,
         elevation: 0,
         title: const Text(
@@ -279,7 +279,7 @@ class _RecurringTransactionsScreenState
                   const Text(
                     'YOUR SCHEDULES',
                     style: TextStyle(
-                      color: Colors.black54,
+                      color: ArthamColors.muted,
                       fontSize: 11,
                       fontWeight: FontWeight.w800,
                       letterSpacing: 1,
@@ -302,7 +302,7 @@ class _RecurringTransactionsScreenState
       floatingActionButton: FloatingActionButton.extended(
         onPressed: _addSchedule,
         backgroundColor: recurringGreen,
-        foregroundColor: Colors.white,
+        foregroundColor: ArthamColors.onAccent,
         icon: const Icon(Icons.add_rounded),
         label: const Text('New schedule'),
       ),
@@ -316,7 +316,8 @@ class _RecurringTransactionsScreenState
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: recurringNavy,
+        gradient: ArthamColors.heroGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(20),
       ),
       child: Row(
@@ -374,7 +375,7 @@ class _RecurringTransactionsScreenState
         const Text(
           'POSSIBLE RECURRING PAYMENTS',
           style: TextStyle(
-            color: Colors.black54,
+            color: ArthamColors.muted,
             fontSize: 11,
             fontWeight: FontWeight.w800,
             letterSpacing: 1,
@@ -385,7 +386,7 @@ class _RecurringTransactionsScreenState
           'Artham found patterns in your past transactions. Review each one '
           'before saving a schedule.',
           style: TextStyle(
-            color: Colors.black54,
+            color: ArthamColors.muted,
             fontSize: 12,
             height: 1.4,
           ),
@@ -398,15 +399,15 @@ class _RecurringTransactionsScreenState
 
   Widget _buildSuggestionCard(RecurringPatternSuggestion suggestion) {
     final isIncome = suggestion.transactionType == 'income';
-    final accent = isIncome ? recurringGreen : const Color(0xFFC45D58);
+    final accent = isIncome ? recurringGreen : ArthamColors.debit;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ArthamColors.glass,
         borderRadius: BorderRadius.circular(18),
-        border: Border.all(color: const Color(0xFFE8ECEE)),
+        border: Border.all(color: ArthamColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -449,7 +450,7 @@ class _RecurringTransactionsScreenState
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
                       style: const TextStyle(
-                        color: Colors.black54,
+                        color: ArthamColors.muted,
                         fontSize: 11,
                       ),
                     ),
@@ -482,7 +483,7 @@ class _RecurringTransactionsScreenState
             'Next expected: ${_formatDate(suggestion.nextExpectedDate)}. '
             'This is an estimate based on transaction history.',
             style: const TextStyle(
-              color: Colors.black54,
+              color: ArthamColors.muted,
               fontSize: 11,
               height: 1.4,
             ),
@@ -494,7 +495,7 @@ class _RecurringTransactionsScreenState
               onPressed: () => _addSchedule(suggestion: suggestion),
               style: FilledButton.styleFrom(
                 backgroundColor: recurringGreen,
-                foregroundColor: Colors.white,
+                foregroundColor: ArthamColors.onAccent,
               ),
               icon: const Icon(Icons.edit_calendar_outlined),
               label: const Text('Review & set up'),
@@ -520,13 +521,14 @@ class _RecurringTransactionsScreenState
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(18),
       ),
       child: const Text(
         'No schedules created yet. You can review a detected pattern above '
         'or create a schedule manually.',
-        style: TextStyle(color: Colors.black54, fontSize: 12, height: 1.4),
+        style: TextStyle(color: ArthamColors.muted, fontSize: 12, height: 1.4),
       ),
     );
   }
@@ -537,16 +539,16 @@ class _RecurringTransactionsScreenState
   }) {
     final schedule = item.schedule;
     final isIncome = schedule.transactionType == 'income';
-    final accent = isIncome ? recurringGreen : const Color(0xFFC45D58);
+    final accent = isIncome ? recurringGreen : ArthamColors.debit;
 
     return Container(
       margin: const EdgeInsets.only(bottom: 12),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ArthamColors.glass,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDue ? recurringGreen.withValues(alpha: 0.45) : const Color(0xFFE8ECEE),
+          color: isDue ? recurringGreen.withValues(alpha: 0.45) : ArthamColors.line,
         ),
       ),
       child: Column(
@@ -586,7 +588,7 @@ class _RecurringTransactionsScreenState
                     Text(
                       bankAccountDisplayLabel(item.account.bankName, item.account.accountNumberLast4),
                       style: const TextStyle(
-                        color: Colors.black54,
+                        color: ArthamColors.muted,
                         fontSize: 12,
                       ),
                     ),
@@ -619,7 +621,7 @@ class _RecurringTransactionsScreenState
             const SizedBox(height: 10),
             Text(
               schedule.description!,
-              style: const TextStyle(color: Colors.black54, fontSize: 12),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
             ),
           ],
           const SizedBox(height: 12),
@@ -631,7 +633,7 @@ class _RecurringTransactionsScreenState
                     onPressed: () => _confirmOccurrence(item),
                     style: FilledButton.styleFrom(
                       backgroundColor: recurringGreen,
-                      foregroundColor: Colors.white,
+                      foregroundColor: ArthamColors.onAccent,
                       minimumSize: const Size(0, 42),
                     ),
                     child: const Text('Confirm transaction'),
@@ -652,7 +654,7 @@ class _RecurringTransactionsScreenState
                 onPressed: () => _deleteSchedule(item),
                 icon: const Icon(
                   Icons.delete_outline_rounded,
-                  color: Color(0xFFC45D58),
+                  color: ArthamColors.debit,
                 ),
               ),
             ],
@@ -714,14 +716,14 @@ class _RecurringTransactionsScreenState
               'Set up regular income or expenses such as salary, rent, '
               'subscriptions or bills.',
               textAlign: TextAlign.center,
-              style: TextStyle(color: Colors.black54, height: 1.45),
+              style: TextStyle(color: ArthamColors.muted, height: 1.45),
             ),
             const SizedBox(height: 20),
             FilledButton.icon(
               onPressed: _addSchedule,
               style: FilledButton.styleFrom(
                 backgroundColor: recurringGreen,
-                foregroundColor: Colors.white,
+                foregroundColor: ArthamColors.onAccent,
               ),
               icon: const Icon(Icons.add_rounded),
               label: const Text('Create first schedule'),
@@ -739,7 +741,7 @@ class _RecurringTransactionsScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, color: Colors.red, size: 40),
+            const Icon(Icons.error_outline, color: ArthamColors.debit, size: 40),
             const SizedBox(height: 12),
             const Text(
               'Unable to load recurring schedules.',
@@ -750,7 +752,7 @@ class _RecurringTransactionsScreenState
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: Colors.black54, fontSize: 12),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
             ),
             const SizedBox(height: 14),
             OutlinedButton(
@@ -944,7 +946,7 @@ class _AddRecurringScheduleSheetState
 
     final result = await showModalBottomSheet<int>(
       context: context,
-      backgroundColor: Colors.white,
+      backgroundColor: ArthamColors.sheet,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
       ),
@@ -1070,14 +1072,14 @@ class _AddRecurringScheduleSheetState
       labelText: label,
       hintText: hint,
       filled: true,
-      fillColor: Colors.white,
+      fillColor: ArthamColors.glass,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: Color(0xFFE5E9EB)),
+        borderSide: const BorderSide(color: ArthamColors.line),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: Color(0xFFE5E9EB)),
+        borderSide: const BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(13),
@@ -1102,7 +1104,7 @@ class _AddRecurringScheduleSheetState
           maxHeight: MediaQuery.of(context).size.height * 0.92,
         ),
         decoration: const BoxDecoration(
-          color: recurringBackground,
+          color: ArthamColors.glassSoft,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
         child: Column(
@@ -1152,8 +1154,8 @@ class _AddRecurringScheduleSheetState
 
   Widget _buildForm() {
     final accent = _transactionType == 'income'
-        ? recurringGreen
-        : const Color(0xFFC45D58);
+        ? ArthamColors.mint
+        : ArthamColors.debit;
 
     return Form(
       key: _formKey,
@@ -1299,7 +1301,7 @@ class _AddRecurringScheduleSheetState
                   const Spacer(),
                   const Text(
                     'Tap to change',
-                    style: TextStyle(color: Colors.black45, fontSize: 12),
+                    style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                   ),
                 ],
               ),
@@ -1339,7 +1341,7 @@ class _AddRecurringScheduleSheetState
               onPressed: _isSaving ? null : _save,
               style: FilledButton.styleFrom(
                 backgroundColor: recurringGreen,
-                foregroundColor: Colors.white,
+                foregroundColor: ArthamColors.onAccent,
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(14),
                 ),
@@ -1349,7 +1351,7 @@ class _AddRecurringScheduleSheetState
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(
-                        color: Colors.white,
+                        color: ArthamColors.onAccent,
                         strokeWidth: 2,
                       ),
                     )

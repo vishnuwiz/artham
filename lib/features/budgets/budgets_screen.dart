@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/budget_repository.dart';
 
-const Color _green = Color(0xFF13866A);
-const Color _navy = Color(0xFF142B35);
+const Color _green = ArthamColors.lavender;
+const Color _navy = ArthamColors.text;
 
 class BudgetsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -152,7 +153,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             ),
             FilledButton(
               style: FilledButton.styleFrom(
-                backgroundColor: Colors.red.shade700,
+                backgroundColor: ArthamColors.debit,
               ),
               onPressed: () => Navigator.pop(confirmContext, true),
               child: const Text('Remove'),
@@ -248,7 +249,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 maxHeight: MediaQuery.of(context).size.height * 0.86,
               ),
               decoration: const BoxDecoration(
-                color: Color(0xFFF5F7F8),
+                color: ArthamColors.glassSoft,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
               ),
               child: SafeArea(
@@ -284,7 +285,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Select a month to see its category-wise spending and limits.',
-                          style: TextStyle(color: Colors.black54, fontSize: 12),
+                          style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                         ),
                       ),
                     ),
@@ -308,7 +309,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
 
                           return Container(
                             decoration: BoxDecoration(
-                              color: Colors.white,
+                              gradient: ArthamColors.glassGradient,
+                              border: ArthamColors.glassBorder,
                               borderRadius: BorderRadius.circular(17),
                             ),
                             child: Column(
@@ -362,7 +364,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               isExpanded
                                                   ? Icons.expand_less_rounded
                                                   : Icons.expand_more_rounded,
-                                              color: Colors.black38,
+                                              color: ArthamColors.faint,
                                             ),
                                           ],
                                         ),
@@ -382,8 +384,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               : 'No overall budget set',
                                           style: TextStyle(
                                             color: over
-                                                ? const Color(0xFFC45D58)
-                                                : Colors.black54,
+                                                ? ArthamColors.debit
+                                                : ArthamColors.muted,
                                             fontSize: 11,
                                             fontWeight: over
                                                 ? FontWeight.w700
@@ -409,7 +411,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                             child: Text(
                                               'Unused balance carries into next month',
                                               style: TextStyle(
-                                                color: Colors.black54,
+                                                color: ArthamColors.muted,
                                                 fontSize: 10,
                                               ),
                                             ),
@@ -438,7 +440,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                         const Text(
                                           'CATEGORY BREAKDOWN',
                                           style: TextStyle(
-                                            color: Colors.black54,
+                                            color: ArthamColors.muted,
                                             fontSize: 10,
                                             fontWeight: FontWeight.w800,
                                             letterSpacing: 0.7,
@@ -466,7 +468,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               return const Text(
                                                 'Unable to load category history.',
                                                 style: TextStyle(
-                                                  color: Color(0xFFC45D58),
+                                                  color: ArthamColors.debit,
                                                   fontSize: 12,
                                                 ),
                                               );
@@ -477,7 +479,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               return const Text(
                                                 'No expense categories found.',
                                                 style: TextStyle(
-                                                  color: Colors.black54,
+                                                  color: ArthamColors.muted,
                                                   fontSize: 12,
                                                 ),
                                               );
@@ -574,7 +576,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 ? 'Available ${_money(item.availableBudgetPaise)}  ·  ${over ? '${_money(item.remainingPaise.abs())} over' : '${_money(item.remainingPaise)} left'}'
                 : 'No category budget set',
             style: TextStyle(
-              color: over ? const Color(0xFFC45D58) : Colors.black54,
+              color: over ? ArthamColors.debit : ArthamColors.muted,
               fontSize: 10,
             ),
           ),
@@ -593,8 +595,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               child: LinearProgressIndicator(
                 value: ratio.clamp(0.0, 1.0).toDouble(),
                 minHeight: 5,
-                backgroundColor: const Color(0xFFE9EEEC),
-                color: over ? const Color(0xFFC45D58) : _green,
+                backgroundColor: ArthamColors.line,
+                color: over ? ArthamColors.debit : _green,
               ),
             ),
           ],
@@ -605,8 +607,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF5F7F8),
+    return ArthamScaffold(
       body: SafeArea(
         child: FutureBuilder<_BudgetScreenData>(
           future: _dataFuture,
@@ -782,7 +783,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               Text(
                 '${alerts.length} ${alerts.length == 1 ? 'alert' : 'alerts'}',
                 style: const TextStyle(
-                  color: Colors.black54,
+                  color: ArthamColors.muted,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                 ),
@@ -798,11 +799,11 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
 
   Widget _buildBudgetAlertCard(_BudgetAlert alert) {
     final color = alert.exceeded
-        ? const Color(0xFFC45D58)
-        : const Color(0xFFB7791F);
+        ? ArthamColors.debit
+        : ArthamColors.peach;
     final background = alert.exceeded
-        ? const Color(0xFFFFF0EE)
-        : const Color(0xFFFFF7E8);
+        ? ArthamColors.debitTint
+        : ArthamColors.peachTint;
     final icon = alert.exceeded
         ? Icons.error_outline_rounded
         : Icons.warning_amber_rounded;
@@ -812,7 +813,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ArthamColors.glass,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(color: color.withValues(alpha: 0.22)),
       ),
@@ -855,7 +856,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 const SizedBox(height: 3),
                 Text(
                   '${_money(alert.spentPaise)} spent of ${_money(alert.budgetPaise)}',
-                  style: const TextStyle(color: Colors.black54, fontSize: 11),
+                  style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
                 ),
               ],
             ),
@@ -880,13 +881,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     return Container(
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
-        color: _navy,
+        color: ArthamColors.hero,
         borderRadius: BorderRadius.circular(24),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF142B35), Color(0xFF176B59)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: ArthamColors.heroGradient,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -944,7 +941,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               value: ratio.clamp(0.0, 1.0).toDouble(),
               minHeight: 9,
               backgroundColor: Colors.white24,
-              color: over ? const Color(0xFFFFA69A) : const Color(0xFF68DFB4),
+              color: over ? ArthamColors.debit : const Color(0xFF68DFB4),
             ),
           ),
           const SizedBox(height: 15),
@@ -1002,7 +999,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       margin: const EdgeInsets.only(bottom: 11),
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(19),
       ),
       child: Column(
@@ -1014,7 +1012,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: const Color(0xFFE5F5EE),
+                  color: ArthamColors.mintTint,
                   borderRadius: BorderRadius.circular(13),
                 ),
                 child: const Icon(Icons.category_outlined, color: _green),
@@ -1038,7 +1036,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                           ? '${_money(item.expensesPaise)} of ${_money(item.availableBudgetPaise)} available'
                           : '${_money(item.expensesPaise)} spent · No limit set',
                       style: const TextStyle(
-                        color: Colors.black54,
+                        color: ArthamColors.muted,
                         fontSize: 11,
                       ),
                     ),
@@ -1085,7 +1083,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 'Unused balance carries into next month',
-                style: TextStyle(color: Colors.black54, fontSize: 10),
+                style: TextStyle(color: ArthamColors.muted, fontSize: 10),
               ),
             ),
           ],
@@ -1096,8 +1094,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               child: LinearProgressIndicator(
                 value: ratio.clamp(0.0, 1.0).toDouble(),
                 minHeight: 7,
-                backgroundColor: const Color(0xFFE9EEEC),
-                color: over ? const Color(0xFFC45D58) : _green,
+                backgroundColor: ArthamColors.line,
+                color: over ? ArthamColors.debit : _green,
               ),
             ),
             const SizedBox(height: 8),
@@ -1106,7 +1104,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 Text(
                   '${(ratio * 100).toStringAsFixed(1)}% used',
                   style: TextStyle(
-                    color: over ? const Color(0xFFC45D58) : _green,
+                    color: over ? ArthamColors.debit : _green,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1116,7 +1114,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   over
                       ? '${_money(item.remainingPaise.abs())} over'
                       : '${_money(item.remainingPaise)} left',
-                  style: const TextStyle(color: Colors.black54, fontSize: 11),
+                  style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
                 ),
               ],
             ),
@@ -1269,7 +1267,7 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
               context,
               const _BudgetDialogResult(action: _BudgetDialogAction.remove),
             ),
-            style: TextButton.styleFrom(foregroundColor: Colors.red),
+            style: TextButton.styleFrom(foregroundColor: ArthamColors.debit),
             child: const Text('Remove budget'),
           ),
         FilledButton(

@@ -41,6 +41,7 @@ dependencies:
   csv: ^8.0.0
   cross_file: ^0.3.5
   share_plus: ^13.3.1
+  file_picker: ^13.3.3
 
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
@@ -70,6 +71,8 @@ flutter:
 
   assets:
     - assets/branding/artham_app_icon_ios_1024.png
+    - assets/branding/artham_adaptive_background.png
+    - assets/branding/artham_adaptive_foreground.png
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/to/resolution-aware-images
@@ -103,16 +106,15 @@ flutter_launcher_icons:
   ios: true
   image_path: assets/branding/artham_app_icon_ios_1024.png
   remove_alpha_ios: true
-  adaptive_icon_background: "#ECE3FF"
-  adaptive_icon_foreground: assets/branding/artham_app_icon_ios_1024.png
+  adaptive_icon_background: assets/branding/artham_adaptive_background.png
+  adaptive_icon_foreground: assets/branding/artham_adaptive_foreground.png
   min_sdk_android: 21
-
 # Generates the native Android and iOS launch screens using the same artwork.
 # Plain native launch surface; the animated Flutter splash takes over on first frame.
 flutter_native_splash:
   color: "#EFE7FF"
   android: true
   ios: true
+  web: false
   android_12:
     color: "#EFE7FF"
-
