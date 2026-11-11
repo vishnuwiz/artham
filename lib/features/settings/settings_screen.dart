@@ -1,3 +1,7 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
@@ -317,6 +321,54 @@ class _SettingsScreenState extends State<SettingsScreen>
     }
   }
 
+  /// Opens the native Save As document picker (Android/iOS).
+  /// Unlike the share sheet, this lets users choose a storage location.
+  Future<void> _saveExportFile({required bool fullBackup}) async {
+    if (_isExporting) return;
+
+    setState(() => _isExporting = true);
+    try {
+      final exportService = DataExportService(widget.database);
+      final content = fullBackup
+          ? await exportService.buildFullBackupJson()
+          : await exportService.buildTransactionsCsv();
+      final bytes = Uint8List.fromList(
+        utf8.encode(fullBackup ? content : '\uFEFF$content'),
+      );
+      final fileName = fullBackup
+          ? 'artham_backup.json'
+          : 'artham_transactions.csv';
+
+      final savedUri = await FilePicker.saveFile(
+        dialogTitle: fullBackup
+            ? 'Save Artham JSON backup'
+            : 'Save Artham transaction CSV',
+        fileName: fileName,
+        bytes: bytes,
+        mimeType: fullBackup ? 'application/json' : 'text/csv',
+      );
+
+      if (!mounted) return;
+      if (savedUri == null) {
+        _showMessage('Save cancelled.');
+      } else {
+        _showMessage(
+          fullBackup
+              ? 'JSON backup saved successfully.'
+              : 'Transaction CSV saved successfully.',
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        _showMessage('Unable to save the export: $error');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isExporting = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return ArthamScaffold(
@@ -573,7 +625,15 @@ class _SettingsScreenState extends State<SettingsScreen>
               minHeight: 3,
             ),
           ],
-          const SizedBox(height: 14),
+          const SizedBox(height: 16),
+          const Text(
+            'Transaction history · CSV',
+            style: TextStyle(
+              color: ArthamColors.text,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 9),
           Wrap(
             spacing: 10,
             runSpacing: 10,
@@ -582,8 +642,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                 onPressed: _isExporting
                     ? null
                     : () => _shareExportFile(fullBackup: false),
-                icon: const Icon(Icons.table_view_outlined),
-                label: const Text('Export CSV'),
+                icon: const Icon(Icons.share_outlined),
+                label: const Text('Share CSV'),
                 style: OutlinedButton.styleFrom(
                   foregroundColor: ArthamColors.lavender,
                 ),
@@ -591,9 +651,47 @@ class _SettingsScreenState extends State<SettingsScreen>
               FilledButton.icon(
                 onPressed: _isExporting
                     ? null
+                    : () => _saveExportFile(fullBackup: false),
+                icon: const Icon(Icons.save_alt_rounded),
+                label: const Text('Save CSV'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: ArthamColors.lavender,
+                  foregroundColor: ArthamColors.onAccent,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 18),
+          const Divider(color: ArthamColors.line),
+          const SizedBox(height: 12),
+          const Text(
+            'Complete backup · JSON',
+            style: TextStyle(
+              color: ArthamColors.text,
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 9),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _isExporting
+                    ? null
                     : () => _shareExportFile(fullBackup: true),
-                icon: const Icon(Icons.backup_outlined),
-                label: const Text('Full JSON backup'),
+                icon: const Icon(Icons.share_outlined),
+                label: const Text('Share JSON'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: ArthamColors.lavender,
+                ),
+              ),
+              FilledButton.icon(
+                onPressed: _isExporting
+                    ? null
+                    : () => _saveExportFile(fullBackup: true),
+                icon: const Icon(Icons.save_alt_rounded),
+                label: const Text('Save JSON'),
                 style: FilledButton.styleFrom(
                   backgroundColor: ArthamColors.lavender,
                   foregroundColor: ArthamColors.onAccent,
