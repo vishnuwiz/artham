@@ -40,6 +40,17 @@ void main() {
 
     expect(find.text('Start with useful categories.'), findsOneWidget);
     expect(find.text('EXPENSE CATEGORIES'), findsOneWidget);
+
+    final categoriesList = find.byKey(const ValueKey('setup-categories'));
+    final categoriesScrollable = find.descendant(
+      of: categoriesList,
+      matching: find.byType(Scrollable),
+    ).first;
+    await tester.scrollUntilVisible(
+      find.text('INCOME CATEGORIES'),
+      250,
+      scrollable: categoriesScrollable,
+    );
     expect(find.text('INCOME CATEGORIES'), findsOneWidget);
 
     final categories = await database.select(database.categories).get();
