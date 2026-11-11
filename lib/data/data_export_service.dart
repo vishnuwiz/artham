@@ -138,7 +138,7 @@ class DataExportService {
     return DataExportFile(
       fileName: 'artham_transactions_${dateSuffix}_${_timeStamp(timestamp)}.csv',
       mimeType: 'text/csv',
-      contents: '\uFEFF${csv}',
+      contents: '\uFEFF$csv',
       recordCount: transactions.length,
     );
   }
@@ -288,7 +288,7 @@ class DataExportService {
   static String _csvCell(String value) {
     final firstNonWhitespace = value.trimLeft();
     if (RegExp(r'^[=+\-@]').hasMatch(firstNonWhitespace)) {
-      value = "'${value}";
+      value = "'$value";
     }
     return '"${value.replaceAll('"', '""')}"';
   }
@@ -298,7 +298,7 @@ class DataExportService {
     final absolute = negative ? -paise : paise;
     final rupees = absolute ~/ 100;
     final subRupees = (absolute % 100).toString().padLeft(2, '0');
-    return '${negative ? '-' : ''}${rupees}.${subRupees}';
+    return '${negative ? '-' : ''}$rupees.$subRupees';
   }
 
   static DateTime _dateOnly(DateTime date) =>
