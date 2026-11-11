@@ -1339,7 +1339,7 @@ class _ActivityHero extends StatelessWidget {
                               color: AC.textSoft,
                             ),
                             SizedBox(width: 8),
-                            const Expanded(
+                            Expanded(
                               child: Text(
                                 'Search transactions',
                                 maxLines: 1,
