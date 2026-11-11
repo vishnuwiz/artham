@@ -150,10 +150,9 @@ Other screens, repositories, and features are maintained in their respective fol
 
 - Store monetary values as integer paise, not floating-point rupees.
 - Maintain `tool/data/merchant_catalog.json` as the single source of truth for merchant names, categories and aliases. Run `python tool/generate_merchant_catalog.py` after edits and `python tool/generate_merchant_catalog.py --check` to verify the generated Dart catalogue; recognition must remain on-device and deterministic.
-- Prefer an explicit payee/counterparty extracted from a bank alert over provider names elsewhere in the SMS.
+- Prefer an explicit payee/counterparty extracted from a manually imported bank alert over provider names elsewhere in the SMS.
 - Keep account balances consistent when creating, editing, or deleting transactions.
 - Display saved bank accounts using the bank name and masked last four digits; do not depend on a user-entered nickname for account identification.
-- Keep native Android SMS `DateTime` values in the Unix-seconds format expected by Drift, and keep auxiliary pending-queue timestamp conversions consistent with their Dart readers.
 - Internal transfers should update the source and destination accounts without changing the user's overall net worth.
 - Keep budget progress in sync with the transactions that contribute to each budget.
 - Recurring budget templates create budget-limit rows only; they must never create financial transactions or alter account balances.
