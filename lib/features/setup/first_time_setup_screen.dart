@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
@@ -33,15 +34,45 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
   List<Category> _income = [];
   int _step = 0;
   bool _busy = false;
+  bool _isTransitioning = false;
 
+  final PageController _stepPageController = PageController();
   final ScrollController _categoriesScrollController = ScrollController(
     keepScrollOffset: false,
   );
 
   @override
   void dispose() {
+    _stepPageController.dispose();
     _categoriesScrollController.dispose();
     super.dispose();
+  }
+
+  Future<void> _animateToStep(int targetStep) async {
+    if (_isTransitioning || targetStep == _step) return;
+
+    if (!_stepPageController.hasClients) {
+      if (mounted) setState(() => _step = targetStep);
+      return;
+    }
+
+    setState(() => _isTransitioning = true);
+    try {
+      await _stepPageController.animateToPage(
+        targetStep,
+        duration: const Duration(milliseconds: 600),
+        curve: Curves.easeInOutCubic,
+      );
+    } finally {
+      if (mounted) setState(() => _isTransitioning = false);
+    }
+  }
+
+  void _handlePageChanged(int page) {
+    HapticFeedback.selectionClick();
+    if (mounted && page != _step) {
+      setState(() => _step = page);
+    }
   }
 
   Future<void> _addAccount() async {
@@ -67,8 +98,8 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
       setState(() {
         _expenses = expenses;
         _income = income;
-        _step = 1;
       });
+      await _animateToStep(1);
     } catch (error) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -85,20 +116,22 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
     if (_step == 0) {
       await _loadCategories();
     } else if (_step == 1) {
-      setState(() => _step = 2);
+      await _animateToStep(2);
     } else {
       await _finish();
     }
   }
 
   Future<void> _finish() async {
-    if (_busy) return;
+    if (_busy || _isTransitioning) return;
     setState(() => _busy = true);
     await widget.onFinish();
   }
 
-  void _back() {
-    if (_step > 0 && !_busy) setState(() => _step--);
+  Future<void> _back() async {
+    if (_step > 0 && !_busy && !_isTransitioning) {
+      await _animateToStep(_step - 1);
+    }
   }
 
   @override
@@ -112,7 +145,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
         ),
         actions: [
           TextButton(
-            onPressed: _busy ? null : _finish,
+            onPressed: _busy || _isTransitioning ? null : _finish,
             child: const Text('Skip'),
           ),
           const SizedBox(width: 8),
@@ -126,47 +159,93 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Text(
-                        'STEP ${_step + 1} OF 3',
-                        style: const TextStyle(
-                          color: ArthamColors.muted,
-                          fontSize: 10,
-                          fontWeight: FontWeight.w800,
-                          letterSpacing: 1.2,
+                  AnimatedSwitcher(
+                    duration: const Duration(milliseconds: 280),
+                    switchInCurve: Curves.easeOutCubic,
+                    switchOutCurve: Curves.easeInCubic,
+                    transitionBuilder: (child, animation) {
+                      final slide = Tween<Offset>(
+                        begin: const Offset(0, 0.22),
+                        end: Offset.zero,
+                      ).animate(
+                        CurvedAnimation(
+                          parent: animation,
+                          curve: Curves.easeOutCubic,
                         ),
-                      ),
-                      const Spacer(),
-                      Text(
-                        labels[_step],
-                        style: const TextStyle(
-                          color: ArthamColors.lavender,
-                          fontWeight: FontWeight.w700,
+                      );
+                      return FadeTransition(
+                        opacity: animation,
+                        child: SlideTransition(
+                          position: slide,
+                          child: child,
                         ),
-                      ),
-                    ],
+                      );
+                    },
+                    child: Row(
+                      key: ValueKey<int>(_step),
+                      children: [
+                        Text(
+                          'STEP ${_step + 1} OF 3',
+                          style: const TextStyle(
+                            color: ArthamColors.muted,
+                            fontSize: 10,
+                            fontWeight: FontWeight.w800,
+                            letterSpacing: 1.2,
+                          ),
+                        ),
+                        const Spacer(),
+                        Text(
+                          labels[_step],
+                          style: const TextStyle(
+                            color: ArthamColors.lavender,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
                   const SizedBox(height: 10),
                   ClipRRect(
                     borderRadius: BorderRadius.circular(10),
-                    child: LinearProgressIndicator(
-                      value: (_step + 1) / 3,
-                      minHeight: 5,
-                      backgroundColor: ArthamColors.line,
+                    child: SizedBox(
+                      height: 5,
+                      child: LayoutBuilder(
+                        builder: (context, constraints) {
+                          return Stack(
+                            alignment: Alignment.centerLeft,
+                            children: [
+                              const Positioned.fill(
+                                child: ColoredBox(color: ArthamColors.line),
+                              ),
+                              AnimatedContainer(
+                                duration: const Duration(milliseconds: 600),
+                                curve: Curves.easeInOutCubic,
+                                width: constraints.maxWidth * ((_step + 1) / 3),
+                                height: 5,
+                                decoration: BoxDecoration(
+                                  gradient: ArthamColors.onTrackGradient,
+                                  borderRadius: BorderRadius.circular(10),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      ),
                     ),
                   ),
                 ],
               ),
             ),
             Expanded(
-              child: AnimatedSwitcher(
-                duration: const Duration(milliseconds: 220),
-                child: _step == 0
-                    ? _accountStep()
-                    : _step == 1
-                        ? _categoriesStep()
-                        : _readyStep(),
+              child: PageView(
+                controller: _stepPageController,
+                physics: const NeverScrollableScrollPhysics(),
+                onPageChanged: _handlePageChanged,
+                children: [
+                  _accountStep(),
+                  _categoriesStep(),
+                  _readyStep(),
+                ],
               ),
             ),
             SafeArea(
@@ -176,14 +255,14 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                 children: [
                   if (_step > 0)
                     TextButton.icon(
-                      onPressed: _busy ? null : _back,
+                      onPressed: _busy || _isTransitioning ? null : _back,
                       icon: const Icon(Icons.arrow_back_rounded, size: 18),
                       label: const Text('Back'),
                     ),
                   const Spacer(),
                   FilledButton.icon(
-                    onPressed: _busy ? null : _next,
-                    icon: _busy
+                    onPressed: _busy || _isTransitioning ? null : _next,
+                    icon: _busy || _isTransitioning
                         ? const SizedBox(
                             width: 17,
                             height: 17,
@@ -199,8 +278,10 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                           ),
                     label: Text(
                       _busy
-                          ? 'Please wait...'
-                          : _step == 2
+                          ? 'Preparing...'
+                          : _isTransitioning
+                              ? 'Moving...'
+                              : _step == 2
                               ? 'Go to dashboard'
                               : 'Continue',
                     ),
