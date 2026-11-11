@@ -2,8 +2,10 @@ import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../data/app_database.dart';
+import '../../data/data_export_service.dart';
 import '../../data/repositories/sms_import_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
@@ -28,6 +30,7 @@ class _SettingsScreenState extends State<SettingsScreen>
   late final SmsImportRepository _smsRepository;
 
   bool _isLoading = true;
+  bool _isExporting = false;
   bool _isSupported = false;
   bool _permissionGranted = false;
   bool _isEnabled = false;
@@ -267,6 +270,50 @@ class _SettingsScreenState extends State<SettingsScreen>
     );
   }
 
+  Future<void> _shareExportFile({required bool fullBackup}) async {
+    if (_isExporting) return;
+
+    setState(() => _isExporting = true);
+    try {
+      final exportService = DataExportService(widget.database);
+      final file = fullBackup
+          ? await exportService.createFullBackupFile()
+          : await exportService.createTransactionsCsvFile();
+
+      if (!mounted) return;
+      final renderObject = context.findRenderObject();
+      final shareOrigin = renderObject is RenderBox && renderObject.hasSize
+          ? renderObject.localToGlobal(Offset.zero) & renderObject.size
+          : null;
+
+      await SharePlus.instance.share(
+        ShareParams(
+          files: [file],
+          title: fullBackup ? 'Artham full data backup' : 'Artham transactions',
+          text: fullBackup
+              ? 'Artham JSON backup. This file contains personal financial data; '
+                  'store and share it securely.'
+              : 'Artham transaction history in CSV format.',
+          sharePositionOrigin: shareOrigin,
+        ),
+      );
+
+      if (mounted) {
+        _showMessage(
+          'Export file prepared. Choose an app or save location in the share sheet.',
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        _showMessage('Unable to create the export: $error');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isExporting = false);
+      }
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -306,6 +353,8 @@ class _SettingsScreenState extends State<SettingsScreen>
                     style: const TextStyle(color: Colors.red),
                   ),
                 ],
+                const SizedBox(height: 18),
+                _buildDataExportCard(),
                 const SizedBox(height: 18),
                 _buildPrivacyCard(),
               ],
@@ -478,6 +527,77 @@ class _SettingsScreenState extends State<SettingsScreen>
                 onImport: (accountId) => _importPending(pending, accountId),
               ),
             ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildDataExportCard() {
+    return _SettingsCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _SectionHeading(
+            icon: Icons.file_download_outlined,
+            title: 'Export your data',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Export your transaction history for spreadsheets or create a '
+            'JSON backup containing your accounts, transactions, categories, '
+            'merchants, budgets and recurring schedules.',
+            style: TextStyle(
+              color: Color(0xFF52636A),
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 6),
+          const Text(
+            'Exports are generated on this device. JSON backups are not '
+            'encrypted and contain personal financial information; store '
+            'them securely. Restore is not included yet.',
+            style: TextStyle(
+              color: Color(0xFF68777D),
+              fontSize: 11,
+              height: 1.45,
+            ),
+          ),
+          if (_isExporting) ...[
+            const SizedBox(height: 14),
+            const LinearProgressIndicator(
+              color: Color(0xFF13866A),
+              minHeight: 3,
+            ),
+          ],
+          const SizedBox(height: 14),
+          Wrap(
+            spacing: 10,
+            runSpacing: 10,
+            children: [
+              OutlinedButton.icon(
+                onPressed: _isExporting
+                    ? null
+                    : () => _shareExportFile(fullBackup: false),
+                icon: const Icon(Icons.table_view_outlined),
+                label: const Text('Export CSV'),
+                style: OutlinedButton.styleFrom(
+                  foregroundColor: const Color(0xFF13866A),
+                ),
+              ),
+              FilledButton.icon(
+                onPressed: _isExporting
+                    ? null
+                    : () => _shareExportFile(fullBackup: true),
+                icon: const Icon(Icons.backup_outlined),
+                label: const Text('Full JSON backup'),
+                style: FilledButton.styleFrom(
+                  backgroundColor: const Color(0xFF13866A),
+                  foregroundColor: Colors.white,
+                ),
+              ),
+            ],
           ),
         ],
       ),
