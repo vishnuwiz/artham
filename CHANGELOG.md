@@ -6,6 +6,23 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 7 — Local Data Export (2026-11-11)
+
+#### Added
+- Added a transaction CSV export with account, transfer destination, category, merchant, reference, notes, source, date, and amount fields.
+- Added a structured JSON backup containing all Drift tables and the Android pending-SMS review queue when available.
+- Added native Android/iOS sharing so users can save or share generated exports from Settings.
+- Added CSV formula-injection protection for untrusted text fields and UTF-8 BOM support for spreadsheet compatibility.
+
+#### Safety and data
+- Export generation runs locally and does not upload financial data to a server.
+- The JSON backup is unencrypted and the Settings screen warns users to store it securely.
+- No database schema change or transaction mutation is required. Restore/import is not part of this stage.
+
+#### Verification
+- Added unit tests for empty and populated CSV exports and the JSON backup structure. Local execution is pending dependency installation and test commands.
+
+
 ### Stage 6C — Merchant-Level Spending Insights (2026-11-10)
 
 #### Added
