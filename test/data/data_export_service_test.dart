@@ -87,7 +87,7 @@ void main() {
     expect(file.mimeType, 'text/csv');
     expect(file.recordCount, 2);
     expect(file.contents, startsWith('\uFEFF'));
-    expect(file.contents, contains('"12.45"'));
+    expect(file.contents, contains('"123.45"'));
     expect(file.contents, contains('"Federal Bank"'));
     expect(file.contents, contains('"1255"'));
     expect(file.contents, contains('"Cafe Sample"'));
