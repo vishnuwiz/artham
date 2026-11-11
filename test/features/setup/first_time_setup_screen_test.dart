@@ -33,15 +33,22 @@ void main() {
     await tester.pump();
 
     expect(find.text('Bring your accounts together.'), findsOneWidget);
+    expect(find.text('STEP 1 OF 3'), findsOneWidget);
 
     await tester.tap(find.text('Continue'));
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
 
     expect(find.text('Start with useful categories.'), findsOneWidget);
+    expect(find.text('STEP 2 OF 3'), findsOneWidget);
+    expect(find.text('A CLEARER VIEW OF EVERY RUPEE').hitTestable(),
+        findsOneWidget);
     expect(find.text('EXPENSE CATEGORIES'), findsOneWidget);
+    expect(find.text('11'), findsOneWidget);
+    expect(find.text('6'), findsOneWidget);
 
-    final categoriesList = find.byKey(const ValueKey('setup-categories'));
+    final categoriesList =
+        find.byKey(const PageStorageKey<String>('setup-categories'));
     final categoriesScrollable = find.descendant(
       of: categoriesList,
       matching: find.byType(Scrollable),
@@ -60,6 +67,8 @@ void main() {
     await tester.pump();
 
     expect(find.text("You're all set."), findsOneWidget);
+    expect(find.text('STEP 3 OF 3'), findsOneWidget);
+    expect(find.text('11 expenses · 6 income'), findsOneWidget);
     await tester.tap(find.text('Go to dashboard'));
     await tester.pump();
 
