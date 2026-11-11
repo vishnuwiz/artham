@@ -10,32 +10,8 @@ class DuplicateSmsImportException implements Exception {
   String toString() => 'This bank SMS has already been imported.';
 }
 
-class PendingSmsImport {
-  final int id;
-  final String fingerprint;
-  final String sender;
-  final DateTime receivedAt;
-  final int amountPaise;
-  final String transactionType;
-  final DateTime transactionDate;
-  final String? referenceNumber;
-  final String description;
-  final String suggestedCategory;
-
-  const PendingSmsImport({
-    required this.id,
-    required this.fingerprint,
-    required this.sender,
-    required this.receivedAt,
-    required this.amountPaise,
-    required this.transactionType,
-    required this.transactionDate,
-    required this.referenceNumber,
-    required this.description,
-    required this.suggestedCategory,
-  });
-}
-
+/// Saves a user-reviewed SMS transaction and protects manual imports from
+/// duplicates. This repository does not read or monitor the device inbox.
 class SmsImportRepository {
   final AppDatabase database;
 
@@ -48,75 +24,7 @@ class SmsImportRepository {
     return existing != null;
   }
 
-  /// Creates a small auxiliary queue table used by the native Android SMS
-  /// receiver for messages that could not be safely matched to an account.
-  /// It stores parsed fields only, never the original SMS body.
-  Future<void> ensurePendingImportsTable() {
-    return database.customStatement('''
-      CREATE TABLE IF NOT EXISTS pending_sms_imports (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fingerprint TEXT NOT NULL UNIQUE,
-        sender TEXT NOT NULL,
-        received_at INTEGER NOT NULL,
-        amount_paise INTEGER NOT NULL,
-        transaction_type TEXT NOT NULL,
-        transaction_date INTEGER NOT NULL,
-        reference_number TEXT,
-        description TEXT NOT NULL,
-        suggested_category TEXT NOT NULL
-      )
-    ''');
-  }
-
-  Future<List<PendingSmsImport>> getPendingImports() async {
-    await ensurePendingImportsTable();
-    final rows = await database.customSelect(
-      '''
-      SELECT id, fingerprint, sender, received_at, amount_paise,
-             transaction_type, transaction_date, reference_number,
-             description, suggested_category
-      FROM pending_sms_imports
-      ORDER BY received_at DESC, id DESC
-      ''',
-    ).get();
-
-    final pending = <PendingSmsImport>[];
-    for (final row in rows) {
-      final fingerprint = row.read<String>('fingerprint');
-      if (await isDuplicate(fingerprint)) {
-        await deletePendingImport(row.read<int>('id'));
-        continue;
-      }
-      pending.add(
-        PendingSmsImport(
-          id: row.read<int>('id'),
-          fingerprint: fingerprint,
-          sender: row.read<String>('sender'),
-          receivedAt: DateTime.fromMillisecondsSinceEpoch(
-            row.read<int>('received_at'),
-          ),
-          amountPaise: row.read<int>('amount_paise'),
-          transactionType: row.read<String>('transaction_type'),
-          transactionDate: DateTime.fromMillisecondsSinceEpoch(
-            row.read<int>('transaction_date'),
-          ),
-          referenceNumber: row.readNullable<String>('reference_number'),
-          description: row.read<String>('description'),
-          suggestedCategory: row.read<String>('suggested_category'),
-        ),
-      );
-    }
-    return pending;
-  }
-
-  Future<void> deletePendingImport(int id) async {
-    await database.customUpdate(
-      'DELETE FROM pending_sms_imports WHERE id = ?',
-      variables: [Variable.withInt(id)],
-    );
-  }
-
-  /// Imports a reviewed SMS as a normal transaction and records its
+  /// Imports a user-reviewed SMS as a normal transaction and records its
   /// fingerprint in the same database transaction for duplicate protection.
   ///
   /// The original SMS body is not stored. Only its fingerprint and the

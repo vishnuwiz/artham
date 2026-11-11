@@ -6,6 +6,22 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 8 — Remove Automatic Android SMS Intake (2026-11-11)
+
+#### Changed
+- Removed the Android incoming-SMS broadcast receiver, `RECEIVE_SMS` permission declaration, and native SMS permission/settings channel.
+- Removed automatic SMS enable/disable controls, default-account matching preferences, and the pending automatic-import review UI.
+- Kept manual SMS paste/share import in Activity, including editable transaction review, local duplicate detection, and merchant/category recognition.
+
+#### Privacy and data preservation
+- Artham no longer monitors incoming messages or requests SMS permissions.
+- Existing `ProcessedSms` fingerprints remain in the local database so older imports and duplicate protection are preserved.
+- No database migration or transaction deletion is required. Legacy pending-review rows from older installations are left untouched and remain included in JSON backups when present.
+
+#### Verification
+- Android manifest permission/receiver audit, Flutter analysis, unit/widget tests, and debug APK build are required before merging.
+- Confirm on a device that Activity > Import SMS still parses and imports a user-selected message.
+
 
 ### Stage 7 — Local Data Export (2026-11-11)
 

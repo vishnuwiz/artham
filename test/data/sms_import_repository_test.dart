@@ -1,4 +1,4 @@
-import 'package:drift/drift.dart' show Value, Variable;
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -107,48 +107,6 @@ void main() {
 
     expect(await database.select(database.moneyTransactions).get(), hasLength(1));
     expect(await database.select(database.processedSms).get(), hasLength(1));
-  });
-
-  test('lists parsed pending automatic SMS imports without the original body', () async {
-    const receivedAt = 1794250000000;
-    const transactionDate = 1794240000000;
-
-    await repository.ensurePendingImportsTable();
-    await database.customInsert(
-      '''
-      INSERT INTO pending_sms_imports (
-        fingerprint, sender, received_at, amount_paise, transaction_type,
-        transaction_date, reference_number, description, suggested_category
-      ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-      ''',
-      variables: [
-        Variable.withString('pending-fingerprint-001'),
-        Variable.withString('VM-HDFCBK'),
-        Variable.withInt(receivedAt),
-        Variable.withInt(125050),
-        Variable.withString('expense'),
-        Variable.withInt(transactionDate),
-        Variable.withString('UTR12345678'),
-        Variable.withString('Swiggy'),
-        Variable.withString('Food & Dining'),
-      ],
-    );
-
-    final pending = await repository.getPendingImports();
-
-    expect(pending, hasLength(1));
-    expect(pending.single.sender, 'VM-HDFCBK');
-    expect(pending.single.amountPaise, 125050);
-    expect(pending.single.transactionType, 'expense');
-    expect(pending.single.description, 'Swiggy');
-    expect(pending.single.referenceNumber, 'UTR12345678');
-    expect(
-      pending.single.receivedAt,
-      DateTime.fromMillisecondsSinceEpoch(receivedAt),
-    );
-
-    await repository.deletePendingImport(pending.single.id);
-    expect(await repository.getPendingImports(), isEmpty);
   });
 
   test('normalizes message case and whitespace for duplicate fingerprints', () {
