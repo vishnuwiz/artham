@@ -1,11 +1,11 @@
 import 'dart:convert';
 
+import 'package:artham/data/app_database.dart';
+import 'package:artham/data/data_export_service.dart';
 import 'package:csv/csv.dart';
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:artham/data/app_database.dart';
-import 'package:artham/data/data_export_service.dart';
 
 void main() {
   late AppDatabase database;
@@ -106,17 +106,20 @@ void main() {
 
     expect(backup['format'], 'artham_backup');
     expect(backup['formatVersion'], 1);
-    expect(data.keys, containsAll([
-      'bankAccounts',
-      'categories',
-      'merchants',
-      'moneyTransactions',
-      'budgets',
-      'budgetTemplates',
-      'processedSms',
-      'recurringSchedules',
-      'pendingSmsImports',
-    ]));
+    expect(
+      data.keys,
+      containsAll([
+        'bankAccounts',
+        'categories',
+        'merchants',
+        'moneyTransactions',
+        'budgets',
+        'budgetTemplates',
+        'processedSms',
+        'recurringSchedules',
+        'pendingSmsImports',
+      ]),
+    );
     expect(exportedTransaction['amountPaise'], 12500);
     expect(exportedTransaction['transactionType'], 'expense');
   });
