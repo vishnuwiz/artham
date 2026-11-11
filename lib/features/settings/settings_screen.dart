@@ -289,7 +289,9 @@ class _SettingsScreenState extends State<SettingsScreen>
       await SharePlus.instance.share(
         ShareParams(
           files: [file],
-          title: fullBackup ? 'Artham full data backup' : 'Artham transactions',
+          title: fullBackup
+              ? 'Artham full data backup'
+              : 'Artham transactions',
           text: fullBackup
               ? 'Artham JSON backup. This file contains personal financial data; '
                   'store and share it securely.'
