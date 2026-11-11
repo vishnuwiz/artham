@@ -60,6 +60,16 @@ jobs:
       - name: Build Android release APK
         run: flutter build apk --release
 
+      - name: Upload Android release APK and resolved dependency lockfile
+        uses: actions/upload-artifact@v4
+        with:
+          name: artham-stage-8-data-export-${{ github.sha }}
+          path: |
+            build/app/outputs/flutter-apk/app-release.apk
+            pubspec.lock
+          if-no-files-found: error
+          retention-days: 7
+
       - name: Run Android JVM tests
         working-directory: android
         run: gradle :app:testDebugUnitTest

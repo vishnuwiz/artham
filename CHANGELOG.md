@@ -6,6 +6,27 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Stage 8 — Local Data Export and Financial Backup (2026-11-10)
+
+#### Added
+- Added transaction export to UTF-8 CSV, including income, expenses and internal transfers, with account, category, merchant, reference, notes and source context.
+- Added an optional inclusive start/end date filter for transaction exports.
+- Added a versioned JSON financial backup for bank accounts, categories, merchants, transactions, monthly budgets, recurring budget templates and recurring schedules.
+- Added a Settings entry and native system share/save flow for Android and iOS.
+
+#### Privacy and data integrity
+- Generate export files locally; Artham does not upload them to a server.
+- Ask for confirmation before opening the system share sheet and warn users to choose a trusted destination.
+- Neutralise spreadsheet formula prefixes in CSV text cells to reduce CSV formula-injection risk.
+- Keep currency values as integer paise in JSON backups and exact two-decimal rupee strings in CSV.
+- Exclude SMS processing fingerprints and the pending SMS review queue from the financial backup.
+- No database migration or automatic data changes are introduced. Backup restore is not included in this stage.
+
+#### Verification
+- Add tests for CSV contents, transfer destination context, inclusive date filtering, formula-prefix neutralisation, invalid date ranges, JSON table coverage and integer-paise preservation.
+- Add a widget test for the export choices and date-range controls.
+
+
 ### Stage 6C — Merchant-Level Spending Insights (2026-11-10)
 
 #### Added

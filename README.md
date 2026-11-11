@@ -44,6 +44,14 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 - Expanded Settings options.
 - Further performance improvements.
 
+### Data export
+
+- Export income, expense and transfer transactions to a UTF-8 CSV file that can be opened in Excel, Google Sheets, and other spreadsheet applications.
+- Export all transactions or select an inclusive date range.
+- Create a versioned JSON financial backup containing bank accounts, categories, merchants, transactions, budgets, recurring budget templates, and recurring schedules.
+- Exports are generated from the local database and passed to the native share/save sheet only after user confirmation.
+- SMS-processing fingerprints and the pending SMS review queue are excluded. Restoring a JSON backup is not included in this export-only stage.
+
 ## Tech Stack
 
 | Area | Technology |
