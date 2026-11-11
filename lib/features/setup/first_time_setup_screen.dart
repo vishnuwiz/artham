@@ -34,6 +34,16 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
   int _step = 0;
   bool _busy = false;
 
+  final ScrollController _categoriesScrollController = ScrollController(
+    keepScrollOffset: false,
+  );
+
+  @override
+  void dispose() {
+    _categoriesScrollController.dispose();
+    super.dispose();
+  }
+
   Future<void> _addAccount() async {
     final saved = await Navigator.push<bool>(
       context,
@@ -119,7 +129,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                   Row(
                     children: [
                       Text(
-                        'STEP \${_step + 1} OF 3',
+                        'STEP ${_step + 1} OF 3',
                         style: const TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 10,
@@ -249,7 +259,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               }
               if (snapshot.hasError) {
                 return Text(
-                  'Unable to load accounts: \${snapshot.error}',
+                  'Unable to load accounts: ${snapshot.error}',
                   style: const TextStyle(color: ArthamColors.debit),
                 );
               }
@@ -326,7 +336,9 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
 
   Widget _categoriesStep() {
     return ListView(
-      key: const ValueKey('setup-categories'),
+      key: const PageStorageKey<String>('setup-categories'),
+      controller: _categoriesScrollController,
+      primary: false,
       padding: const EdgeInsets.fromLTRB(22, 8, 22, 24),
       children: [
         const Text(
@@ -392,7 +404,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                 ),
               ),
               Text(
-                '\${items.length}',
+                '${items.length}',
                 style: const TextStyle(color: ArthamColors.muted),
               ),
             ],
@@ -465,7 +477,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               _summaryRow(
                 Icons.category_outlined,
                 'Starter categories',
-                '\${_expenses.length} expenses · \${_income.length} income',
+                '${_expenses.length} expenses · ${_income.length} income',
               ),
               const Divider(height: 22),
               _summaryRow(
