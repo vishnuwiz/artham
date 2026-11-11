@@ -36,16 +36,13 @@ void main() {
     expect(find.text('STEP 1 OF 3'), findsOneWidget);
 
     await tester.tap(find.text('Continue'));
-    await tester.pump();
-    await tester.pump(const Duration(milliseconds: 100));
+    await tester.pumpAndSettle();
 
     expect(find.text('Start with useful categories.'), findsOneWidget);
     expect(find.text('STEP 2 OF 3'), findsOneWidget);
     expect(find.text('A CLEARER VIEW OF EVERY RUPEE').hitTestable(),
         findsOneWidget);
     expect(find.text('EXPENSE CATEGORIES'), findsOneWidget);
-    expect(find.text('11'), findsOneWidget);
-    expect(find.text('6'), findsOneWidget);
 
     final categoriesList =
         find.byKey(const PageStorageKey<String>('setup-categories'));
@@ -62,9 +59,17 @@ void main() {
 
     final categories = await database.select(database.categories).get();
     expect(categories, hasLength(17));
+    expect(
+      categories.where((category) => category.type == 'expense'),
+      hasLength(11),
+    );
+    expect(
+      categories.where((category) => category.type == 'income'),
+      hasLength(6),
+    );
 
     await tester.tap(find.text('Continue'));
-    await tester.pump();
+    await tester.pumpAndSettle();
 
     expect(find.text("You're all set."), findsOneWidget);
     expect(find.text('STEP 3 OF 3'), findsOneWidget);
