@@ -1,14 +1,14 @@
 import 'package:flutter/foundation.dart'
     show defaultTargetPlatform, TargetPlatform;
 import 'package:flutter/material.dart';
-import 'package:share_plus/share_plus.dart';
-import '../../theme/artham_theme.dart';
 import 'package:flutter/services.dart';
+import 'package:share_plus/share_plus.dart';
 
 import '../../data/app_database.dart';
 import '../../data/data_export_service.dart';
 import '../../data/repositories/sms_import_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
+import '../../theme/artham_theme.dart';
 
 const MethodChannel _automaticSmsChannel = MethodChannel(
   'artham/automatic_sms',
@@ -596,7 +596,7 @@ class _SettingsScreenState extends State<SettingsScreen>
                 label: const Text('Full JSON backup'),
                 style: FilledButton.styleFrom(
                   backgroundColor: ArthamColors.lavender,
-                  foregroundColor: ArthamColors.background,
+                  foregroundColor: ArthamColors.onAccent,
                 ),
               ),
             ],
