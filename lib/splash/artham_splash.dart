@@ -13,7 +13,11 @@ const _peach = Color(0xFFFFD0B5);
 
 /// Colour from 0xRRGGBB + alpha (works on every Flutter version).
 Color _c(int rgb, [double a = 1]) => Color.fromRGBO(
-    (rgb >> 16) & 255, (rgb >> 8) & 255, rgb & 255, a.clamp(0.0, 1.0));
+  (rgb >> 16) & 255,
+  (rgb >> 8) & 255,
+  rgb & 255,
+  a.clamp(0.0, 1.0),
+);
 
 /// Wrap your home screen with this. The splash plays once per cold start,
 /// then cross-fades into [child].
@@ -41,7 +45,10 @@ class _SplashGateState extends State<SplashGate> {
                 }
               },
             )
-          : KeyedSubtree(key: const ValueKey('artham-app'), child: widget.child),
+          : KeyedSubtree(
+              key: const ValueKey('artham-app'),
+              child: widget.child,
+            ),
     );
   }
 }
@@ -103,8 +110,12 @@ class _ArthamSplashState extends State<ArthamSplash>
     super.dispose();
   }
 
-  static double seg(double t, double start, double dur,
-      [Curve curve = Curves.linear]) {
+  static double seg(
+    double t,
+    double start,
+    double dur, [
+    Curve curve = Curves.linear,
+  ]) {
     final v = ((t - start) / dur).clamp(0.0, 1.0);
     return curve.transform(v);
   }
@@ -123,18 +134,34 @@ class _ArthamSplashState extends State<ArthamSplash>
         builder: (context, _) {
           final t = _c.value * _total;
 
-          Widget blob(double start, Color color, double d,
-              {double? top, double? bottom, double? left, double? right}) {
+          Widget blob(
+            double start,
+            Color color,
+            double d, {
+            double? top,
+            double? bottom,
+            double? left,
+            double? right,
+          }) {
             final o = 0.55 * seg(t, start, 1.4, Curves.easeOut);
             return Positioned(
-              top: top, bottom: bottom, left: left, right: right,
+              top: top,
+              bottom: bottom,
+              left: left,
+              right: right,
               child: ImageFiltered(
                 imageFilter: ui.ImageFilter.blur(
-                    sigmaX: 30, sigmaY: 30, tileMode: TileMode.decal),
+                  sigmaX: 30,
+                  sigmaY: 30,
+                  tileMode: TileMode.decal,
+                ),
                 child: Container(
-                  width: d * f, height: d * f,
+                  width: d * f,
+                  height: d * f,
                   decoration: BoxDecoration(
-                      shape: BoxShape.circle, color: color.withAlpha((o * 255).round())),
+                    shape: BoxShape.circle,
+                    color: color.withAlpha((o * 255).round()),
+                  ),
                 ),
               ),
             );
@@ -152,14 +179,30 @@ class _ArthamSplashState extends State<ArthamSplash>
                   gradient: LinearGradient(
                     begin: Alignment(-0.35, -1),
                     end: Alignment(0.35, 1),
-                    colors: [Color(0xFFFFF1E6), Color(0xFFEFE7FF), Color(0xFFD9F3E8)],
+                    colors: [
+                      Color(0xFFFFF1E6),
+                      Color(0xFFEFE7FF),
+                      Color(0xFFD9F3E8),
+                    ],
                     stops: [0, 0.52, 1],
                   ),
                 ),
               ),
               blob(0.1, _peach, 200, top: -40 * f, left: -60 * f),
-              blob(0.3, const Color(0xFFC9B9FB), 240, bottom: 60 * f, right: -90 * f),
-              blob(0.5, const Color(0xFFA6E8CF), 180, bottom: -50 * f, left: -40 * f),
+              blob(
+                0.3,
+                const Color(0xFFC9B9FB),
+                240,
+                bottom: 60 * f,
+                right: -90 * f,
+              ),
+              blob(
+                0.5,
+                const Color(0xFFA6E8CF),
+                180,
+                bottom: -50 * f,
+                left: -40 * f,
+              ),
               Positioned.fill(
                 child: Padding(
                   padding: const EdgeInsets.only(bottom: 24),
@@ -167,7 +210,8 @@ class _ArthamSplashState extends State<ArthamSplash>
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       SizedBox(
-                        width: logoSize, height: logoSize,
+                        width: logoSize,
+                        height: logoSize,
                         child: Semantics(
                           label: 'Artham logo, beta',
                           child: CustomPaint(painter: _LogoPainter(t)),
@@ -182,17 +226,24 @@ class _ArthamSplashState extends State<ArthamSplash>
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Padding(
-                                padding: EdgeInsets.only(left: 6), // balance letter-spacing
-                                child: Text('ARTHAM',
-                                    style: TextStyle(
-                                        color: _ink,
-                                        fontSize: 30,
-                                        fontWeight: FontWeight.w700,
-                                        letterSpacing: 6)),
+                                padding: EdgeInsets.only(
+                                  left: 6,
+                                ), // balance letter-spacing
+                                child: Text(
+                                  'ARTHAM',
+                                  style: TextStyle(
+                                    color: _ink,
+                                    fontSize: 30,
+                                    fontWeight: FontWeight.w700,
+                                    letterSpacing: 6,
+                                  ),
+                                ),
                               ),
                               SizedBox(height: 4),
-                              Text('അർത്ഥം',
-                                  style: TextStyle(color: _muted, fontSize: 15)),
+                              Text(
+                                'അർത്ഥം',
+                                style: TextStyle(color: _muted, fontSize: 15),
+                              ),
                             ],
                           ),
                         ),
@@ -202,17 +253,26 @@ class _ArthamSplashState extends State<ArthamSplash>
                 ),
               ),
               Positioned(
-                left: 0, right: 0, bottom: 46 + bottomInset,
+                left: 0,
+                right: 0,
+                bottom: 46 + bottomInset,
                 child: Opacity(
                   opacity: tagp,
-                  child: const Text('MONEY, MADE MEANINGFUL',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                          color: _muted, fontSize: 11.5, letterSpacing: 3)),
+                  child: const Text(
+                    'MONEY, MADE MEANINGFUL',
+                    textAlign: TextAlign.center,
+                    style: TextStyle(
+                      color: _muted,
+                      fontSize: 11.5,
+                      letterSpacing: 3,
+                    ),
+                  ),
                 ),
               ),
               Positioned(
-                left: 0, right: 0, bottom: 26 + bottomInset,
+                left: 0,
+                right: 0,
+                bottom: 26 + bottomInset,
                 child: Opacity(
                   opacity: dotsp,
                   child: AnimatedBuilder(
@@ -245,8 +305,10 @@ class _ArthamSplashState extends State<ArthamSplash>
         child: Transform.scale(
           scale: 1 + 0.5 * k,
           child: Container(
-              width: 6, height: 6,
-              decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+            width: 6,
+            height: 6,
+            decoration: BoxDecoration(color: color, shape: BoxShape.circle),
+          ),
         ),
       ),
     );
@@ -283,15 +345,19 @@ class _LogoPainter extends CustomPainter {
     canvas.translate(512, 540);
     canvas.scale(0.6 + 0.4 * h);
     canvas.translate(-512, -540);
-    canvas.drawCircle(const Offset(512, 540), 372,
-        Paint()..color = _c(0xFFFFFF, 0.55 * h));
     canvas.drawCircle(
-        const Offset(512, 540),
-        372,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 4
-          ..color = _c(0xFFFFFF, 0.8 * h));
+      const Offset(512, 540),
+      372,
+      Paint()..color = _c(0xFFFFFF, 0.55 * h),
+    );
+    canvas.drawCircle(
+      const Offset(512, 540),
+      372,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 4
+        ..color = _c(0xFFFFFF, 0.8 * h),
+    );
     canvas.restore();
   }
 
@@ -305,7 +371,10 @@ class _LogoPainter extends CustomPainter {
       ..strokeCap = StrokeCap.round
       ..strokeWidth = 96
       ..shader = ui.Gradient.linear(
-          const Offset(0, 276), const Offset(0, 770), colors)
+        const Offset(0, 276),
+        const Offset(0, 770),
+        colors,
+      )
       ..color = _c(0xFFFFFF, alpha);
 
     final shadow = Paint()
@@ -323,12 +392,18 @@ class _LogoPainter extends CustomPainter {
       canvas.drawLine(a2 + dy, Offset.lerp(a2, apex, p2)! + dy, shadow);
     }
     if (p1 > 0) {
-      canvas.drawLine(a1, Offset.lerp(a1, apex, p1)!,
-          stroke([_c(0xC9B9FB), _c(0xA995EE)], 1));
+      canvas.drawLine(
+        a1,
+        Offset.lerp(a1, apex, p1)!,
+        stroke([_c(0xC9B9FB), _c(0xA995EE)], 1),
+      );
     }
     if (p2 > 0) {
-      canvas.drawLine(a2, Offset.lerp(a2, apex, p2)!,
-          stroke([_c(0xA6E8CF), _c(0x78D3B3)], 0.92));
+      canvas.drawLine(
+        a2,
+        Offset.lerp(a2, apex, p2)!,
+        stroke([_c(0xA6E8CF), _c(0x78D3B3)], 0.92),
+      );
     }
   }
 
@@ -346,24 +421,30 @@ class _LogoPainter extends CustomPainter {
 
     const c = Offset(512, 610);
     canvas.drawCircle(
-        c + const Offset(0, 8),
-        104,
-        Paint()
-          ..color = _c(0xB5683A, 0.28)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10));
+      c + const Offset(0, 8),
+      104,
+      Paint()
+        ..color = _c(0xB5683A, 0.28)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 10),
+    );
     canvas.drawCircle(
-        c,
-        104,
-        Paint()
-          ..shader = ui.Gradient.linear(const Offset(408, 506),
-              const Offset(616, 714), [_c(0xFFE7B8), _c(0xFFC79A)]));
+      c,
+      104,
+      Paint()
+        ..shader = ui.Gradient.linear(
+          const Offset(408, 506),
+          const Offset(616, 714),
+          [_c(0xFFE7B8), _c(0xFFC79A)],
+        ),
+    );
     canvas.drawCircle(
-        c,
-        85,
-        Paint()
-          ..style = PaintingStyle.stroke
-          ..strokeWidth = 6
-          ..color = _c(0xFFFFFF, 0.75));
+      c,
+      85,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = 6
+        ..color = _c(0xFFFFFF, 0.75),
+    );
 
     final r = _seg(t, 2.0, 0.6, Curves.easeOut);
     if (r > 0) {
@@ -371,13 +452,14 @@ class _LogoPainter extends CustomPainter {
       canvas.translate(512, 610);
       canvas.scale(1.08);
       canvas.drawPath(
-          _trim(_rupee(), r),
-          Paint()
-            ..style = PaintingStyle.stroke
-            ..strokeWidth = 11
-            ..strokeCap = StrokeCap.round
-            ..strokeJoin = StrokeJoin.round
-            ..color = _c(0x5D4A92));
+        _trim(_rupee(), r),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 11
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round
+          ..color = _c(0x5D4A92),
+      );
       canvas.restore();
     }
     canvas.restore();
@@ -418,7 +500,11 @@ class _LogoPainter extends CustomPainter {
         sc = 1 + 0.4 * q;
         ty = -8 * q;
       }
-      canvas.drawCircle(c + Offset(0, ty), r * sc, Paint()..color = _c(rgb, op));
+      canvas.drawCircle(
+        c + Offset(0, ty),
+        r * sc,
+        Paint()..color = _c(rgb, op),
+      );
     }
 
     spark(const Offset(660, 520), 12, 0xFFC79A, 2.2);
@@ -433,24 +519,34 @@ class _LogoPainter extends CustomPainter {
     }
 
     canvas.save();
-    canvas.clipPath(Path()
-      ..addOval(Rect.fromCircle(center: const Offset(512, 540), radius: 372)));
+    canvas.clipPath(
+      Path()
+        ..addOval(Rect.fromCircle(center: const Offset(512, 540), radius: 372)),
+    );
     canvas.saveLayer(null, Paint()..color = Color.fromRGBO(0, 0, 0, rp));
-    canvas.translate(60 * (1 - rp), -60 * (1 - rp)); // slides in from the corner
+    canvas.translate(
+      60 * (1 - rp),
+      -60 * (1 - rp),
+    ); // slides in from the corner
     canvas.translate(713.5, 338.5);
     canvas.rotate(math.pi / 4);
 
     const band = Rect.fromLTWH(-360, -44, 720, 88);
     canvas.drawRect(
-        band.shift(const Offset(0, 6)),
-        Paint()
-          ..color = _c(0x2E2254, 0.35)
-          ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7));
+      band.shift(const Offset(0, 6)),
+      Paint()
+        ..color = _c(0x2E2254, 0.35)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 7),
+    );
     canvas.drawRect(
-        band,
-        Paint()
-          ..shader = ui.Gradient.linear(const Offset(0, -44), const Offset(0, 44),
-              [_c(0x7A63C4), _c(0x5D4A92)]));
+      band,
+      Paint()
+        ..shader = ui.Gradient.linear(
+          const Offset(0, -44),
+          const Offset(0, 44),
+          [_c(0x7A63C4), _c(0x5D4A92)],
+        ),
+    );
 
     final dash = Paint()
       ..style = PaintingStyle.stroke
@@ -464,12 +560,14 @@ class _LogoPainter extends CustomPainter {
 
     final tp = TextPainter(
       text: const TextSpan(
-          text: 'BETA',
-          style: TextStyle(
-              color: Colors.white,
-              fontSize: 50,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 10)),
+        text: 'BETA',
+        style: TextStyle(
+          color: Colors.white,
+          fontSize: 50,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 10,
+        ),
+      ),
       textDirection: TextDirection.ltr,
     )..layout();
     final base = tp.computeDistanceToActualBaseline(TextBaseline.alphabetic);
