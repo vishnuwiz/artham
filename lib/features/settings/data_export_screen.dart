@@ -223,7 +223,10 @@ class _DataExportScreenState extends State<DataExportScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                SwitchListTile.adaptive(
+                Material(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(12),
+                  child: SwitchListTile.adaptive(
                   contentPadding: EdgeInsets.zero,
                   value: _useDateRange,
                   onChanged: _isExporting
@@ -249,6 +252,7 @@ class _DataExportScreenState extends State<DataExportScreen> {
                       fontWeight: FontWeight.w700,
                       fontSize: 13,
                     ),
+                  ),
                   ),
                 ),
                 if (_useDateRange) ...[
