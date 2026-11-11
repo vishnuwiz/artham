@@ -45,6 +45,12 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
 
+      - name: Generate Android and iOS launcher icons
+        run: dart run flutter_launcher_icons
+
+      - name: Generate native launch screens
+        run: dart run flutter_native_splash:create
+
       - name: Validate generated merchant catalogue
         run: python tool/generate_merchant_catalog.py --check
 

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transactionGreen = Color(0xFF13866A);
-const Color transactionNavy = Color(0xFF142B35);
-const Color transactionBackground = Color(0xFFF5F7F8);
+const Color transactionGreen = ArthamColors.lavender;
+const Color transactionNavy = ArthamColors.text;
+const Color transactionBackground = Colors.transparent;
 
 class TransactionDetailsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -100,7 +101,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           ),
           FilledButton(
             style: FilledButton.styleFrom(
-              backgroundColor: const Color(0xFFC45D58),
+              backgroundColor: ArthamColors.debit,
             ),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Delete'),
@@ -136,12 +137,11 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     final transaction = widget.transaction;
     final isIncome = transaction.transactionType == 'income';
     final amountColor =
-        isIncome ? transactionGreen : const Color(0xFFC45D58);
+        isIncome ? transactionGreen : ArthamColors.debit;
 
-    return Scaffold(
-      backgroundColor: transactionBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: transactionBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: transactionNavy,
         elevation: 0,
         title: const Text(
@@ -186,7 +186,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
               Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  gradient: ArthamColors.glassGradient,
+                  border: ArthamColors.glassBorder,
                   borderRadius: BorderRadius.circular(22),
                 ),
                 child: Column(
@@ -209,7 +210,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                     const SizedBox(height: 16),
                     Text(
                       isIncome ? 'Income' : 'Expense',
-                      style: const TextStyle(color: Colors.black54),
+                      style: const TextStyle(color: ArthamColors.muted),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -239,7 +240,8 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
               Container(
                 padding: const EdgeInsets.all(18),
                 decoration: BoxDecoration(
-                  color: Colors.white,
+                  gradient: ArthamColors.glassGradient,
+                  border: ArthamColors.glassBorder,
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Column(
@@ -275,7 +277,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                 icon: const Icon(Icons.delete_outline_rounded),
                 label: const Text('Delete transaction'),
                 style: TextButton.styleFrom(
-                  foregroundColor: const Color(0xFFC45D58),
+                  foregroundColor: ArthamColors.debit,
                 ),
               ),
             ],
@@ -292,7 +294,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Text(label, style: const TextStyle(color: Colors.black54)),
+            child: Text(label, style: const TextStyle(color: ArthamColors.muted)),
           ),
           const SizedBox(width: 12),
           Flexible(
@@ -491,10 +493,9 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
   Widget build(BuildContext context) {
     final typeLabel = _type == 'income' ? 'Income' : 'Expense';
 
-    return Scaffold(
-      backgroundColor: transactionBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: transactionBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: transactionNavy,
         elevation: 0,
         title: const Text(
@@ -514,7 +515,8 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                       Container(
                         padding: const EdgeInsets.all(18),
                         decoration: BoxDecoration(
-                          color: Colors.white,
+                          gradient: ArthamColors.glassGradient,
+                          border: ArthamColors.glassBorder,
                           borderRadius: BorderRadius.circular(20),
                         ),
                         child: Column(
@@ -625,7 +627,7 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                                 width: 20,
                                 child: CircularProgressIndicator(
                                   strokeWidth: 2,
-                                  color: Colors.white,
+                                  color: ArthamColors.onAccent,
                                 ),
                               )
                             : const Text(

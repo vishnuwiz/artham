@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/budget_forecast.dart';
@@ -6,9 +7,8 @@ import '../../data/merchant_spending_insights.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color _insightsGreen = Color(0xFF13866A);
-const Color _insightsNavy = Color(0xFF142B35);
-const Color _insightsBackground = Color(0xFFF5F7F8);
+const Color _insightsGreen = ArthamColors.lavender;
+const Color _insightsNavy = ArthamColors.text;
 
 class InsightsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -264,8 +264,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: _insightsBackground,
+    return ArthamScaffold(
       body: SafeArea(
         child: FutureBuilder<_InsightsData>(
           future: _dataFuture,
@@ -315,7 +314,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         Text(
                           'Your financial overview · ${_monthLong(DateTime.now())}',
                           style: const TextStyle(
-                            color: Colors.black54,
+                            color: ArthamColors.muted,
                             fontSize: 12,
                           ),
                         ),
@@ -365,7 +364,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 20),
                         const Text(
                           'Insights are based on transactions saved in Artham. Transfers are excluded.',
-                          style: TextStyle(color: Colors.black45, fontSize: 11),
+                          style: TextStyle(color: ArthamColors.muted, fontSize: 11),
                         ),
                       ]),
                     ),
@@ -394,7 +393,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Column(
@@ -411,7 +411,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             SizedBox(height: 5),
             Text(
               'Set an overall or category budget to compare your plan with actual spending.',
-              style: TextStyle(color: Colors.black54, fontSize: 11),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
           ],
         ),
@@ -427,7 +427,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -461,15 +462,15 @@ class _InsightsScreenState extends State<InsightsScreen> {
               child: LinearProgressIndicator(
                 value: ratio.clamp(0.0, 1.0).toDouble(),
                 minHeight: 8,
-                backgroundColor: const Color(0xFFE9EEEC),
-                color: over ? const Color(0xFFC45D58) : _insightsGreen,
+                backgroundColor: ArthamColors.line,
+                color: over ? ArthamColors.debit : _insightsGreen,
               ),
             ),
             const SizedBox(height: 6),
             Text(
               '${(ratio * 100).toStringAsFixed(1)}% of the available plan used'
               '${overall.rolloverPaise > 0 ? ' · includes ${_money(overall.rolloverPaise)} carried in' : ''}',
-              style: const TextStyle(color: Colors.black54, fontSize: 10),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ] else ...[
             const Text(
@@ -483,7 +484,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             const SizedBox(height: 5),
             Text(
               '${budgetedCategories.length} category budgets cover ${_money(budgetedCategories.fold<int>(0, (sum, item) => sum + item.availableBudgetPaise))} in planned spending.',
-              style: const TextStyle(color: Colors.black54, fontSize: 11),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
           ],
           const SizedBox(height: 15),
@@ -524,19 +525,21 @@ class _InsightsScreenState extends State<InsightsScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
           'Set an overall or category budget to see month-end spending estimates and daily spending guidance.',
-          style: TextStyle(color: Colors.black54, fontSize: 11),
+          style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
       );
     }
     return Container(
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -602,14 +605,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         .clamp(0.0, 1.0)
                         .toDouble(),
                 minHeight: 8,
-                backgroundColor: const Color(0xFFE9EEEC),
+                backgroundColor: ArthamColors.line,
                 color: _forecastColor(overall.status),
               ),
             ),
             const SizedBox(height: 8),
             Text(
               _forecastMessage(overall),
-              style: const TextStyle(color: Colors.black54, fontSize: 11),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
             const SizedBox(height: 8),
             Text(
@@ -630,7 +633,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             const Text(
               'CATEGORY OUTLOOK',
               style: TextStyle(
-                color: Colors.black45,
+                color: ArthamColors.muted,
                 fontSize: 9,
                 fontWeight: FontWeight.w800,
                 letterSpacing: 0.8,
@@ -645,7 +648,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           const SizedBox(height: 12),
           const Text(
             'Estimates use the average daily spending recorded so far this month. A projection appears after at least 3 elapsed days and can change when new transactions are recorded and Insights is refreshed.',
-            style: TextStyle(color: Colors.black45, fontSize: 10),
+            style: TextStyle(color: ArthamColors.muted, fontSize: 10),
           ),
         ],
       ),
@@ -698,7 +701,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ),
             Text(
               'Plan ${_money(forecast.budgetPaise)}',
-              style: const TextStyle(color: Colors.black54, fontSize: 10),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ],
         ),
@@ -711,14 +714,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     .clamp(0.0, 1.0)
                     .toDouble(),
             minHeight: 6,
-            backgroundColor: const Color(0xFFE9EEEC),
+            backgroundColor: ArthamColors.line,
             color: _forecastColor(forecast.status),
           ),
         ),
         const SizedBox(height: 6),
         Text(
           _dailySpendingGuide(forecast),
-          style: const TextStyle(color: Colors.black54, fontSize: 10),
+          style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
         ),
       ],
     );
@@ -747,15 +750,15 @@ class _InsightsScreenState extends State<InsightsScreen> {
     switch (status) {
       case BudgetForecastStatus.alreadyOverBudget:
       case BudgetForecastStatus.likelyOverBudget:
-        return const Color(0xFFC45D58);
+        return ArthamColors.debit;
       case BudgetForecastStatus.approachingLimit:
-        return const Color(0xFFB7791F);
+        return ArthamColors.peach;
       case BudgetForecastStatus.onTrack:
         return _insightsGreen;
       case BudgetForecastStatus.noBudget:
       case BudgetForecastStatus.noSpending:
       case BudgetForecastStatus.insufficientData:
-        return Colors.black45;
+        return ArthamColors.muted;
     }
   }
 
@@ -794,7 +797,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         Text(
           label,
           style: const TextStyle(
-            color: Colors.black45,
+            color: ArthamColors.muted,
             fontSize: 9,
             fontWeight: FontWeight.w700,
           ),
@@ -825,7 +828,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 17, 16, 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -834,7 +838,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             children: [
               _legend(_insightsGreen, 'Planned'),
               const SizedBox(width: 18),
-              _legend(const Color(0xFFFFA69A), 'Actual'),
+              _legend(ArthamColors.debit, 'Actual'),
             ],
           ),
           const SizedBox(height: 18),
@@ -860,7 +864,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                           children: [
                             _bar(planHeight, color: _insightsGreen),
                             const SizedBox(width: 3),
-                            _bar(actualHeight, color: const Color(0xFFFFA69A)),
+                            _bar(actualHeight, color: ArthamColors.debit),
                           ],
                         ),
                       ),
@@ -868,7 +872,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       Text(
                         _monthShort(item.month),
                         style: const TextStyle(
-                          color: Colors.black54,
+                          color: ArthamColors.muted,
                           fontSize: 10,
                         ),
                       ),
@@ -883,7 +887,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             alignment: Alignment.centerLeft,
             child: Text(
               'Months without an overall budget show actual spending only.',
-              style: TextStyle(color: Colors.black45, fontSize: 10),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ),
         ],
@@ -913,12 +917,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
           'Category budget comparisons will appear once you set category limits and record spending.',
-          style: TextStyle(color: Colors.black54, fontSize: 11),
+          style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
       );
     }
@@ -926,7 +931,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -959,7 +965,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                                 : '${_money(item.remainingPaise)} left')
                           : 'No plan',
                       style: TextStyle(
-                        color: over ? const Color(0xFFC45D58) : Colors.black54,
+                        color: over ? ArthamColors.debit : ArthamColors.muted,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -971,7 +977,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   hasBudget
                       ? 'Actual ${_money(item.expensesPaise)} · Plan ${_money(item.availableBudgetPaise)}'
                       : 'Actual spending ${_money(item.expensesPaise)}',
-                  style: const TextStyle(color: Colors.black54, fontSize: 10),
+                  style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
                 ),
                 if (hasBudget) ...[
                   const SizedBox(height: 7),
@@ -980,8 +986,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     child: LinearProgressIndicator(
                       value: ratio.clamp(0.0, 1.0).toDouble(),
                       minHeight: 6,
-                      backgroundColor: const Color(0xFFE9EEEC),
-                      color: over ? const Color(0xFFC45D58) : _insightsGreen,
+                      backgroundColor: ArthamColors.line,
+                      color: over ? ArthamColors.debit : _insightsGreen,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -990,7 +996,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     child: Text(
                       '${(ratio * 100).toStringAsFixed(1)}% used',
                       style: TextStyle(
-                        color: over ? const Color(0xFFC45D58) : _insightsGreen,
+                        color: over ? ArthamColors.debit : _insightsGreen,
                         fontSize: 10,
                         fontWeight: FontWeight.w700,
                       ),
@@ -1040,11 +1046,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
       padding: const EdgeInsets.all(20),
       decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(23),
-        gradient: const LinearGradient(
-          colors: [Color(0xFF142B35), Color(0xFF176B59)],
-          begin: Alignment.topLeft,
-          end: Alignment.bottomRight,
-        ),
+        gradient: ArthamColors.heroGradient,
+        border: ArthamColors.glassBorder,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1128,16 +1131,17 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(16, 18, 16, 14),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
         children: [
           Row(
             children: [
-              _legend(const Color(0xFF13866A), 'Income'),
+              _legend(ArthamColors.lavender, 'Income'),
               const SizedBox(width: 18),
-              _legend(const Color(0xFFFFA69A), 'Expenses'),
+              _legend(ArthamColors.debit, 'Expenses'),
             ],
           ),
           const SizedBox(height: 20),
@@ -1163,7 +1167,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                           children: [
                             _bar(incomeHeight),
                             const SizedBox(width: 4),
-                            _bar(expenseHeight, color: const Color(0xFFFFA69A)),
+                            _bar(expenseHeight, color: ArthamColors.debit),
                           ],
                         ),
                       ),
@@ -1171,7 +1175,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       Text(
                         _monthShort(item.month),
                         style: const TextStyle(
-                          color: Colors.black54,
+                          color: ArthamColors.muted,
                           fontSize: 10,
                         ),
                       ),
@@ -1208,7 +1212,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(color: Colors.black54, fontSize: 11),
+          style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
       ],
     );
@@ -1221,12 +1225,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Text(
           'Merchant spending insights will appear for recognised merchants.',
-          style: TextStyle(color: Colors.black54, fontSize: 11),
+          style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
       );
     }
@@ -1235,7 +1240,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -1277,7 +1283,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 Text(
                   '${item.categoryName ?? 'Uncategorised'} · $countLabel',
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: ArthamColors.muted,
                     fontSize: 10,
                   ),
                 ),
@@ -1287,7 +1293,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   child: LinearProgressIndicator(
                     value: share.clamp(0.0, 1.0).toDouble(),
                     minHeight: 7,
-                    backgroundColor: const Color(0xFFE9EEEC),
+                    backgroundColor: ArthamColors.line,
                     color: _insightsGreen,
                   ),
                 ),
@@ -1306,7 +1312,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(18),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Column(
@@ -1335,7 +1342,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             SizedBox(height: 7),
             Text(
               'Flags appear after at least three prior payment dates across two months, when spending is more than 50% and ₹500 above the usual amount by this date.',
-              style: TextStyle(color: Colors.black54, fontSize: 10),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ],
         ),
@@ -1345,7 +1352,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -1373,13 +1381,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         vertical: 5,
                       ),
                       decoration: BoxDecoration(
-                        color: const Color(0xFFFBEDEC),
+                        color: ArthamColors.debitTint,
                         borderRadius: BorderRadius.circular(20),
                       ),
                       child: Text(
                         '+${item.percentageAboveUsual}% above usual',
                         style: const TextStyle(
-                          color: Color(0xFFC45D58),
+                          color: ArthamColors.debit,
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
                         ),
@@ -1391,7 +1399,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 Text(
                   '${item.categoryName ?? 'Uncategorised'} · ${item.currentMonthTransactionCount} current-month payments',
                   style: const TextStyle(
-                    color: Colors.black54,
+                    color: ArthamColors.muted,
                     fontSize: 10,
                   ),
                 ),
@@ -1399,7 +1407,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 Text(
                   'Spent ${_money(item.currentMonthSpendPaise)} · Usual by today ${_money(item.expectedSpendToDatePaise)}',
                   style: const TextStyle(
-                    color: Color(0xFFC45D58),
+                    color: ArthamColors.debit,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
                   ),
@@ -1418,7 +1426,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
         width: double.infinity,
         padding: const EdgeInsets.all(22),
         decoration: BoxDecoration(
-          color: Colors.white,
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
         child: const Column(
@@ -1439,7 +1448,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             SizedBox(height: 4),
             Text(
               'Your category breakdown will appear here.',
-              style: TextStyle(color: Colors.black54, fontSize: 11),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
           ],
         ),
@@ -1449,7 +1458,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Container(
       padding: const EdgeInsets.all(17),
       decoration: BoxDecoration(
-        color: Colors.white,
+        gradient: ArthamColors.glassGradient,
+        border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
@@ -1487,7 +1497,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   child: LinearProgressIndicator(
                     value: share.clamp(0.0, 1.0).toDouble(),
                     minHeight: 7,
-                    backgroundColor: const Color(0xFFE9EEEC),
+                    backgroundColor: ArthamColors.line,
                     color: _insightsGreen,
                   ),
                 ),
@@ -1496,7 +1506,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     '${(share * 100).toStringAsFixed(1)}%',
-                    style: const TextStyle(color: Colors.black45, fontSize: 10),
+                    style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
                   ),
                 ),
               ],

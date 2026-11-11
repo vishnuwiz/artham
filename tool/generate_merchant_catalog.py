@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Generate the Dart and Kotlin merchant catalogue from the canonical JSON file."""
+"""Generate the Dart merchant catalogue from the canonical JSON file."""
 from __future__ import annotations
 
 import argparse
@@ -10,10 +10,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "tool" / "data" / "merchant_catalog.json"
 DART_TARGET = ROOT / "lib" / "data" / "merchant_catalog_data.dart"
-KOTLIN_TARGET = (
-    ROOT / "android" / "app" / "src" / "main" / "kotlin"
-    / "com" / "artham" / "app" / "artham" / "MerchantCatalogData.kt"
-)
 ALLOWED_CATEGORIES = {
     "Food & Dining", "Groceries", "Shopping", "Transportation",
     "Bills & Utilities", "Entertainment", "Health", "Travel",
@@ -27,10 +23,6 @@ def normalize(value: str) -> str:
 def quote_dart(value: str) -> str:
     escaped = value.replace("\\", "\\\\").replace("'", "\\'").replace("$", "\\$")
     return "'" + escaped + "'"
-
-
-def quote_kotlin(value: str) -> str:
-    return json.dumps(value, ensure_ascii=True)
 
 
 def validate(records: list[dict]) -> None:
@@ -88,45 +80,15 @@ def render_dart(records: list[dict]) -> str:
     return "\n".join(lines)
 
 
-def render_kotlin(records: list[dict]) -> str:
-    lines = [
-        "// GENERATED CODE - DO NOT MODIFY BY HAND.",
-        "// Source: tool/data/merchant_catalog.json",
-        "",
-        "package com.artham.app.artham",
-        "",
-        "internal data class MerchantCatalogRuleData(",
-        "    val name: String,",
-        "    val categoryName: String,",
-        "    val aliases: List<String>,",
-        ")",
-        "",
-        "internal object MerchantCatalogData {",
-        "    val rules = listOf(",
-    ]
-    for record in records:
-        aliases = ", ".join(quote_kotlin(alias) for alias in record["aliases"])
-        lines.extend([
-            "        MerchantCatalogRuleData(",
-            f"            name = {quote_kotlin(record['name'])},",
-            f"            categoryName = {quote_kotlin(record['category'])},",
-            f"            aliases = listOf({aliases}),",
-            "        ),",
-        ])
-    lines.extend(["    )", "}", ""])
-    return "\n".join(lines)
-
-
 def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--check", action="store_true",
-                        help="fail if generated Dart/Kotlin files are stale")
+                        help="fail if the generated Dart file is stale")
     args = parser.parse_args()
     records = json.loads(SOURCE.read_text(encoding="utf-8"))
     validate(records)
     outputs = {
         DART_TARGET: render_dart(records),
-        KOTLIN_TARGET: render_kotlin(records),
     }
     stale = []
     for target, content in outputs.items():
@@ -142,7 +104,7 @@ def main() -> int:
     if args.check:
         print(f"Merchant catalogue is valid: {len(records)} merchants; generated files are current.")
     else:
-        print(f"Generated Dart and Kotlin catalogues for {len(records)} merchants.")
+        print(f"Generated Dart catalogue for {len(records)} merchants.")
     return 0
 
 

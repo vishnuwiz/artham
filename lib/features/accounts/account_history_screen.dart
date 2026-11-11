@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color historyGreen = Color(0xFF13866A);
-const Color historyNavy = Color(0xFF142B35);
-const Color historyBackground = Color(0xFFF5F7F8);
+const Color historyGreen = ArthamColors.lavender;
+const Color historyNavy = ArthamColors.text;
+const Color historyBackground = Colors.transparent;
 
 class AccountHistoryScreen extends StatefulWidget {
   final AppDatabase database;
@@ -49,11 +50,10 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: historyBackground,
+    return ArthamScaffold(
       appBar: AppBar(
         title: const Text('Account History', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: historyBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: historyNavy,
         elevation: 0,
       ),
@@ -80,7 +80,8 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                 Container(
                   padding: const EdgeInsets.all(20),
                   decoration: BoxDecoration(
-                    color: const Color(0xFF164F49),
+                    gradient: ArthamColors.heroGradient,
+                    border: ArthamColors.glassBorder,
                     borderRadius: BorderRadius.circular(20),
                   ),
                   child: Column(
@@ -95,7 +96,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                       const SizedBox(height: 16),
                       Row(children: [
                         Expanded(child: _summary('Income', income, const Color(0xFF78E0B9))),
-                        Expanded(child: _summary('Expenses', expenses, const Color(0xFFFFB0A4))),
+                        Expanded(child: _summary('Expenses', expenses, ArthamColors.debit)),
                       ]),
                     ],
                   ),
@@ -104,7 +105,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                 Row(children: [
                   const Text('Transactions', style: TextStyle(color: historyNavy, fontSize: 18, fontWeight: FontWeight.w800)),
                   const Spacer(),
-                  Text('${data.transactions.length} records', style: const TextStyle(color: Colors.black45, fontSize: 12)),
+                  Text('${data.transactions.length} records', style: const TextStyle(color: ArthamColors.muted, fontSize: 12)),
                 ]),
                 const SizedBox(height: 10),
                 if (data.transactions.isEmpty)
@@ -120,17 +121,18 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     final title = isTransfer
                         ? (isIncomingTransfer ? 'Transfer received' : 'Transfer sent')
                         : ((tx.categoryId == null ? null : data.categories[tx.categoryId!]) ?? tx.description ?? tx.transactionType);
-                    final color = isIncome ? historyGreen : const Color(0xFFC45D58);
+                    final color = isIncome ? historyGreen : ArthamColors.debit;
                     return Container(
                       margin: const EdgeInsets.only(bottom: 10),
                       padding: const EdgeInsets.all(15),
-                      decoration: BoxDecoration(color: Colors.white, borderRadius: BorderRadius.circular(17)),
+                      decoration: BoxDecoration(gradient: ArthamColors.glassGradient,
+ border: ArthamColors.glassBorder, borderRadius: BorderRadius.circular(17)),
                       child: Row(children: [
                         Icon(isTransfer ? Icons.swap_horiz_rounded : (isIncome ? Icons.arrow_downward_rounded : Icons.arrow_upward_rounded), color: color),
                         const SizedBox(width: 12),
                         Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
                           Text(title, style: const TextStyle(color: historyNavy, fontWeight: FontWeight.w700)),
-                          Text(_date(tx.transactionDate), style: const TextStyle(color: Colors.black45, fontSize: 11)),
+                          Text(_date(tx.transactionDate), style: const TextStyle(color: ArthamColors.muted, fontSize: 11)),
                         ])),
                         Text('${isIncome ? '+' : '−'}${_money(tx.amountPaise)}', style: TextStyle(color: color, fontWeight: FontWeight.w800)),
                       ]),

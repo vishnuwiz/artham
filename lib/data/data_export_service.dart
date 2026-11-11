@@ -116,8 +116,9 @@ class DataExportService {
 
   /// Creates a structured JSON export of all app database tables.
   ///
-  /// The Android-only pending SMS review queue is included when it exists.
-  /// Raw SMS message bodies are never stored by Artham and are not exported.
+  /// Legacy pending SMS review rows are included when present so backups from
+  /// earlier versions do not silently lose locally stored review data. Current
+  /// versions do not create or consume those rows. Raw SMS bodies are never exported.
   Future<String> buildFullBackupJson() async {
     final accounts = await database.select(database.bankAccounts).get();
     final categories = await database.select(database.categories).get();

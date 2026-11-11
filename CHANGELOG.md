@@ -6,12 +6,38 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Beta branding and animated splash (2026-11-11)
+
+#### Changed
+- Added the beta Artham launcher artwork for Android and iOS, including adaptive Android icon layers.
+- Replaced the prior startup intro with the animated pastel A and rupee coin splash, BETA ribbon, Malayalam wordmark, and tagline.
+- Configured matching lavender native launch screens.
+
+
+### Stage 8 — Remove Automatic Android SMS Intake (2026-11-11)
+
+#### Changed
+- Removed the Android incoming-SMS broadcast receiver, `RECEIVE_SMS` permission declaration, and native SMS permission/settings channel.
+- Removed automatic SMS enable/disable controls, default-account matching preferences, and the pending automatic-import review UI.
+- Kept manual SMS paste/share import in Activity, including editable transaction review, local duplicate detection, and merchant/category recognition.
+
+#### Privacy and data preservation
+- Artham no longer monitors incoming messages or requests SMS permissions.
+- Existing `ProcessedSms` fingerprints remain in the local database so older imports and duplicate protection are preserved.
+- No database migration or transaction deletion is required. Legacy pending-review rows from older installations are left untouched and remain included in JSON backups when present.
+
+#### Verification
+- Android manifest permission/receiver audit, Flutter analysis, unit/widget tests, and debug APK build are required before merging.
+- Confirm on a device that Activity > Import SMS still parses and imports a user-selected message.
+
+
 ### Stage 7 — Local Data Export (2026-11-11)
 
 #### Added
 - Added a transaction CSV export with account, transfer destination, category, merchant, reference, notes, source, date, and amount fields.
 - Added a structured JSON backup containing all Drift tables and the Android pending-SMS review queue when available.
 - Added native Android/iOS sharing so users can save or share generated exports from Settings.
+- Added separate native Save As actions for CSV and JSON so users can select a device folder such as Downloads instead of relying on the Android share sheet.
 - Added CSV formula-injection protection for untrusted text fields and UTF-8 BOM support for spreadsheet compatibility.
 
 #### Safety and data
@@ -22,6 +48,18 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 #### Verification
 - Added unit tests for empty and populated CSV exports and the JSON backup structure. Local execution is pending dependency installation and test commands.
 
+
+### Dark glass redesign (2026-11-10)
+
+#### Changed
+- Replaced the light green theme with a dark purple "glass" look across every screen: translucent cards and inputs tinted with the logo's lavender, mint and peach over a glowing purple ground.
+- Added `lib/theme/artham_theme.dart` as the single source for colours, the Material theme, the screen background and the glass tab bar; screens no longer define their own palette values.
+- Replaced the Material navigation bar with a floating glass tab bar. Unselected tabs are white; the selected tab is a white capsule with dark icon and label.
+- Debit amounts and over-budget states are shown in red; income is shown in mint.
+- The dashboard header shows the Artham logo.
+
+#### Safety and data
+- Presentation only: no schema, repository, SMS import or balance logic changed.
 
 ### Stage 6C — Merchant-Level Spending Insights (2026-11-10)
 

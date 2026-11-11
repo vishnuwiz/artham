@@ -12,10 +12,9 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
-- **Data export** — Share all transaction history as an Excel-friendly CSV, or create a structured JSON backup of all Drift tables and the Android pending-SMS review queue when present. Exports are generated locally; JSON backups are unencrypted and should be stored securely.
+- **Data export** — Share all transaction history as an Excel-friendly CSV, or create a structured JSON backup of the Drift tables. Legacy pending-SMS review records from older installations are preserved in backups when present. Exports are generated locally; JSON backups are unencrypted and should be stored securely.
 - **Offline merchant recognition** — Recognise more than 1,000 India-focused merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue generated from a single version-controlled source. Suggest categories such as Food & Dining, Groceries, Shopping, Travel, Health, Bills & Utilities and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
-- **Automatic Android bank-SMS import (Android emulator validated; physical-device testing pending)** — after the user enables it and grants SMS permission, newly received bank/UPI debit and credit alerts are parsed in the background and saved to the existing local database. The receiver uses the account suffix in the alert to match a saved account, ignores duplicate alerts, and does not retain the original SMS body. Alerts with an unknown or ambiguous account suffix wait in Settings for manual account assignment.
-- **Manual SMS import fallback** — paste/share a bank or UPI alert, review the parsed fields, and import it with local duplicate protection.
+- **Manual SMS import** — choose Activity > Import SMS, then paste or share an individual bank/UPI alert. Review the parsed fields and confirm before saving; local fingerprints prevent duplicate imports. Artham does not monitor incoming messages or scan the SMS inbox.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance.
 - **Account history** — Review transactions associated with an account.
@@ -38,8 +37,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ### Platform notes
 
-- Android automatic SMS import is opt-in and listens only for new incoming SMS broadcasts; it does not read or scan the existing inbox and does not request `READ_SMS`. `RECEIVE_SMS` is a hard-restricted Android permission. The flow has been validated in the Android emulator; physical-device testing and distribution checks remain outstanding. Distribution through Google Play requires the applicable SMS-based money-management declaration and review/approval; a sideloaded APK may not be allowlisted to hold this permission.
-- iOS supports user-initiated SMS sharing/pasting only; ordinary third-party apps cannot read the full Messages inbox.
+- SMS import is user-initiated on both Android and iOS. Artham does not request `RECEIVE_SMS` or `READ_SMS`, register an incoming-SMS receiver, or scan the message inbox. Only a message the user explicitly pastes or shares into Activity > Import SMS is processed.
 - Bank statement import.
 - Database encryption and additional security improvements.
 - JSON backup restore/import (export is implemented first; restore is not included yet).
@@ -51,7 +49,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 | Area | Technology |
 |---|---|
 | App framework | Flutter |
-| Programming language | Dart (Flutter app), Kotlin (Android SMS receiver) |
+| Programming language | Dart (Flutter app), Kotlin (Android activity entry point) |
 | Local database | SQLite |
 | Database toolkit | Drift |
 | Data persistence | On-device / local-first |
@@ -75,10 +73,10 @@ The database includes the following tables:
 | `MoneyTransactions` | Stores income, expense, transfer, and generated recurring transactions |
 | `Budgets` | Stores monthly overall and category budget limits, including rollover settings |
 | `BudgetTemplates` | Stores recurring monthly overall/category budget templates and their effective start month |
-| `ProcessedSms` | Tracks processed SMS records |
+| `ProcessedSms` | Stores local fingerprints to prevent duplicate manual SMS imports |
 | `RecurringSchedules` | Stores recurring transaction schedules and their next due dates |
 
-An auxiliary Android-only `pending_sms_imports` table stores structured transaction fields (never the original SMS body) when an alert cannot be matched safely to an account. Pending items are shown in Settings for account assignment.
+Older installations may contain an auxiliary Android-only `pending_sms_imports` table from the retired automatic-SMS feature. Current versions do not create or consume pending rows; existing rows are left untouched and included in JSON backups for data-preservation compatibility.
 
 **Amount storage:** Monetary amounts are stored as integer paise to avoid floating-point precision issues. For example, ₹100.00 is stored as `10000`.
 
@@ -151,11 +149,10 @@ Other screens, repositories, and features are maintained in their respective fol
 ## Development Notes
 
 - Store monetary values as integer paise, not floating-point rupees.
-- Maintain `tool/data/merchant_catalog.json` as the single source of truth for merchant names, categories and aliases. Run `python tool/generate_merchant_catalog.py` after edits and `python tool/generate_merchant_catalog.py --check` to verify the generated Dart and Kotlin catalogues; recognition must remain on-device and deterministic.
-- Prefer an explicit payee/counterparty extracted from a bank alert over provider names elsewhere in the SMS.
+- Maintain `tool/data/merchant_catalog.json` as the single source of truth for merchant names, categories and aliases. Run `python tool/generate_merchant_catalog.py` after edits and `python tool/generate_merchant_catalog.py --check` to verify the generated Dart catalogue; recognition must remain on-device and deterministic.
+- Prefer an explicit payee/counterparty extracted from a manually imported bank alert over provider names elsewhere in the SMS.
 - Keep account balances consistent when creating, editing, or deleting transactions.
 - Display saved bank accounts using the bank name and masked last four digits; do not depend on a user-entered nickname for account identification.
-- Keep native Android SMS `DateTime` values in the Unix-seconds format expected by Drift, and keep auxiliary pending-queue timestamp conversions consistent with their Dart readers.
 - Internal transfers should update the source and destination accounts without changing the user's overall net worth.
 - Keep budget progress in sync with the transactions that contribute to each budget.
 - Recurring budget templates create budget-limit rows only; they must never create financial transactions or alter account balances.
@@ -189,7 +186,9 @@ No license has been specified yet. Until a license is added to this repository, 
 
 ## App icon and splash screen
 
-The supplied pastel Artham artwork is used for Android and iOS launcher icons. Save `icon-1024.png` from the supplied branding ZIP as `assets/branding/artham_app_icon_ios_1024.png`. The native launch screen uses a soft lavender background, then the animated in-app intro in `lib/features/splash/artham_splash_pastel.dart` takes over. Regenerate platform assets with:
+The beta launcher artwork is stored in `assets/branding/` and generated for Android and iOS. The animated Flutter startup screen is implemented in `lib/splash/artham_splash.dart`; it draws the pastel A mark, rupee coin, BETA ribbon, Malayalam wordmark, and tagline. Native launch screens use a matching lavender background.
+
+After changing branding assets or icon configuration, run:
 
 ```powershell
 flutter pub get
@@ -197,5 +196,7 @@ dart run flutter_launcher_icons
 dart run flutter_native_splash:create
 flutter analyze
 flutter test
+flutter build apk --release
 ```
 
+The Android launcher resources and iOS AppIcon set are checked into the repository as well as being regenerated by CI.

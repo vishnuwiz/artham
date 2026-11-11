@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
@@ -6,9 +7,9 @@ import '../../data/repositories/sms_import_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../../data/sms_transaction_parser.dart';
 
-const Color smsGreen = Color(0xFF13866A);
-const Color smsNavy = Color(0xFF142B35);
-const Color smsBackground = Color(0xFFF5F7F8);
+const Color smsGreen = ArthamColors.lavender;
+const Color smsNavy = ArthamColors.text;
+const Color smsBackground = Colors.transparent;
 
 class ImportSmsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -219,9 +220,9 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
       margin: const EdgeInsets.only(top: 20),
       padding: const EdgeInsets.all(18),
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: ArthamColors.glass,
         borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: const Color(0xFFE2E8E8)),
+        border: Border.all(color: ArthamColors.line),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -244,14 +245,14 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: (isIncome ? smsGreen : const Color(0xFFC45D58))
+                  color: (isIncome ? smsGreen : ArthamColors.debit)
                       .withValues(alpha: 0.10),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
                   isIncome ? 'INCOME' : 'EXPENSE',
                   style: TextStyle(
-                    color: isIncome ? smsGreen : const Color(0xFFC45D58),
+                    color: isIncome ? smsGreen : ArthamColors.debit,
                     fontSize: 10,
                     fontWeight: FontWeight.w800,
                     letterSpacing: 0.8,
@@ -343,7 +344,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             const SizedBox(height: 12),
             Text(
               'Reference: ${parsed.referenceNumber}',
-              style: const TextStyle(color: Colors.black54, fontSize: 12),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
             ),
           ],
           const SizedBox(height: 18),
@@ -353,7 +354,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               onPressed: _isSaving ? null : _importTransaction,
               style: FilledButton.styleFrom(
                 backgroundColor: smsGreen,
-                foregroundColor: Colors.white,
+                foregroundColor: ArthamColors.onAccent,
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               icon: _isSaving
@@ -362,7 +363,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: ArthamColors.onAccent,
                       ),
                     )
                   : const Icon(Icons.download_done_rounded),
@@ -376,10 +377,9 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: smsBackground,
+    return ArthamScaffold(
       appBar: AppBar(
-        backgroundColor: smsBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: smsNavy,
         elevation: 0,
         title: const Text(
@@ -393,7 +393,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
           Container(
             padding: const EdgeInsets.all(16),
             decoration: BoxDecoration(
-              color: const Color(0xFFEAF4F1),
+              color: ArthamColors.mintTint,
               borderRadius: BorderRadius.circular(16),
             ),
             child: const Row(
@@ -435,14 +435,14 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               hintText: 'Paste the bank SMS here...',
               alignLabelWithHint: true,
               filled: true,
-              fillColor: Colors.white,
+              fillColor: ArthamColors.glass,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFE2E8E8)),
+                borderSide: const BorderSide(color: ArthamColors.line),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: Color(0xFFE2E8E8)),
+                borderSide: const BorderSide(color: ArthamColors.line),
               ),
             ),
           ),
@@ -452,8 +452,8 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             child: FilledButton.icon(
               onPressed: _isParsing ? null : _parseMessage,
               style: FilledButton.styleFrom(
-                backgroundColor: smsNavy,
-                foregroundColor: Colors.white,
+                backgroundColor: ArthamColors.lavender,
+                foregroundColor: ArthamColors.onAccent,
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: _isParsing
@@ -462,7 +462,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                       height: 18,
                       child: CircularProgressIndicator(
                         strokeWidth: 2,
-                        color: Colors.white,
+                        color: ArthamColors.onAccent,
                       ),
                     )
                   : const Icon(Icons.document_scanner_outlined),
@@ -474,13 +474,13 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             Container(
               padding: const EdgeInsets.all(13),
               decoration: BoxDecoration(
-                color: const Color(0xFFFFEEEE),
+                color: ArthamColors.debitTint,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
                 _error!,
                 style: const TextStyle(
-                  color: Color(0xFF9D3333),
+                  color: ArthamColors.debit,
                   fontSize: 13,
                 ),
               ),

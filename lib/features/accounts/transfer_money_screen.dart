@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
+import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transferGreen = Color(0xFF13866A);
-const Color transferNavy = Color(0xFF142B35);
-const Color transferBackground = Color(0xFFF5F7F8);
+const Color transferGreen = ArthamColors.lavender;
+const Color transferNavy = ArthamColors.text;
+const Color transferBackground = Colors.transparent;
 
 class TransferMoneyScreen extends StatefulWidget {
   final AppDatabase database;
@@ -104,11 +105,10 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: transferBackground,
+    return ArthamScaffold(
       appBar: AppBar(
         title: const Text('Transfer Money', style: TextStyle(fontWeight: FontWeight.w800)),
-        backgroundColor: transferBackground,
+        backgroundColor: Colors.transparent,
         foregroundColor: transferNavy,
         elevation: 0,
       ),
@@ -134,7 +134,8 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
                           Container(
                             padding: const EdgeInsets.all(18),
                             decoration: BoxDecoration(
-                              color: const Color(0xFF164F49),
+                              gradient: ArthamColors.heroGradient,
+                              border: ArthamColors.glassBorder,
                               borderRadius: BorderRadius.circular(20),
                             ),
                             child: const Row(
@@ -167,7 +168,7 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
                               alignment: Alignment.centerLeft,
                               child: Text(
                                 'Available: ${_money(_balanceSummary?.accountBalancesPaise[_fromAccountId!] ?? 0)}',
-                                style: const TextStyle(color: Colors.black54, fontSize: 12),
+                                style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
                               ),
                             ),
                           ],
@@ -186,7 +187,7 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
                               prefixText: '₹ ',
                               border: OutlineInputBorder(),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: ArthamColors.glass,
                             ),
                             validator: (value) {
                               final amount = double.tryParse((value ?? '').trim());
@@ -203,7 +204,7 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
                               labelText: 'Description (optional)',
                               border: OutlineInputBorder(),
                               filled: true,
-                              fillColor: Colors.white,
+                              fillColor: ArthamColors.glass,
                             ),
                           ),
                           const SizedBox(height: 16),
@@ -224,7 +225,7 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
                               minimumSize: const Size(double.infinity, 54),
                             ),
                             child: _saving
-                                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white))
+                                ? const SizedBox(height: 20, width: 20, child: CircularProgressIndicator(strokeWidth: 2, color: ArthamColors.onAccent))
                                 : const Text('Confirm Transfer'),
                           ),
                         ],
@@ -245,7 +246,7 @@ class _TransferMoneyScreenState extends State<TransferMoneyScreen> {
         labelText: label,
         border: const OutlineInputBorder(),
         filled: true,
-        fillColor: Colors.white,
+        fillColor: ArthamColors.glass,
       ),
       items: _accounts.map((account) {
         final balance = _balanceSummary?.accountBalancesPaise[account.id] ?? 0;
