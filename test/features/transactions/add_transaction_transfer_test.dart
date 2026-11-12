@@ -54,6 +54,8 @@ void main() {
     expect(find.text('Transfer'), findsOneWidget);
     expect(find.text('Save Transaction'), findsOneWidget);
     expect(find.text('Category'), findsOneWidget);
+    expect(find.text('Transaction Date'), findsOneWidget);
+    expect(find.text('Transaction Time'), findsOneWidget);
 
     await tester.tap(find.text('Transfer'));
     await tester.pump(const Duration(milliseconds: 300));
