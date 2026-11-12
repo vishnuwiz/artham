@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../theme/artham_theme.dart';
 import '../../theme/category_icons.dart';
 
@@ -36,24 +37,25 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   }
 
   Future<_TransactionDetailsData> _loadDetails() async {
-    final account = await (widget.database.select(widget.database.bankAccounts)
-          ..where((item) => item.id.equals(widget.transaction.accountId)))
-        .getSingleOrNull();
+    final account =
+        await (widget.database.select(widget.database.bankAccounts)
+              ..where((item) => item.id.equals(widget.transaction.accountId)))
+            .getSingleOrNull();
 
     Category? category;
     final categoryId = widget.transaction.categoryId;
     if (categoryId != null) {
-      category = await (widget.database.select(widget.database.categories)
-            ..where((item) => item.id.equals(categoryId)))
-          .getSingleOrNull();
+      category = await (widget.database.select(
+        widget.database.categories,
+      )..where((item) => item.id.equals(categoryId))).getSingleOrNull();
     }
 
     Merchant? merchant;
     final merchantId = widget.transaction.merchantId;
     if (merchantId != null) {
-      merchant = await (widget.database.select(widget.database.merchants)
-            ..where((item) => item.id.equals(merchantId)))
-          .getSingleOrNull();
+      merchant = await (widget.database.select(
+        widget.database.merchants,
+      )..where((item) => item.id.equals(merchantId))).getSingleOrNull();
     }
 
     return _TransactionDetailsData(
@@ -101,9 +103,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: ArthamColors.debit,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: ArthamColors.debit),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Delete'),
           ),
@@ -114,8 +114,9 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
     if (confirmed != true || !mounted) return;
 
     try {
-      final deleted =
-          await _repository.deleteTransaction(widget.transaction.id);
+      final deleted = await _repository.deleteTransaction(
+        widget.transaction.id,
+      );
       if (!mounted) return;
 
       if (deleted) {
@@ -137,8 +138,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
   Widget build(BuildContext context) {
     final transaction = widget.transaction;
     final isIncome = transaction.transactionType == 'income';
-    final amountColor =
-        isIncome ? transactionGreen : ArthamColors.debit;
+    final amountColor = isIncome ? transactionGreen : ArthamColors.debit;
 
     return ArthamScaffold(
       appBar: AppBar(
@@ -169,7 +169,9 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             return const Center(child: CircularProgressIndicator());
           }
           if (snapshot.hasError) {
-            return Center(child: Text('Unable to load details: ${snapshot.error}'));
+            return Center(
+              child: Text('Unable to load details: ${snapshot.error}'),
+            );
           }
 
           final details = snapshot.data!;
@@ -251,7 +253,10 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                     if (details.merchant != null)
                       _detailRow('Merchant', details.merchant!.name),
                     _detailRow('Account', accountName),
-                    _detailRow('Date', _formatDate(transaction.transactionDate)),
+                    _detailRow(
+                      'Date',
+                      _formatDate(transaction.transactionDate),
+                    ),
                     _detailRow('Type', isIncome ? 'Income' : 'Expense'),
                     _detailRow('Source', transaction.source),
                     if (transaction.referenceNumber?.isNotEmpty == true)
@@ -295,7 +300,10 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Expanded(
-            child: Text(label, style: const TextStyle(color: ArthamColors.muted)),
+            child: Text(
+              label,
+              style: const TextStyle(color: ArthamColors.muted),
+            ),
           ),
           const SizedBox(width: 12),
           Flexible(
@@ -402,9 +410,10 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
           _accounts = accounts;
           _categories = categories;
           _selectedAccountId = widget.transaction.accountId;
-          _selectedCategoryId = _categories.any(
-            (item) => item.id == widget.transaction.categoryId,
-          )
+          _selectedCategoryId =
+              _categories.any(
+                (item) => item.id == widget.transaction.categoryId,
+              )
               ? widget.transaction.categoryId
               : (_categories.isNotEmpty ? _categories.first.id : null);
           _isLoading = false;
@@ -466,7 +475,9 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
     final amount = double.tryParse(_amountController.text.trim());
     if (amount == null || amount <= 0) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enter a valid amount greater than zero.')),
+        const SnackBar(
+          content: Text('Enter a valid amount greater than zero.'),
+        ),
       );
       return;
     }
@@ -520,138 +531,143 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
       body: _isLoading
           ? const Center(child: CircularProgressIndicator())
           : _loadError != null
-              ? Center(child: Text('Unable to load form: $_loadError'))
-              : Form(
-                  key: _formKey,
-                  child: ListView(
-                    padding: const EdgeInsets.all(20),
-                    children: [
-                      Container(
-                        padding: const EdgeInsets.all(18),
-                        decoration: BoxDecoration(
-                          gradient: ArthamColors.glassGradient,
-                          border: ArthamColors.glassBorder,
-                          borderRadius: BorderRadius.circular(20),
+          ? Center(child: Text('Unable to load form: $_loadError'))
+          : Form(
+              key: _formKey,
+              child: ListView(
+                padding: const EdgeInsets.all(20),
+                children: [
+                  Container(
+                    padding: const EdgeInsets.all(18),
+                    decoration: BoxDecoration(
+                      gradient: ArthamColors.glassGradient,
+                      border: ArthamColors.glassBorder,
+                      borderRadius: BorderRadius.circular(20),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          typeLabel,
+                          style: const TextStyle(
+                            color: transactionGreen,
+                            fontWeight: FontWeight.w700,
+                          ),
                         ),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              typeLabel,
-                              style: const TextStyle(
-                                color: transactionGreen,
-                                fontWeight: FontWeight.w700,
-                              ),
-                            ),
-                            const SizedBox(height: 14),
-                            TextFormField(
-                              controller: _amountController,
-                              keyboardType:
-                                  const TextInputType.numberWithOptions(decimal: true),
-                              decoration: const InputDecoration(
-                                labelText: 'Amount (₹)',
-                                prefixText: '₹ ',
-                                border: OutlineInputBorder(),
-                              ),
-                              validator: (value) {
-                                final amount =
-                                    double.tryParse((value ?? '').trim());
-                                if (amount == null || amount <= 0) {
-                                  return 'Enter a valid amount';
-                                }
-                                return null;
-                              },
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<int>(
-                              initialValue: _selectedAccountId,
-                              isExpanded: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Account',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: _accounts
-                                  .map(
-                                    (account) => DropdownMenuItem<int>(
-                                      value: account.id,
-                                      child: Text(
-                                        bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
-                                        overflow: TextOverflow.ellipsis,
-                                      ),
+                        const SizedBox(height: 14),
+                        TextFormField(
+                          controller: _amountController,
+                          keyboardType: const TextInputType.numberWithOptions(
+                            decimal: true,
+                          ),
+                          decoration: const InputDecoration(
+                            labelText: 'Amount (₹)',
+                            prefixText: '₹ ',
+                            border: OutlineInputBorder(),
+                          ),
+                          validator: (value) {
+                            final amount = double.tryParse(
+                              (value ?? '').trim(),
+                            );
+                            if (amount == null || amount <= 0) {
+                              return 'Enter a valid amount';
+                            }
+                            return null;
+                          },
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<int>(
+                          initialValue: _selectedAccountId,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Account',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _accounts
+                              .map(
+                                (account) => DropdownMenuItem<int>(
+                                  value: account.id,
+                                  child: Text(
+                                    bankAccountDisplayLabel(
+                                      account.bankName,
+                                      account.accountNumberLast4,
                                     ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) =>
-                                  setState(() => _selectedAccountId = value),
-                            ),
-                            const SizedBox(height: 16),
-                            DropdownButtonFormField<int>(
-                              initialValue: _selectedCategoryId,
-                              isExpanded: true,
-                              decoration: const InputDecoration(
-                                labelText: 'Category',
-                                border: OutlineInputBorder(),
-                              ),
-                              items: _categories
-                                  .map(
-                                    (category) => DropdownMenuItem<int>(
-                                      value: category.id,
-                                      child: CategoryLabel(category: category),
-                                    ),
-                                  )
-                                  .toList(),
-                              onChanged: (value) =>
-                                  setState(() => _selectedCategoryId = value),
-                            ),
-                            const SizedBox(height: 16),
-                            TextFormField(
-                              controller: _descriptionController,
-                              textCapitalization: TextCapitalization.sentences,
-                              decoration: const InputDecoration(
-                                labelText: 'Description',
-                                border: OutlineInputBorder(),
-                              ),
-                            ),
-                            const SizedBox(height: 16),
-                            InkWell(
-                              onTap: _pickDate,
-                              borderRadius: BorderRadius.circular(10),
-                              child: InputDecorator(
-                                decoration: const InputDecoration(
-                                  labelText: 'Transaction date',
-                                  border: OutlineInputBorder(),
-                                  suffixIcon: Icon(Icons.calendar_month_outlined),
-                                ),
-                                child: Text(_formatDate(_selectedDate)),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                      const SizedBox(height: 22),
-                      FilledButton(
-                        onPressed: _isSaving ? null : _save,
-                        style: FilledButton.styleFrom(
-                          backgroundColor: transactionGreen,
-                          padding: const EdgeInsets.symmetric(vertical: 16),
-                        ),
-                        child: _isSaving
-                            ? const SizedBox(
-                                height: 20,
-                                width: 20,
-                                child: CircularProgressIndicator(
-                                  strokeWidth: 2,
-                                  color: ArthamColors.onAccent,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               )
-                            : const Text(
-                                'Save Changes',
-                                style: TextStyle(fontWeight: FontWeight.w700),
-                              ),
-                      ),
-                    ],
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => _selectedAccountId = value),
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<int>(
+                          initialValue: _selectedCategoryId,
+                          isExpanded: true,
+                          decoration: const InputDecoration(
+                            labelText: 'Category',
+                            border: OutlineInputBorder(),
+                          ),
+                          items: _categories
+                              .map(
+                                (category) => DropdownMenuItem<int>(
+                                  value: category.id,
+                                  child: CategoryLabel(category: category),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (value) =>
+                              setState(() => _selectedCategoryId = value),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _descriptionController,
+                          textCapitalization: TextCapitalization.sentences,
+                          decoration: const InputDecoration(
+                            labelText: 'Description',
+                            border: OutlineInputBorder(),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        InkWell(
+                          onTap: _pickDate,
+                          borderRadius: BorderRadius.circular(10),
+                          child: InputDecorator(
+                            decoration: const InputDecoration(
+                              labelText: 'Transaction date',
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.calendar_month_outlined),
+                            ),
+                            child: Text(_formatDate(_selectedDate)),
+                          ),
+                        ),
+                      ],
+                    ),
                   ),
-                ),
+                  const SizedBox(height: 22),
+                  FilledButton(
+                    onPressed: _isSaving ? null : _save,
+                    style: FilledButton.styleFrom(
+                      backgroundColor: transactionGreen,
+                      padding: const EdgeInsets.symmetric(vertical: 16),
+                    ),
+                    child: _isSaving
+                        ? const SizedBox(
+                            height: 20,
+                            width: 20,
+                            child: CircularProgressIndicator(
+                              strokeWidth: 2,
+                              color: ArthamColors.onAccent,
+                            ),
+                          )
+                        : const Text(
+                            'Save Changes',
+                            style: TextStyle(fontWeight: FontWeight.w700),
+                          ),
+                  ),
+                ],
+              ),
+            ),
     );
   }
 }

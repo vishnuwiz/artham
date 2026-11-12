@@ -154,11 +154,9 @@ class RecurringPatternDetector {
       final graceDays = cadence.frequency == 'weekly'
           ? 14
           : cadence.frequency == 'yearly'
-              ? 60
-              : 45;
-      if (nextExpected.isBefore(
-        today.subtract(Duration(days: graceDays)),
-      )) {
+          ? 60
+          : 45;
+      if (nextExpected.isBefore(today.subtract(Duration(days: graceDays)))) {
         continue;
       }
 
@@ -269,10 +267,12 @@ class RecurringPatternDetector {
       return current.add(Duration(days: 7 * interval));
     }
 
-    final targetYear =
-        frequency == 'yearly' ? current.year + interval : current.year;
-    final targetMonth =
-        frequency == 'monthly' ? current.month + interval : current.month;
+    final targetYear = frequency == 'yearly'
+        ? current.year + interval
+        : current.year;
+    final targetMonth = frequency == 'monthly'
+        ? current.month + interval
+        : current.month;
     final firstOfTargetMonth = DateTime(targetYear, targetMonth, 1);
     final lastDay = DateTime(
       firstOfTargetMonth.year,
@@ -280,11 +280,7 @@ class RecurringPatternDetector {
       0,
     ).day;
     final day = current.day > lastDay ? lastDay : current.day;
-    return DateTime(
-      firstOfTargetMonth.year,
-      firstOfTargetMonth.month,
-      day,
-    );
+    return DateTime(firstOfTargetMonth.year, firstOfTargetMonth.month, day);
   }
 
   static DateTime _dateOnly(DateTime value) =>

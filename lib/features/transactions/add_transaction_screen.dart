@@ -1,7 +1,8 @@
+import 'package:material_ui/material_ui.dart';
 
-import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
 import '../../theme/category_icons.dart';
+
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
@@ -15,18 +16,13 @@ const Color transactionBackground = Colors.transparent;
 class AddTransactionScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const AddTransactionScreen({
-    super.key,
-    required this.database,
-  });
+  const AddTransactionScreen({super.key, required this.database});
 
   @override
-  State<AddTransactionScreen> createState() =>
-      _AddTransactionScreenState();
+  State<AddTransactionScreen> createState() => _AddTransactionScreenState();
 }
 
-class _AddTransactionScreenState
-    extends State<AddTransactionScreen> {
+class _AddTransactionScreenState extends State<AddTransactionScreen> {
   final _formKey = GlobalKey<FormState>();
 
   late final TransactionRepository _repository;
@@ -75,8 +71,7 @@ class _AddTransactionScreenState
 
       final accounts = await _repository.getActiveAccounts();
       final balanceSummary = await _repository.getBalanceSummary();
-      final categories =
-          await _repository.getCategories(_transactionType);
+      final categories = await _repository.getCategories(_transactionType);
 
       if (!mounted) return;
 
@@ -84,11 +79,9 @@ class _AddTransactionScreenState
         _accounts = accounts;
         _categories = categories;
         _balanceSummary = balanceSummary;
-        _selectedAccountId =
-            accounts.isNotEmpty ? accounts.first.id : null;
+        _selectedAccountId = accounts.isNotEmpty ? accounts.first.id : null;
         _toAccountId = accounts.length > 1 ? accounts[1].id : null;
-        _defaultCategoryId =
-            categories.isNotEmpty ? categories.first.id : null;
+        _defaultCategoryId = categories.isNotEmpty ? categories.first.id : null;
         _selectedCategoryId = _defaultCategoryId;
         _categoryWasManuallySelected = false;
         _isLoading = false;
@@ -98,9 +91,8 @@ class _AddTransactionScreenState
 
       setState(() => _isLoading = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to load form: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Unable to load form: $e')));
     }
   }
 
@@ -134,8 +126,7 @@ class _AddTransactionScreenState
 
       setState(() {
         _categories = categories;
-        _defaultCategoryId =
-            categories.isNotEmpty ? categories.first.id : null;
+        _defaultCategoryId = categories.isNotEmpty ? categories.first.id : null;
         _selectedCategoryId = _defaultCategoryId;
         _isLoading = false;
       });
@@ -144,9 +135,9 @@ class _AddTransactionScreenState
 
       setState(() => _isLoading = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to load categories: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to load categories: $e')));
     }
   }
 
@@ -157,8 +148,7 @@ class _AddTransactionScreenState
       return;
     }
     if (_toAccountId == null || _toAccountId == _selectedAccountId) {
-      _toAccountId =
-          _accounts.firstWhere((a) => a.id != _selectedAccountId).id;
+      _toAccountId = _accounts.firstWhere((a) => a.id != _selectedAccountId).id;
     }
   }
 
@@ -173,8 +163,8 @@ class _AddTransactionScreenState
     setState(() {
       _merchantSuggestion = match;
       if (!_categoryWasManuallySelected) {
-        _selectedCategoryId = suggestedCategory != null &&
-                suggestedCategory.isNotEmpty
+        _selectedCategoryId =
+            suggestedCategory != null && suggestedCategory.isNotEmpty
             ? suggestedCategory.first.id
             : _defaultCategoryId;
       }
@@ -241,9 +231,7 @@ class _AddTransactionScreenState
       setState(() => _isSaving = false);
 
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text(e.toString().replaceFirst('Bad state: ', '')),
-        ),
+        SnackBar(content: Text(e.toString().replaceFirst('Bad state: ', ''))),
       );
     }
   }
@@ -253,8 +241,7 @@ class _AddTransactionScreenState
 
     if (!_formKey.currentState!.validate()) return;
 
-    if (_selectedAccountId == null ||
-        _selectedCategoryId == null) {
+    if (_selectedAccountId == null || _selectedCategoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           content: Text('Please select a bank account and category.'),
@@ -263,8 +250,7 @@ class _AddTransactionScreenState
       return;
     }
 
-    final amount =
-        double.tryParse(_amountController.text.trim());
+    final amount = double.tryParse(_amountController.text.trim());
 
     if (amount == null || !amount.isFinite || amount <= 0) {
       return;
@@ -287,9 +273,7 @@ class _AddTransactionScreenState
       if (!mounted) return;
 
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Transaction saved successfully!'),
-        ),
+        const SnackBar(content: Text('Transaction saved successfully!')),
       );
 
       Navigator.pop(context, true);
@@ -298,17 +282,13 @@ class _AddTransactionScreenState
 
       setState(() => _isSaving = false);
 
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to save transaction: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to save transaction: $e')));
     }
   }
 
-  InputDecoration _decoration(
-    String label, {
-    String? hint,
-    Widget? prefix,
-  }) {
+  InputDecoration _decoration(String label, {String? hint, Widget? prefix}) {
     return InputDecoration(
       labelText: label,
       hintText: hint,
@@ -325,10 +305,7 @@ class _AddTransactionScreenState
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(
-          color: transactionGreen,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: transactionGreen, width: 1.5),
       ),
     );
   }
@@ -336,8 +313,9 @@ class _AddTransactionScreenState
   @override
   Widget build(BuildContext context) {
     final isIncome = _transactionType == 'income';
-    final accent =
-        _transactionType == 'expense' ? ArthamColors.debit : transactionGreen;
+    final accent = _transactionType == 'expense'
+        ? ArthamColors.debit
+        : transactionGreen;
 
     return ArthamScaffold(
       appBar: AppBar(
@@ -351,13 +329,11 @@ class _AddTransactionScreenState
       ),
       body: _isLoading
           ? const Center(
-              child: CircularProgressIndicator(
-                color: transactionGreen,
-              ),
+              child: CircularProgressIndicator(color: transactionGreen),
             )
           : _accounts.isEmpty
-              ? _buildNoAccounts()
-              : _buildForm(isIncome, accent),
+          ? _buildNoAccounts()
+          : _buildForm(isIncome, accent),
     );
   }
 
@@ -423,8 +399,7 @@ class _AddTransactionScreenState
                 TextFormField(
                   controller: _amountController,
                   autofocus: false,
-                  keyboardType:
-                      const TextInputType.numberWithOptions(
+                  keyboardType: const TextInputType.numberWithOptions(
                     decimal: true,
                   ),
                   inputFormatters: [
@@ -448,12 +423,9 @@ class _AddTransactionScreenState
                     border: InputBorder.none,
                   ),
                   validator: (value) {
-                    final amount =
-                        double.tryParse(value?.trim() ?? '');
+                    final amount = double.tryParse(value?.trim() ?? '');
 
-                    if (amount == null ||
-                        !amount.isFinite ||
-                        amount <= 0) {
+                    if (amount == null || !amount.isFinite || amount <= 0) {
                       return 'Enter a valid amount';
                     }
 
@@ -462,7 +434,8 @@ class _AddTransactionScreenState
                     }
 
                     if (_isTransfer) {
-                      final available = _balanceSummary
+                      final available =
+                          _balanceSummary
                               ?.accountBalancesPaise[_selectedAccountId] ??
                           0;
                       if ((amount * 100).round() > available) {
@@ -514,7 +487,10 @@ class _AddTransactionScreenState
               return DropdownMenuItem<int>(
                 value: account.id,
                 child: Text(
-                  bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
+                  bankAccountDisplayLabel(
+                    account.bankName,
+                    account.accountNumberLast4,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               );
@@ -534,10 +510,7 @@ class _AddTransactionScreenState
               const SizedBox(height: 6),
               Text(
                 'Available: ${_money(_balanceSummary?.accountBalancesPaise[_selectedAccountId] ?? 0)}',
-                style: const TextStyle(
-                  color: ArthamColors.muted,
-                  fontSize: 12,
-                ),
+                style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
               ),
             ],
             const SizedBox(height: 16),
@@ -561,17 +534,18 @@ class _AddTransactionScreenState
                 items: _accounts
                     .where((account) => account.id != _selectedAccountId)
                     .map((account) {
-                  return DropdownMenuItem<int>(
-                    value: account.id,
-                    child: Text(
-                      bankAccountDisplayLabel(
-                        account.bankName,
-                        account.accountNumberLast4,
-                      ),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  );
-                }).toList(),
+                      return DropdownMenuItem<int>(
+                        value: account.id,
+                        child: Text(
+                          bankAccountDisplayLabel(
+                            account.bankName,
+                            account.accountNumberLast4,
+                          ),
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      );
+                    })
+                    .toList(),
                 onChanged: (value) {
                   setState(() => _toAccountId = value);
                 },
@@ -579,34 +553,33 @@ class _AddTransactionScreenState
                     value == null ? 'Select a destination account' : null,
               ),
           ] else ...[
-              const SizedBox(height: 16),
+            const SizedBox(height: 16),
 
-              DropdownButtonFormField<int>(
-                key: ValueKey<int?>(_selectedCategoryId),
-                initialValue: _selectedCategoryId,
-                isExpanded: true,
-                decoration: _decoration(
-                  'Category',
-                  prefix: const Icon(
-                    Icons.category_outlined,
-                    color: transactionGreen,
-                  ),
+            DropdownButtonFormField<int>(
+              key: ValueKey<int?>(_selectedCategoryId),
+              initialValue: _selectedCategoryId,
+              isExpanded: true,
+              decoration: _decoration(
+                'Category',
+                prefix: const Icon(
+                  Icons.category_outlined,
+                  color: transactionGreen,
                 ),
-                items: _categories.map((category) {
-                  return DropdownMenuItem<int>(
-                    value: category.id,
-                    child: CategoryLabel(category: category),
-                  );
-                }).toList(),
-                onChanged: (value) {
-                  setState(() {
-                    _selectedCategoryId = value;
-                    _categoryWasManuallySelected = true;
-                  });
-                },
-                validator: (value) =>
-                    value == null ? 'Select a category' : null,
               ),
+              items: _categories.map((category) {
+                return DropdownMenuItem<int>(
+                  value: category.id,
+                  child: CategoryLabel(category: category),
+                );
+              }).toList(),
+              onChanged: (value) {
+                setState(() {
+                  _selectedCategoryId = value;
+                  _categoryWasManuallySelected = true;
+                });
+              },
+              validator: (value) => value == null ? 'Select a category' : null,
+            ),
           ],
 
           const SizedBox(height: 16),
@@ -618,10 +591,7 @@ class _AddTransactionScreenState
             decoration: _decoration(
               'Description (optional)',
               hint: 'e.g. Lunch with friends',
-              prefix: const Icon(
-                Icons.notes_rounded,
-                color: transactionGreen,
-              ),
+              prefix: const Icon(Icons.notes_rounded, color: transactionGreen),
             ),
           ),
           if (_merchantSuggestion != null) ...[
@@ -664,9 +634,7 @@ class _AddTransactionScreenState
               ),
               child: Row(
                 children: [
-                  Expanded(
-                    child: Text(_formatDate(_transactionDate)),
-                  ),
+                  Expanded(child: Text(_formatDate(_transactionDate))),
                   const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: transactionGreen,

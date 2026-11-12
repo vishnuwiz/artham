@@ -1,5 +1,5 @@
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
@@ -14,7 +14,13 @@ void main() {
     addTearDown(database.close);
 
     await tester.pumpWidget(
-      MaterialApp(home: BudgetsScreen(database: database)),
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          splashFactory: InkRipple.splashFactory,
+        ),
+        home: BudgetsScreen(database: database),
+      ),
     );
     await tester.pumpAndSettle();
 
@@ -37,9 +43,8 @@ void main() {
     expect(budget!.limitPaise, 100000);
     expect(budget.rolloverEnabled, isTrue);
 
-    final template = await BudgetRepository(database).getBudgetTemplate(
-      categoryId: null,
-    );
+    final template = await BudgetRepository(database)
+        .getBudgetTemplate(categoryId: null);
     expect(template, isNotNull);
     expect(template!.isActive, isTrue);
     expect(template.limitPaise, 100000);

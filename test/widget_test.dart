@@ -17,8 +17,9 @@ void main() {
     await testDatabase.close();
   });
 
-  testWidgets('Artham navigation opens the bank SMS import review screen',
-      (tester) async {
+  testWidgets('Artham navigation opens the bank SMS import review screen', (
+    tester,
+  ) async {
     await tester.pumpWidget(const ArthamApp());
     // The initial dashboard and offstage tabs may contain indeterminate
     // loading indicators, so do not wait for every animation to settle.

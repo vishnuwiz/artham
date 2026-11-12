@@ -27,16 +27,14 @@ class DataExportService {
     final accounts = await database.select(database.bankAccounts).get();
     final categories = await database.select(database.categories).get();
     final merchants = await database.select(database.merchants).get();
-    final transactions = await (database.select(database.moneyTransactions)
-          ..orderBy([
-            (transaction) => OrderingTerm.desc(transaction.transactionDate),
-            (transaction) => OrderingTerm.desc(transaction.createdAt),
-          ]))
-        .get();
+    final transactions =
+        await (database.select(database.moneyTransactions)..orderBy([
+              (transaction) => OrderingTerm.desc(transaction.transactionDate),
+              (transaction) => OrderingTerm.desc(transaction.createdAt),
+            ]))
+            .get();
 
-    final accountsById = {
-      for (final account in accounts) account.id: account,
-    };
+    final accountsById = {for (final account in accounts) account.id: account};
     final categoriesById = {
       for (final category in categories) category.id: category,
     };
@@ -123,14 +121,17 @@ class DataExportService {
     final accounts = await database.select(database.bankAccounts).get();
     final categories = await database.select(database.categories).get();
     final merchants = await database.select(database.merchants).get();
-    final transactions =
-        await database.select(database.moneyTransactions).get();
+    final transactions = await database
+        .select(database.moneyTransactions)
+        .get();
     final budgets = await database.select(database.budgets).get();
-    final budgetTemplates =
-        await database.select(database.budgetTemplates).get();
+    final budgetTemplates = await database
+        .select(database.budgetTemplates)
+        .get();
     final processedSms = await database.select(database.processedSms).get();
-    final recurringSchedules =
-        await database.select(database.recurringSchedules).get();
+    final recurringSchedules = await database
+        .select(database.recurringSchedules)
+        .get();
     final pendingSmsImports = await _readPendingSmsImports();
 
     final payload = <String, dynamic>{
@@ -191,8 +192,8 @@ class DataExportService {
                 'transactionType': transaction.transactionType,
                 'description': transaction.description,
                 'referenceNumber': transaction.referenceNumber,
-                'transactionDate':
-                    transaction.transactionDate.toIso8601String(),
+                'transactionDate': transaction.transactionDate
+                    .toIso8601String(),
                 'source': transaction.source,
                 'notes': transaction.notes,
                 'createdAt': transaction.createdAt.toIso8601String(),
@@ -291,18 +292,17 @@ class DataExportService {
     final file = File(
       p.join(directory.path, 'artham_export_$timestamp.$extension'),
     );
-    await file.writeAsBytes(
-      utf8.encode(contents),
-      flush: true,
-    );
+    await file.writeAsBytes(utf8.encode(contents), flush: true);
     return XFile(file.path, mimeType: mimeType);
   }
 
   Future<List<Map<String, dynamic>>> _readPendingSmsImports() async {
-    final table = await database.customSelect(
-      "SELECT name FROM sqlite_master "
-      "WHERE type = 'table' AND name = 'pending_sms_imports'",
-    ).getSingleOrNull();
+    final table = await database
+        .customSelect(
+          "SELECT name FROM sqlite_master "
+          "WHERE type = 'table' AND name = 'pending_sms_imports'",
+        )
+        .getSingleOrNull();
 
     if (table == null) {
       return [];

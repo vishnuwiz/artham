@@ -40,8 +40,7 @@ class MerchantSpendingItem {
     required this.historicalMonthCount,
   });
 
-  int get excessSpendPaise =>
-      currentMonthSpendPaise - expectedSpendToDatePaise;
+  int get excessSpendPaise => currentMonthSpendPaise - expectedSpendToDatePaise;
 
   int get percentageAboveUsual {
     if (expectedSpendToDatePaise <= 0) return 0;
@@ -67,8 +66,7 @@ class MerchantSpendingInsights {
     this.unusualMerchants = const [],
   });
 
-  factory MerchantSpendingInsights.empty() =>
-      const MerchantSpendingInsights();
+  factory MerchantSpendingInsights.empty() => const MerchantSpendingInsights();
 }
 
 class MerchantSpendingAnalyzer {
@@ -87,11 +85,7 @@ class MerchantSpendingAnalyzer {
     final asOfDate = DateTime(asOf.year, asOf.month, asOf.day);
     final currentMonth = DateTime(asOf.year, asOf.month, 1);
     final nextMonth = DateTime(asOf.year, asOf.month + 1, 1);
-    final historyStart = DateTime(
-      asOf.year,
-      asOf.month - historyMonths,
-      1,
-    );
+    final historyStart = DateTime(asOf.year, asOf.month - historyMonths, 1);
     final byMerchant = <int, List<MerchantExpenseRecord>>{};
 
     for (final expense in expenses) {
@@ -142,8 +136,7 @@ class MerchantSpendingAnalyzer {
         // subscription simply because its payment exceeds a daily average.
         if (date.day <= asOf.day) {
           historicalSpendByMonth[monthStart] =
-              (historicalSpendByMonth[monthStart] ?? 0) +
-              record.amountPaise;
+              (historicalSpendByMonth[monthStart] ?? 0) + record.amountPaise;
         }
       }
 

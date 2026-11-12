@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
@@ -72,7 +73,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
     final categories = await repository.getCategories('expense');
     final now = DateTime.now();
     final currentMonth = DateTime(now.year, now.month, 1);
-    final merchants = await widget.database.select(widget.database.merchants).get();
+    final merchants = await widget.database
+        .select(widget.database.merchants)
+        .get();
     final merchantsById = {
       for (final merchant in merchants) merchant.id: merchant,
     };
@@ -369,7 +372,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 20),
                         const Text(
                           'Insights are based on transactions saved in Artham. Transfers are excluded.',
-                          style: TextStyle(color: ArthamColors.muted, fontSize: 11),
+                          style: TextStyle(
+                            color: ArthamColors.muted,
+                            fontSize: 11,
+                          ),
                         ),
                       ]),
                     ),
@@ -982,7 +988,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   hasBudget
                       ? 'Actual ${_money(item.expensesPaise)} · Plan ${_money(item.availableBudgetPaise)}'
                       : 'Actual spending ${_money(item.expensesPaise)}',
-                  style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
+                  style: const TextStyle(
+                    color: ArthamColors.muted,
+                    fontSize: 10,
+                  ),
                 ),
                 if (hasBudget) ...[
                   const SizedBox(height: 7),
@@ -1511,7 +1520,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     '${(share * 100).toStringAsFixed(1)}%',
-                    style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
+                    style: const TextStyle(
+                      color: ArthamColors.muted,
+                      fontSize: 10,
+                    ),
                   ),
                 ),
               ],

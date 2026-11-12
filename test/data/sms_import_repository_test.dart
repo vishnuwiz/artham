@@ -15,7 +15,9 @@ void main() {
     database = AppDatabase.forTesting(NativeDatabase.memory());
     repository = SmsImportRepository(database);
 
-    accountId = await database.into(database.bankAccounts).insert(
+    accountId = await database
+        .into(database.bankAccounts)
+        .insert(
           BankAccountsCompanion.insert(
             bankName: 'HDFC Bank',
             accountName: 'Savings',
@@ -25,7 +27,9 @@ void main() {
           ),
         );
 
-    categoryId = await database.into(database.categories).insert(
+    categoryId = await database
+        .into(database.categories)
+        .insert(
           CategoriesCompanion.insert(
             name: 'Restaurants',
             type: 'expense',
@@ -38,38 +42,40 @@ void main() {
     await database.close();
   });
 
-  test('imports an SMS transaction and records its fingerprint atomically',
-      () async {
-    final transactionId = await repository.importTransaction(
-      fingerprint: 'sms-fingerprint-001',
-      accountId: accountId,
-      categoryId: categoryId,
-      amountPaise: 125050,
-      transactionType: 'expense',
-      transactionDate: DateTime(2026, 11, 9),
-      description: 'Swiggy',
-      referenceNumber: '123456789012',
-    );
+  test(
+    'imports an SMS transaction and records its fingerprint atomically',
+    () async {
+      final transactionId = await repository.importTransaction(
+        fingerprint: 'sms-fingerprint-001',
+        accountId: accountId,
+        categoryId: categoryId,
+        amountPaise: 125050,
+        transactionType: 'expense',
+        transactionDate: DateTime(2026, 11, 9),
+        description: 'Swiggy',
+        referenceNumber: '123456789012',
+      );
 
-    final transaction = await (database.select(database.moneyTransactions)
-          ..where((row) => row.id.equals(transactionId)))
-        .getSingle();
-    final processedSms = await database.select(database.processedSms).get();
+      final transaction = await (database.select(
+        database.moneyTransactions,
+      )..where((row) => row.id.equals(transactionId))).getSingle();
+      final processedSms = await database.select(database.processedSms).get();
 
-    expect(transaction.amountPaise, 125050);
-    expect(transaction.transactionType, 'expense');
-    expect(transaction.source, 'sms');
-    expect(transaction.referenceNumber, '123456789012');
-    expect(transaction.merchantId, isNotNull);
-    final merchant = await (database.select(database.merchants)
-          ..where((row) => row.id.equals(transaction.merchantId!)))
-        .getSingle();
-    expect(merchant.name, 'Swiggy');
-    expect(merchant.defaultCategoryId, categoryId);
-    expect(processedSms, hasLength(1));
-    expect(processedSms.single.fingerprint, 'sms-fingerprint-001');
-    expect(processedSms.single.isProcessed, isTrue);
-  });
+      expect(transaction.amountPaise, 125050);
+      expect(transaction.transactionType, 'expense');
+      expect(transaction.source, 'sms');
+      expect(transaction.referenceNumber, '123456789012');
+      expect(transaction.merchantId, isNotNull);
+      final merchant = await (database.select(
+        database.merchants,
+      )..where((row) => row.id.equals(transaction.merchantId!))).getSingle();
+      expect(merchant.name, 'Swiggy');
+      expect(merchant.defaultCategoryId, categoryId);
+      expect(processedSms, hasLength(1));
+      expect(processedSms.single.fingerprint, 'sms-fingerprint-001');
+      expect(processedSms.single.isProcessed, isTrue);
+    },
+  );
 
   test('rejects an SMS fingerprint that has already been imported', () async {
     final arguments = {
@@ -105,7 +111,10 @@ void main() {
       throwsA(isA<DuplicateSmsImportException>()),
     );
 
-    expect(await database.select(database.moneyTransactions).get(), hasLength(1));
+    expect(
+      await database.select(database.moneyTransactions).get(),
+      hasLength(1),
+    );
     expect(await database.select(database.processedSms).get(), hasLength(1));
   });
 

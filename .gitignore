@@ -65,3 +65,5 @@ secrets.json
 # OS files
 Thumbs.db
 desktop.ini
+# Android Gradle build output
+/android/build/

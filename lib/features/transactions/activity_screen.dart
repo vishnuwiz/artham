@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
@@ -12,26 +13,19 @@ const Color activityGreen = ArthamColors.lavender;
 const Color activityNavy = ArthamColors.text;
 const Color activityBackground = Colors.transparent;
 
-enum _TransactionSort {
-  newest,
-  oldest,
-  highest,
-  lowest,
-}
+enum _TransactionSort { newest, oldest, highest, lowest }
 
 class ActivityScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const ActivityScreen({
-    super.key,
-    required this.database,
-  });
+  const ActivityScreen({super.key, required this.database});
 
   @override
   State<ActivityScreen> createState() => _ActivityScreenState();
 }
 
-class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObserver {
+class _ActivityScreenState extends State<ActivityScreen>
+    with WidgetsBindingObserver {
   late final TransactionRepository _repository;
   late Future<_ActivityData> _activityFuture;
 
@@ -69,12 +63,15 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
 
   Future<_ActivityData> _fetchActivity() async {
     final transactions = await _repository.getAllTransactions();
-    final accounts =
-        await widget.database.select(widget.database.bankAccounts).get();
-    final categories =
-        await widget.database.select(widget.database.categories).get();
-    final merchants =
-        await widget.database.select(widget.database.merchants).get();
+    final accounts = await widget.database
+        .select(widget.database.bankAccounts)
+        .get();
+    final categories = await widget.database
+        .select(widget.database.categories)
+        .get();
+    final merchants = await widget.database
+        .select(widget.database.merchants)
+        .get();
 
     return _ActivityData(
       transactions: transactions,
@@ -83,7 +80,10 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       },
       accountNames: {
         for (final account in accounts)
-          account.id: bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
+          account.id: bankAccountDisplayLabel(
+            account.bankName,
+            account.accountNumberLast4,
+          ),
       },
       categoryNames: {
         for (final category in categories) category.id: category.name,
@@ -120,9 +120,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
     await Navigator.push<void>(
       context,
       MaterialPageRoute(
-        builder: (_) => RecurringTransactionsScreen(
-          database: widget.database,
-        ),
+        builder: (_) => RecurringTransactionsScreen(database: widget.database),
       ),
     );
 
@@ -149,8 +147,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
     await _activityFuture;
   }
 
-  String _formatAmount(int paise) =>
-      '₹${(paise / 100).toStringAsFixed(2)}';
+  String _formatAmount(int paise) => '₹${(paise / 100).toStringAsFixed(2)}';
 
   String _formatDate(DateTime date) {
     final now = DateTime.now();
@@ -177,8 +174,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       if (_selectedType != 'all' && tx.transactionType != _selectedType) {
         return false;
       }
-      if (_selectedCategoryId != null &&
-          tx.categoryId != _selectedCategoryId) {
+      if (_selectedCategoryId != null && tx.categoryId != _selectedCategoryId) {
         return false;
       }
       if (_selectedAccountId != null &&
@@ -202,13 +198,13 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       }
       if (query.isNotEmpty) {
         final description = (tx.description ?? '').toLowerCase();
-        final merchant =
-            (data.merchantNames[tx.merchantId] ?? '').toLowerCase();
+        final merchant = (data.merchantNames[tx.merchantId] ?? '')
+            .toLowerCase();
         final reference = (tx.referenceNumber ?? '').toLowerCase();
-        final category =
-            (data.categoryNames[tx.categoryId] ?? '').toLowerCase();
-        final sourceAccount =
-            (data.accountNames[tx.accountId] ?? '').toLowerCase();
+        final category = (data.categoryNames[tx.categoryId] ?? '')
+            .toLowerCase();
+        final sourceAccount = (data.accountNames[tx.accountId] ?? '')
+            .toLowerCase();
         final destinationAccount =
             (data.accountNames[tx.transferToAccountId] ?? '').toLowerCase();
         if (!description.contains(query) &&
@@ -376,7 +372,10 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                             (account) => DropdownMenuItem<int?>(
                               value: account.id,
                               child: Text(
-                                bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
+                                bankAccountDisplayLabel(
+                                  account.bankName,
+                                  account.accountNumberLast4,
+                                ),
                                 overflow: TextOverflow.ellipsis,
                               ),
                             ),
@@ -393,7 +392,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                           dateRange == null
                               ? 'Choose date range'
                               : '${_shortDate(dateRange!.start)} – '
-                                  '${_shortDate(dateRange!.end)}',
+                                    '${_shortDate(dateRange!.end)}',
                         ),
                         style: OutlinedButton.styleFrom(
                           foregroundColor: activityGreen,
@@ -528,7 +527,11 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(Icons.error_outline, color: ArthamColors.debit, size: 40),
+                    const Icon(
+                      Icons.error_outline,
+                      color: ArthamColors.debit,
+                      size: 40,
+                    ),
                     const SizedBox(height: 12),
                     Text(
                       'Unable to load transactions:\n${snapshot.error}',
@@ -570,8 +573,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                     suffixIcon: _searchQuery.isEmpty
                         ? null
                         : IconButton(
-                            onPressed: () =>
-                                setState(() => _searchQuery = ''),
+                            onPressed: () => setState(() => _searchQuery = ''),
                             icon: const Icon(Icons.close_rounded),
                           ),
                     filled: true,
@@ -638,10 +640,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                       tooltip: 'Sort',
                       onPressed: _openSortSheet,
                       visualDensity: VisualDensity.compact,
-                      icon: const Icon(
-                        Icons.sort_rounded,
-                        color: activityNavy,
-                      ),
+                      icon: const Icon(Icons.sort_rounded, color: activityNavy),
                     ),
                   ],
                 ),
@@ -678,8 +677,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
                   child: ChoiceChip(
                     label: Text(item.$1),
                     selected: selected,
-                    onSelected: (_) =>
-                        setState(() => _selectedType = item.$2),
+                    onSelected: (_) => setState(() => _selectedType = item.$2),
                     selectedColor: activityGreen.withValues(alpha: 0.13),
                     backgroundColor: ArthamColors.glass,
                     labelStyle: TextStyle(
@@ -798,12 +796,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
     );
   }
 
-  Widget _summaryItem(
-    String title,
-    String amount,
-    IconData icon,
-    Color color,
-  ) {
+  Widget _summaryItem(String title, String amount, IconData icon, Color color) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -839,8 +832,8 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
     final color = isTransfer
         ? ArthamColors.lavender
         : isIncome
-            ? ArthamColors.mint
-            : ArthamColors.debit;
+        ? ArthamColors.mint
+        : ArthamColors.debit;
     final categoryName = isTransfer
         ? 'Transfer'
         : data.categoryNames[transaction.categoryId] ?? 'Uncategorised';
@@ -981,11 +974,7 @@ class _ActivityScreenState extends State<ActivityScreen> with WidgetsBindingObse
       ),
       child: Column(
         children: [
-          const Icon(
-            Icons.search_off_rounded,
-            color: activityGreen,
-            size: 48,
-          ),
+          const Icon(Icons.search_off_rounded, color: activityGreen, size: 48),
           const SizedBox(height: 14),
           const Text(
             'No matching transactions',

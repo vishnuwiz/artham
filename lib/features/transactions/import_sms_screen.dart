@@ -1,6 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../theme/artham_theme.dart';
 import '../../theme/category_icons.dart';
+
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
@@ -15,10 +17,7 @@ const Color smsBackground = Colors.transparent;
 class ImportSmsScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const ImportSmsScreen({
-    super.key,
-    required this.database,
-  });
+  const ImportSmsScreen({super.key, required this.database});
 
   @override
   State<ImportSmsScreen> createState() => _ImportSmsScreenState();
@@ -76,7 +75,8 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
       final parsed = _parser.parse(message);
       if (parsed == null) {
         setState(() {
-          _error = 'This message does not look like a supported debit or '
+          _error =
+              'This message does not look like a supported debit or '
               'credit alert. You can still add it manually.';
           _isParsing = false;
         });
@@ -84,8 +84,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
       }
 
       final fingerprint = smsMessageFingerprint(message);
-      final isDuplicate =
-          await _smsImportRepository.isDuplicate(fingerprint);
+      final isDuplicate = await _smsImportRepository.isDuplicate(fingerprint);
       if (!mounted) return;
       if (isDuplicate) {
         setState(() {
@@ -97,8 +96,9 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
 
       await _transactionRepository.seedDefaultCategories();
       final accounts = await _transactionRepository.getActiveAccounts();
-      final categories =
-          await _transactionRepository.getCategories(parsed.transactionType);
+      final categories = await _transactionRepository.getCategories(
+        parsed.transactionType,
+      );
 
       if (!mounted) return;
 
@@ -125,8 +125,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             ? suggestedCategory.first.id
             : (categories.isNotEmpty ? categories.first.id : null);
         _selectedDate = parsed.transactionDate ?? DateTime.now();
-        _amountController.text =
-            (parsed.amountPaise / 100).toStringAsFixed(2);
+        _amountController.text = (parsed.amountPaise / 100).toStringAsFixed(2);
         _descriptionController.text = parsed.description;
         _fingerprint = fingerprint;
         _isParsing = false;
@@ -193,9 +192,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
 
       if (!mounted) return;
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('SMS transaction imported successfully.'),
-        ),
+        const SnackBar(content: Text('SMS transaction imported successfully.')),
       );
       Navigator.pop(context, true);
     } on DuplicateSmsImportException {
@@ -246,8 +243,9 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: (isIncome ? smsGreen : ArthamColors.debit)
-                      .withValues(alpha: 0.10),
+                  color: (isIncome ? smsGreen : ArthamColors.debit).withValues(
+                    alpha: 0.10,
+                  ),
                   borderRadius: BorderRadius.circular(30),
                 ),
                 child: Text(
@@ -295,13 +293,15 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               return DropdownMenuItem<int>(
                 value: account.id,
                 child: Text(
-                  bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
+                  bankAccountDisplayLabel(
+                    account.bankName,
+                    account.accountNumberLast4,
+                  ),
                   overflow: TextOverflow.ellipsis,
                 ),
               );
             }).toList(),
-            onChanged: (value) =>
-                setState(() => _selectedAccountId = value),
+            onChanged: (value) => setState(() => _selectedAccountId = value),
           ),
           const SizedBox(height: 13),
           DropdownButtonFormField<int>(
@@ -317,8 +317,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                 child: CategoryLabel(category: category),
               );
             }).toList(),
-            onChanged: (value) =>
-                setState(() => _selectedCategoryId = value),
+            onChanged: (value) => setState(() => _selectedCategoryId = value),
           ),
           const SizedBox(height: 13),
           InkWell(
@@ -480,10 +479,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               ),
               child: Text(
                 _error!,
-                style: const TextStyle(
-                  color: ArthamColors.debit,
-                  fontSize: 13,
-                ),
+                style: const TextStyle(color: ArthamColors.debit, fontSize: 13),
               ),
             ),
           ],

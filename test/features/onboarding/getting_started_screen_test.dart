@@ -1,5 +1,5 @@
 import 'package:artham/features/onboarding/getting_started_screen.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -10,6 +10,10 @@ void main() {
 
       await tester.pumpWidget(
         MaterialApp(
+          theme: ThemeData(
+            useMaterial3: true,
+            splashFactory: InkRipple.splashFactory,
+          ),
           home: GettingStartedScreen(onGetStarted: () => callbackCount++),
         ),
       );

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import 'theme/artham_theme.dart';
 import 'features/transactions/activity_screen.dart';
@@ -123,12 +123,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _loadAccounts() {
-    _accountsFuture = AccountRepository(appDatabase).getActiveAccounts().then((
-      value,
-    ) {
-      _lastAccounts = value;
-      return value;
-    });
+    _accountsFuture = AccountRepository(appDatabase)
+        .getActiveAccounts()
+        .then((value) {
+          _lastAccounts = value;
+          return value;
+        });
     final transactionRepository = TransactionRepository(appDatabase);
     _summaryFuture = transactionRepository.getBalanceSummary().then((value) {
       _lastSummary = value;
@@ -667,8 +667,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return FutureBuilder<MonthlyBudgetSummary?>(
       future: _budgetSummaryFuture,
       builder: (context, snapshot) {
-        final summary =
-            snapshot.data ?? (_hasLastBudget ? _lastBudget : null);
+        final summary = snapshot.data ?? (_hasLastBudget ? _lastBudget : null);
 
         if (snapshot.connectionState == ConnectionState.waiting &&
             !_hasLastBudget) {

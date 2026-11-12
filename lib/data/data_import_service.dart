@@ -115,9 +115,7 @@ class DataImportService {
 
     final root = Map<String, dynamic>.from(decoded);
     if (root['format'] != 'artham_backup' || root['app'] != 'Artham') {
-      throw const FormatException(
-        'This file is not a valid Artham backup.',
-      );
+      throw const FormatException('This file is not a valid Artham backup.');
     }
 
     if (_requiredInt(root, 'formatVersion') != 1) {
@@ -134,8 +132,7 @@ class DataImportService {
       );
     }
 
-    if (root['currency'] != 'INR' ||
-        root['amountStorage'] != 'integer_paise') {
+    if (root['currency'] != 'INR' || root['amountStorage'] != 'integer_paise') {
       throw const FormatException(
         'The backup currency or amount format is not supported.',
       );
@@ -148,41 +145,21 @@ class DataImportService {
     }
     final data = Map<String, dynamic>.from(dataValue);
 
-    final bankAccounts = _parseRows(
-      data,
-      'bankAccounts',
-      _parseBankAccount,
-    );
-    final categories = _parseRows(
-      data,
-      'categories',
-      _parseCategory,
-    );
-    final merchants = _parseRows(
-      data,
-      'merchants',
-      _parseMerchant,
-    );
+    final bankAccounts = _parseRows(data, 'bankAccounts', _parseBankAccount);
+    final categories = _parseRows(data, 'categories', _parseCategory);
+    final merchants = _parseRows(data, 'merchants', _parseMerchant);
     final transactions = _parseRows(
       data,
       'moneyTransactions',
       _parseTransaction,
     );
-    final budgets = _parseRows(
-      data,
-      'budgets',
-      _parseBudget,
-    );
+    final budgets = _parseRows(data, 'budgets', _parseBudget);
     final budgetTemplates = _parseRows(
       data,
       'budgetTemplates',
       _parseBudgetTemplate,
     );
-    final processedSms = _parseRows(
-      data,
-      'processedSms',
-      _parseProcessedSms,
-    );
+    final processedSms = _parseRows(data, 'processedSms', _parseProcessedSms);
     final recurringSchedules = _parseRows(
       data,
       'recurringSchedules',
@@ -284,9 +261,7 @@ class DataImportService {
     );
   }
 
-  MoneyTransactionsCompanion _parseTransaction(
-    Map<String, dynamic> row,
-  ) {
+  MoneyTransactionsCompanion _parseTransaction(Map<String, dynamic> row) {
     return MoneyTransactionsCompanion.insert(
       id: Value(_requiredId(row, 'id')),
       accountId: _requiredId(row, 'accountId'),
@@ -315,9 +290,7 @@ class DataImportService {
     );
   }
 
-  BudgetTemplatesCompanion _parseBudgetTemplate(
-    Map<String, dynamic> row,
-  ) {
+  BudgetTemplatesCompanion _parseBudgetTemplate(Map<String, dynamic> row) {
     return BudgetTemplatesCompanion.insert(
       id: Value(_requiredId(row, 'id')),
       categoryId: Value(_optionalInt(row, 'categoryId')),

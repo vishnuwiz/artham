@@ -1,6 +1,6 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 /// Artham's dark "glass" palette.
@@ -101,6 +101,7 @@ ThemeData buildArthamTheme() {
 
   return ThemeData(
     useMaterial3: true,
+    splashFactory: InkRipple.splashFactory,
     brightness: Brightness.dark,
     colorScheme: scheme,
     scaffoldBackgroundColor: ArthamColors.ink,

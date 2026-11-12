@@ -19,21 +19,23 @@ void main() {
     database = AppDatabase.forTesting(NativeDatabase.memory());
     repository = BudgetRepository(database);
 
-    accountId = await database.into(database.bankAccounts).insert(
-      BankAccountsCompanion.insert(
-        bankName: 'Test Bank',
-        accountName: 'Test Account',
-        openingBalancePaise: 0,
-        openingDate: DateTime(2027, 1, 1),
-      ),
-    );
+    accountId = await database
+        .into(database.bankAccounts)
+        .insert(
+          BankAccountsCompanion.insert(
+            bankName: 'Test Bank',
+            accountName: 'Test Account',
+            openingBalancePaise: 0,
+            openingDate: DateTime(2027, 1, 1),
+          ),
+        );
 
-    foodCategoryId = await database.into(database.categories).insert(
-      CategoriesCompanion.insert(name: 'Food', type: 'expense'),
-    );
-    transportCategoryId = await database.into(database.categories).insert(
-      CategoriesCompanion.insert(name: 'Transport', type: 'expense'),
-    );
+    foodCategoryId = await database
+        .into(database.categories)
+        .insert(CategoriesCompanion.insert(name: 'Food', type: 'expense'));
+    transportCategoryId = await database
+        .into(database.categories)
+        .insert(CategoriesCompanion.insert(name: 'Transport', type: 'expense'));
   });
 
   tearDown(() async {
@@ -45,22 +47,21 @@ void main() {
     required int amountPaise,
     int? categoryId,
   }) async {
-    await database.into(database.moneyTransactions).insert(
-      MoneyTransactionsCompanion.insert(
-        accountId: accountId,
-        categoryId: Value(categoryId),
-        amountPaise: amountPaise,
-        transactionType: 'expense',
-        transactionDate: DateTime(month.year, month.month, 15),
-      ),
-    );
+    await database
+        .into(database.moneyTransactions)
+        .insert(
+          MoneyTransactionsCompanion.insert(
+            accountId: accountId,
+            categoryId: Value(categoryId),
+            amountPaise: amountPaise,
+            transactionType: 'expense',
+            transactionDate: DateTime(month.year, month.month, 15),
+          ),
+        );
   }
 
   test('new budgets default rollover to off', () async {
-    await repository.saveMonthlyBudget(
-      month: april,
-      limitPaise: 100000,
-    );
+    await repository.saveMonthlyBudget(month: april, limitPaise: 100000);
 
     final budget = await repository.getMonthlyBudget(april);
 
@@ -75,10 +76,7 @@ void main() {
       rolloverEnabled: true,
     );
     await addExpense(month: april, amountPaise: 70000);
-    await repository.saveMonthlyBudget(
-      month: may,
-      limitPaise: 120000,
-    );
+    await repository.saveMonthlyBudget(month: may, limitPaise: 120000);
     await addExpense(month: may, amountPaise: 20000);
 
     final result = await repository.getMonthlyBudgetRolloverAmounts(may);
@@ -90,17 +88,10 @@ void main() {
     expect(result.remainingPaise, 130000);
   });
 
-  test('does not carry unused money when the prior budget opted out',
-      () async {
-    await repository.saveMonthlyBudget(
-      month: april,
-      limitPaise: 100000,
-    );
+  test('does not carry unused money when the prior budget opted out', () async {
+    await repository.saveMonthlyBudget(month: april, limitPaise: 100000);
     await addExpense(month: april, amountPaise: 25000);
-    await repository.saveMonthlyBudget(
-      month: may,
-      limitPaise: 80000,
-    );
+    await repository.saveMonthlyBudget(month: may, limitPaise: 80000);
 
     final result = await repository.getMonthlyBudgetRolloverAmounts(may);
 
@@ -126,10 +117,7 @@ void main() {
       rolloverEnabled: true,
     );
     await addExpense(month: february, amountPaise: 40000);
-    await repository.saveMonthlyBudget(
-      month: march,
-      limitPaise: 60000,
-    );
+    await repository.saveMonthlyBudget(month: march, limitPaise: 60000);
 
     final result = await repository.getMonthlyBudgetRolloverAmounts(march);
 
@@ -145,10 +133,7 @@ void main() {
       rolloverEnabled: true,
     );
     await addExpense(month: april, amountPaise: 120000);
-    await repository.saveMonthlyBudget(
-      month: may,
-      limitPaise: 80000,
-    );
+    await repository.saveMonthlyBudget(month: may, limitPaise: 80000);
 
     final result = await repository.getMonthlyBudgetRolloverAmounts(may);
 
@@ -211,28 +196,26 @@ void main() {
     expect(result.availableBudgetPaise, 120000);
   });
 
-  test('editing a budget without a rollover option preserves its setting',
-      () async {
-    await repository.saveMonthlyBudget(
-      month: april,
-      limitPaise: 100000,
-      rolloverEnabled: true,
-    );
+  test(
+    'editing a budget without a rollover option preserves its setting',
+    () async {
+      await repository.saveMonthlyBudget(
+        month: april,
+        limitPaise: 100000,
+        rolloverEnabled: true,
+      );
 
-    await repository.saveMonthlyBudget(
-      month: april,
-      limitPaise: 125000,
-    );
+      await repository.saveMonthlyBudget(month: april, limitPaise: 125000);
 
-    final budget = await repository.getMonthlyBudget(april);
+      final budget = await repository.getMonthlyBudget(april);
 
-    expect(budget, isNotNull);
-    expect(budget!.limitPaise, 125000);
-    expect(budget.rolloverEnabled, isTrue);
-  });
+      expect(budget, isNotNull);
+      expect(budget!.limitPaise, 125000);
+      expect(budget.rolloverEnabled, isTrue);
+    },
+  );
 
-  test('monthly templates populate future months without overwriting edits',
-      () async {
+  test('monthly templates populate future months without overwriting edits', () async {
     await repository.saveBudgetTemplate(
       categoryId: null,
       startMonth: april,
@@ -247,10 +230,7 @@ void main() {
     );
 
     // A manually edited May overall budget must not be replaced by a template.
-    await repository.saveMonthlyBudget(
-      month: may,
-      limitPaise: 175000,
-    );
+    await repository.saveMonthlyBudget(month: may, limitPaise: 175000);
 
     final applied = await repository.applyTemplatesForMonth(may);
     final overall = await repository.getMonthlyBudget(may);
@@ -281,9 +261,9 @@ void main() {
 
     expect(results.reduce((total, value) => total + value), 2);
 
-    final budgets = await (database.select(database.budgets)
-          ..where((budget) => budget.categoryId.isNull()))
-        .get();
+    final budgets = await (database.select(
+      database.budgets,
+    )..where((budget) => budget.categoryId.isNull())).get();
     expect(budgets, hasLength(2));
 
     expect(await repository.applyTemplatesForMonth(may), 0);
@@ -313,10 +293,7 @@ void main() {
     );
 
     await repository.applyTemplatesForMonth(april);
-    await repository.setBudgetTemplateActive(
-      categoryId: null,
-      isActive: false,
-    );
+    await repository.setBudgetTemplateActive(categoryId: null, isActive: false);
 
     final june = DateTime(2027, 6, 1);
     expect(await repository.applyTemplatesForMonth(june), 0);
@@ -333,10 +310,7 @@ void main() {
       limitPaise: 90000,
       rolloverEnabled: false,
     );
-    await repository.setBudgetTemplateActive(
-      categoryId: null,
-      isActive: false,
-    );
+    await repository.setBudgetTemplateActive(categoryId: null, isActive: false);
     await repository.saveBudgetTemplate(
       categoryId: null,
       startMonth: may,
@@ -354,35 +328,38 @@ void main() {
     expect(await repository.applyTemplatesForMonth(may), 1);
   });
 
-  test('editing an active template starts the new plan in that month', () async {
-    await repository.saveBudgetTemplate(
-      categoryId: null,
-      startMonth: april,
-      limitPaise: 100000,
-      rolloverEnabled: false,
-    );
-    await repository.applyTemplatesForMonth(april);
+  test(
+    'editing an active template starts the new plan in that month',
+    () async {
+      await repository.saveBudgetTemplate(
+        categoryId: null,
+        startMonth: april,
+        limitPaise: 100000,
+        rolloverEnabled: false,
+      );
+      await repository.applyTemplatesForMonth(april);
 
-    await repository.saveBudgetTemplate(
-      categoryId: null,
-      startMonth: may,
-      limitPaise: 150000,
-      rolloverEnabled: true,
-    );
+      await repository.saveBudgetTemplate(
+        categoryId: null,
+        startMonth: may,
+        limitPaise: 150000,
+        rolloverEnabled: true,
+      );
 
-    final june = DateTime(2027, 6, 1);
-    final applied = await repository.applyTemplatesForMonth(june);
-    final aprilBudget = await repository.getMonthlyBudget(april);
-    final mayBudget = await repository.getMonthlyBudget(may);
-    final juneBudget = await repository.getMonthlyBudget(june);
+      final june = DateTime(2027, 6, 1);
+      final applied = await repository.applyTemplatesForMonth(june);
+      final aprilBudget = await repository.getMonthlyBudget(april);
+      final mayBudget = await repository.getMonthlyBudget(may);
+      final juneBudget = await repository.getMonthlyBudget(june);
 
-    expect(applied, 2);
-    expect(aprilBudget!.limitPaise, 100000);
-    expect(mayBudget!.limitPaise, 150000);
-    expect(juneBudget!.limitPaise, 150000);
-    expect(aprilBudget.rolloverEnabled, isFalse);
-    expect(mayBudget.rolloverEnabled, isTrue);
-  });
+      expect(applied, 2);
+      expect(aprilBudget!.limitPaise, 100000);
+      expect(mayBudget!.limitPaise, 150000);
+      expect(juneBudget!.limitPaise, 150000);
+      expect(aprilBudget.rolloverEnabled, isFalse);
+      expect(mayBudget.rolloverEnabled, isTrue);
+    },
+  );
 
   test('budget summaries identify monthly templates', () async {
     await repository.saveBudgetTemplate(
@@ -416,5 +393,4 @@ void main() {
     expect(food.expensesPaise, 25000);
     expect(food.remainingPaise, 35000);
   });
-
 }

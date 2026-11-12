@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../data/app_database.dart';
@@ -14,10 +14,7 @@ import 'categories_screen.dart';
 class SettingsScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const SettingsScreen({
-    super.key,
-    required this.database,
-  });
+  const SettingsScreen({super.key, required this.database});
 
   @override
   State<SettingsScreen> createState() => _SettingsScreenState();
@@ -28,9 +25,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
   void _showMessage(String message) {
     if (!mounted) return;
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(content: Text(message)),
-    );
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   Future<void> _shareExportFile({required bool fullBackup}) async {
@@ -52,12 +48,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       await SharePlus.instance.share(
         ShareParams(
           files: [file],
-          title: fullBackup
-              ? 'Artham full data backup'
-              : 'Artham transactions',
+          title: fullBackup ? 'Artham full data backup' : 'Artham transactions',
           text: fullBackup
               ? 'Artham JSON backup. This file contains personal financial data; '
-                  'store and share it securely.'
+                    'store and share it securely.'
               : 'Artham transaction history in CSV format.',
           sharePositionOrigin: shareOrigin,
         ),
@@ -252,18 +246,10 @@ class _SettingsScreenState extends State<SettingsScreen> {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Row(
         children: [
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(fontSize: 13),
-            ),
-          ),
+          Expanded(child: Text(label, style: const TextStyle(fontSize: 13))),
           Text(
             count.toString(),
-            style: const TextStyle(
-              fontWeight: FontWeight.w700,
-              fontSize: 13,
-            ),
+            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 13),
           ),
         ],
       ),
@@ -469,10 +455,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: const [
-          _SectionHeading(
-            icon: Icons.shield_outlined,
-            title: 'SMS privacy',
-          ),
+          _SectionHeading(icon: Icons.shield_outlined, title: 'SMS privacy'),
           SizedBox(height: 10),
           _PrivacyLine(
             text: 'Artham does not read incoming SMS messages or scan your SMS inbox.',
@@ -512,10 +495,7 @@ class _SectionHeading extends StatelessWidget {
   final IconData icon;
   final String title;
 
-  const _SectionHeading({
-    required this.icon,
-    required this.title,
-  });
+  const _SectionHeading({required this.icon, required this.title});
 
   @override
   Widget build(BuildContext context) {

@@ -84,23 +84,28 @@ class SmsTransactionParser {
     final amountPaise = _parsePaise(chosenAmount.group(1)!);
     if (amountPaise == null || amountPaise <= 0) return null;
 
-    final referenceNumber =
-        _referencePattern.firstMatch(text)?.group(1)?.trim();
+    final referenceNumber = _referencePattern
+        .firstMatch(text)
+        ?.group(1)
+        ?.trim();
 
     // Merchant recognition is a local, deterministic lookup. It is only
     // applied to expenses; income counterparties require separate handling.
     final counterparty = _extractCounterparty(text);
     final merchant = transactionType == 'expense'
         ? MerchantIntelligence.recognize(counterparty) ??
-            (counterparty == null
-                ? MerchantIntelligence.recognize(text)
-                : null)
+              (counterparty == null
+                  ? MerchantIntelligence.recognize(text)
+                  : null)
         : null;
-    final categorySource =
-        transactionType == 'expense' ? counterparty ?? text : text;
+    final categorySource = transactionType == 'expense'
+        ? counterparty ?? text
+        : text;
     final suggestedCategory =
-        merchant?.categoryName ?? _suggestCategory(categorySource, transactionType);
-    final description = merchant?.name ??
+        merchant?.categoryName ??
+        _suggestCategory(categorySource, transactionType);
+    final description =
+        merchant?.name ??
         counterparty ??
         (transactionType == 'expense' ? 'Bank SMS expense' : 'Bank SMS credit');
 
@@ -129,8 +134,7 @@ class SmsTransactionParser {
   }
 
   DateTime? _extractDate(String text) {
-    final iso = RegExp(r'\b(20\d{2})-(\d{1,2})-(\d{1,2})\b')
-        .firstMatch(text);
+    final iso = RegExp(r'\b(20\d{2})-(\d{1,2})-(\d{1,2})\b').firstMatch(text);
     if (iso != null) {
       return _safeDate(
         int.parse(iso.group(1)!),
@@ -139,9 +143,8 @@ class SmsTransactionParser {
       );
     }
 
-    final numeric = RegExp(
-      r'\b(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b',
-    ).firstMatch(text);
+    final numeric = RegExp(r'\b(\d{1,2})[/-](\d{1,2})[/-](\d{2,4})\b')
+        .firstMatch(text);
     if (numeric != null) {
       var year = int.parse(numeric.group(3)!);
       if (year < 100) year += 2000;
@@ -157,18 +160,30 @@ class SmsTransactionParser {
     ).firstMatch(text);
     if (namedMonth != null) {
       const months = {
-        'jan': 1, 'january': 1,
-        'feb': 2, 'february': 2,
-        'mar': 3, 'march': 3,
-        'apr': 4, 'april': 4,
+        'jan': 1,
+        'january': 1,
+        'feb': 2,
+        'february': 2,
+        'mar': 3,
+        'march': 3,
+        'apr': 4,
+        'april': 4,
         'may': 5,
-        'jun': 6, 'june': 6,
-        'jul': 7, 'july': 7,
-        'aug': 8, 'august': 8,
-        'sep': 9, 'sept': 9, 'september': 9,
-        'oct': 10, 'october': 10,
-        'nov': 11, 'november': 11,
-        'dec': 12, 'december': 12,
+        'jun': 6,
+        'june': 6,
+        'jul': 7,
+        'july': 7,
+        'aug': 8,
+        'august': 8,
+        'sep': 9,
+        'sept': 9,
+        'september': 9,
+        'oct': 10,
+        'october': 10,
+        'nov': 11,
+        'november': 11,
+        'dec': 12,
+        'december': 12,
       };
       final month = months[namedMonth.group(2)!.toLowerCase()];
       if (month != null) {
@@ -234,7 +249,8 @@ class SmsTransactionParser {
     if (RegExp(r'\batm\b|cash withdrawal|cash wdl').hasMatch(lower)) {
       return 'ATM';
     }
-    if (RegExp(r'credit card (bill|payment|dues)|card repayment').hasMatch(lower)) {
+    if (RegExp(r'credit card (bill|payment|dues)|card repayment')
+        .hasMatch(lower)) {
       return 'Card Repayment';
     }
     if (RegExp(r'\bemi\b|loan').hasMatch(lower)) {
@@ -243,25 +259,30 @@ class SmsTransactionParser {
     if (RegExp(r'swiggy|zomato|restaurant|food|cafe|dining').hasMatch(lower)) {
       return 'Restaurants';
     }
-    if (RegExp(r'bigbasket|blinkit|zepto|grocery|supermarket').hasMatch(lower)) {
+    if (RegExp(r'bigbasket|blinkit|zepto|grocery|supermarket')
+        .hasMatch(lower)) {
       return 'Food & Grocery';
     }
-    if (RegExp(r'amazon|flipkart|myntra|ajio|shopping|retail').hasMatch(lower)) {
+    if (RegExp(r'amazon|flipkart|myntra|ajio|shopping|retail')
+        .hasMatch(lower)) {
       return 'Shopping';
     }
-    if (RegExp(r'uber|ola|rapido|petrol|diesel|fuel|metro|bus|taxi').hasMatch(lower)) {
+    if (RegExp(r'uber|ola|rapido|petrol|diesel|fuel|metro|bus|taxi')
+        .hasMatch(lower)) {
       return 'Transport & Fuel';
     }
     if (RegExp(r'electricity|kseb|power bill').hasMatch(lower)) {
       return 'Electricity';
     }
-    if (RegExp(r'airtel|jio|vodafone|recharge|broadband|fibernet').hasMatch(lower)) {
+    if (RegExp(r'airtel|jio|vodafone|recharge|broadband|fibernet')
+        .hasMatch(lower)) {
       return 'Internet & Telecom';
     }
     if (RegExp(r'gas bill|water bill|water authority').hasMatch(lower)) {
       return 'Utility';
     }
-    if (RegExp(r'netflix|spotify|bookmyshow|hotstar|movie|cinema').hasMatch(lower)) {
+    if (RegExp(r'netflix|spotify|bookmyshow|hotstar|movie|cinema')
+        .hasMatch(lower)) {
       return 'Entertainment';
     }
     if (RegExp(r'insurance|premium').hasMatch(lower)) {

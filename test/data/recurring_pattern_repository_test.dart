@@ -13,7 +13,9 @@ void main() {
   late int merchantId;
 
   Future<void> addPayment(DateTime date, {int amountPaise = 14900}) async {
-    await database.into(database.moneyTransactions).insert(
+    await database
+        .into(database.moneyTransactions)
+        .insert(
           MoneyTransactionsCompanion.insert(
             accountId: accountId,
             categoryId: Value(categoryId),
@@ -37,7 +39,9 @@ void main() {
     database = AppDatabase.forTesting(NativeDatabase.memory());
     repository = RecurringTransactionRepository(database);
 
-    accountId = await database.into(database.bankAccounts).insert(
+    accountId = await database
+        .into(database.bankAccounts)
+        .insert(
           BankAccountsCompanion.insert(
             bankName: 'Federal Bank',
             accountName: 'Account 6983',
@@ -47,14 +51,15 @@ void main() {
           ),
         );
 
-    categoryId = await database.into(database.categories).insert(
-          CategoriesCompanion.insert(
-            name: 'Entertainment',
-            type: 'expense',
-          ),
+    categoryId = await database
+        .into(database.categories)
+        .insert(
+          CategoriesCompanion.insert(name: 'Entertainment', type: 'expense'),
         );
 
-    merchantId = await database.into(database.merchants).insert(
+    merchantId = await database
+        .into(database.merchants)
+        .insert(
           MerchantsCompanion.insert(
             name: 'Netflix',
             defaultCategoryId: Value(categoryId),
@@ -66,30 +71,31 @@ void main() {
     await database.close();
   });
 
-  test('returns a reviewable suggestion with account and category labels',
-      () async {
-    await addMonthlyHistory();
+  test(
+    'returns a reviewable suggestion with account and category labels',
+    () async {
+      await addMonthlyHistory();
 
-    final suggestions = await repository.getPatternSuggestions(
-      asOf: DateTime(2026, 11, 1),
-    );
+      final suggestions = await repository.getPatternSuggestions(
+        asOf: DateTime(2026, 11, 1),
+      );
 
-    expect(suggestions, hasLength(1));
-    expect(suggestions.single.description, 'Netflix');
-    expect(suggestions.single.categoryName, 'Entertainment');
-    expect(
-      suggestions.single.accountLabel,
-      'Federal Bank · •••• 6983',
-    );
-    expect(suggestions.single.amountPaise, 14900);
-    expect(suggestions.single.frequency, 'monthly');
-    expect(suggestions.single.nextExpectedDate, DateTime(2026, 11, 5));
-  });
+      expect(suggestions, hasLength(1));
+      expect(suggestions.single.description, 'Netflix');
+      expect(suggestions.single.categoryName, 'Entertainment');
+      expect(suggestions.single.accountLabel, 'Federal Bank · •••• 6983');
+      expect(suggestions.single.amountPaise, 14900);
+      expect(suggestions.single.frequency, 'monthly');
+      expect(suggestions.single.nextExpectedDate, DateTime(2026, 11, 5));
+    },
+  );
 
   test('does not suggest a pattern already covered by a schedule', () async {
     await addMonthlyHistory();
 
-    await database.into(database.recurringSchedules).insert(
+    await database
+        .into(database.recurringSchedules)
+        .insert(
           RecurringSchedulesCompanion.insert(
             accountId: accountId,
             categoryId: categoryId,

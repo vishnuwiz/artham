@@ -115,9 +115,7 @@ class BudgetRepository {
 
   /// Returns the recurring template for the overall budget (null category)
   /// or a specific category.
-  Future<BudgetTemplate?> getBudgetTemplate({
-    required int? categoryId,
-  }) async {
+  Future<BudgetTemplate?> getBudgetTemplate({required int? categoryId}) async {
     final query = database.select(database.budgetTemplates)
       ..where(
         (template) => categoryId == null
@@ -129,9 +127,7 @@ class BudgetRepository {
     return query.getSingleOrNull();
   }
 
-  Future<List<BudgetTemplate>> getBudgetTemplates({
-    bool activeOnly = false,
-  }) {
+  Future<List<BudgetTemplate>> getBudgetTemplates({bool activeOnly = false}) {
     final query = database.select(database.budgetTemplates)
       ..orderBy([
         (template) => OrderingTerm.asc(template.categoryId),
@@ -161,24 +157,28 @@ class BudgetRepository {
     final normalizedStart = _monthStart(startMonth);
 
     if (existing == null) {
-      await database.into(database.budgetTemplates).insert(
-        BudgetTemplatesCompanion.insert(
-          categoryId: Value(categoryId),
-          startMonth: normalizedStart,
-          limitPaise: limitPaise,
+      await database
+          .into(database.budgetTemplates)
+          .insert(
+            BudgetTemplatesCompanion.insert(
+              categoryId: Value(categoryId),
+              startMonth: normalizedStart,
+              limitPaise: limitPaise,
+              rolloverEnabled: Value(rolloverEnabled),
+              isActive: Value(isActive),
+            ),
+          );
+    } else {
+      await (database.update(
+        database.budgetTemplates,
+      )..where((template) => template.id.equals(existing.id))).write(
+        BudgetTemplatesCompanion(
+          startMonth: Value(normalizedStart),
+          limitPaise: Value(limitPaise),
           rolloverEnabled: Value(rolloverEnabled),
           isActive: Value(isActive),
         ),
       );
-    } else {
-      await (database.update(database.budgetTemplates)
-            ..where((template) => template.id.equals(existing.id)))
-          .write(BudgetTemplatesCompanion(
-        startMonth: Value(normalizedStart),
-        limitPaise: Value(limitPaise),
-        rolloverEnabled: Value(rolloverEnabled),
-        isActive: Value(isActive),
-      ));
     }
   }
 
@@ -193,17 +193,19 @@ class BudgetRepository {
     final existing = await getBudgetTemplate(categoryId: categoryId);
     if (existing == null) return;
 
-    await (database.update(database.budgetTemplates)
-          ..where((template) => template.id.equals(existing.id)))
-        .write(BudgetTemplatesCompanion(
-      isActive: Value(isActive),
-      limitPaise: limitPaise == null
-          ? const Value.absent()
-          : Value(limitPaise),
-      rolloverEnabled: rolloverEnabled == null
-          ? const Value.absent()
-          : Value(rolloverEnabled),
-    ));
+    await (database.update(
+      database.budgetTemplates,
+    )..where((template) => template.id.equals(existing.id))).write(
+      BudgetTemplatesCompanion(
+        isActive: Value(isActive),
+        limitPaise: limitPaise == null
+            ? const Value.absent()
+            : Value(limitPaise),
+        rolloverEnabled: rolloverEnabled == null
+            ? const Value.absent()
+            : Value(rolloverEnabled),
+      ),
+    );
   }
 
   /// Applies active templates to [month], but never overwrites a budget the
@@ -229,14 +231,15 @@ class BudgetRepository {
 
   Future<int> _applyTemplatesForMonth(DateTime month) async {
     final targetMonth = _monthStart(month);
-    final templates = await (database.select(database.budgetTemplates)
-          ..where(
-            (template) =>
-                template.isActive.equals(true) &
-                template.startMonth.isSmallerOrEqualValue(targetMonth),
-          )
-          ..orderBy([(template) => OrderingTerm.asc(template.id)]))
-        .get();
+    final templates =
+        await (database.select(database.budgetTemplates)
+              ..where(
+                (template) =>
+                    template.isActive.equals(true) &
+                    template.startMonth.isSmallerOrEqualValue(targetMonth),
+              )
+              ..orderBy([(template) => OrderingTerm.asc(template.id)]))
+            .get();
 
     var applied = 0;
     await database.transaction(() async {
@@ -248,34 +251,39 @@ class BudgetRepository {
           if (template.categoryId == null) {
             final existing = await getMonthlyBudget(monthToApply);
             if (existing == null) {
-              await database.into(database.budgets).insert(
-                BudgetsCompanion.insert(
-                  categoryId: const Value(null),
-                  monthStart: monthToApply,
-                  limitPaise: template.limitPaise,
-                  rolloverEnabled: Value(template.rolloverEnabled),
-                ),
-              );
+              await database
+                  .into(database.budgets)
+                  .insert(
+                    BudgetsCompanion.insert(
+                      categoryId: const Value(null),
+                      monthStart: monthToApply,
+                      limitPaise: template.limitPaise,
+                      rolloverEnabled: Value(template.rolloverEnabled),
+                    ),
+                  );
               applied++;
             }
           } else {
-            final category = await (database.select(database.categories)
-                  ..where((item) => item.id.equals(template.categoryId!)))
-                .getSingleOrNull();
+            final category =
+                await (database.select(database.categories)
+                      ..where((item) => item.id.equals(template.categoryId!)))
+                    .getSingleOrNull();
             if (category != null && category.type == 'expense') {
               final existing = await getCategoryBudget(
                 month: monthToApply,
                 categoryId: template.categoryId!,
               );
               if (existing == null) {
-                await database.into(database.budgets).insert(
-                  BudgetsCompanion.insert(
-                    categoryId: Value(template.categoryId),
-                    monthStart: monthToApply,
-                    limitPaise: template.limitPaise,
-                    rolloverEnabled: Value(template.rolloverEnabled),
-                  ),
-                );
+                await database
+                    .into(database.budgets)
+                    .insert(
+                      BudgetsCompanion.insert(
+                        categoryId: Value(template.categoryId),
+                        monthStart: monthToApply,
+                        limitPaise: template.limitPaise,
+                        rolloverEnabled: Value(template.rolloverEnabled),
+                      ),
+                    );
                 applied++;
               }
             }
@@ -616,9 +624,10 @@ class BudgetRepository {
       availableBudgetPaise: amounts.availableBudgetPaise,
       rolloverPaise: amounts.rolloverPaise,
       rolloverEnabled: budget.rolloverEnabled,
-      repeatsMonthly: template != null &&
-              template.isActive &&
-              !_monthStart(template.startMonth).isAfter(_monthStart(month)),
+      repeatsMonthly:
+          template != null &&
+          template.isActive &&
+          !_monthStart(template.startMonth).isAfter(_monthStart(month)),
       expensesPaise: amounts.expensesPaise,
       remainingPaise: amounts.remainingPaise,
     );
@@ -663,7 +672,8 @@ class BudgetRepository {
           availableBudgetPaise: amounts?.availableBudgetPaise ?? 0,
           rolloverPaise: amounts?.rolloverPaise ?? 0,
           rolloverEnabled: budget?.rolloverEnabled ?? false,
-          repeatsMonthly: template != null &&
+          repeatsMonthly:
+              template != null &&
               template.isActive &&
               !_monthStart(template.startMonth).isAfter(_monthStart(month)),
           expensesPaise: expenses,

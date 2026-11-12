@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// Pastel, calm Artham splash (~3.2 s): soft colour blobs drift in, a halo
 /// opens, the lavender and mint strokes of the "A" draw, a rupee coin lands
@@ -22,13 +22,15 @@ class _State extends State<ArthamSplashPastel>
   @override
   void initState() {
     super.initState();
-    _c = AnimationController(
-      vsync: this,
-      duration: const Duration(milliseconds: 3200),
-    )..forward().whenComplete(() async {
-        await Future<void>.delayed(const Duration(milliseconds: 300));
-        if (mounted) widget.onDone();
-      });
+    _c =
+        AnimationController(
+            vsync: this,
+            duration: const Duration(milliseconds: 3200),
+          )
+          ..forward().whenComplete(() async {
+            await Future<void>.delayed(const Duration(milliseconds: 300));
+            if (mounted) widget.onDone();
+          });
   }
 
   @override
@@ -103,10 +105,7 @@ class _State extends State<ArthamSplashPastel>
                               SizedBox(height: 4),
                               Text(
                                 'അർത്ഥം',
-                                style: TextStyle(
-                                  color: _muted,
-                                  fontSize: 15,
-                                ),
+                                style: TextStyle(color: _muted, fontSize: 15),
                               ),
                             ],
                           ),
@@ -159,11 +158,7 @@ class _Blobs extends CustomPainter {
     }
 
     blob(Offset(20, 30), 100, const Color(0xFFFFD0B5));
-    blob(
-      Offset(s.width - 10, s.height * .66),
-      120,
-      const Color(0xFFC9B9FB),
-    );
+    blob(Offset(s.width - 10, s.height * .66), 120, const Color(0xFFC9B9FB));
     blob(Offset(30, s.height - 10), 95, const Color(0xFFA6E8CF));
   }
 
@@ -239,18 +234,14 @@ class _Mark extends CustomPainter {
       );
     }
 
-    leg(
-      const Offset(298, 770),
-      const Offset(512, 276),
-      l1,
-      const [Color(0xFFC9B9FB), Color(0xFFA995EE)],
-    );
-    leg(
-      const Offset(726, 770),
-      const Offset(512, 276),
-      l2,
-      const [Color(0xFFA6E8CF), Color(0xFF78D3B3)],
-    );
+    leg(const Offset(298, 770), const Offset(512, 276), l1, const [
+      Color(0xFFC9B9FB),
+      Color(0xFFA995EE),
+    ]);
+    leg(const Offset(726, 770), const Offset(512, 276), l2, const [
+      Color(0xFFA6E8CF),
+      Color(0xFF78D3B3),
+    ]);
 
     if (coin > 0) {
       final k = Curves.easeOut.transform(coin.clamp(0.0, 1.0));
@@ -273,9 +264,7 @@ class _Mark extends CustomPainter {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
             colors: [Color(0xFFFFE7B8), Color(0xFFFFC79A)],
-          ).createShader(
-            Rect.fromCircle(center: Offset.zero, radius: 104),
-          ),
+          ).createShader(Rect.fromCircle(center: Offset.zero, radius: 104)),
       );
       canvas.drawCircle(
         Offset.zero,

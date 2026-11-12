@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../data/onboarding_completion_store.dart';
 import 'getting_started_screen.dart';

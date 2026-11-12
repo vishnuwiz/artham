@@ -51,9 +51,7 @@ class TransactionRepository {
   Future<List<BankAccount>> getActiveAccounts() {
     return (database.select(database.bankAccounts)
           ..where((account) => account.isActive.equals(true))
-          ..orderBy([
-            (account) => OrderingTerm.asc(account.bankName),
-          ]))
+          ..orderBy([(account) => OrderingTerm.asc(account.bankName)]))
         .get();
   }
 
@@ -71,19 +69,19 @@ class TransactionRepository {
     }
 
     if (amountPaise <= 0) {
-      throw ArgumentError(
-        'Transaction amount must be greater than zero',
-      );
+      throw ArgumentError('Transaction amount must be greater than zero');
     }
 
     final merchantId = await MerchantRepository(database)
         .findOrCreateForDescription(
-      description: description,
-      transactionType: transactionType,
-      fallbackCategoryId: categoryId,
-    );
+          description: description,
+          transactionType: transactionType,
+          fallbackCategoryId: categoryId,
+        );
 
-    return database.into(database.moneyTransactions).insert(
+    return database
+        .into(database.moneyTransactions)
+        .insert(
           MoneyTransactionsCompanion.insert(
             accountId: accountId,
             categoryId: Value(categoryId),
@@ -100,7 +98,6 @@ class TransactionRepository {
           ),
         );
   }
-
 
   /// Update an existing income or expense transaction.
   Future<bool> updateTransaction({
@@ -123,44 +120,44 @@ class TransactionRepository {
 
     final merchantId = await MerchantRepository(database)
         .findOrCreateForDescription(
-      description: description,
-      transactionType: transactionType,
-      fallbackCategoryId: categoryId,
-    );
+          description: description,
+          transactionType: transactionType,
+          fallbackCategoryId: categoryId,
+        );
 
-    final updatedRows = await (database.update(database.moneyTransactions)
-          ..where((transaction) => transaction.id.equals(transactionId)))
-        .write(
-      MoneyTransactionsCompanion(
-        accountId: Value(accountId),
-        categoryId: Value(categoryId),
-        merchantId: Value(merchantId),
-        amountPaise: Value(amountPaise),
-        transactionType: Value(transactionType),
-        transactionDate: Value(transactionDate),
-        description: Value(
-          description == null || description.trim().isEmpty
-              ? null
-              : description.trim(),
-        ),
-        notes: Value(
-          notes == null || notes.trim().isEmpty ? null : notes.trim(),
-        ),
-      ),
-    );
+    final updatedRows =
+        await (database.update(
+          database.moneyTransactions,
+        )..where((transaction) => transaction.id.equals(transactionId))).write(
+          MoneyTransactionsCompanion(
+            accountId: Value(accountId),
+            categoryId: Value(categoryId),
+            merchantId: Value(merchantId),
+            amountPaise: Value(amountPaise),
+            transactionType: Value(transactionType),
+            transactionDate: Value(transactionDate),
+            description: Value(
+              description == null || description.trim().isEmpty
+                  ? null
+                  : description.trim(),
+            ),
+            notes: Value(
+              notes == null || notes.trim().isEmpty ? null : notes.trim(),
+            ),
+          ),
+        );
 
     return updatedRows > 0;
   }
 
   /// Delete a transaction by its database ID.
   Future<bool> deleteTransaction(int transactionId) async {
-    final deletedRows = await (database.delete(database.moneyTransactions)
-          ..where((transaction) => transaction.id.equals(transactionId)))
-        .go();
+    final deletedRows = await (database.delete(
+      database.moneyTransactions,
+    )..where((transaction) => transaction.id.equals(transactionId))).go();
 
     return deletedRows > 0;
   }
-
 
   /// Record a transfer as one linked transaction row.
   /// The source account is debited and the destination account credited
@@ -205,38 +202,42 @@ class TransactionRepository {
       throw StateError('Insufficient balance in the source account.');
     }
 
-    return database.into(database.moneyTransactions).insert(
-      MoneyTransactionsCompanion.insert(
-        accountId: fromAccountId,
-        transferToAccountId: Value(toAccountId),
-        categoryId: const Value.absent(),
-        amountPaise: amountPaise,
-        transactionType: 'transfer',
-        transactionDate: transactionDate,
-        description: Value(
-          description == null || description.trim().isEmpty
-              ? 'Transfer'
-              : description.trim(),
-        ),
-        referenceNumber: Value(
-          referenceNumber == null || referenceNumber.trim().isEmpty
-              ? null
-              : referenceNumber.trim(),
-        ),
-        notes: Value(
-          notes == null || notes.trim().isEmpty ? null : notes.trim(),
-        ),
-        source: const Value('manual'),
-      ),
-    );
+    return database
+        .into(database.moneyTransactions)
+        .insert(
+          MoneyTransactionsCompanion.insert(
+            accountId: fromAccountId,
+            transferToAccountId: Value(toAccountId),
+            categoryId: const Value.absent(),
+            amountPaise: amountPaise,
+            transactionType: 'transfer',
+            transactionDate: transactionDate,
+            description: Value(
+              description == null || description.trim().isEmpty
+                  ? 'Transfer'
+                  : description.trim(),
+            ),
+            referenceNumber: Value(
+              referenceNumber == null || referenceNumber.trim().isEmpty
+                  ? null
+                  : referenceNumber.trim(),
+            ),
+            notes: Value(
+              notes == null || notes.trim().isEmpty ? null : notes.trim(),
+            ),
+            source: const Value('manual'),
+          ),
+        );
   }
 
   /// Fetch all transactions affecting one account, including incoming transfers.
   Future<List<MoneyTransaction>> getAccountTransactions(int accountId) async {
     final query = database.select(database.moneyTransactions)
-      ..where((tx) =>
-          tx.accountId.equals(accountId) |
-          tx.transferToAccountId.equals(accountId))
+      ..where(
+        (tx) =>
+            tx.accountId.equals(accountId) |
+            tx.transferToAccountId.equals(accountId),
+      )
       ..orderBy([
         (tx) => OrderingTerm.desc(tx.transactionDate),
         (tx) => OrderingTerm.desc(tx.createdAt),
@@ -246,22 +247,17 @@ class TransactionRepository {
 
   // Get all transactions, newest first
   Future<List<MoneyTransaction>> getAllTransactions() {
-    return (database.select(database.moneyTransactions)
-          ..orderBy([
-            (transaction) => OrderingTerm.desc(
-                  transaction.transactionDate,
-                ),
-            (transaction) => OrderingTerm.desc(transaction.createdAt),
-          ]))
+    return (database.select(database.moneyTransactions)..orderBy([
+          (transaction) => OrderingTerm.desc(transaction.transactionDate),
+          (transaction) => OrderingTerm.desc(transaction.createdAt),
+        ]))
         .get();
   }
 
   // Get the latest transactions with their bank account and category.
   // The account join is inner because a transaction must belong to an account.
   // The category join is left outer because categoryId can be null.
-  Future<List<RecentTransaction>> getRecentTransactions({
-    int limit = 5,
-  }) async {
+  Future<List<RecentTransaction>> getRecentTransactions({int limit = 5}) async {
     if (limit <= 0) {
       return [];
     }
@@ -275,15 +271,11 @@ class TransactionRepository {
       ),
       leftOuterJoin(
         database.categories,
-        database.categories.id.equalsExp(
-          database.moneyTransactions.categoryId,
-        ),
+        database.categories.id.equalsExp(database.moneyTransactions.categoryId),
       ),
       leftOuterJoin(
         database.merchants,
-        database.merchants.id.equalsExp(
-          database.moneyTransactions.merchantId,
-        ),
+        database.merchants.id.equalsExp(database.moneyTransactions.merchantId),
       ),
     ]);
 
@@ -314,8 +306,7 @@ class TransactionRepository {
     final transactions = await getAllTransactions();
 
     final balances = <int, int>{
-      for (final account in accounts)
-        account.id: account.openingBalancePaise,
+      for (final account in accounts) account.id: account.openingBalancePaise,
     };
 
     for (final transaction in transactions) {
@@ -356,9 +347,7 @@ class TransactionRepository {
               (account) => account.id == destinationId,
             );
 
-            if (!transactionDate.isBefore(
-              destinationAccount.openingDate,
-            )) {
+            if (!transactionDate.isBefore(destinationAccount.openingDate)) {
               balances[destinationId] =
                   balances[destinationId]! + transaction.amountPaise;
             }

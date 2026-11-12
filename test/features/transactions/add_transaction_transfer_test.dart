@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
@@ -17,8 +17,13 @@ void main() {
 
     await tester.runAsync(() async {
       database = AppDatabase.forTesting(NativeDatabase.memory());
-      for (final entry in const [('HDFC Bank', '1234'), ('ICICI Bank', '5678')]) {
-        await database.into(database.bankAccounts).insert(
+      for (final entry in const [
+        ('HDFC Bank', '1234'),
+        ('ICICI Bank', '5678'),
+      ]) {
+        await database
+            .into(database.bankAccounts)
+            .insert(
               BankAccountsCompanion.insert(
                 bankName: entry.$1,
                 accountName: 'Savings',
@@ -31,7 +36,13 @@ void main() {
     });
 
     await tester.pumpWidget(
-      MaterialApp(home: AddTransactionScreen(database: database)),
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          splashFactory: InkRipple.splashFactory,
+        ),
+        home: AddTransactionScreen(database: database),
+      ),
     );
     await tester.runAsync(
       () => Future<void>.delayed(const Duration(milliseconds: 400)),

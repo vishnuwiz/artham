@@ -24,35 +24,34 @@ class MerchantRepository {
     final match = MerchantIntelligence.recognize(description);
     if (match == null) return null;
 
-    final existing = await (database.select(database.merchants)
-          ..where((merchant) => merchant.name.equals(match.name)))
-        .getSingleOrNull();
+    final existing = await (database.select(
+      database.merchants,
+    )..where((merchant) => merchant.name.equals(match.name))).getSingleOrNull();
 
-    final catalogCategory = await (database.select(database.categories)
-          ..where(
-            (category) =>
-                category.name.equals(match.categoryName) &
-                category.type.equals('expense'),
-          ))
-        .getSingleOrNull();
+    final catalogCategory =
+        await (database.select(database.categories)..where(
+              (category) =>
+                  category.name.equals(match.categoryName) &
+                  category.type.equals('expense'),
+            ))
+            .getSingleOrNull();
 
-    final defaultCategoryId =
-        catalogCategory?.id ?? fallbackCategoryId;
+    final defaultCategoryId = catalogCategory?.id ?? fallbackCategoryId;
 
     if (existing != null) {
       if (existing.defaultCategoryId == null && defaultCategoryId != null) {
-        await (database.update(database.merchants)
-              ..where((merchant) => merchant.id.equals(existing.id)))
-            .write(
-          MerchantsCompanion(
-            defaultCategoryId: Value(defaultCategoryId),
-          ),
+        await (database.update(
+          database.merchants,
+        )..where((merchant) => merchant.id.equals(existing.id))).write(
+          MerchantsCompanion(defaultCategoryId: Value(defaultCategoryId)),
         );
       }
       return existing.id;
     }
 
-    return database.into(database.merchants).insert(
+    return database
+        .into(database.merchants)
+        .insert(
           MerchantsCompanion.insert(
             name: match.name,
             defaultCategoryId: Value(defaultCategoryId),

@@ -18,9 +18,9 @@ class SmsImportRepository {
   SmsImportRepository(this.database);
 
   Future<bool> isDuplicate(String fingerprint) async {
-    final existing = await (database.select(database.processedSms)
-          ..where((sms) => sms.fingerprint.equals(fingerprint)))
-        .getSingleOrNull();
+    final existing = await (database.select(
+      database.processedSms,
+    )..where((sms) => sms.fingerprint.equals(fingerprint))).getSingleOrNull();
     return existing != null;
   }
 
@@ -50,14 +50,16 @@ class SmsImportRepository {
     }
 
     return database.transaction(() async {
-      final existing = await (database.select(database.processedSms)
-            ..where((sms) => sms.fingerprint.equals(fingerprint)))
-          .getSingleOrNull();
+      final existing = await (database.select(
+        database.processedSms,
+      )..where((sms) => sms.fingerprint.equals(fingerprint))).getSingleOrNull();
       if (existing != null) {
         throw const DuplicateSmsImportException();
       }
 
-      await database.into(database.processedSms).insert(
+      await database
+          .into(database.processedSms)
+          .insert(
             ProcessedSmsCompanion.insert(
               fingerprint: fingerprint,
               receivedAt: DateTime.now(),
@@ -67,12 +69,14 @@ class SmsImportRepository {
 
       final merchantId = await MerchantRepository(database)
           .findOrCreateForDescription(
-        description: description,
-        transactionType: transactionType,
-        fallbackCategoryId: categoryId,
-      );
+            description: description,
+            transactionType: transactionType,
+            fallbackCategoryId: categoryId,
+          );
 
-      return database.into(database.moneyTransactions).insert(
+      return database
+          .into(database.moneyTransactions)
+          .insert(
             MoneyTransactionsCompanion.insert(
               accountId: accountId,
               categoryId: Value(categoryId),
@@ -99,9 +103,9 @@ class SmsImportRepository {
 /// The raw SMS text is not written to the database.
 String smsMessageFingerprint(String message) {
   final normalized = message.trim().toLowerCase().replaceAll(
-        RegExp(r'\s+'),
-        ' ',
-      );
+    RegExp(r'\s+'),
+    ' ',
+  );
   var forward = 0x345678;
   var reverse = 0x123456;
   for (final unit in normalized.codeUnits) {

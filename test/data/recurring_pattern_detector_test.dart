@@ -26,14 +26,11 @@ void main() {
   }
 
   test('detects a stable monthly payment and predicts its next date', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 8, 5)),
-        transaction(DateTime(2026, 9, 5)),
-        transaction(DateTime(2026, 10, 5)),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 8, 5)),
+      transaction(DateTime(2026, 9, 5)),
+      transaction(DateTime(2026, 10, 5)),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, hasLength(1));
     expect(suggestions.single.frequency, 'monthly');
@@ -45,14 +42,11 @@ void main() {
   });
 
   test('detects quarterly payments as every three months', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 1, 5)),
-        transaction(DateTime(2026, 4, 5)),
-        transaction(DateTime(2026, 7, 5)),
-      ],
-      asOf: DateTime(2026, 7, 6),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 1, 5)),
+      transaction(DateTime(2026, 4, 5)),
+      transaction(DateTime(2026, 7, 5)),
+    ], asOf: DateTime(2026, 7, 6));
 
     expect(suggestions, hasLength(1));
     expect(suggestions.single.frequency, 'monthly');
@@ -61,14 +55,11 @@ void main() {
   });
 
   test('detects yearly payments', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2024, 11, 10)),
-        transaction(DateTime(2025, 11, 10)),
-        transaction(DateTime(2026, 11, 10)),
-      ],
-      asOf: DateTime(2026, 11, 10),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2024, 11, 10)),
+      transaction(DateTime(2025, 11, 10)),
+      transaction(DateTime(2026, 11, 10)),
+    ], asOf: DateTime(2026, 11, 10));
 
     expect(suggestions, hasLength(1));
     expect(suggestions.single.frequency, 'yearly');
@@ -77,27 +68,21 @@ void main() {
   });
 
   test('does not revive a pattern whose next payment is long overdue', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2025, 8, 5)),
-        transaction(DateTime(2025, 9, 5)),
-        transaction(DateTime(2025, 10, 5)),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2025, 8, 5)),
+      transaction(DateTime(2025, 9, 5)),
+      transaction(DateTime(2025, 10, 5)),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, isEmpty);
   });
 
   test('detects a fortnightly payment as every two weeks', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 10, 1)),
-        transaction(DateTime(2026, 10, 15)),
-        transaction(DateTime(2026, 10, 29)),
-      ],
-      asOf: DateTime(2026, 10, 30),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 10, 1)),
+      transaction(DateTime(2026, 10, 15)),
+      transaction(DateTime(2026, 10, 29)),
+    ], asOf: DateTime(2026, 10, 30));
 
     expect(suggestions, hasLength(1));
     expect(suggestions.single.frequency, 'weekly');
@@ -106,80 +91,62 @@ void main() {
   });
 
   test('requires at least three distinct transaction dates', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 9, 5)),
-        transaction(DateTime(2026, 10, 5)),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 9, 5)),
+      transaction(DateTime(2026, 10, 5)),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, isEmpty);
   });
 
   test('does not treat several same-day purchases as a recurring pattern', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 10, 5)),
-        transaction(DateTime(2026, 10, 5), amountPaise: 100000),
-        transaction(DateTime(2026, 10, 5), amountPaise: 105000),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 10, 5)),
+      transaction(DateTime(2026, 10, 5), amountPaise: 100000),
+      transaction(DateTime(2026, 10, 5), amountPaise: 105000),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, isEmpty);
   });
 
   test('rejects unstable amounts', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 8, 5), amountPaise: 50000),
-        transaction(DateTime(2026, 9, 5), amountPaise: 150000),
-        transaction(DateTime(2026, 10, 5), amountPaise: 50000),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 8, 5), amountPaise: 50000),
+      transaction(DateTime(2026, 9, 5), amountPaise: 150000),
+      transaction(DateTime(2026, 10, 5), amountPaise: 50000),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, isEmpty);
   });
 
   test('rejects irregular transaction intervals', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 7, 1)),
-        transaction(DateTime(2026, 8, 17)),
-        transaction(DateTime(2026, 10, 5)),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 7, 1)),
+      transaction(DateTime(2026, 8, 17)),
+      transaction(DateTime(2026, 10, 5)),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, isEmpty);
   });
 
   test('ignores transfers and transactions created by recurring schedules', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 8, 5), type: 'transfer'),
-        transaction(DateTime(2026, 9, 5), source: 'recurring'),
-        transaction(DateTime(2026, 10, 5)),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 8, 5), type: 'transfer'),
+      transaction(DateTime(2026, 9, 5), source: 'recurring'),
+      transaction(DateTime(2026, 10, 5)),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, isEmpty);
   });
 
   test('keeps patterns from separate accounts separate', () {
-    final suggestions = detector.detect(
-      [
-        transaction(DateTime(2026, 8, 5), accountId: 1),
-        transaction(DateTime(2026, 9, 5), accountId: 1),
-        transaction(DateTime(2026, 10, 5), accountId: 1),
-        transaction(DateTime(2026, 8, 5), accountId: 2),
-        transaction(DateTime(2026, 9, 5), accountId: 2),
-      ],
-      asOf: DateTime(2026, 11, 1),
-    );
+    final suggestions = detector.detect([
+      transaction(DateTime(2026, 8, 5), accountId: 1),
+      transaction(DateTime(2026, 9, 5), accountId: 1),
+      transaction(DateTime(2026, 10, 5), accountId: 1),
+      transaction(DateTime(2026, 8, 5), accountId: 2),
+      transaction(DateTime(2026, 9, 5), accountId: 2),
+    ], asOf: DateTime(2026, 11, 1));
 
     expect(suggestions, hasLength(1));
     expect(suggestions.single.accountId, 1);
@@ -187,7 +154,9 @@ void main() {
 
   test('normalizes bank alert noise without losing the merchant identity', () {
     expect(
-      RecurringPatternDetector.normalizeIdentity('UPI/DR/123456/Netflix/REF987'),
+      RecurringPatternDetector.normalizeIdentity(
+        'UPI/DR/123456/Netflix/REF987',
+      ),
       'netflix',
     );
   });

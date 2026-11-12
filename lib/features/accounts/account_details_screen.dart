@@ -1,5 +1,5 @@
+import 'package:material_ui/material_ui.dart';
 
-import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
@@ -20,8 +20,7 @@ class AccountDetailsScreen extends StatefulWidget {
   });
 
   @override
-  State<AccountDetailsScreen> createState() =>
-      _AccountDetailsScreenState();
+  State<AccountDetailsScreen> createState() => _AccountDetailsScreenState();
 }
 
 class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
@@ -50,21 +49,19 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
   }
 
   Future<void> _editAccount(BankAccount account) async {
-  final result = await Navigator.push<bool>(
-    context,
-    MaterialPageRoute(
-      builder: (_) => EditAccountScreen(
-        database: widget.database,
-        account: account,
+    final result = await Navigator.push<bool>(
+      context,
+      MaterialPageRoute(
+        builder: (_) =>
+            EditAccountScreen(database: widget.database, account: account),
       ),
-    ),
-  );
+    );
 
-  if (result == true && mounted) {
-    // Notify My Accounts that the account has changed.
-    Navigator.pop(context, true);
+    if (result == true && mounted) {
+      // Notify My Accounts that the account has changed.
+      Navigator.pop(context, true);
+    }
   }
-}
 
   Future<void> _deactivateAccount(BankAccount account) async {
     final confirmed = await showDialog<bool>(
@@ -83,9 +80,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: ArthamColors.debit,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: ArthamColors.debit),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Deactivate'),
           ),
@@ -96,15 +91,13 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
     if (confirmed != true || !mounted) return;
 
     try {
-      final success =
-          await _repository.deactivateAccount(account.id);
+      final success = await _repository.deactivateAccount(account.id);
 
       if (!mounted) return;
 
       if (success) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('Account deactivated')),
-        );
+        ScaffoldMessenger.of(context)
+            .showSnackBar(const SnackBar(content: Text('Account deactivated')));
         Navigator.pop(context, true);
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -113,9 +106,8 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
       }
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error: $e')));
     }
   }
 
@@ -128,10 +120,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(
-                color: ArthamColors.muted,
-                fontSize: 14,
-              ),
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 14),
             ),
           ),
           const SizedBox(width: 12),
@@ -173,7 +162,9 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           }
 
           if (snapshot.hasError) {
-            return Center(child: Text('Unable to load account: ${snapshot.error}'));
+            return Center(
+              child: Text('Unable to load account: ${snapshot.error}'),
+            );
           }
 
           final account = snapshot.data;
@@ -219,7 +210,10 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     const SizedBox(height: 5),
                     Text(
                       accountNumberLastFourLabel(account.accountNumberLast4),
-                      style: const TextStyle(color: ArthamColors.muted, letterSpacing: 1),
+                      style: const TextStyle(
+                        color: ArthamColors.muted,
+                        letterSpacing: 1,
+                      ),
                     ),
                     const SizedBox(height: 22),
                     const Text(
@@ -244,10 +238,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     const Text(
                       'This is the recorded opening balance, not the live bank balance.',
                       textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: ArthamColors.muted,
-                        fontSize: 11,
-                      ),
+                      style: TextStyle(color: ArthamColors.muted, fontSize: 11),
                     ),
                   ],
                 ),
@@ -369,8 +360,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     super.initState();
 
     _repository = AccountRepository(widget.database);
-    _bankNameController =
-        TextEditingController(text: widget.account.bankName);
+    _bankNameController = TextEditingController(text: widget.account.bankName);
     _last4Controller = TextEditingController(
       text: widget.account.accountNumberLast4 ?? '',
     );
@@ -413,8 +403,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
     setState(() => _isSaving = true);
 
     try {
-      final balance =
-          double.parse(_balanceController.text.trim());
+      final balance = double.parse(_balanceController.text.trim());
 
       final success = await _repository.updateAccount(
         accountId: widget.account.id,
@@ -434,16 +423,16 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
         Navigator.pop(context, true);
       } else {
         setState(() => _isSaving = false);
-        ScaffoldMessenger.of(context).showSnackBar(
-          const SnackBar(content: Text('No account was updated')),
-        );
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(const SnackBar(content: Text('No account was updated')));
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to update account: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to update account: $e')));
     }
   }
 
@@ -491,10 +480,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   : 'Other',
               decoration: _decoration('Bank name'),
               items: _banks.map((bank) {
-                return DropdownMenuItem(
-                  value: bank,
-                  child: Text(bank),
-                );
+                return DropdownMenuItem(value: bank, child: Text(bank));
               }).toList(),
               onChanged: (value) {
                 if (value != null) {
@@ -506,20 +492,16 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
             TextFormField(
               controller: _bankNameController,
               decoration: _decoration('Bank name (custom)'),
-              validator: (value) =>
-                  value == null || value.trim().isEmpty
-                      ? 'Please enter the bank name'
-                      : null,
+              validator: (value) => value == null || value.trim().isEmpty
+                  ? 'Please enter the bank name'
+                  : null,
             ),
             const SizedBox(height: 16),
             TextFormField(
               controller: _last4Controller,
               keyboardType: TextInputType.number,
               maxLength: 4,
-              decoration: _decoration(
-                'Last four digits',
-                hint: 'e.g. 4858',
-              ),
+              decoration: _decoration('Last four digits', hint: 'e.g. 4858'),
               validator: (value) {
                 final digits = value?.trim() ?? '';
                 if (!RegExp(r'^\d{4}$').hasMatch(digits)) {
@@ -531,8 +513,9 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
             const SizedBox(height: 8),
             TextFormField(
               controller: _balanceController,
-              keyboardType:
-                  const TextInputType.numberWithOptions(decimal: true),
+              keyboardType: const TextInputType.numberWithOptions(
+                decimal: true,
+              ),
               decoration: _decoration('Opening balance (₹)'),
               validator: (value) {
                 final amount = double.tryParse(value?.trim() ?? '');

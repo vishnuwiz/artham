@@ -24,11 +24,9 @@ class BankAccounts extends Table {
 
   DateTimeColumn get openingDate => dateTime()();
 
-  BoolColumn get isActive =>
-      boolean().withDefault(const Constant(true))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 // ==========================================
@@ -47,8 +45,7 @@ class Categories extends Table {
 
   TextColumn get colorHex => text().nullable()();
 
-  BoolColumn get isSystem =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isSystem => boolean().withDefault(const Constant(false))();
 
   /// Stable identifier for a built-in category (for example
   /// `expense.restaurants`). It survives renames, so a default the user has
@@ -59,8 +56,7 @@ class Categories extends Table {
   /// Hidden categories stay in the database so existing transactions,
   /// budgets and schedules keep their label, but they are not offered in
   /// category pickers.
-  BoolColumn get isArchived =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isArchived => boolean().withDefault(const Constant(false))();
 }
 
 // ==========================================
@@ -83,8 +79,7 @@ class Merchants extends Table {
 class MoneyTransactions extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get accountId =>
-      integer().references(BankAccounts, #id)();
+  IntColumn get accountId => integer().references(BankAccounts, #id)();
 
   IntColumn get transferToAccountId =>
       integer().nullable().references(BankAccounts, #id)();
@@ -92,8 +87,7 @@ class MoneyTransactions extends Table {
   IntColumn get categoryId =>
       integer().nullable().references(Categories, #id)();
 
-  IntColumn get merchantId =>
-      integer().nullable().references(Merchants, #id)();
+  IntColumn get merchantId => integer().nullable().references(Merchants, #id)();
 
   IntColumn get amountPaise => integer()();
 
@@ -106,14 +100,12 @@ class MoneyTransactions extends Table {
 
   DateTimeColumn get transactionDate => dateTime()();
 
-  TextColumn get source =>
-      text().withDefault(const Constant('manual'))();
+  TextColumn get source => text().withDefault(const Constant('manual'))();
   // manual, sms, statement, recurring
 
   TextColumn get notes => text().nullable()();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 // ==========================================
@@ -133,8 +125,7 @@ class Budgets extends Table {
   BoolColumn get rolloverEnabled =>
       boolean().withDefault(const Constant(false))();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 // ==========================================
@@ -155,11 +146,9 @@ class BudgetTemplates extends Table {
   BoolColumn get rolloverEnabled =>
       boolean().withDefault(const Constant(false))();
 
-  BoolColumn get isActive =>
-      boolean().withDefault(const Constant(true))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 // ==========================================
@@ -173,8 +162,7 @@ class ProcessedSms extends Table {
 
   DateTimeColumn get receivedAt => dateTime()();
 
-  BoolColumn get isProcessed =>
-      boolean().withDefault(const Constant(false))();
+  BoolColumn get isProcessed => boolean().withDefault(const Constant(false))();
 }
 
 // ==========================================
@@ -184,11 +172,9 @@ class ProcessedSms extends Table {
 class RecurringSchedules extends Table {
   IntColumn get id => integer().autoIncrement()();
 
-  IntColumn get accountId =>
-      integer().references(BankAccounts, #id)();
+  IntColumn get accountId => integer().references(BankAccounts, #id)();
 
-  IntColumn get categoryId =>
-      integer().references(Categories, #id)();
+  IntColumn get categoryId => integer().references(Categories, #id)();
 
   IntColumn get amountPaise => integer()();
 
@@ -209,11 +195,9 @@ class RecurringSchedules extends Table {
 
   DateTimeColumn get nextDueDate => dateTime()();
 
-  BoolColumn get isActive =>
-      boolean().withDefault(const Constant(true))();
+  BoolColumn get isActive => boolean().withDefault(const Constant(true))();
 
-  DateTimeColumn get createdAt =>
-      dateTime().withDefault(currentDateAndTime)();
+  DateTimeColumn get createdAt => dateTime().withDefault(currentDateAndTime)();
 }
 
 // ==========================================
@@ -243,25 +227,25 @@ class AppDatabase extends _$AppDatabase {
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
-        onCreate: (m) async {
-          await m.createAll();
-        },
-        onUpgrade: (m, from, to) async {
-          if (from < 2) {
-            await m.createTable(recurringSchedules);
-          }
-          if (from < 3) {
-            await m.addColumn(budgets, budgets.rolloverEnabled);
-          }
-          if (from < 4) {
-            await m.createTable(budgetTemplates);
-          }
-          if (from < 5) {
-            await m.addColumn(categories, categories.seedKey);
-            await m.addColumn(categories, categories.isArchived);
-          }
-        },
-      );
+    onCreate: (m) async {
+      await m.createAll();
+    },
+    onUpgrade: (m, from, to) async {
+      if (from < 2) {
+        await m.createTable(recurringSchedules);
+      }
+      if (from < 3) {
+        await m.addColumn(budgets, budgets.rolloverEnabled);
+      }
+      if (from < 4) {
+        await m.createTable(budgetTemplates);
+      }
+      if (from < 5) {
+        await m.addColumn(categories, categories.seedKey);
+        await m.addColumn(categories, categories.isArchived);
+      }
+    },
+  );
 
   Future<bool> testConnection() async {
     try {
@@ -281,9 +265,7 @@ LazyDatabase _openConnection() {
   return LazyDatabase(() async {
     final directory = await getApplicationDocumentsDirectory();
 
-    final file = File(
-      p.join(directory.path, 'artham.sqlite'),
-    );
+    final file = File(p.join(directory.path, 'artham.sqlite'));
 
     return NativeDatabase.createInBackground(file);
   });

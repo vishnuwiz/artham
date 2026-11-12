@@ -46,18 +46,20 @@ class RecurringTransactionRepository {
       endDate: endDate,
     );
 
-    final account = await (database.select(database.bankAccounts)
-          ..where((a) => a.id.equals(accountId) & a.isActive.equals(true)))
-        .getSingleOrNull();
+    final account =
+        await (database.select(database.bankAccounts)
+              ..where((a) => a.id.equals(accountId) & a.isActive.equals(true)))
+            .getSingleOrNull();
 
     if (account == null) {
       throw ArgumentError('Choose an active bank account.');
     }
 
-    final category = await (database.select(database.categories)
-          ..where((c) =>
-              c.id.equals(categoryId) & c.type.equals(transactionType)))
-        .getSingleOrNull();
+    final category =
+        await (database.select(database.categories)..where(
+              (c) => c.id.equals(categoryId) & c.type.equals(transactionType),
+            ))
+            .getSingleOrNull();
 
     if (category == null) {
       throw ArgumentError(
@@ -68,7 +70,9 @@ class RecurringTransactionRepository {
     final firstDueDate = _dateOnly(startDate);
     final finalDate = endDate == null ? null : _dateOnly(endDate);
 
-    return database.into(database.recurringSchedules).insert(
+    return database
+        .into(database.recurringSchedules)
+        .insert(
           RecurringSchedulesCompanion.insert(
             accountId: accountId,
             categoryId: categoryId,
@@ -86,24 +90,24 @@ class RecurringTransactionRepository {
 
   /// Returns all schedules, including paused schedules.
   Future<List<RecurringScheduleDetails>> getSchedules() async {
-    final query = database.select(database.recurringSchedules).join([
-      innerJoin(
-        database.bankAccounts,
-        database.bankAccounts.id.equalsExp(
-          database.recurringSchedules.accountId,
-        ),
-      ),
-      innerJoin(
-        database.categories,
-        database.categories.id.equalsExp(
-          database.recurringSchedules.categoryId,
-        ),
-      ),
-    ])
-      ..orderBy([
-        OrderingTerm.asc(database.recurringSchedules.nextDueDate),
-        OrderingTerm.desc(database.recurringSchedules.createdAt),
-      ]);
+    final query =
+        database.select(database.recurringSchedules).join([
+          innerJoin(
+            database.bankAccounts,
+            database.bankAccounts.id.equalsExp(
+              database.recurringSchedules.accountId,
+            ),
+          ),
+          innerJoin(
+            database.categories,
+            database.categories.id.equalsExp(
+              database.recurringSchedules.categoryId,
+            ),
+          ),
+        ])..orderBy([
+          OrderingTerm.asc(database.recurringSchedules.nextDueDate),
+          OrderingTerm.desc(database.recurringSchedules.createdAt),
+        ]);
 
     final rows = await query.get();
 
@@ -123,28 +127,30 @@ class RecurringTransactionRepository {
   }) async {
     final today = _dateOnly(asOf ?? DateTime.now());
 
-    final query = database.select(database.recurringSchedules).join([
-      innerJoin(
-        database.bankAccounts,
-        database.bankAccounts.id.equalsExp(
-          database.recurringSchedules.accountId,
-        ),
-      ),
-      innerJoin(
-        database.categories,
-        database.categories.id.equalsExp(
-          database.recurringSchedules.categoryId,
-        ),
-      ),
-    ])
-      ..where(
-        database.recurringSchedules.isActive.equals(true) &
-            database.recurringSchedules.nextDueDate
-                .isSmallerOrEqualValue(today),
-      )
-      ..orderBy([
-        OrderingTerm.asc(database.recurringSchedules.nextDueDate),
-      ]);
+    final query =
+        database.select(database.recurringSchedules).join([
+            innerJoin(
+              database.bankAccounts,
+              database.bankAccounts.id.equalsExp(
+                database.recurringSchedules.accountId,
+              ),
+            ),
+            innerJoin(
+              database.categories,
+              database.categories.id.equalsExp(
+                database.recurringSchedules.categoryId,
+              ),
+            ),
+          ])
+          ..where(
+            database.recurringSchedules.isActive.equals(true) &
+                database.recurringSchedules.nextDueDate.isSmallerOrEqualValue(
+                  today,
+                ),
+          )
+          ..orderBy([
+            OrderingTerm.asc(database.recurringSchedules.nextDueDate),
+          ]);
 
     final rows = await query.get();
 
@@ -160,9 +166,8 @@ class RecurringTransactionRepository {
           final endDate = item.schedule.endDate;
 
           return endDate == null ||
-              !_dateOnly(endDate).isBefore(
-                _dateOnly(item.schedule.nextDueDate),
-              );
+              !_dateOnly(endDate)
+                  .isBefore(_dateOnly(item.schedule.nextDueDate));
         })
         .toList();
   }
@@ -174,12 +179,14 @@ class RecurringTransactionRepository {
   Future<List<RecurringPatternSuggestion>> getPatternSuggestions({
     DateTime? asOf,
   }) async {
-    final accounts = await (database.select(database.bankAccounts)
-          ..where((account) => account.isActive.equals(true)))
-        .get();
+    final accounts = await (database.select(
+      database.bankAccounts,
+    )..where((account) => account.isActive.equals(true))).get();
     final categories = await database.select(database.categories).get();
     final merchants = await database.select(database.merchants).get();
-    final transactions = await database.select(database.moneyTransactions).get();
+    final transactions = await database
+        .select(database.moneyTransactions)
+        .get();
     final schedules = await database.select(database.recurringSchedules).get();
 
     final accountById = {for (final item in accounts) item.id: item};
@@ -194,7 +201,8 @@ class RecurringTransactionRepository {
       final account = accountById[transaction.accountId];
       final category = categoryById[categoryId];
 
-      if (account == null || category == null ||
+      if (account == null ||
+          category == null ||
           category.type != transaction.transactionType) {
         continue;
       }
@@ -218,46 +226,48 @@ class RecurringTransactionRepository {
       asOf: asOf ?? DateTime.now(),
     );
 
-    return detected.where((suggestion) {
-      final identity = suggestion.patternIdentity;
-      return !schedules.any((schedule) {
-        if (schedule.accountId != suggestion.accountId ||
-            schedule.categoryId != suggestion.categoryId ||
-            schedule.transactionType != suggestion.transactionType ||
-            schedule.frequency != suggestion.frequency ||
-            schedule.interval != suggestion.interval) {
-          return false;
-        }
+    return detected
+        .where((suggestion) {
+          final identity = suggestion.patternIdentity;
+          return !schedules.any((schedule) {
+            if (schedule.accountId != suggestion.accountId ||
+                schedule.categoryId != suggestion.categoryId ||
+                schedule.transactionType != suggestion.transactionType ||
+                schedule.frequency != suggestion.frequency ||
+                schedule.interval != suggestion.interval) {
+              return false;
+            }
 
-        final scheduleIdentity =
-            RecurringPatternDetector.normalizeIdentity(
-          schedule.description ?? '',
-        );
-        return scheduleIdentity == identity ||
-            (identity.isNotEmpty && scheduleIdentity.contains(identity));
-      });
-    }).map((suggestion) {
-      final account = accountById[suggestion.accountId]!;
-      final category = categoryById[suggestion.categoryId]!;
-      return RecurringPatternSuggestion(
-        accountId: suggestion.accountId,
-        categoryId: suggestion.categoryId,
-        amountPaise: suggestion.amountPaise,
-        transactionType: suggestion.transactionType,
-        frequency: suggestion.frequency,
-        interval: suggestion.interval,
-        description: suggestion.description,
-        patternIdentity: suggestion.patternIdentity,
-        accountLabel: bankAccountDisplayLabel(
-          account.bankName,
-          account.accountNumberLast4,
-        ),
-        categoryName: category.name,
-        occurrenceCount: suggestion.occurrenceCount,
-        lastOccurrence: suggestion.lastOccurrence,
-        nextExpectedDate: suggestion.nextExpectedDate,
-      );
-    }).toList();
+            final scheduleIdentity = RecurringPatternDetector.normalizeIdentity(
+              schedule.description ?? '',
+            );
+            return scheduleIdentity == identity ||
+                (identity.isNotEmpty && scheduleIdentity.contains(identity));
+          });
+        })
+        .map((suggestion) {
+          final account = accountById[suggestion.accountId]!;
+          final category = categoryById[suggestion.categoryId]!;
+          return RecurringPatternSuggestion(
+            accountId: suggestion.accountId,
+            categoryId: suggestion.categoryId,
+            amountPaise: suggestion.amountPaise,
+            transactionType: suggestion.transactionType,
+            frequency: suggestion.frequency,
+            interval: suggestion.interval,
+            description: suggestion.description,
+            patternIdentity: suggestion.patternIdentity,
+            accountLabel: bankAccountDisplayLabel(
+              account.bankName,
+              account.accountNumberLast4,
+            ),
+            categoryName: category.name,
+            occurrenceCount: suggestion.occurrenceCount,
+            lastOccurrence: suggestion.lastOccurrence,
+            nextExpectedDate: suggestion.nextExpectedDate,
+          );
+        })
+        .toList();
   }
 
   /// Pauses or resumes a schedule without changing its next due date.
@@ -265,20 +275,19 @@ class RecurringTransactionRepository {
     required int scheduleId,
     required bool isActive,
   }) async {
-    final changed = await (database.update(database.recurringSchedules)
-          ..where((s) => s.id.equals(scheduleId)))
-        .write(RecurringSchedulesCompanion(
-      isActive: Value(isActive),
-    ));
+    final changed =
+        await (database.update(database.recurringSchedules)
+              ..where((s) => s.id.equals(scheduleId)))
+            .write(RecurringSchedulesCompanion(isActive: Value(isActive)));
 
     return changed > 0;
   }
 
   /// Deletes a schedule. Transactions already created from it are retained.
   Future<bool> deleteSchedule(int scheduleId) async {
-    final deleted = await (database.delete(database.recurringSchedules)
-          ..where((s) => s.id.equals(scheduleId)))
-        .go();
+    final deleted = await (database.delete(
+      database.recurringSchedules,
+    )..where((s) => s.id.equals(scheduleId))).go();
 
     return deleted > 0;
   }
@@ -293,9 +302,9 @@ class RecurringTransactionRepository {
   /// had already been recorded or is not currently confirmable.
   Future<bool> confirmNextOccurrence(int scheduleId) async {
     return database.transaction(() async {
-      final schedule = await (database.select(database.recurringSchedules)
-            ..where((s) => s.id.equals(scheduleId)))
-          .getSingleOrNull();
+      final schedule = await (database.select(
+        database.recurringSchedules,
+      )..where((s) => s.id.equals(scheduleId))).getSingleOrNull();
 
       if (schedule == null || !schedule.isActive) {
         return false;
@@ -308,23 +317,23 @@ class RecurringTransactionRepository {
         return false;
       }
 
-      final endDate =
-          schedule.endDate == null ? null : _dateOnly(schedule.endDate!);
+      final endDate = schedule.endDate == null
+          ? null
+          : _dateOnly(schedule.endDate!);
 
       if (endDate != null && dueDate.isAfter(endDate)) {
         await (database.update(database.recurringSchedules)
               ..where((s) => s.id.equals(scheduleId)))
-            .write(const RecurringSchedulesCompanion(
-          isActive: Value(false),
-        ));
+            .write(const RecurringSchedulesCompanion(isActive: Value(false)));
         return false;
       }
 
       final occurrenceKey = _occurrenceKey(schedule.id, dueDate);
 
-      final alreadyRecorded = await (database.select(database.moneyTransactions)
-            ..where((t) => t.referenceNumber.equals(occurrenceKey)))
-          .getSingleOrNull();
+      final alreadyRecorded =
+          await (database.select(database.moneyTransactions)
+                ..where((t) => t.referenceNumber.equals(occurrenceKey)))
+              .getSingleOrNull();
 
       if (alreadyRecorded != null) {
         // Repair the schedule pointer if a previous attempt recorded the
@@ -333,26 +342,29 @@ class RecurringTransactionRepository {
         return false;
       }
 
-      final account = await (database.select(database.bankAccounts)
-            ..where((a) => a.id.equals(schedule.accountId)))
-          .getSingleOrNull();
+      final account = await (database.select(
+        database.bankAccounts,
+      )..where((a) => a.id.equals(schedule.accountId))).getSingleOrNull();
 
       if (account == null || !account.isActive) {
         throw StateError('The bank account for this schedule is unavailable.');
       }
 
-      final description = _cleanText(schedule.description) ??
+      final description =
+          _cleanText(schedule.description) ??
           (schedule.transactionType == 'income'
               ? 'Recurring income'
               : 'Recurring expense');
       final merchantId = await MerchantRepository(database)
           .findOrCreateForDescription(
-        description: description,
-        transactionType: schedule.transactionType,
-        fallbackCategoryId: schedule.categoryId,
-      );
+            description: description,
+            transactionType: schedule.transactionType,
+            fallbackCategoryId: schedule.categoryId,
+          );
 
-      await database.into(database.moneyTransactions).insert(
+      await database
+          .into(database.moneyTransactions)
+          .insert(
             MoneyTransactionsCompanion.insert(
               accountId: schedule.accountId,
               categoryId: Value(schedule.categoryId),
@@ -384,12 +396,14 @@ class RecurringTransactionRepository {
 
     final shouldRemainActive = endDate == null || !nextDate.isAfter(endDate);
 
-    await (database.update(database.recurringSchedules)
-          ..where((s) => s.id.equals(schedule.id)))
-        .write(RecurringSchedulesCompanion(
-      nextDueDate: Value(nextDate),
-      isActive: Value(shouldRemainActive),
-    ));
+    await (database.update(
+      database.recurringSchedules,
+    )..where((s) => s.id.equals(schedule.id))).write(
+      RecurringSchedulesCompanion(
+        nextDueDate: Value(nextDate),
+        isActive: Value(shouldRemainActive),
+      ),
+    );
   }
 
   static void _validateSchedule({
@@ -404,7 +418,9 @@ class RecurringTransactionRepository {
       throw ArgumentError('Amount must be greater than zero.');
     }
     if (transactionType != 'income' && transactionType != 'expense') {
-      throw ArgumentError('Recurring schedules support income or expense only.');
+      throw ArgumentError(
+        'Recurring schedules support income or expense only.',
+      );
     }
     if (!const {'daily', 'weekly', 'monthly', 'yearly'}.contains(frequency)) {
       throw ArgumentError('Choose a valid recurring frequency.');
@@ -412,8 +428,7 @@ class RecurringTransactionRepository {
     if (interval < 1 || interval > 999) {
       throw ArgumentError('Repeat interval must be between 1 and 999.');
     }
-    if (endDate != null &&
-        _dateOnly(endDate).isBefore(_dateOnly(startDate))) {
+    if (endDate != null && _dateOnly(endDate).isBefore(_dateOnly(startDate))) {
       throw ArgumentError('End date cannot be before the start date.');
     }
   }
@@ -429,11 +444,7 @@ class RecurringTransactionRepository {
       case 'weekly':
         return current.add(Duration(days: 7 * interval));
       case 'monthly':
-        final targetMonth = DateTime(
-          current.year,
-          current.month + interval,
-          1,
-        );
+        final targetMonth = DateTime(current.year, current.month + interval, 1);
         final lastDay = DateTime(
           targetMonth.year,
           targetMonth.month + 1,

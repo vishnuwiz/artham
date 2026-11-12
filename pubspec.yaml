@@ -43,6 +43,8 @@ dependencies:
   share_plus: ^13.3.1
   file_picker: ^13.3.3
 
+  material_ui: any
+  cupertino_ui: any
 dev_dependencies:
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.7

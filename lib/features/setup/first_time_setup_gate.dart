@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../data/app_database.dart';
 import '../../data/first_time_setup_store.dart';
@@ -28,10 +28,12 @@ class FirstTimeSetupGate extends StatefulWidget {
 class _FirstTimeSetupGateState extends State<FirstTimeSetupGate> {
   late final FirstTimeSetupStore _store =
       widget.store ?? LocalFirstTimeSetupStore();
-  late final AccountRepository _accountRepository =
-      AccountRepository(widget.database);
-  late final CategoryRepository _categoryRepository =
-      CategoryRepository(widget.database);
+  late final AccountRepository _accountRepository = AccountRepository(
+    widget.database,
+  );
+  late final CategoryRepository _categoryRepository = CategoryRepository(
+    widget.database,
+  );
 
   bool? _showSetup;
 
@@ -96,9 +98,7 @@ class _FirstTimeSetupGateState extends State<FirstTimeSetupGate> {
   Widget build(BuildContext context) {
     if (_showSetup == null) {
       return const ArthamScaffold(
-        body: SafeArea(
-          child: Center(child: CircularProgressIndicator()),
-        ),
+        body: SafeArea(child: Center(child: CircularProgressIndicator())),
       );
     }
 

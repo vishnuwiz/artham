@@ -30,9 +30,53 @@ void main() {
     expect(rows.first, contains('Transfer To Account'));
   });
 
-  test('CSV export resolves account and category and quotes descriptions',
-      () async {
-    final accountId = await database.into(database.bankAccounts).insert(
+  test(
+    'CSV export resolves account and category and quotes descriptions',
+    () async {
+      final accountId = await database
+          .into(database.bankAccounts)
+          .insert(
+            BankAccountsCompanion.insert(
+              bankName: 'Federal Bank',
+              accountName: 'Account 1255',
+              accountNumberLast4: const Value('1255'),
+              openingBalancePaise: 100000,
+              openingDate: DateTime(2026, 1, 1),
+            ),
+          );
+      final categoryId = await database
+          .into(database.categories)
+          .insert(
+            CategoriesCompanion.insert(name: 'Restaurants', type: 'expense'),
+          );
+
+      await database
+          .into(database.moneyTransactions)
+          .insert(
+            MoneyTransactionsCompanion.insert(
+              accountId: accountId,
+              categoryId: Value(categoryId),
+              amountPaise: 12500,
+              transactionType: 'expense',
+              transactionDate: DateTime(2026, 11, 10, 9, 30),
+              description: const Value('Cafe, Kochi'),
+            ),
+          );
+
+      final rows = Csv().decode(await exportService.buildTransactionsCsv());
+
+      expect(rows, hasLength(2));
+      expect(rows[1][3], '125.00');
+      expect(rows[1][5], 'Federal Bank · •••• 1255');
+      expect(rows[1][8], 'Restaurants');
+      expect(rows[1][10], 'Cafe, Kochi');
+    },
+  );
+
+  test('JSON backup contains every database table and paise amounts', () async {
+    final accountId = await database
+        .into(database.bankAccounts)
+        .insert(
           BankAccountsCompanion.insert(
             bankName: 'Federal Bank',
             accountName: 'Account 1255',
@@ -41,52 +85,15 @@ void main() {
             openingDate: DateTime(2026, 1, 1),
           ),
         );
-    final categoryId = await database.into(database.categories).insert(
-          CategoriesCompanion.insert(
-            name: 'Restaurants',
-            type: 'expense',
-          ),
+    final categoryId = await database
+        .into(database.categories)
+        .insert(
+          CategoriesCompanion.insert(name: 'Restaurants', type: 'expense'),
         );
 
-    await database.into(database.moneyTransactions).insert(
-          MoneyTransactionsCompanion.insert(
-            accountId: accountId,
-            categoryId: Value(categoryId),
-            amountPaise: 12500,
-            transactionType: 'expense',
-            transactionDate: DateTime(2026, 11, 10, 9, 30),
-            description: const Value('Cafe, Kochi'),
-          ),
-        );
-
-    final rows = Csv().decode(await exportService.buildTransactionsCsv());
-
-    expect(rows, hasLength(2));
-    expect(rows[1][3], '125.00');
-    expect(rows[1][5], 'Federal Bank · •••• 1255');
-    expect(rows[1][8], 'Restaurants');
-    expect(rows[1][10], 'Cafe, Kochi');
-  });
-
-  test('JSON backup contains every database table and paise amounts',
-      () async {
-    final accountId = await database.into(database.bankAccounts).insert(
-          BankAccountsCompanion.insert(
-            bankName: 'Federal Bank',
-            accountName: 'Account 1255',
-            accountNumberLast4: const Value('1255'),
-            openingBalancePaise: 100000,
-            openingDate: DateTime(2026, 1, 1),
-          ),
-        );
-    final categoryId = await database.into(database.categories).insert(
-          CategoriesCompanion.insert(
-            name: 'Restaurants',
-            type: 'expense',
-          ),
-        );
-
-    await database.into(database.moneyTransactions).insert(
+    await database
+        .into(database.moneyTransactions)
+        .insert(
           MoneyTransactionsCompanion.insert(
             accountId: accountId,
             categoryId: Value(categoryId),
@@ -101,8 +108,7 @@ void main() {
     ) as Map<String, dynamic>;
     final data = backup['data'] as Map<String, dynamic>;
     final transactions = data['moneyTransactions'] as List<dynamic>;
-    final exportedTransaction =
-        transactions.single as Map<String, dynamic>;
+    final exportedTransaction = transactions.single as Map<String, dynamic>;
 
     expect(backup['format'], 'artham_backup');
     expect(backup['formatVersion'], 1);

@@ -1,4 +1,5 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
@@ -120,8 +121,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     required int currentPaise,
     required bool currentRolloverEnabled,
   }) async {
-    final existingTemplate =
-        await _repository.getBudgetTemplate(categoryId: categoryId);
+    final existingTemplate = await _repository.getBudgetTemplate(
+      categoryId: categoryId,
+    );
     if (!mounted) return;
 
     final result = await showDialog<_BudgetDialogResult>(
@@ -289,7 +291,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         alignment: Alignment.centerLeft,
                         child: Text(
                           'Select a month to see its category-wise spending and limits.',
-                          style: TextStyle(color: ArthamColors.muted, fontSize: 12),
+                          style: TextStyle(
+                            color: ArthamColors.muted,
+                            fontSize: 12,
+                          ),
                         ),
                       ),
                     ),
@@ -803,9 +808,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
   }
 
   Widget _buildBudgetAlertCard(_BudgetAlert alert) {
-    final color = alert.exceeded
-        ? ArthamColors.debit
-        : ArthamColors.peach;
+    final color = alert.exceeded ? ArthamColors.debit : ArthamColors.peach;
     final background = alert.exceeded
         ? ArthamColors.debitTint
         : ArthamColors.peachTint;
@@ -861,7 +864,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 const SizedBox(height: 3),
                 Text(
                   '${_money(alert.spentPaise)} spent of ${_money(alert.budgetPaise)}',
-                  style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+                  style: const TextStyle(
+                    color: ArthamColors.muted,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -1119,7 +1125,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   over
                       ? '${_money(item.remainingPaise.abs())} over'
                       : '${_money(item.remainingPaise)} left',
-                  style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+                  style: const TextStyle(
+                    color: ArthamColors.muted,
+                    fontSize: 11,
+                  ),
                 ),
               ],
             ),
@@ -1202,61 +1211,61 @@ class _BudgetLimitDialogState extends State<_BudgetLimitDialog> {
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-            TextFormField(
-              controller: _controller,
-              autofocus: true,
-              keyboardType: const TextInputType.numberWithOptions(
-                decimal: true,
+              TextFormField(
+                controller: _controller,
+                autofocus: true,
+                keyboardType: const TextInputType.numberWithOptions(
+                  decimal: true,
+                ),
+                decoration: const InputDecoration(
+                  labelText: 'Monthly limit',
+                  prefixText: '₹ ',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  final amount = double.tryParse(
+                    (value ?? '').trim().replaceAll(',', ''),
+                  );
+                  if (amount == null || amount <= 0) {
+                    return 'Enter an amount greater than zero';
+                  }
+                  if (amount > 100000000000) return 'Enter a smaller amount';
+                  return null;
+                },
               ),
-              decoration: const InputDecoration(
-                labelText: 'Monthly limit',
-                prefixText: '₹ ',
-                border: OutlineInputBorder(),
+              const SizedBox(height: 8),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                value: _rolloverEnabled,
+                onChanged: (value) {
+                  setState(() => _rolloverEnabled = value);
+                },
+                title: const Text(
+                  'Carry unused budget forward',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+                subtitle: const Text(
+                  'Move the unused balance into the next month.',
+                  style: TextStyle(fontSize: 11),
+                ),
+                activeTrackColor: _green,
               ),
-              validator: (value) {
-                final amount = double.tryParse(
-                  (value ?? '').trim().replaceAll(',', ''),
-                );
-                if (amount == null || amount <= 0) {
-                  return 'Enter an amount greater than zero';
-                }
-                if (amount > 100000000000) return 'Enter a smaller amount';
-                return null;
-              },
-            ),
-            const SizedBox(height: 8),
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              value: _rolloverEnabled,
-              onChanged: (value) {
-                setState(() => _rolloverEnabled = value);
-              },
-              title: const Text(
-                'Carry unused budget forward',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+              SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                value: _repeatMonthly,
+                onChanged: (value) {
+                  setState(() => _repeatMonthly = value);
+                },
+                title: const Text(
+                  'Repeat this budget monthly',
+                  style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
+                ),
+                subtitle: const Text(
+                  'Create this budget automatically for future months when you open Artham.',
+                  style: TextStyle(fontSize: 11),
+                ),
+                activeTrackColor: _green,
               ),
-              subtitle: const Text(
-                'Move the unused balance into the next month.',
-                style: TextStyle(fontSize: 11),
-              ),
-              activeTrackColor: _green,
-            ),
-            SwitchListTile.adaptive(
-              contentPadding: EdgeInsets.zero,
-              value: _repeatMonthly,
-              onChanged: (value) {
-                setState(() => _repeatMonthly = value);
-              },
-              title: const Text(
-                'Repeat this budget monthly',
-                style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700),
-              ),
-              subtitle: const Text(
-                'Create this budget automatically for future months when you open Artham.',
-                style: TextStyle(fontSize: 11),
-              ),
-              activeTrackColor: _green,
-            ),
             ],
           ),
         ),

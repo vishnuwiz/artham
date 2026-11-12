@@ -1,5 +1,5 @@
+import 'package:material_ui/material_ui.dart';
 
-import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
@@ -15,10 +15,7 @@ const Color accountsBackground = Colors.transparent;
 class AccountsScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const AccountsScreen({
-    super.key,
-    required this.database,
-  });
+  const AccountsScreen({super.key, required this.database});
 
   @override
   State<AccountsScreen> createState() => _AccountsScreenState();
@@ -44,17 +41,18 @@ class _AccountsScreenState extends State<AccountsScreen> {
   Future<_AccountsData> _fetchAccounts() async {
     final accounts = await _repository.getActiveAccounts();
     final balances = await _transactionRepository.getBalanceSummary();
-    return _AccountsData(accounts: accounts, balances: balances.accountBalancesPaise,
-        totalBalancePaise: balances.totalBalancePaise);
+    return _AccountsData(
+      accounts: accounts,
+      balances: balances.accountBalancesPaise,
+      totalBalancePaise: balances.totalBalancePaise,
+    );
   }
 
   Future<void> _addAccount() async {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddAccountScreen(
-          database: widget.database,
-        ),
+        builder: (_) => AddAccountScreen(database: widget.database),
       ),
     );
 
@@ -67,10 +65,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final result = await Navigator.push<bool>(
       context,
       MaterialPageRoute(
-        builder: (_) => AddAccountScreen(
-          database: widget.database,
-          account: account,
-        ),
+        builder: (_) =>
+            AddAccountScreen(database: widget.database, account: account),
       ),
     );
     if (result == true && mounted) setState(_loadAccounts);
@@ -95,9 +91,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         elevation: 0,
         title: const Text(
           'My Accounts',
-          style: TextStyle(
-            fontWeight: FontWeight.w800,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w800),
         ),
       ),
       body: FutureBuilder<_AccountsData>(
@@ -105,9 +99,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
             return const Center(
-              child: CircularProgressIndicator(
-                color: accountsGreen,
-              ),
+              child: CircularProgressIndicator(color: accountsGreen),
             );
           }
 
@@ -159,20 +151,35 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text('TOTAL ACCOUNT BALANCE',
-                        style: TextStyle(color: Colors.white70, fontSize: 10,
-                          letterSpacing: 1, fontWeight: FontWeight.w700)),
+                      const Text(
+                        'TOTAL ACCOUNT BALANCE',
+                        style: TextStyle(
+                          color: Colors.white70,
+                          fontSize: 10,
+                          letterSpacing: 1,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       const SizedBox(height: 7),
-                      Text(_formatAmount(data.totalBalancePaise),
-                        style: const TextStyle(color: Colors.white,
-                          fontSize: 25, fontWeight: FontWeight.w800)),
+                      Text(
+                        _formatAmount(data.totalBalancePaise),
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontSize: 25,
+                          fontWeight: FontWeight.w800,
+                        ),
+                      ),
                     ],
                   ),
                 ),
                 const SizedBox(height: 16),
 
-                ...accounts.map((account) => _buildAccountCard(
-                  account, data.balances[account.id] ?? account.openingBalancePaise)),
+                ...accounts.map(
+                  (account) => _buildAccountCard(
+                    account,
+                    data.balances[account.id] ?? account.openingBalancePaise,
+                  ),
+                ),
 
                 const SizedBox(height: 20),
 
@@ -219,122 +226,122 @@ class _AccountsScreenState extends State<AccountsScreen> {
         });
       },
       child: Container(
-      margin: const EdgeInsets.only(bottom: 14),
-      padding: const EdgeInsets.all(19),
-      decoration: BoxDecoration(
-        gradient: ArthamColors.glassGradient,
-        border: ArthamColors.glassBorder,
-        borderRadius: BorderRadius.circular(21),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Container(
-                height: 46,
-                width: 46,
-                decoration: BoxDecoration(
-                  color: accountsGreen.withValues(alpha: 0.10),
-                  borderRadius: BorderRadius.circular(14),
+        margin: const EdgeInsets.only(bottom: 14),
+        padding: const EdgeInsets.all(19),
+        decoration: BoxDecoration(
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
+          borderRadius: BorderRadius.circular(21),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Container(
+                  height: 46,
+                  width: 46,
+                  decoration: BoxDecoration(
+                    color: accountsGreen.withValues(alpha: 0.10),
+                    borderRadius: BorderRadius.circular(14),
+                  ),
+                  child: const Icon(
+                    Icons.account_balance_rounded,
+                    color: accountsGreen,
+                    size: 25,
+                  ),
                 ),
-                child: const Icon(
-                  Icons.account_balance_rounded,
-                  color: accountsGreen,
-                  size: 25,
-                ),
-              ),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      account.bankName,
-                      style: const TextStyle(
-                        color: accountsNavy,
-                        fontWeight: FontWeight.w800,
-                        fontSize: 16,
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        account.bankName,
+                        style: const TextStyle(
+                          color: accountsNavy,
+                          fontWeight: FontWeight.w800,
+                          fontSize: 16,
+                        ),
                       ),
-                    ),
-                    const SizedBox(height: 4),
-                    Text(
-                      accountNumberLastFourLabel(account.accountNumberLast4),
-                      style: const TextStyle(
-                        color: ArthamColors.muted,
-                        fontSize: 12,
-                        letterSpacing: 1,
+                      const SizedBox(height: 4),
+                      Text(
+                        accountNumberLastFourLabel(account.accountNumberLast4),
+                        style: const TextStyle(
+                          color: ArthamColors.muted,
+                          fontSize: 12,
+                          letterSpacing: 1,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuButton<String>(
+                  tooltip: 'Account options',
+                  onSelected: (value) {
+                    if (value == 'edit') _editAccount(account);
+                  },
+                  itemBuilder: (context) => const [
+                    PopupMenuItem(
+                      value: 'edit',
+                      child: Row(
+                        children: [
+                          Icon(Icons.edit_outlined, size: 19),
+                          SizedBox(width: 10),
+                          Text('Edit account'),
+                        ],
                       ),
                     ),
                   ],
+                  icon: const Icon(Icons.more_vert, color: accountsNavy),
                 ),
-              ),
-              PopupMenuButton<String>(
-                tooltip: 'Account options',
-                onSelected: (value) {
-                  if (value == 'edit') _editAccount(account);
-                },
-                itemBuilder: (context) => const [
-                  PopupMenuItem(
-                    value: 'edit',
-                    child: Row(
-                      children: [
-                        Icon(Icons.edit_outlined, size: 19),
-                        SizedBox(width: 10),
-                        Text('Edit account'),
-                      ],
-                    ),
-                  ),
-                ],
-                icon: const Icon(Icons.more_vert, color: accountsNavy),
-              ),
-            ],
-          ),
-
-          const SizedBox(height: 20),
-
-          const Text(
-            'CURRENT BALANCE',
-            style: TextStyle(
-              color: ArthamColors.muted,
-              fontSize: 10,
-              letterSpacing: 1,
-              fontWeight: FontWeight.w600,
+              ],
             ),
-          ),
 
-          const SizedBox(height: 5),
+            const SizedBox(height: 20),
 
-          Text(
-            _formatAmount(currentBalancePaise),
-            style: const TextStyle(
-              color: accountsNavy,
-              fontSize: 23,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          Row(
-            children: [
-              const Icon(
-                Icons.calendar_today_outlined,
-                size: 13,
+            const Text(
+              'CURRENT BALANCE',
+              style: TextStyle(
                 color: ArthamColors.muted,
+                fontSize: 10,
+                letterSpacing: 1,
+                fontWeight: FontWeight.w600,
               ),
-              const SizedBox(width: 6),
-              Text(
-                'Opening date: ${_formatDate(account.openingDate)}',
-                style: const TextStyle(
+            ),
+
+            const SizedBox(height: 5),
+
+            Text(
+              _formatAmount(currentBalancePaise),
+              style: const TextStyle(
+                color: accountsNavy,
+                fontSize: 23,
+                fontWeight: FontWeight.w800,
+              ),
+            ),
+
+            const SizedBox(height: 12),
+
+            Row(
+              children: [
+                const Icon(
+                  Icons.calendar_today_outlined,
+                  size: 13,
                   color: ArthamColors.muted,
-                  fontSize: 11,
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+                const SizedBox(width: 6),
+                Text(
+                  'Opening date: ${_formatDate(account.openingDate)}',
+                  style: const TextStyle(
+                    color: ArthamColors.muted,
+                    fontSize: 11,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -365,10 +372,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
               'Add your first bank account to start '
               'managing your finances.',
               textAlign: TextAlign.center,
-              style: TextStyle(
-                color: ArthamColors.muted,
-                fontSize: 13,
-              ),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 13),
             ),
             const SizedBox(height: 20),
             ElevatedButton.icon(
@@ -386,7 +390,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
     );
   }
 }
-
 
 class _AccountsData {
   final List<BankAccount> accounts;

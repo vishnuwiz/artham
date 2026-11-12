@@ -14,14 +14,18 @@ void main() {
     database = AppDatabase.forTesting(NativeDatabase.memory());
     repository = MerchantRepository(database);
 
-    foodCategoryId = await database.into(database.categories).insert(
+    foodCategoryId = await database
+        .into(database.categories)
+        .insert(
           CategoriesCompanion.insert(
             name: 'Restaurants',
             type: 'expense',
             isSystem: const Value(true),
           ),
         );
-    shoppingCategoryId = await database.into(database.categories).insert(
+    shoppingCategoryId = await database
+        .into(database.categories)
+        .insert(
           CategoriesCompanion.insert(
             name: 'Shopping',
             type: 'expense',
@@ -42,34 +46,36 @@ void main() {
     );
 
     expect(id, isNotNull);
-    final merchant = await (database.select(database.merchants)
-          ..where((row) => row.id.equals(id!)))
-        .getSingle();
+    final merchant = await (database.select(
+      database.merchants,
+    )..where((row) => row.id.equals(id!))).getSingle();
 
     expect(merchant.name, 'Swiggy');
     // The catalogue category takes precedence over the fallback category.
     expect(merchant.defaultCategoryId, foodCategoryId);
   });
 
-  test('reuses an existing merchant without overwriting its default category',
-      () async {
-    final firstId = await repository.findOrCreateForDescription(
-      description: 'Swiggy',
-      transactionType: 'expense',
-      fallbackCategoryId: foodCategoryId,
-    );
-    final secondId = await repository.findOrCreateForDescription(
-      description: 'Payment to SWIGGY',
-      transactionType: 'expense',
-      fallbackCategoryId: shoppingCategoryId,
-    );
+  test(
+    'reuses an existing merchant without overwriting its default category',
+    () async {
+      final firstId = await repository.findOrCreateForDescription(
+        description: 'Swiggy',
+        transactionType: 'expense',
+        fallbackCategoryId: foodCategoryId,
+      );
+      final secondId = await repository.findOrCreateForDescription(
+        description: 'Payment to SWIGGY',
+        transactionType: 'expense',
+        fallbackCategoryId: shoppingCategoryId,
+      );
 
-    expect(secondId, firstId);
-    expect(await database.select(database.merchants).get(), hasLength(1));
+      expect(secondId, firstId);
+      expect(await database.select(database.merchants).get(), hasLength(1));
 
-    final merchant = (await database.select(database.merchants).get()).single;
-    expect(merchant.defaultCategoryId, foodCategoryId);
-  });
+      final merchant = (await database.select(database.merchants).get()).single;
+      expect(merchant.defaultCategoryId, foodCategoryId);
+    },
+  );
 
   test('does not classify income descriptions as merchants', () async {
     final id = await repository.findOrCreateForDescription(
@@ -93,20 +99,22 @@ void main() {
     expect(await database.select(database.merchants).get(), isEmpty);
   });
 
-  test('uses the supplied category when the catalogue category is absent',
-      () async {
-    await database.delete(database.categories).go();
+  test(
+    'uses the supplied category when the catalogue category is absent',
+    () async {
+      await database.delete(database.categories).go();
 
-    final id = await repository.findOrCreateForDescription(
-      description: 'Swiggy',
-      transactionType: 'expense',
-      fallbackCategoryId: shoppingCategoryId,
-    );
+      final id = await repository.findOrCreateForDescription(
+        description: 'Swiggy',
+        transactionType: 'expense',
+        fallbackCategoryId: shoppingCategoryId,
+      );
 
-    final merchant = await (database.select(database.merchants)
-          ..where((row) => row.id.equals(id!)))
-        .getSingle();
+      final merchant = await (database.select(
+        database.merchants,
+      )..where((row) => row.id.equals(id!))).getSingle();
 
-    expect(merchant.defaultCategoryId, shoppingCategoryId);
-  });
+      expect(merchant.defaultCategoryId, shoppingCategoryId);
+    },
+  );
 }

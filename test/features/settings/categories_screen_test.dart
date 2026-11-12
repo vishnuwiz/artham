@@ -1,5 +1,5 @@
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
@@ -28,7 +28,13 @@ void main() {
     });
 
     await tester.pumpWidget(
-      MaterialApp(home: SettingsScreen(database: database)),
+      MaterialApp(
+        theme: ThemeData(
+          useMaterial3: true,
+          splashFactory: InkRipple.splashFactory,
+        ),
+        home: SettingsScreen(database: database),
+      ),
     );
     await tester.tap(find.byKey(const Key('manage-categories-button')));
     await settle(tester);

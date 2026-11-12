@@ -8,28 +8,31 @@ void main() {
       expect(MerchantIntelligence.merchantCount, greaterThanOrEqualTo(500));
     });
 
-    test('recognises every canonical merchant alias with its mapped category', () {
-      var testedAliases = 0;
+    test(
+      'recognises every canonical merchant alias with its mapped category',
+      () {
+        var testedAliases = 0;
 
-      for (final merchant in merchantCatalogData) {
-        for (final alias in merchant.aliases) {
-          final result = MerchantIntelligence.recognize(
-            'UPI PAYMENT TO $alias',
-          );
+        for (final merchant in merchantCatalogData) {
+          for (final alias in merchant.aliases) {
+            final result = MerchantIntelligence.recognize(
+              'UPI PAYMENT TO $alias',
+            );
 
-          expect(result, isNotNull, reason: 'Alias: $alias');
-          expect(result!.name, merchant.name, reason: 'Alias: $alias');
-          expect(
-            result.categoryName,
-            merchant.categoryName,
-            reason: 'Alias: $alias',
-          );
-          testedAliases++;
+            expect(result, isNotNull, reason: 'Alias: $alias');
+            expect(result!.name, merchant.name, reason: 'Alias: $alias');
+            expect(
+              result.categoryName,
+              merchant.categoryName,
+              reason: 'Alias: $alias',
+            );
+            testedAliases++;
+          }
         }
-      }
 
-      expect(testedAliases, greaterThanOrEqualTo(1000));
-    });
+        expect(testedAliases, greaterThanOrEqualTo(1000));
+      },
+    );
 
     test('recognises a merchant from a masked UPI-style description', () {
       final result = MerchantIntelligence.recognize(
@@ -63,7 +66,10 @@ void main() {
         'Lulu Hypermarket purchase': ('Lulu Hypermarket', 'Food & Grocery'),
         'Decathlon store': ('Decathlon', 'Shopping'),
         'Kochi Metro ticket': ('Kochi Metro', 'Transport & Fuel'),
-        'Kerala Vision Broadband': ('Kerala Vision Broadband', 'Internet & Telecom'),
+        'Kerala Vision Broadband': (
+          'Kerala Vision Broadband',
+          'Internet & Telecom',
+        ),
         'Amrita Hospital payment': ('Amrita Hospital', 'Medical'),
         'IndiGo flight': ('IndiGo', 'Travel'),
         'Third Wave Coffee': ('Third Wave Coffee', 'Restaurants'),

@@ -1,5 +1,5 @@
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
@@ -34,8 +34,9 @@ void main() {
     await database.close();
   });
 
-  testWidgets('shows setup for a new installation without accounts',
-      (tester) async {
+  testWidgets('shows setup for a new installation without accounts', (
+    tester,
+  ) async {
     await tester.pumpWidget(
       MaterialApp(
         home: FirstTimeSetupGate(
@@ -53,8 +54,9 @@ void main() {
     expect(find.text('Dashboard'), findsNothing);
   });
 
-  testWidgets('existing active accounts bypass setup and seed categories',
-      (tester) async {
+  testWidgets('existing active accounts bypass setup and seed categories', (
+    tester,
+  ) async {
     await AccountRepository(database).addAccount(
       bankName: 'Federal Bank',
       accountName: 'Account 1234',
@@ -84,8 +86,7 @@ void main() {
     );
   });
 
-  testWidgets('a previously skipped setup is not shown again',
-      (tester) async {
+  testWidgets('a previously skipped setup is not shown again', (tester) async {
     store.completed = true;
 
     await tester.pumpWidget(

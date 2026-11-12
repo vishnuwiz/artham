@@ -1,5 +1,5 @@
+import 'package:material_ui/material_ui.dart';
 
-import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
@@ -13,11 +13,7 @@ class AddAccountScreen extends StatefulWidget {
   final AppDatabase database;
   final BankAccount? account;
 
-  const AddAccountScreen({
-    super.key,
-    required this.database,
-    this.account,
-  });
+  const AddAccountScreen({super.key, required this.database, this.account});
 
   @override
   State<AddAccountScreen> createState() => _AddAccountScreenState();
@@ -57,8 +53,8 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       _selectedBank = account.bankName;
       if (!_banks.contains(account.bankName)) _banks.add(account.bankName);
       _lastFourController.text = account.accountNumberLast4 ?? '';
-      _openingBalanceController.text =
-          (account.openingBalancePaise / 100).toStringAsFixed(2);
+      _openingBalanceController.text = (account.openingBalancePaise / 100)
+          .toStringAsFixed(2);
       _openingDate = account.openingDate;
     }
   }
@@ -111,9 +107,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
     if (_selectedBank == null) return;
 
-    final rupees = double.parse(
-      _openingBalanceController.text.trim(),
-    );
+    final rupees = double.parse(_openingBalanceController.text.trim());
 
     final balancePaise = (rupees * 100).round();
 
@@ -145,9 +139,11 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text(widget.account == null
-              ? 'Bank account saved successfully!'
-              : 'Bank account updated successfully!'),
+          content: Text(
+            widget.account == null
+                ? 'Bank account saved successfully!'
+                : 'Bank account updated successfully!',
+          ),
           backgroundColor: arthamGreen,
         ),
       );
@@ -180,10 +176,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
         elevation: 0,
         title: Text(
           widget.account == null ? 'Add Bank Account' : 'Edit Bank Account',
-          style: TextStyle(
-            fontWeight: FontWeight.w700,
-            fontSize: 20,
-          ),
+          style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
         ),
       ),
       body: SafeArea(
@@ -212,7 +205,9 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            widget.account == null ? 'Add your account' : 'Edit your account',
+                            widget.account == null
+                                ? 'Add your account'
+                                : 'Edit your account',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 18,
@@ -259,10 +254,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   icon: Icons.account_balance_outlined,
                 ),
                 items: _banks.map((bank) {
-                  return DropdownMenuItem(
-                    value: bank,
-                    child: Text(bank),
-                  );
+                  return DropdownMenuItem(value: bank, child: Text(bank));
                 }).toList(),
                 onChanged: (value) {
                   setState(() {
@@ -290,8 +282,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   icon: Icons.credit_card_rounded,
                 ).copyWith(counterText: ''),
                 validator: (value) {
-                  if (value == null ||
-                      !RegExp(r'^\d{4}$').hasMatch(value)) {
+                  if (value == null || !RegExp(r'^\d{4}$').hasMatch(value)) {
                     return 'Enter exactly 4 digits';
                   }
                   return null;
@@ -345,9 +336,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   decoration: BoxDecoration(
                     color: ArthamColors.glass,
                     borderRadius: BorderRadius.circular(14),
-                    border: Border.all(
-                      color: ArthamColors.line,
-                    ),
+                    border: Border.all(color: ArthamColors.line),
                   ),
                   child: Row(
                     children: [
@@ -383,9 +372,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   style: ElevatedButton.styleFrom(
                     backgroundColor: arthamGreen,
                     foregroundColor: ArthamColors.onAccent,
-                    disabledBackgroundColor: arthamGreen.withValues(
-                      alpha: 0.6,
-                    ),
+                    disabledBackgroundColor: arthamGreen.withValues(alpha: 0.6),
                     elevation: 0,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
@@ -404,12 +391,18 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                           ),
                         )
                       else
-                        Icon(widget.account == null ? Icons.add_rounded : Icons.save_outlined),
+                        Icon(
+                          widget.account == null
+                              ? Icons.add_rounded
+                              : Icons.save_outlined,
+                        ),
                       const SizedBox(width: 8),
                       Text(
                         _isSaving
                             ? 'Saving...'
-                            : widget.account == null ? 'Save Bank Account' : 'Save Changes',
+                            : widget.account == null
+                            ? 'Save Bank Account'
+                            : 'Save Changes',
                         style: const TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.bold,
@@ -426,10 +419,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                 'Only the last four digits are requested. '
                 'Never enter your PIN, CVV or internet banking password.',
                 textAlign: TextAlign.center,
-                style: TextStyle(
-                  color: ArthamColors.muted,
-                  fontSize: 12,
-                ),
+                style: TextStyle(color: ArthamColors.muted, fontSize: 12),
               ),
             ],
           ),
@@ -458,44 +448,29 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
   }) {
     return InputDecoration(
       hintText: hint,
-      prefixIcon: Icon(
-        icon,
-        color: arthamGreen,
-      ),
+      prefixIcon: Icon(icon, color: arthamGreen),
       filled: true,
       fillColor: ArthamColors.glass,
-      contentPadding: const EdgeInsets.symmetric(
-        horizontal: 15,
-        vertical: 16,
-      ),
+      contentPadding: const EdgeInsets.symmetric(horizontal: 15, vertical: 16),
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
         borderSide: BorderSide.none,
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: BorderSide(
-          color: ArthamColors.line,
-        ),
+        borderSide: BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: arthamGreen,
-          width: 1.5,
-        ),
+        borderSide: const BorderSide(color: arthamGreen, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: ArthamColors.debit,
-        ),
+        borderSide: const BorderSide(color: ArthamColors.debit),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(
-          color: ArthamColors.debit,
-        ),
+        borderSide: const BorderSide(color: ArthamColors.debit),
       ),
     );
   }

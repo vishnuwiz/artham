@@ -1,5 +1,5 @@
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
@@ -18,8 +18,9 @@ void main() {
     await database.close();
   });
 
-  testWidgets('prepares starter categories and completes setup',
-      (tester) async {
+  testWidgets('prepares starter categories and completes setup', (
+    tester,
+  ) async {
     var completed = false;
 
     await tester.pumpWidget(
@@ -41,16 +42,18 @@ void main() {
 
     expect(find.text('Start with useful categories.'), findsOneWidget);
     expect(find.text('STEP 2 OF 3'), findsOneWidget);
-    expect(find.text('A CLEARER VIEW OF EVERY RUPEE').hitTestable(),
-        findsOneWidget);
+    expect(
+      find.text('A CLEARER VIEW OF EVERY RUPEE').hitTestable(),
+      findsOneWidget,
+    );
     expect(find.text('EXPENSE CATEGORIES'), findsOneWidget);
 
-    final categoriesList =
-        find.byKey(const PageStorageKey<String>('setup-categories'));
-    final categoriesScrollable = find.descendant(
-      of: categoriesList,
-      matching: find.byType(Scrollable),
-    ).first;
+    final categoriesList = find.byKey(
+      const PageStorageKey<String>('setup-categories'),
+    );
+    final categoriesScrollable = find
+        .descendant(of: categoriesList, matching: find.byType(Scrollable))
+        .first;
     await tester.scrollUntilVisible(
       find.text('INCOME CATEGORIES'),
       250,
@@ -82,9 +85,7 @@ void main() {
     expect(find.text("You're all set."), findsOneWidget);
     expect(find.text('STEP 3 OF 3'), findsOneWidget);
     expect(
-      find.text(
-        '$expectedExpenseCount expenses · $expectedIncomeCount income',
-      ),
+      find.text('$expectedExpenseCount expenses · $expectedIncomeCount income'),
       findsOneWidget,
     );
     await tester.tap(find.text('Go to dashboard'));
@@ -93,8 +94,9 @@ void main() {
     expect(completed, isTrue);
   });
 
-  testWidgets('Skip completes setup without adding a bank account',
-      (tester) async {
+  testWidgets('Skip completes setup without adding a bank account', (
+    tester,
+  ) async {
     var completed = false;
 
     await tester.pumpWidget(

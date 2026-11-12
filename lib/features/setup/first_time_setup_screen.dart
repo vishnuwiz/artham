@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
@@ -24,12 +24,12 @@ class FirstTimeSetupScreen extends StatefulWidget {
 }
 
 class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
-  late final AccountRepository _accounts =
-      AccountRepository(widget.database);
-  late final CategoryRepository _categoriesRepository =
-      CategoryRepository(widget.database);
-  late Future<List<BankAccount>> _accountsFuture =
-      _accounts.getActiveAccounts();
+  late final AccountRepository _accounts = AccountRepository(widget.database);
+  late final CategoryRepository _categoriesRepository = CategoryRepository(
+    widget.database,
+  );
+  late Future<List<BankAccount>> _accountsFuture = _accounts
+      .getActiveAccounts();
 
   List<Category> _expenses = [];
   List<Category> _income = [];
@@ -165,21 +165,19 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                     switchInCurve: Curves.easeOutCubic,
                     switchOutCurve: Curves.easeInCubic,
                     transitionBuilder: (child, animation) {
-                      final slide = Tween<Offset>(
-                        begin: const Offset(0, 0.22),
-                        end: Offset.zero,
-                      ).animate(
-                        CurvedAnimation(
-                          parent: animation,
-                          curve: Curves.easeOutCubic,
-                        ),
-                      );
+                      final slide =
+                          Tween<Offset>(
+                            begin: const Offset(0, 0.22),
+                            end: Offset.zero,
+                          ).animate(
+                            CurvedAnimation(
+                              parent: animation,
+                              curve: Curves.easeOutCubic,
+                            ),
+                          );
                       return FadeTransition(
                         opacity: animation,
-                        child: SlideTransition(
-                          position: slide,
-                          child: child,
-                        ),
+                        child: SlideTransition(position: slide, child: child),
                       );
                     },
                     child: Row(
@@ -242,11 +240,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                 controller: _stepPageController,
                 physics: const NeverScrollableScrollPhysics(),
                 onPageChanged: _handlePageChanged,
-                children: [
-                  _accountStep(),
-                  _categoriesStep(),
-                  _readyStep(),
-                ],
+                children: [_accountStep(), _categoriesStep(), _readyStep()],
               ),
             ),
             SafeArea(
@@ -281,10 +275,10 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                       _busy
                           ? 'Preparing...'
                           : _isTransitioning
-                              ? 'Moving...'
-                              : _step == 2
-                              ? 'Go to dashboard'
-                              : 'Continue',
+                          ? 'Moving...'
+                          : _step == 2
+                          ? 'Go to dashboard'
+                          : 'Continue',
                     ),
                   ),
                 ],
@@ -519,11 +513,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
         const CircleAvatar(
           radius: 42,
           backgroundColor: ArthamColors.mintTint,
-          child: Icon(
-            Icons.check_rounded,
-            color: ArthamColors.mint,
-            size: 44,
-          ),
+          child: Icon(Icons.check_rounded, color: ArthamColors.mint, size: 44),
         ),
         const SizedBox(height: 24),
         const Text(
@@ -613,10 +603,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               const SizedBox(height: 3),
               Text(
                 detail,
-                style: const TextStyle(
-                  color: ArthamColors.muted,
-                  fontSize: 11,
-                ),
+                style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
               ),
             ],
           ),

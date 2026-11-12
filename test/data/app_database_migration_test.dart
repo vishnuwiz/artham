@@ -107,9 +107,9 @@ void main() {
 
     await CategoryRepository(database).ensureDefaultCategories();
 
-    Future<Category> byId(int id) => (database.select(database.categories)
-          ..where((row) => row.id.equals(id)))
-        .getSingle();
+    Future<Category> byId(int id) => (database.select(
+      database.categories,
+    )..where((row) => row.id.equals(id))).getSingle();
 
     // Same row ids, so transactions and budgets keep their category.
     final restaurants = await byId(7);
@@ -126,10 +126,12 @@ void main() {
     expect((await byId(9)).name, 'Interest');
     expect((await byId(10)).name, 'Pet care');
 
-    final restaurantsRows = await (database.select(database.categories)
-          ..where((row) =>
-              row.name.equals('Restaurants') & row.type.equals('expense')))
-        .get();
+    final restaurantsRows =
+        await (database.select(database.categories)..where(
+              (row) =>
+                  row.name.equals('Restaurants') & row.type.equals('expense'),
+            ))
+            .get();
     expect(restaurantsRows, hasLength(1));
   });
 }

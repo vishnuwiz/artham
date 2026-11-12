@@ -1,6 +1,6 @@
 import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/data/app_database.dart';
@@ -54,38 +54,44 @@ void main() {
           ),
         );
 
-    final merchantId = await database.into(database.merchants).insert(
-      MerchantsCompanion.insert(
-        name: 'Amazon',
-        defaultCategoryId: Value(foodCategoryId),
-      ),
-    );
-    for (var offset = 3; offset >= 1; offset--) {
-      await database.into(database.moneyTransactions).insert(
-        MoneyTransactionsCompanion.insert(
-          accountId: accountId,
-          categoryId: Value(foodCategoryId),
-          merchantId: Value(merchantId),
-          amountPaise: 100000,
-          transactionType: 'expense',
-          transactionDate: DateTime(
-            now.year,
-            now.month - offset,
-            now.day > 28 ? 28 : now.day,
+    final merchantId = await database
+        .into(database.merchants)
+        .insert(
+          MerchantsCompanion.insert(
+            name: 'Amazon',
+            defaultCategoryId: Value(foodCategoryId),
           ),
-        ),
-      );
+        );
+    for (var offset = 3; offset >= 1; offset--) {
+      await database
+          .into(database.moneyTransactions)
+          .insert(
+            MoneyTransactionsCompanion.insert(
+              accountId: accountId,
+              categoryId: Value(foodCategoryId),
+              merchantId: Value(merchantId),
+              amountPaise: 100000,
+              transactionType: 'expense',
+              transactionDate: DateTime(
+                now.year,
+                now.month - offset,
+                now.day > 28 ? 28 : now.day,
+              ),
+            ),
+          );
     }
-    await database.into(database.moneyTransactions).insert(
-      MoneyTransactionsCompanion.insert(
-        accountId: accountId,
-        categoryId: Value(foodCategoryId),
-        merchantId: Value(merchantId),
-        amountPaise: 200000,
-        transactionType: 'expense',
-        transactionDate: DateTime(now.year, now.month, now.day),
-      ),
-    );
+    await database
+        .into(database.moneyTransactions)
+        .insert(
+          MoneyTransactionsCompanion.insert(
+            accountId: accountId,
+            categoryId: Value(foodCategoryId),
+            merchantId: Value(merchantId),
+            amountPaise: 200000,
+            transactionType: 'expense',
+            transactionDate: DateTime(now.year, now.month, now.day),
+          ),
+        );
 
     // Keep the full Insights content in the test viewport so assertions do
     // not depend on scrollable discovery or scroll timing.

@@ -1,7 +1,9 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
+
 import '../../theme/artham_theme.dart';
 import '../../theme/category_icons.dart';
-import 'package:flutter/cupertino.dart';
+
+import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:drift/drift.dart' hide Column;
 
@@ -16,10 +18,7 @@ const Color recurringBackground = Colors.transparent;
 class RecurringTransactionsScreen extends StatefulWidget {
   final AppDatabase database;
 
-  const RecurringTransactionsScreen({
-    super.key,
-    required this.database,
-  });
+  const RecurringTransactionsScreen({super.key, required this.database});
 
   @override
   State<RecurringTransactionsScreen> createState() =>
@@ -59,9 +58,7 @@ class _RecurringTransactionsScreenState
     await _screenData;
   }
 
-  Future<void> _addSchedule({
-    RecurringPatternSuggestion? suggestion,
-  }) async {
+  Future<void> _addSchedule({RecurringPatternSuggestion? suggestion}) async {
     final created = await showModalBottomSheet<bool>(
       context: context,
       isScrollControlled: true,
@@ -88,9 +85,7 @@ class _RecurringTransactionsScreenState
     }
   }
 
-  Future<void> _confirmOccurrence(
-    RecurringScheduleDetails item,
-  ) async {
+  Future<void> _confirmOccurrence(RecurringScheduleDetails item) async {
     final schedule = item.schedule;
     final amount = _formatAmount(schedule.amountPaise);
     final dueDate = _formatDate(schedule.nextDueDate);
@@ -109,9 +104,7 @@ class _RecurringTransactionsScreenState
             child: const Text('Not now'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: recurringGreen,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: recurringGreen),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Confirm'),
           ),
@@ -155,9 +148,9 @@ class _RecurringTransactionsScreenState
       setState(_loadSchedules);
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to update schedule: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to update schedule: $e')));
     }
   }
 
@@ -176,9 +169,7 @@ class _RecurringTransactionsScreenState
             child: const Text('Cancel'),
           ),
           FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: ArthamColors.debit,
-            ),
+            style: FilledButton.styleFrom(backgroundColor: ArthamColors.debit),
             onPressed: () => Navigator.pop(dialogContext, true),
             child: const Text('Delete'),
           ),
@@ -197,14 +188,13 @@ class _RecurringTransactionsScreenState
       );
     } catch (e) {
       if (!mounted) return;
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to delete schedule: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to delete schedule: $e')));
     }
   }
 
-  String _formatAmount(int paise) =>
-      '₹${(paise / 100).toStringAsFixed(2)}';
+  String _formatAmount(int paise) => '₹${(paise / 100).toStringAsFixed(2)}';
 
   String _formatDate(DateTime date) =>
       '${date.day.toString().padLeft(2, '0')}/'
@@ -311,8 +301,9 @@ class _RecurringTransactionsScreenState
   }
 
   Widget _buildSummary(_RecurringScreenData data) {
-    final activeCount =
-        data.schedules.where((item) => item.schedule.isActive).length;
+    final activeCount = data.schedules
+        .where((item) => item.schedule.isActive)
+        .length;
 
     return Container(
       padding: const EdgeInsets.all(18),
@@ -324,16 +315,9 @@ class _RecurringTransactionsScreenState
       child: Row(
         children: [
           Expanded(
-            child: _summaryValue(
-              'Active schedules',
-              activeCount.toString(),
-            ),
+            child: _summaryValue('Active schedules', activeCount.toString()),
           ),
-          Container(
-            width: 1,
-            height: 42,
-            color: Colors.white24,
-          ),
+          Container(width: 1, height: 42, color: Colors.white24),
           const SizedBox(width: 18),
           Expanded(
             child: _summaryValue(
@@ -367,9 +351,7 @@ class _RecurringTransactionsScreenState
     );
   }
 
-  Widget _buildSuggestionSection(
-    List<RecurringPatternSuggestion> suggestions,
-  ) {
+  Widget _buildSuggestionSection(List<RecurringPatternSuggestion> suggestions) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -511,8 +493,8 @@ class _RecurringTransactionsScreenState
     final unit = suggestion.frequency == 'weekly'
         ? 'week'
         : suggestion.frequency == 'yearly'
-            ? 'year'
-            : 'month';
+        ? 'year'
+        : 'month';
     return suggestion.interval == 1
         ? 'Every $unit'
         : 'Every ${suggestion.interval} ${unit}s';
@@ -549,7 +531,9 @@ class _RecurringTransactionsScreenState
         color: ArthamColors.glass,
         borderRadius: BorderRadius.circular(18),
         border: Border.all(
-          color: isDue ? recurringGreen.withValues(alpha: 0.45) : ArthamColors.line,
+          color: isDue
+              ? recurringGreen.withValues(alpha: 0.45)
+              : ArthamColors.line,
         ),
       ),
       child: Column(
@@ -587,7 +571,10 @@ class _RecurringTransactionsScreenState
                     ),
                     const SizedBox(height: 3),
                     Text(
-                      bankAccountDisplayLabel(item.account.bankName, item.account.accountNumberLast4),
+                      bankAccountDisplayLabel(
+                        item.account.bankName,
+                        item.account.accountNumberLast4,
+                      ),
                       style: const TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 12,
@@ -742,7 +729,11 @@ class _RecurringTransactionsScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(Icons.error_outline, color: ArthamColors.debit, size: 40),
+            const Icon(
+              Icons.error_outline,
+              color: ArthamColors.debit,
+              size: 40,
+            ),
             const SizedBox(height: 12),
             const Text(
               'Unable to load recurring schedules.',
@@ -836,18 +827,21 @@ class _AddRecurringScheduleSheetState
 
   Future<void> _loadFormData() async {
     try {
-      final accounts = await (widget.database.select(widget.database.bankAccounts)
-            ..where((a) => a.isActive.equals(true))
-            ..orderBy([(a) => OrderingTerm.asc(a.bankName)]))
-          .get();
+      final accounts =
+          await (widget.database.select(widget.database.bankAccounts)
+                ..where((a) => a.isActive.equals(true))
+                ..orderBy([(a) => OrderingTerm.asc(a.bankName)]))
+              .get();
 
-      final categoryRows = await (widget.database.select(
-        widget.database.categories,
-      )..where((category) =>
-          category.type.equals(_transactionType) &
-          category.isArchived.equals(false))
-        ..orderBy([(category) => OrderingTerm.asc(category.name)]))
-          .get();
+      final categoryRows =
+          await (widget.database.select(widget.database.categories)
+                ..where(
+                  (category) =>
+                      category.type.equals(_transactionType) &
+                      category.isArchived.equals(false),
+                )
+                ..orderBy([(category) => OrderingTerm.asc(category.name)]))
+              .get();
 
       if (!mounted) return;
       final suggestion = widget.suggestion;
@@ -859,23 +853,22 @@ class _AddRecurringScheduleSheetState
         _accountId = accounts.any((item) => item.id == suggestedAccountId)
             ? suggestedAccountId
             : (accounts.isEmpty ? null : accounts.first.id);
-        _categoryId =
-            categoryRows.any((item) => item.id == suggestedCategoryId)
-                ? suggestedCategoryId
-                : (categoryRows.isEmpty ? null : categoryRows.first.id);
+        _categoryId = categoryRows.any((item) => item.id == suggestedCategoryId)
+            ? suggestedCategoryId
+            : (categoryRows.isEmpty ? null : categoryRows.first.id);
         _isLoading = false;
       });
       if (suggestion != null) {
-        _amountController.text =
-            (suggestion.amountPaise / 100).toStringAsFixed(2);
+        _amountController.text = (suggestion.amountPaise / 100).toStringAsFixed(
+          2,
+        );
         _descriptionController.text = suggestion.description;
       }
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to load form: $e')),
-      );
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Unable to load form: $e')));
     }
   }
 
@@ -888,12 +881,15 @@ class _AddRecurringScheduleSheetState
     });
 
     try {
-      final categories = await (widget.database.select(
-        widget.database.categories,
-      )..where((category) =>
-          category.type.equals(type) & category.isArchived.equals(false))
-        ..orderBy([(category) => OrderingTerm.asc(category.name)]))
-          .get();
+      final categories =
+          await (widget.database.select(widget.database.categories)
+                ..where(
+                  (category) =>
+                      category.type.equals(type) &
+                      category.isArchived.equals(false),
+                )
+                ..orderBy([(category) => OrderingTerm.asc(category.name)]))
+              .get();
       if (!mounted) return;
       setState(() {
         _categories = categories;
@@ -903,9 +899,9 @@ class _AddRecurringScheduleSheetState
     } catch (e) {
       if (!mounted) return;
       setState(() => _isLoading = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to load categories: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to load categories: $e')));
     }
   }
 
@@ -935,18 +931,16 @@ class _AddRecurringScheduleSheetState
     final unit = _frequency == 'daily'
         ? 'day'
         : _frequency == 'weekly'
-            ? 'week'
-            : _frequency == 'yearly'
-                ? 'year'
-                : 'month';
+        ? 'week'
+        : _frequency == 'yearly'
+        ? 'year'
+        : 'month';
     return value == 1 ? unit : '${unit}s';
   }
 
   Future<void> _pickRepeatInterval() async {
     var selectedInterval = _interval;
-    final controller = FixedExtentScrollController(
-      initialItem: _interval - 1,
-    );
+    final controller = FixedExtentScrollController(initialItem: _interval - 1);
 
     final result = await showModalBottomSheet<int>(
       context: context,
@@ -1030,9 +1024,7 @@ class _AddRecurringScheduleSheetState
 
     if (_accountId == null || _categoryId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Please select an account and category.'),
-        ),
+        const SnackBar(content: Text('Please select an account and category.')),
       );
       return;
     }
@@ -1040,8 +1032,11 @@ class _AddRecurringScheduleSheetState
     final amount = double.tryParse(_amountController.text.trim());
     final interval = _interval;
 
-    if (amount == null || !amount.isFinite || amount <= 0 ||
-        interval < 1 || interval > 999) {
+    if (amount == null ||
+        !amount.isFinite ||
+        amount <= 0 ||
+        interval < 1 ||
+        interval > 999) {
       return;
     }
 
@@ -1065,9 +1060,9 @@ class _AddRecurringScheduleSheetState
     } catch (e) {
       if (!mounted) return;
       setState(() => _isSaving = false);
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Unable to create schedule: $e')),
-      );
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text('Unable to create schedule: $e')));
     }
   }
 
@@ -1143,9 +1138,7 @@ class _AddRecurringScheduleSheetState
                   ? const Center(
                       child: Padding(
                         padding: EdgeInsets.all(30),
-                        child: CircularProgressIndicator(
-                          color: recurringGreen,
-                        ),
+                        child: CircularProgressIndicator(color: recurringGreen),
                       ),
                     )
                   : _buildForm(),
@@ -1214,9 +1207,10 @@ class _AddRecurringScheduleSheetState
             inputFormatters: [
               FilteringTextInputFormatter.allow(RegExp(r'^\d*\.?\d{0,2}')),
             ],
-            decoration: _decoration('Amount', hint: '0.00').copyWith(
-              prefixText: '₹ ',
-            ),
+            decoration: _decoration(
+              'Amount',
+              hint: '0.00',
+            ).copyWith(prefixText: '₹ '),
             validator: (value) {
               final amount = double.tryParse((value ?? '').trim());
               if (amount == null || !amount.isFinite || amount <= 0) {
@@ -1238,7 +1232,10 @@ class _AddRecurringScheduleSheetState
                   (account) => DropdownMenuItem<int>(
                     value: account.id,
                     child: Text(
-                      bankAccountDisplayLabel(account.bankName, account.accountNumberLast4),
+                      bankAccountDisplayLabel(
+                        account.bankName,
+                        account.accountNumberLast4,
+                      ),
                       overflow: TextOverflow.ellipsis,
                     ),
                   ),
@@ -1262,8 +1259,7 @@ class _AddRecurringScheduleSheetState
                 )
                 .toList(),
             onChanged: (value) => setState(() => _categoryId = value),
-            validator: (value) =>
-                value == null ? 'Select a category' : null,
+            validator: (value) => value == null ? 'Select a category' : null,
           ),
           const SizedBox(height: 14),
           DropdownButtonFormField<String>(

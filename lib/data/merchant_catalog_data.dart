@@ -1644,11 +1644,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Shopping',
     aliases: ['Decathlon'],
   ),
-  MerchantCatalogEntry(
-    name: 'H&M',
-    categoryName: 'Shopping',
-    aliases: ['H&M'],
-  ),
+  MerchantCatalogEntry(name: 'H&M', categoryName: 'Shopping', aliases: ['H&M']),
   MerchantCatalogEntry(
     name: 'Zara',
     categoryName: 'Shopping',
@@ -1724,11 +1720,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Shopping',
     aliases: ['Global Desi'],
   ),
-  MerchantCatalogEntry(
-    name: 'AND',
-    categoryName: 'Shopping',
-    aliases: ['AND'],
-  ),
+  MerchantCatalogEntry(name: 'AND', categoryName: 'Shopping', aliases: ['AND']),
   MerchantCatalogEntry(
     name: 'Soch',
     categoryName: 'Shopping',
@@ -1809,11 +1801,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Shopping',
     aliases: ['Wrangler'],
   ),
-  MerchantCatalogEntry(
-    name: 'Lee',
-    categoryName: 'Shopping',
-    aliases: ['Lee'],
-  ),
+  MerchantCatalogEntry(name: 'Lee', categoryName: 'Shopping', aliases: ['Lee']),
   MerchantCatalogEntry(
     name: 'Pepe Jeans',
     categoryName: 'Shopping',
@@ -2334,11 +2322,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Shopping',
     aliases: ['Cultsport'],
   ),
-  MerchantCatalogEntry(
-    name: 'HRX',
-    categoryName: 'Shopping',
-    aliases: ['HRX'],
-  ),
+  MerchantCatalogEntry(name: 'HRX', categoryName: 'Shopping', aliases: ['HRX']),
   MerchantCatalogEntry(
     name: 'Woodland',
     categoryName: 'Shopping',
@@ -2644,11 +2628,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Shopping',
     aliases: ['Ferns N Petals'],
   ),
-  MerchantCatalogEntry(
-    name: 'IGP',
-    categoryName: 'Shopping',
-    aliases: ['IGP'],
-  ),
+  MerchantCatalogEntry(name: 'IGP', categoryName: 'Shopping', aliases: ['IGP']),
   MerchantCatalogEntry(
     name: 'FlowerAura',
     categoryName: 'Shopping',
@@ -3574,11 +3554,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Utility',
     aliases: ['Think Gas'],
   ),
-  MerchantCatalogEntry(
-    name: 'MGL',
-    categoryName: 'Utility',
-    aliases: ['MGL'],
-  ),
+  MerchantCatalogEntry(name: 'MGL', categoryName: 'Utility', aliases: ['MGL']),
   MerchantCatalogEntry(
     name: 'CESC',
     categoryName: 'Electricity',
@@ -4954,11 +4930,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Travel',
     aliases: ['Air France'],
   ),
-  MerchantCatalogEntry(
-    name: 'KLM',
-    categoryName: 'Travel',
-    aliases: ['KLM'],
-  ),
+  MerchantCatalogEntry(name: 'KLM', categoryName: 'Travel', aliases: ['KLM']),
   MerchantCatalogEntry(
     name: 'Swiss International Air Lines',
     categoryName: 'Travel',
@@ -5064,11 +5036,7 @@ const List<MerchantCatalogEntry> merchantCatalogData = [
     categoryName: 'Travel',
     aliases: ['Sterling Holidays'],
   ),
-  MerchantCatalogEntry(
-    name: 'OYO',
-    categoryName: 'Travel',
-    aliases: ['OYO'],
-  ),
+  MerchantCatalogEntry(name: 'OYO', categoryName: 'Travel', aliases: ['OYO']),
   MerchantCatalogEntry(
     name: 'Treebo Hotels',
     categoryName: 'Travel',

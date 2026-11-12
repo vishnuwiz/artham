@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'package:artham/theme/artham_theme.dart';
@@ -48,12 +48,18 @@ void main() {
     );
 
     await tester.pumpWidget(build(0));
-    final before = tester.getTopLeft(find.byKey(const ValueKey('artham-tab-capsule'))).dx;
+    final before = tester
+        .getTopLeft(find.byKey(const ValueKey('artham-tab-capsule')))
+        .dx;
     await tester.pumpWidget(build(1));
     await tester.pump(const Duration(milliseconds: 120));
-    final during = tester.getTopLeft(find.byKey(const ValueKey('artham-tab-capsule'))).dx;
+    final during = tester
+        .getTopLeft(find.byKey(const ValueKey('artham-tab-capsule')))
+        .dx;
     await tester.pump(const Duration(milliseconds: 600));
-    final after = tester.getTopLeft(find.byKey(const ValueKey('artham-tab-capsule'))).dx;
+    final after = tester
+        .getTopLeft(find.byKey(const ValueKey('artham-tab-capsule')))
+        .dx;
 
     expect(during, greaterThan(before));
     expect(after, greaterThan(during));
