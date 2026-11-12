@@ -8,6 +8,11 @@ import 'package:artham/features/transactions/add_transaction_screen.dart';
 
 void main() {
   testWidgets('Add Transaction offers a Transfer option', (tester) async {
+    // Tall viewport so the whole ListView is built, including the save button.
+    tester.view.physicalSize = const Size(800, 2400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+
     late AppDatabase database;
 
     await tester.runAsync(() async {
