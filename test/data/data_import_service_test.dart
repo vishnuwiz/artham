@@ -3,7 +3,7 @@ import 'dart:convert';
 import 'package:artham/data/app_database.dart';
 import 'package:artham/data/data_export_service.dart';
 import 'package:artham/data/data_import_service.dart';
-import 'package:drift/drift.dart' show Value;
+import 'package:drift/drift.dart' show Value, driftRuntimeOptions;
 import 'package:drift/native.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -12,8 +12,20 @@ void main() {
   late AppDatabase targetDatabase;
 
   setUp(() {
-    sourceDatabase = AppDatabase.forTesting(NativeDatabase.memory());
-    targetDatabase = AppDatabase.forTesting(NativeDatabase.memory());
+    // These are intentionally separate in-memory databases: one is the backup
+    // source and the other is the restore destination. Drift's duplicate-
+    // instance warning counts database classes, so suppress it only while
+    // these two independent test databases are being constructed.
+    final previousWarningSetting =
+        driftRuntimeOptions.dontWarnAboutMultipleDatabases;
+    driftRuntimeOptions.dontWarnAboutMultipleDatabases = true;
+    try {
+      sourceDatabase = AppDatabase.forTesting(NativeDatabase.memory());
+      targetDatabase = AppDatabase.forTesting(NativeDatabase.memory());
+    } finally {
+      driftRuntimeOptions.dontWarnAboutMultipleDatabases =
+          previousWarningSetting;
+    }
   });
 
   tearDown(() async {
