@@ -132,7 +132,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() => _isExporting = true);
     try {
-      final selection = await FilePicker.platform.pickFiles(
+      final selection = await FilePicker.pickFiles(
         type: FileType.custom,
         allowedExtensions: ['json'],
         withData: true,
@@ -173,8 +173,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ),
                   const SizedBox(height: 14),
                   Text(
-                    'Backup date: ' +
-                        preview.exportedAt.toLocal().toString(),
+                    'Backup date: \${preview.exportedAt.toLocal()}',
                     style: const TextStyle(
                       color: ArthamColors.muted,
                       fontSize: 12,
@@ -201,10 +200,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   if (preview.legacyPendingSmsImportCount > 0) ...[
                     const SizedBox(height: 12),
                     Text(
-                      'This backup also contains ' +
-                          preview.legacyPendingSmsImportCount.toString() +
-                          ' older pending SMS review item(s). The current '
-                              'version cannot restore those legacy items.',
+                      'This backup also contains \${preview.legacyPendingSmsImportCount} older pending SMS review item(s). The current version cannot restore those legacy items.',
                       style: const TextStyle(
                         color: ArthamColors.debit,
                         fontSize: 12,
@@ -247,11 +243,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
       final restored = await importService.restoreFullBackupJson(contents);
       if (mounted) {
         _showMessage(
-          'Backup restored: ' +
-              restored.bankAccountCount.toString() +
-              ' accounts and ' +
-              restored.transactionCount.toString() +
-              ' transactions. Switch to Home to refresh the dashboard.',
+          'Backup restored: \${restored.bankAccountCount} accounts and \${restored.transactionCount} transactions. Switch to Home to refresh the dashboard.',
         );
       }
     } catch (error) {
