@@ -12,6 +12,7 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 - **Home dashboard** — View a summary of finances and account balances.
 - **Transaction management** — Record and manage income and expenses.
+- **Transaction date and time** — Set or edit the date and time for income, expense and internal transfer records. The selected time is preserved when changing the date and is shown in transaction details.
 - **Data export** — Share all transaction history as an Excel-friendly CSV, or create a structured JSON backup of the Drift tables. Legacy pending-SMS review records from older installations are preserved in backups when present. Exports are generated locally; JSON backups are unencrypted and should be stored securely.
 - **Offline merchant recognition** — Recognise more than 1,000 India-focused merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue generated from a single version-controlled source. Suggest categories such as Restaurants, Food & Grocery, Shopping, Travel, Medical, Electricity, Internet & Telecom and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
 - **Custom categories** — Manage expense and income categories in Settings > Categories. Artham ships with 27 built-in categories (including Restaurants, Housing, Electricity, Transport & Fuel, Medical, Card Repayment, ATM and Loan), each with a Material icon and colour. Add your own, rename or recolour any category, and hide ones you don't use; hidden categories keep their history.
@@ -62,7 +63,7 @@ Artham stores its data locally in an SQLite database.
 - **Database file:** `artham.sqlite`
 - **Drift database definition:** `lib/data/app_database.dart`
 - **Generated database code:** `lib/data/app_database.g.dart`
-- **Current schema version:** `4`
+- **Current schema version:** `5`
 
 The database includes the following tables:
 
