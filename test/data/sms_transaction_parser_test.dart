@@ -15,7 +15,7 @@ void main() {
     expect(result.referenceNumber, '123456789012');
     expect(result.description, 'Swiggy');
     expect(result.merchantName, 'Swiggy');
-    expect(result.suggestedCategory, 'Food & Dining');
+    expect(result.suggestedCategory, 'Restaurants');
   });
 
   test('recognises Instamart as groceries rather than regular Swiggy', () {
@@ -26,7 +26,7 @@ void main() {
     expect(result, isNotNull);
     expect(result!.description, 'Swiggy Instamart');
     expect(result.merchantName, 'Swiggy Instamart');
-    expect(result.suggestedCategory, 'Groceries');
+    expect(result.suggestedCategory, 'Food & Grocery');
   });
 
   test('does not mistake a payment provider for the actual payee', () {
@@ -38,7 +38,7 @@ void main() {
     expect(result, isNotNull);
     expect(result!.description, 'Local Book Store');
     expect(result.merchantName, isNull);
-    expect(result.suggestedCategory, 'Other Expense');
+    expect(result.suggestedCategory, 'Other');
   });
 
   test('parses an incoming bank credit and named-month date', () {
@@ -52,7 +52,7 @@ void main() {
     expect(result.transactionType, 'income');
     expect(result.transactionDate, DateTime(2026, 11, 10));
     expect(result.referenceNumber, '123456789012');
-    expect(result.suggestedCategory, 'Other Income');
+    expect(result.suggestedCategory, 'Other');
   });
 
   test('suggests an income category for a salary credit', () {
@@ -62,7 +62,7 @@ void main() {
 
     expect(result, isNotNull);
     expect(result!.transactionType, 'income');
-    expect(result.suggestedCategory, 'Salary');
+    expect(result.suggestedCategory, 'Income');
     expect(result.amountPaise, 8250000);
   });
 
@@ -73,7 +73,7 @@ void main() {
 
     expect(result, isNotNull);
     expect(result!.amountPaise, 50000);
-    expect(result.suggestedCategory, 'Transportation');
+    expect(result.suggestedCategory, 'Transport & Fuel');
   });
 
   test('returns null for an OTP or non-transaction message', () {

@@ -6,6 +6,21 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Custom categories (2026-11-12)
+
+#### Added
+- Settings > Categories: add your own expense and income categories with a name, a Material icon and a colour, and edit or remove existing ones.
+- New default categories: Investment, Income, Personal, Work, Business, Restaurants, Housing, Electricity, Transport & Fuel, Food & Grocery, Medical, Travel, Fitness, Insurance, Entertainment, Internet & Telecom, Gift, Taxes, Utility, Shopping, Card Repayment, ATM, Bank Charges, Reimbursement, Self Transfer, Loan and Education, plus Other. Investment, Business, Gift and Self Transfer exist as both expense and income categories.
+- Category icons in the Add Transaction, transaction edit, recurring schedule and SMS import pickers.
+- SMS import suggests the new categories, including ATM, Card Repayment, Loan, Electricity, Internet & Telecom, Insurance and Reimbursement.
+
+#### Changed
+- Database schema version 5 adds `seed_key` and `is_archived` to `categories`. Built-in categories from earlier versions are renamed in place (for example Food & Dining → Restaurants, Groceries → Food & Grocery, Salary → Income), so existing transactions, budgets and schedules keep their category. Interest is kept as it is.
+- A category that transactions, budgets, schedules or merchants still use is hidden rather than deleted, and can be restored. Built-in categories are always hidden rather than deleted, so they are not re-created.
+- The merchant catalogue now uses the new names. Bills & Utilities merchants are split into Electricity, Internet & Telecom and Utility, and Health merchants into Medical, Fitness and Insurance.
+- Default categories are created at app start rather than when Add Transaction is first opened.
+- JSON backups include each category's seed key and hidden state.
+
 ### Beta branding and animated splash (2026-11-11)
 
 #### Changed

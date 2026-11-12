@@ -38,7 +38,7 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.name, 'Swiggy');
-      expect(result.categoryName, 'Food & Dining');
+      expect(result.categoryName, 'Restaurants');
     });
 
     test('prefers the longest alias for overlapping merchants', () {
@@ -48,25 +48,25 @@ void main() {
 
       expect(result, isNotNull);
       expect(result!.name, 'Swiggy Instamart');
-      expect(result.categoryName, 'Groceries');
+      expect(result.categoryName, 'Food & Grocery');
     });
 
     test('recognises common Indian merchants across categories', () {
       final cases = {
-        'Blinkit order': ('Blinkit', 'Groceries'),
+        'Blinkit order': ('Blinkit', 'Food & Grocery'),
         'AMAZON PAY': ('Amazon', 'Shopping'),
-        'Uber trip': ('Uber', 'Transportation'),
+        'Uber trip': ('Uber', 'Transport & Fuel'),
         'Netflix subscription': ('Netflix', 'Entertainment'),
-        'KSEB bill payment': ('KSEB', 'Bills & Utilities'),
-        'Tata 1mg order': ('Tata 1mg', 'Health'),
+        'KSEB bill payment': ('KSEB', 'Electricity'),
+        'Tata 1mg order': ('Tata 1mg', 'Medical'),
         'MakeMyTrip booking': ('MakeMyTrip', 'Travel'),
-        'Lulu Hypermarket purchase': ('Lulu Hypermarket', 'Groceries'),
+        'Lulu Hypermarket purchase': ('Lulu Hypermarket', 'Food & Grocery'),
         'Decathlon store': ('Decathlon', 'Shopping'),
-        'Kochi Metro ticket': ('Kochi Metro', 'Transportation'),
-        'Kerala Vision Broadband': ('Kerala Vision Broadband', 'Bills & Utilities'),
-        'Amrita Hospital payment': ('Amrita Hospital', 'Health'),
+        'Kochi Metro ticket': ('Kochi Metro', 'Transport & Fuel'),
+        'Kerala Vision Broadband': ('Kerala Vision Broadband', 'Internet & Telecom'),
+        'Amrita Hospital payment': ('Amrita Hospital', 'Medical'),
         'IndiGo flight': ('IndiGo', 'Travel'),
-        'Third Wave Coffee': ('Third Wave Coffee', 'Food & Dining'),
+        'Third Wave Coffee': ('Third Wave Coffee', 'Restaurants'),
         'ManoramaMAX subscription': ('ManoramaMAX', 'Entertainment'),
       };
 

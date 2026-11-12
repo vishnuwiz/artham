@@ -43,7 +43,7 @@ void main() {
         );
     final categoryId = await database.into(database.categories).insert(
           CategoriesCompanion.insert(
-            name: 'Food & Dining',
+            name: 'Restaurants',
             type: 'expense',
           ),
         );
@@ -64,7 +64,7 @@ void main() {
     expect(rows, hasLength(2));
     expect(rows[1][3], '125.00');
     expect(rows[1][5], 'Federal Bank · •••• 1255');
-    expect(rows[1][8], 'Food & Dining');
+    expect(rows[1][8], 'Restaurants');
     expect(rows[1][10], 'Cafe, Kochi');
   });
 
@@ -81,7 +81,7 @@ void main() {
         );
     final categoryId = await database.into(database.categories).insert(
           CategoriesCompanion.insert(
-            name: 'Food & Dining',
+            name: 'Restaurants',
             type: 'expense',
           ),
         );

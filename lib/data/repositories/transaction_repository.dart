@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import 'category_repository.dart';
 import 'merchant_repository.dart';
 
 class AccountBalanceSummary {
@@ -37,63 +38,14 @@ class TransactionRepository {
 
   TransactionRepository(this.database);
 
-  // Default categories for Artham
-  static const Map<String, List<String>> defaultCategories = {
-    'income': [
-      'Salary',
-      'Business Income',
-      'Interest',
-      'Investment Returns',
-      'Gift',
-      'Other Income',
-    ],
-    'expense': [
-      'Food & Dining',
-      'Shopping',
-      'Transportation',
-      'Bills & Utilities',
-      'Entertainment',
-      'Health',
-      'Education',
-      'Travel',
-      'Groceries',
-      'Rent',
-      'Other Expense',
-    ],
-  };
+  /// Seeds the built-in categories and upgrades older ones.
+  /// See [CategoryRepository.ensureDefaultCategories].
+  Future<void> seedDefaultCategories() =>
+      CategoryRepository(database).ensureDefaultCategories();
 
-  // Create default categories if they don't already exist
-  Future<void> seedDefaultCategories() async {
-    for (final entry in defaultCategories.entries) {
-      for (final categoryName in entry.value) {
-        final existing = await (database.select(database.categories)
-              ..where((category) =>
-                  category.name.equals(categoryName) &
-                  category.type.equals(entry.key)))
-            .getSingleOrNull();
-
-        if (existing == null) {
-          await database.into(database.categories).insert(
-                CategoriesCompanion.insert(
-                  name: categoryName,
-                  type: entry.key,
-                  isSystem: const Value(true),
-                ),
-              );
-        }
-      }
-    }
-  }
-
-  // Get categories for income or expense
-  Future<List<Category>> getCategories(String type) {
-    return (database.select(database.categories)
-          ..where((category) => category.type.equals(type))
-          ..orderBy([
-            (category) => OrderingTerm.asc(category.name),
-          ]))
-        .get();
-  }
+  /// Visible (not hidden) categories for income or expense, sorted by name.
+  Future<List<Category>> getCategories(String type) =>
+      CategoryRepository(database).getCategories(type);
 
   // Get active bank accounts
   Future<List<BankAccount>> getActiveAccounts() {

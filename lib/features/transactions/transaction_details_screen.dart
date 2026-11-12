@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
+import '../../theme/category_icons.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
@@ -383,6 +384,19 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
       }
 
       final categories = await _repository.getCategories(_type);
+      // Keep a hidden category selectable for the transaction that uses it,
+      // so editing the amount doesn't silently change its category.
+      final currentCategoryId = widget.transaction.categoryId;
+      if (currentCategoryId != null &&
+          !categories.any((item) => item.id == currentCategoryId)) {
+        final currentCategory =
+            await (widget.database.select(widget.database.categories)
+                  ..where((item) => item.id.equals(currentCategoryId)))
+                .getSingleOrNull();
+        if (currentCategory != null && currentCategory.type == _type) {
+          categories.add(currentCategory);
+        }
+      }
       if (mounted) {
         setState(() {
           _accounts = accounts;
@@ -582,7 +596,7 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                                   .map(
                                     (category) => DropdownMenuItem<int>(
                                       value: category.id,
-                                      child: Text(category.name),
+                                      child: CategoryLabel(category: category),
                                     ),
                                   )
                                   .toList(),

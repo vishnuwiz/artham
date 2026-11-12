@@ -49,6 +49,18 @@ class Categories extends Table {
 
   BoolColumn get isSystem =>
       boolean().withDefault(const Constant(false))();
+
+  /// Stable identifier for a built-in category (for example
+  /// `expense.restaurants`). It survives renames, so a default the user has
+  /// renamed or hidden is never re-created by seeding. Null for categories
+  /// the user created.
+  TextColumn get seedKey => text().nullable()();
+
+  /// Hidden categories stay in the database so existing transactions,
+  /// budgets and schedules keep their label, but they are not offered in
+  /// category pickers.
+  BoolColumn get isArchived =>
+      boolean().withDefault(const Constant(false))();
 }
 
 // ==========================================
@@ -227,7 +239,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase.forTesting(super.e);
 
   @override
-  int get schemaVersion => 4;
+  int get schemaVersion => 5;
 
   @override
   MigrationStrategy get migration => MigrationStrategy(
@@ -243,6 +255,10 @@ class AppDatabase extends _$AppDatabase {
           }
           if (from < 4) {
             await m.createTable(budgetTemplates);
+          }
+          if (from < 5) {
+            await m.addColumn(categories, categories.seedKey);
+            await m.addColumn(categories, categories.isArchived);
           }
         },
       );

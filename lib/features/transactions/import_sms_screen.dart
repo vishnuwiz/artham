@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
+import '../../theme/category_icons.dart';
 import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
@@ -313,7 +314,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             items: _categories.map((category) {
               return DropdownMenuItem<int>(
                 value: category.id,
-                child: Text(category.name),
+                child: CategoryLabel(category: category),
               );
             }).toList(),
             onChanged: (value) =>

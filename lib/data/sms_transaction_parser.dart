@@ -214,39 +214,65 @@ class SmsTransactionParser {
     return null;
   }
 
+  /// Suggests a category by name. Names match the built-in categories in
+  /// `category_catalog.dart`; if the user has renamed or hidden one, the
+  /// import screen falls back to its first category.
   String _suggestCategory(String text, String transactionType) {
     final lower = text.toLowerCase();
     if (transactionType == 'income') {
-      if (lower.contains('salary')) return 'Salary';
-      if (lower.contains('interest')) return 'Interest';
-      if (lower.contains('business')) return 'Business Income';
-      return 'Other Income';
+      if (lower.contains('salary')) return 'Income';
+      if (RegExp(r'refund|reimburs|cashback').hasMatch(lower)) {
+        return 'Reimbursement';
+      }
+      if (RegExp(r'interest|dividend|mutual fund|redemption').hasMatch(lower)) {
+        return 'Investment';
+      }
+      if (lower.contains('business')) return 'Business';
+      return 'Other';
     }
 
+    if (RegExp(r'\batm\b|cash withdrawal|cash wdl').hasMatch(lower)) {
+      return 'ATM';
+    }
+    if (RegExp(r'credit card (bill|payment|dues)|card repayment').hasMatch(lower)) {
+      return 'Card Repayment';
+    }
+    if (RegExp(r'\bemi\b|loan').hasMatch(lower)) {
+      return 'Loan';
+    }
     if (RegExp(r'swiggy|zomato|restaurant|food|cafe|dining').hasMatch(lower)) {
-      return 'Food & Dining';
+      return 'Restaurants';
     }
     if (RegExp(r'bigbasket|blinkit|zepto|grocery|supermarket').hasMatch(lower)) {
-      return 'Groceries';
+      return 'Food & Grocery';
     }
     if (RegExp(r'amazon|flipkart|myntra|ajio|shopping|retail').hasMatch(lower)) {
       return 'Shopping';
     }
     if (RegExp(r'uber|ola|rapido|petrol|diesel|fuel|metro|bus|taxi').hasMatch(lower)) {
-      return 'Transportation';
+      return 'Transport & Fuel';
     }
-    if (RegExp(r'airtel|jio|vodafone|electricity|recharge|broadband|gas bill').hasMatch(lower)) {
-      return 'Bills & Utilities';
+    if (RegExp(r'electricity|kseb|power bill').hasMatch(lower)) {
+      return 'Electricity';
+    }
+    if (RegExp(r'airtel|jio|vodafone|recharge|broadband|fibernet').hasMatch(lower)) {
+      return 'Internet & Telecom';
+    }
+    if (RegExp(r'gas bill|water bill|water authority').hasMatch(lower)) {
+      return 'Utility';
     }
     if (RegExp(r'netflix|spotify|bookmyshow|hotstar|movie|cinema').hasMatch(lower)) {
       return 'Entertainment';
     }
+    if (RegExp(r'insurance|premium').hasMatch(lower)) {
+      return 'Insurance';
+    }
     if (RegExp(r'pharmacy|hospital|clinic|medical|medicine').hasMatch(lower)) {
-      return 'Health';
+      return 'Medical';
     }
     if (RegExp(r'airline|flight|irctc|hotel booking|travel').hasMatch(lower)) {
       return 'Travel';
     }
-    return 'Other Expense';
+    return 'Other';
   }
 }

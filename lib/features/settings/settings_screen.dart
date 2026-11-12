@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import '../../data/app_database.dart';
 import '../../data/data_export_service.dart';
 import '../../theme/artham_theme.dart';
+import 'categories_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -142,9 +143,51 @@ class _SettingsScreenState extends State<SettingsScreen> {
       body: ListView(
         padding: const EdgeInsets.fromLTRB(18, 12, 18, 28),
         children: [
+          _buildCategoriesCard(),
+          const SizedBox(height: 18),
           _buildDataExportCard(),
           const SizedBox(height: 18),
           _buildSmsPrivacyCard(),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildCategoriesCard() {
+    return _SettingsCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _SectionHeading(
+            icon: Icons.category_outlined,
+            title: 'Categories',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Add your own categories, or rename, recolour and hide the '
+            'built-in ones. Changes apply to transactions, budgets and '
+            'recurring schedules.',
+            style: TextStyle(
+              color: ArthamColors.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 14),
+          FilledButton.icon(
+            key: const Key('manage-categories-button'),
+            onPressed: () => Navigator.of(context).push(
+              MaterialPageRoute<void>(
+                builder: (_) => CategoriesScreen(database: widget.database),
+              ),
+            ),
+            icon: const Icon(Icons.tune_rounded),
+            label: const Text('Manage categories'),
+            style: FilledButton.styleFrom(
+              backgroundColor: ArthamColors.lavender,
+              foregroundColor: ArthamColors.onAccent,
+            ),
+          ),
         ],
       ),
     );

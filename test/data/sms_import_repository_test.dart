@@ -27,7 +27,7 @@ void main() {
 
     categoryId = await database.into(database.categories).insert(
           CategoriesCompanion.insert(
-            name: 'Food & Dining',
+            name: 'Restaurants',
             type: 'expense',
             isSystem: const Value(true),
           ),

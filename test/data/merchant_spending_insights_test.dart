@@ -47,7 +47,7 @@ void main() {
         MerchantExpenseRecord(
           merchantId: 2,
           merchantName: 'Swiggy',
-          categoryName: 'Food & Dining',
+          categoryName: 'Restaurants',
           amountPaise: 50000,
           transactionDate: DateTime(2026, 11, 9),
         ),

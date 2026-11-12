@@ -165,6 +165,8 @@ class DataExportService {
                 'iconKey': category.iconKey,
                 'colorHex': category.colorHex,
                 'isSystem': category.isSystem,
+                'seedKey': category.seedKey,
+                'isArchived': category.isArchived,
               },
             )
             .toList(),

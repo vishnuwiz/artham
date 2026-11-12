@@ -647,6 +647,15 @@ class BudgetRepository {
           amounts?.expensesPaise ??
           await getCategoryExpensesPaise(month: month, categoryId: category.id);
 
+      // A hidden category only stays on the budget screen while it still
+      // has a budget, a monthly template or spending in this month.
+      if (category.isArchived &&
+          amounts == null &&
+          (template == null || !template.isActive) &&
+          expenses == 0) {
+        continue;
+      }
+
       results.add(
         CategoryBudgetSummary(
           category: category,

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../theme/artham_theme.dart';
+import '../../theme/category_icons.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:drift/drift.dart' hide Column;
@@ -842,7 +843,9 @@ class _AddRecurringScheduleSheetState
 
       final categoryRows = await (widget.database.select(
         widget.database.categories,
-      )..where((category) => category.type.equals(_transactionType))
+      )..where((category) =>
+          category.type.equals(_transactionType) &
+          category.isArchived.equals(false))
         ..orderBy([(category) => OrderingTerm.asc(category.name)]))
           .get();
 
@@ -887,7 +890,8 @@ class _AddRecurringScheduleSheetState
     try {
       final categories = await (widget.database.select(
         widget.database.categories,
-      )..where((category) => category.type.equals(type))
+      )..where((category) =>
+          category.type.equals(type) & category.isArchived.equals(false))
         ..orderBy([(category) => OrderingTerm.asc(category.name)]))
           .get();
       if (!mounted) return;
@@ -1253,7 +1257,7 @@ class _AddRecurringScheduleSheetState
                 .map(
                   (category) => DropdownMenuItem<int>(
                     value: category.id,
-                    child: Text(category.name),
+                    child: CategoryLabel(category: category),
                   ),
                 )
                 .toList(),

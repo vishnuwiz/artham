@@ -10,9 +10,11 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parents[1]
 SOURCE = ROOT / "tool" / "data" / "merchant_catalog.json"
 DART_TARGET = ROOT / "lib" / "data" / "merchant_catalog_data.dart"
+# Must match expense category names in lib/data/category_catalog.dart.
 ALLOWED_CATEGORIES = {
-    "Food & Dining", "Groceries", "Shopping", "Transportation",
-    "Bills & Utilities", "Entertainment", "Health", "Travel",
+    "Restaurants", "Food & Grocery", "Shopping", "Transport & Fuel",
+    "Electricity", "Internet & Telecom", "Utility", "Entertainment",
+    "Medical", "Fitness", "Insurance", "Travel",
 }
 
 

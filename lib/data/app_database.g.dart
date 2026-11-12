@@ -606,6 +606,32 @@ class $CategoriesTable extends Categories
     ),
     defaultValue: const Constant(false),
   );
+  static const VerificationMeta _seedKeyMeta = const VerificationMeta(
+    'seedKey',
+  );
+  @override
+  late final GeneratedColumn<String> seedKey = GeneratedColumn<String>(
+    'seed_key',
+    aliasedName,
+    true,
+    type: DriftSqlType.string,
+    requiredDuringInsert: false,
+  );
+  static const VerificationMeta _isArchivedMeta = const VerificationMeta(
+    'isArchived',
+  );
+  @override
+  late final GeneratedColumn<bool> isArchived = GeneratedColumn<bool>(
+    'is_archived',
+    aliasedName,
+    false,
+    type: DriftSqlType.bool,
+    requiredDuringInsert: false,
+    defaultConstraints: GeneratedColumn.constraintIsAlways(
+      'CHECK ("is_archived" IN (0, 1))',
+    ),
+    defaultValue: const Constant(false),
+  );
   @override
   List<GeneratedColumn> get $columns => [
     id,
@@ -614,6 +640,8 @@ class $CategoriesTable extends Categories
     iconKey,
     colorHex,
     isSystem,
+    seedKey,
+    isArchived,
   ];
   @override
   String get aliasedName => _alias ?? actualTableName;
@@ -664,6 +692,18 @@ class $CategoriesTable extends Categories
         isSystem.isAcceptableOrUnknown(data['is_system']!, _isSystemMeta),
       );
     }
+    if (data.containsKey('seed_key')) {
+      context.handle(
+        _seedKeyMeta,
+        seedKey.isAcceptableOrUnknown(data['seed_key']!, _seedKeyMeta),
+      );
+    }
+    if (data.containsKey('is_archived')) {
+      context.handle(
+        _isArchivedMeta,
+        isArchived.isAcceptableOrUnknown(data['is_archived']!, _isArchivedMeta),
+      );
+    }
     return context;
   }
 
@@ -697,6 +737,14 @@ class $CategoriesTable extends Categories
         DriftSqlType.bool,
         data['${effectivePrefix}is_system'],
       )!,
+      seedKey: attachedDatabase.typeMapping.read(
+        DriftSqlType.string,
+        data['${effectivePrefix}seed_key'],
+      ),
+      isArchived: attachedDatabase.typeMapping.read(
+        DriftSqlType.bool,
+        data['${effectivePrefix}is_archived'],
+      )!,
     );
   }
 
@@ -713,6 +761,17 @@ class Category extends DataClass implements Insertable<Category> {
   final String? iconKey;
   final String? colorHex;
   final bool isSystem;
+
+  /// Stable identifier for a built-in category (for example
+  /// `expense.restaurants`). It survives renames, so a default the user has
+  /// renamed or hidden is never re-created by seeding. Null for categories
+  /// the user created.
+  final String? seedKey;
+
+  /// Hidden categories stay in the database so existing transactions,
+  /// budgets and schedules keep their label, but they are not offered in
+  /// category pickers.
+  final bool isArchived;
   const Category({
     required this.id,
     required this.name,
@@ -720,6 +779,8 @@ class Category extends DataClass implements Insertable<Category> {
     this.iconKey,
     this.colorHex,
     required this.isSystem,
+    this.seedKey,
+    required this.isArchived,
   });
   @override
   Map<String, Expression> toColumns(bool nullToAbsent) {
@@ -734,6 +795,10 @@ class Category extends DataClass implements Insertable<Category> {
       map['color_hex'] = Variable<String>(colorHex);
     }
     map['is_system'] = Variable<bool>(isSystem);
+    if (!nullToAbsent || seedKey != null) {
+      map['seed_key'] = Variable<String>(seedKey);
+    }
+    map['is_archived'] = Variable<bool>(isArchived);
     return map;
   }
 
@@ -749,6 +814,10 @@ class Category extends DataClass implements Insertable<Category> {
           ? const Value.absent()
           : Value(colorHex),
       isSystem: Value(isSystem),
+      seedKey: seedKey == null && nullToAbsent
+          ? const Value.absent()
+          : Value(seedKey),
+      isArchived: Value(isArchived),
     );
   }
 
@@ -764,6 +833,8 @@ class Category extends DataClass implements Insertable<Category> {
       iconKey: serializer.fromJson<String?>(json['iconKey']),
       colorHex: serializer.fromJson<String?>(json['colorHex']),
       isSystem: serializer.fromJson<bool>(json['isSystem']),
+      seedKey: serializer.fromJson<String?>(json['seedKey']),
+      isArchived: serializer.fromJson<bool>(json['isArchived']),
     );
   }
   @override
@@ -776,6 +847,8 @@ class Category extends DataClass implements Insertable<Category> {
       'iconKey': serializer.toJson<String?>(iconKey),
       'colorHex': serializer.toJson<String?>(colorHex),
       'isSystem': serializer.toJson<bool>(isSystem),
+      'seedKey': serializer.toJson<String?>(seedKey),
+      'isArchived': serializer.toJson<bool>(isArchived),
     };
   }
 
@@ -786,6 +859,8 @@ class Category extends DataClass implements Insertable<Category> {
     Value<String?> iconKey = const Value.absent(),
     Value<String?> colorHex = const Value.absent(),
     bool? isSystem,
+    Value<String?> seedKey = const Value.absent(),
+    bool? isArchived,
   }) => Category(
     id: id ?? this.id,
     name: name ?? this.name,
@@ -793,6 +868,8 @@ class Category extends DataClass implements Insertable<Category> {
     iconKey: iconKey.present ? iconKey.value : this.iconKey,
     colorHex: colorHex.present ? colorHex.value : this.colorHex,
     isSystem: isSystem ?? this.isSystem,
+    seedKey: seedKey.present ? seedKey.value : this.seedKey,
+    isArchived: isArchived ?? this.isArchived,
   );
   Category copyWithCompanion(CategoriesCompanion data) {
     return Category(
@@ -802,6 +879,10 @@ class Category extends DataClass implements Insertable<Category> {
       iconKey: data.iconKey.present ? data.iconKey.value : this.iconKey,
       colorHex: data.colorHex.present ? data.colorHex.value : this.colorHex,
       isSystem: data.isSystem.present ? data.isSystem.value : this.isSystem,
+      seedKey: data.seedKey.present ? data.seedKey.value : this.seedKey,
+      isArchived: data.isArchived.present
+          ? data.isArchived.value
+          : this.isArchived,
     );
   }
 
@@ -813,13 +894,24 @@ class Category extends DataClass implements Insertable<Category> {
           ..write('type: $type, ')
           ..write('iconKey: $iconKey, ')
           ..write('colorHex: $colorHex, ')
-          ..write('isSystem: $isSystem')
+          ..write('isSystem: $isSystem, ')
+          ..write('seedKey: $seedKey, ')
+          ..write('isArchived: $isArchived')
           ..write(')'))
         .toString();
   }
 
   @override
-  int get hashCode => Object.hash(id, name, type, iconKey, colorHex, isSystem);
+  int get hashCode => Object.hash(
+    id,
+    name,
+    type,
+    iconKey,
+    colorHex,
+    isSystem,
+    seedKey,
+    isArchived,
+  );
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
@@ -829,7 +921,9 @@ class Category extends DataClass implements Insertable<Category> {
           other.type == this.type &&
           other.iconKey == this.iconKey &&
           other.colorHex == this.colorHex &&
-          other.isSystem == this.isSystem);
+          other.isSystem == this.isSystem &&
+          other.seedKey == this.seedKey &&
+          other.isArchived == this.isArchived);
 }
 
 class CategoriesCompanion extends UpdateCompanion<Category> {
@@ -839,6 +933,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
   final Value<String?> iconKey;
   final Value<String?> colorHex;
   final Value<bool> isSystem;
+  final Value<String?> seedKey;
+  final Value<bool> isArchived;
   const CategoriesCompanion({
     this.id = const Value.absent(),
     this.name = const Value.absent(),
@@ -846,6 +942,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.iconKey = const Value.absent(),
     this.colorHex = const Value.absent(),
     this.isSystem = const Value.absent(),
+    this.seedKey = const Value.absent(),
+    this.isArchived = const Value.absent(),
   });
   CategoriesCompanion.insert({
     this.id = const Value.absent(),
@@ -854,6 +952,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     this.iconKey = const Value.absent(),
     this.colorHex = const Value.absent(),
     this.isSystem = const Value.absent(),
+    this.seedKey = const Value.absent(),
+    this.isArchived = const Value.absent(),
   }) : name = Value(name),
        type = Value(type);
   static Insertable<Category> custom({
@@ -863,6 +963,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Expression<String>? iconKey,
     Expression<String>? colorHex,
     Expression<bool>? isSystem,
+    Expression<String>? seedKey,
+    Expression<bool>? isArchived,
   }) {
     return RawValuesInsertable({
       if (id != null) 'id': id,
@@ -871,6 +973,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       if (iconKey != null) 'icon_key': iconKey,
       if (colorHex != null) 'color_hex': colorHex,
       if (isSystem != null) 'is_system': isSystem,
+      if (seedKey != null) 'seed_key': seedKey,
+      if (isArchived != null) 'is_archived': isArchived,
     });
   }
 
@@ -881,6 +985,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     Value<String?>? iconKey,
     Value<String?>? colorHex,
     Value<bool>? isSystem,
+    Value<String?>? seedKey,
+    Value<bool>? isArchived,
   }) {
     return CategoriesCompanion(
       id: id ?? this.id,
@@ -889,6 +995,8 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
       iconKey: iconKey ?? this.iconKey,
       colorHex: colorHex ?? this.colorHex,
       isSystem: isSystem ?? this.isSystem,
+      seedKey: seedKey ?? this.seedKey,
+      isArchived: isArchived ?? this.isArchived,
     );
   }
 
@@ -913,6 +1021,12 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
     if (isSystem.present) {
       map['is_system'] = Variable<bool>(isSystem.value);
     }
+    if (seedKey.present) {
+      map['seed_key'] = Variable<String>(seedKey.value);
+    }
+    if (isArchived.present) {
+      map['is_archived'] = Variable<bool>(isArchived.value);
+    }
     return map;
   }
 
@@ -924,7 +1038,9 @@ class CategoriesCompanion extends UpdateCompanion<Category> {
           ..write('type: $type, ')
           ..write('iconKey: $iconKey, ')
           ..write('colorHex: $colorHex, ')
-          ..write('isSystem: $isSystem')
+          ..write('isSystem: $isSystem, ')
+          ..write('seedKey: $seedKey, ')
+          ..write('isArchived: $isArchived')
           ..write(')'))
         .toString();
   }
@@ -997,7 +1113,8 @@ class $MerchantsTable extends Merchants
     } else if (isInserting) {
       context.missing(_nameMeta);
     }
-    if (data.containsKey('default_category_id')) {      context.handle(
+    if (data.containsKey('default_category_id')) {
+      context.handle(
         _defaultCategoryIdMeta,
         defaultCategoryId.isAcceptableOrUnknown(
           data['default_category_id']!,
@@ -1996,7 +2113,8 @@ class $BudgetsTable extends Budgets with TableInfo<$BudgetsTable, Budget> {
   late final GeneratedColumn<int> id = GeneratedColumn<int>(
     'id',
     aliasedName,
-    false,    hasAutoIncrement: true,
+    false,
+    hasAutoIncrement: true,
     type: DriftSqlType.int,
     requiredDuringInsert: false,
     defaultConstraints: GeneratedColumn.constraintIsAlways(
@@ -2995,7 +3113,8 @@ class $ProcessedSmsTable extends ProcessedSms
       )!,
       fingerprint: attachedDatabase.typeMapping.read(
         DriftSqlType.string,
-        data['${effectivePrefix}fingerprint'],      )!,
+        data['${effectivePrefix}fingerprint'],
+      )!,
       receivedAt: attachedDatabase.typeMapping.read(
         DriftSqlType.dateTime,
         data['${effectivePrefix}received_at'],
@@ -3994,7 +4113,8 @@ abstract class _$AppDatabase extends GeneratedDatabase {
 
 typedef $$BankAccountsTableCreateCompanionBuilder =
     BankAccountsCompanion Function({
-      Value<int> id,      required String bankName,
+      Value<int> id,
+      required String bankName,
       required String accountName,
       Value<String?> accountNumberLast4,
       required int openingBalancePaise,
@@ -4365,6 +4485,8 @@ typedef $$CategoriesTableCreateCompanionBuilder = CategoriesCompanion Function({
   Value<String?> iconKey,
   Value<String?> colorHex,
   Value<bool> isSystem,
+  Value<String?> seedKey,
+  Value<bool> isArchived,
 });
 typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<int> id,
@@ -4373,6 +4495,8 @@ typedef $$CategoriesTableUpdateCompanionBuilder = CategoriesCompanion Function({
   Value<String?> iconKey,
   Value<String?> colorHex,
   Value<bool> isSystem,
+  Value<String?> seedKey,
+  Value<bool> isArchived,
 });
 
 final class $$CategoriesTableReferences
@@ -4515,6 +4639,16 @@ class $$CategoriesTableFilterComposer
 
   ColumnFilters<bool> get isSystem => $composableBuilder(
     column: $table.isSystem,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<String> get seedKey => $composableBuilder(
+    column: $table.seedKey,
+    builder: (column) => ColumnFilters(column),
+  );
+
+  ColumnFilters<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
     builder: (column) => ColumnFilters(column),
   );
 
@@ -4682,6 +4816,16 @@ class $$CategoriesTableOrderingComposer
     column: $table.isSystem,
     builder: (column) => ColumnOrderings(column),
   );
+
+  ColumnOrderings<String> get seedKey => $composableBuilder(
+    column: $table.seedKey,
+    builder: (column) => ColumnOrderings(column),
+  );
+
+  ColumnOrderings<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => ColumnOrderings(column),
+  );
 }
 
 class $$CategoriesTableAnnotationComposer
@@ -4710,6 +4854,14 @@ class $$CategoriesTableAnnotationComposer
 
   GeneratedColumn<bool> get isSystem =>
       $composableBuilder(column: $table.isSystem, builder: (column) => column);
+
+  GeneratedColumn<String> get seedKey =>
+      $composableBuilder(column: $table.seedKey, builder: (column) => column);
+
+  GeneratedColumn<bool> get isArchived => $composableBuilder(
+    column: $table.isArchived,
+    builder: (column) => column,
+  );
 
   Expression<T> merchantsRefs<T extends Object>(
     Expression<T> Function($$MerchantsTableAnnotationComposer a) f,
@@ -4879,6 +5031,8 @@ class $$CategoriesTableTableManager
                 Value<String?> iconKey = const Value.absent(),
                 Value<String?> colorHex = const Value.absent(),
                 Value<bool> isSystem = const Value.absent(),
+                Value<String?> seedKey = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
               }) => CategoriesCompanion(
                 id: id,
                 name: name,
@@ -4886,6 +5040,8 @@ class $$CategoriesTableTableManager
                 iconKey: iconKey,
                 colorHex: colorHex,
                 isSystem: isSystem,
+                seedKey: seedKey,
+                isArchived: isArchived,
               ),
           createCompanionCallback:
               ({
@@ -4895,6 +5051,8 @@ class $$CategoriesTableTableManager
                 Value<String?> iconKey = const Value.absent(),
                 Value<String?> colorHex = const Value.absent(),
                 Value<bool> isSystem = const Value.absent(),
+                Value<String?> seedKey = const Value.absent(),
+                Value<bool> isArchived = const Value.absent(),
               }) => CategoriesCompanion.insert(
                 id: id,
                 name: name,
@@ -4902,6 +5060,8 @@ class $$CategoriesTableTableManager
                 iconKey: iconKey,
                 colorHex: colorHex,
                 isSystem: isSystem,
+                seedKey: seedKey,
+                isArchived: isArchived,
               ),
           withReferenceMapper: (p0) => p0
               .map(
@@ -4993,7 +5153,8 @@ class $$CategoriesTableTableManager
                         ),
                       if (budgetTemplatesRefs)
                         await $_getPrefetchedDataByColumns<
-                          Category,                          $CategoriesTable,
+                          Category,
+                          $CategoriesTable,
                           BudgetTemplate,
                           $BudgetTemplatesTable
                         >(
@@ -5992,7 +6153,8 @@ class $$MoneyTransactionsTableTableManager
           $$MoneyTransactionsTableCreateCompanionBuilder,
           $$MoneyTransactionsTableUpdateCompanionBuilder,
           (MoneyTransaction, $$MoneyTransactionsTableReferences),
-          MoneyTransaction,          PrefetchHooks Function({
+          MoneyTransaction,
+          PrefetchHooks Function({
             bool accountId,
             bool transferToAccountId,
             bool categoryId,
@@ -6991,7 +7153,8 @@ class $$ProcessedSmsTableTableManager
           $$ProcessedSmsTableCreateCompanionBuilder,
           $$ProcessedSmsTableUpdateCompanionBuilder,
           (
-            ProcessedSm,            BaseReferences<_$AppDatabase, $ProcessedSmsTable, ProcessedSm>,
+            ProcessedSm,
+            BaseReferences<_$AppDatabase, $ProcessedSmsTable, ProcessedSm>,
           ),
           ProcessedSm,
           PrefetchHooks Function()
