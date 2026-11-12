@@ -1,6 +1,7 @@
 import 'dart:ui';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
 /// Artham's dark "glass" palette.
 ///
@@ -335,7 +336,8 @@ class ArthamTab {
 }
 
 /// Floating glass tab bar. Unselected tabs are white; the selected tab is a
-/// white capsule carrying its icon and label in dark ink.
+/// white capsule carrying its icon and label in dark ink. The capsule slides
+/// from tab to tab instead of fading in place.
 class ArthamTabBar extends StatelessWidget {
   const ArthamTabBar({
     super.key,
@@ -348,6 +350,9 @@ class ArthamTabBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
+  static const Duration slideDuration = Duration(milliseconds: 340);
+  static const Curve slideCurve = Curves.easeOutCubic;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -356,17 +361,52 @@ class ArthamTabBar extends StatelessWidget {
       child: GlassPanel(
         borderRadius: const BorderRadius.all(Radius.circular(33)),
         padding: const EdgeInsets.all(6),
-        child: Row(
-          children: [
-            for (var index = 0; index < tabs.length; index++)
-              Expanded(
-                child: _TabButton(
-                  tab: tabs[index],
-                  selected: index == selectedIndex,
-                  onTap: () => onSelected(index),
-                ),
-              ),
-          ],
+        child: SizedBox(
+          height: 54,
+          child: LayoutBuilder(
+            builder: (context, constraints) {
+              final tabWidth = constraints.maxWidth / tabs.length;
+              return Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: slideDuration,
+                    curve: slideCurve,
+                    left: selectedIndex * tabWidth,
+                    top: 0,
+                    bottom: 0,
+                    width: tabWidth,
+                    child: const Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 2),
+                      child: DecoratedBox(
+                        key: ValueKey('artham-tab-capsule'),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.all(Radius.circular(27)),
+                        ),
+                      ),
+                    ),
+                  ),
+                  Row(
+                    children: [
+                      for (var index = 0; index < tabs.length; index++)
+                        Expanded(
+                          child: _TabButton(
+                            tab: tabs[index],
+                            selected: index == selectedIndex,
+                            onTap: () {
+                              if (index != selectedIndex) {
+                                HapticFeedback.selectionClick();
+                              }
+                              onSelected(index);
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              );
+            },
+          ),
         ),
       ),
     );
@@ -394,31 +434,135 @@ class _TabButton extends StatelessWidget {
       child: InkWell(
         onTap: onTap,
         borderRadius: BorderRadius.circular(27),
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 180),
-          curve: Curves.easeOut,
-          height: 54,
-          margin: const EdgeInsets.symmetric(horizontal: 2),
-          decoration: BoxDecoration(
-            color: selected ? Colors.white : Colors.transparent,
-            borderRadius: BorderRadius.circular(27),
-          ),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(tab.icon, size: 22, color: color),
+              TweenAnimationBuilder<Color?>(
+                tween: ColorTween(end: color),
+                duration: ArthamTabBar.slideDuration,
+                curve: ArthamTabBar.slideCurve,
+                builder: (context, value, _) =>
+                    Icon(tab.icon, size: 22, color: value),
+              ),
               const SizedBox(height: 2),
-              Text(
-                tab.label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
+              AnimatedDefaultTextStyle(
+                duration: ArthamTabBar.slideDuration,
+                curve: ArthamTabBar.slideCurve,
                 style: TextStyle(
                   color: color,
                   fontSize: 11,
                   fontWeight: selected ? FontWeight.w700 : FontWeight.w600,
                 ),
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                child: Text(tab.label),
               ),
             ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Shows one of [children] at a time, like an [IndexedStack], but cross-fades
+/// and nudges the pages sideways in the direction of travel. Every page stays
+/// mounted, so scroll positions and loaded data are preserved. Pages that are
+/// not visible are offstage and have their tickers muted.
+class ArthamTabSwitcher extends StatefulWidget {
+  const ArthamTabSwitcher({
+    super.key,
+    required this.index,
+    required this.children,
+    this.duration = const Duration(milliseconds: 320),
+  });
+
+  final int index;
+  final List<Widget> children;
+  final Duration duration;
+
+  @override
+  State<ArthamTabSwitcher> createState() => _ArthamTabSwitcherState();
+}
+
+class _ArthamTabSwitcherState extends State<ArthamTabSwitcher>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: widget.duration,
+    value: 1,
+  );
+  late int _from = widget.index;
+  late int _to = widget.index;
+
+  @override
+  void didUpdateWidget(covariant ArthamTabSwitcher oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.index != widget.index) {
+      _from = _to;
+      _to = widget.index;
+      _controller.forward(from: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final t = Curves.easeOutCubic.transform(_controller.value);
+        final animating = _controller.value < 1 && _from != _to;
+        final direction = _to >= _from ? 1.0 : -1.0;
+        const shift = 0.06;
+
+        return Stack(
+          fit: StackFit.expand,
+          children: [
+            for (var i = 0; i < widget.children.length; i++)
+              _slot(
+                index: i,
+                opacity: i == _to
+                    ? (animating ? t : 1.0)
+                    : (animating && i == _from ? 1 - t : 0.0),
+                dx: i == _to
+                    ? (animating ? (1 - t) * direction * shift : 0.0)
+                    : (animating && i == _from ? -t * direction * shift : 0.0),
+                visible: i == _to || (animating && i == _from),
+              ),
+          ],
+        );
+      },
+    );
+  }
+
+  Widget _slot({
+    required int index,
+    required double opacity,
+    required double dx,
+    required bool visible,
+  }) {
+    return Offstage(
+      offstage: !visible,
+      child: TickerMode(
+        enabled: visible,
+        child: IgnorePointer(
+          ignoring: index != _to,
+          child: RepaintBoundary(
+            child: Opacity(
+              opacity: opacity.clamp(0.0, 1.0),
+              child: FractionalTranslation(
+                translation: Offset(dx, 0),
+                child: widget.children[index],
+              ),
+            ),
           ),
         ),
       ),

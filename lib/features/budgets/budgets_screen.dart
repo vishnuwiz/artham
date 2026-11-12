@@ -40,6 +40,7 @@ class _BudgetDialogResult {
 class _BudgetsScreenState extends State<BudgetsScreen> {
   late DateTime _selectedMonth;
   late Future<_BudgetScreenData> _dataFuture;
+  _BudgetScreenData? _lastData; // shown while a refresh is in flight
 
   BudgetRepository get _repository => BudgetRepository(widget.database);
 
@@ -67,7 +68,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
   }
 
   void _loadData() {
-    _dataFuture = _fetchData();
+    _dataFuture = _fetchData().then((value) {
+      _lastData = value;
+      return value;
+    });
   }
 
   Future<_BudgetScreenData> _fetchData() async {
@@ -612,7 +616,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
         child: FutureBuilder<_BudgetScreenData>(
           future: _dataFuture,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                _lastData == null) {
               return const Center(
                 child: CircularProgressIndicator(color: _green),
               );
@@ -622,7 +627,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 child: Text('Unable to load budgets. Please try again.'),
               );
             }
-            final data = snapshot.data;
+            final data = snapshot.data ?? _lastData;
             if (data == null) {
               return const Center(child: Text('No budget data available.'));
             }

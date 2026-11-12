@@ -26,6 +26,7 @@ class InsightsScreen extends StatefulWidget {
 
 class _InsightsScreenState extends State<InsightsScreen> {
   late Future<_InsightsData> _dataFuture;
+  _InsightsData? _lastData; // shown while a refresh is in flight
 
   @override
   void initState() {
@@ -58,7 +59,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
   }
 
   void _loadData() {
-    _dataFuture = _fetchData();
+    _dataFuture = _fetchData().then((value) {
+      _lastData = value;
+      return value;
+    });
   }
 
   Future<_InsightsData> _fetchData() async {
@@ -269,7 +273,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
         child: FutureBuilder<_InsightsData>(
           future: _dataFuture,
           builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
+            if (snapshot.connectionState == ConnectionState.waiting &&
+                _lastData == null) {
               return const Center(
                 child: CircularProgressIndicator(color: _insightsGreen),
               );
@@ -279,7 +284,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 child: Text('Unable to load insights. Please try again.'),
               );
             }
-            final data = snapshot.data;
+            final data = snapshot.data ?? _lastData;
             if (data == null) {
               return const Center(child: Text('No insights available.'));
             }
