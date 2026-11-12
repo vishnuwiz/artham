@@ -77,6 +77,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   late Future<List<RecentTransaction>> _recentTransactionsFuture;
   late Future<MonthlyBudgetSummary?> _budgetSummaryFuture;
 
+  // Last loaded values. They stay on screen while a refresh is in flight, so
+  // returning to Home does not flash spinners or "Loading..." text.
+  List<BankAccount>? _lastAccounts;
+  AccountBalanceSummary? _lastSummary;
+  List<RecentTransaction>? _lastRecent;
+  MonthlyBudgetSummary? _lastBudget;
+  bool _hasLastBudget = false;
+
   @override
   void initState() {
     super.initState();
@@ -98,12 +106,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _loadAccounts() {
-    _accountsFuture = AccountRepository(appDatabase).getActiveAccounts();
+    _accountsFuture = AccountRepository(appDatabase).getActiveAccounts().then((
+      value,
+    ) {
+      _lastAccounts = value;
+      return value;
+    });
     final transactionRepository = TransactionRepository(appDatabase);
-    _summaryFuture = transactionRepository.getBalanceSummary();
-    _recentTransactionsFuture = transactionRepository.getRecentTransactions(
-      limit: 5,
-    );
+    _summaryFuture = transactionRepository.getBalanceSummary().then((value) {
+      _lastSummary = value;
+      return value;
+    });
+    _recentTransactionsFuture = transactionRepository
+        .getRecentTransactions(limit: 5)
+        .then((value) {
+          _lastRecent = value;
+          return value;
+        });
     _loadBudget();
   }
 
@@ -112,7 +131,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     final now = DateTime.now();
     _budgetSummaryFuture = () async {
       await repository.applyTemplatesForMonth(now);
-      return repository.getMonthlyBudgetSummary(now);
+      final summary = await repository.getMonthlyBudgetSummary(now);
+      _lastBudget = summary;
+      _hasLastBudget = true;
+      return summary;
     }();
   }
 
@@ -163,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget build(BuildContext context) {
     return ArthamScaffold(
       body: SafeArea(
-        child: IndexedStack(
+        child: ArthamTabSwitcher(
           index: selectedTab,
           children: [
             buildDashboard(),
@@ -276,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return FutureBuilder<AccountBalanceSummary>(
       future: _summaryFuture,
       builder: (context, snapshot) {
-        final summary = snapshot.data;
+        final summary = snapshot.data ?? _lastSummary;
         final totalBalance = summary == null
             ? (snapshot.connectionState == ConnectionState.waiting
                   ? 'Loading...'
@@ -460,7 +482,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return FutureBuilder<List<BankAccount>>(
       future: _accountsFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            _lastAccounts == null) {
           return const Center(
             child: Padding(
               padding: EdgeInsets.all(25),
@@ -484,7 +507,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           );
         }
 
-        final accounts = snapshot.data ?? [];
+        final accounts = snapshot.data ?? _lastAccounts ?? [];
 
         if (accounts.isEmpty) {
           return Container(
@@ -534,7 +557,9 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         return FutureBuilder<AccountBalanceSummary>(
           future: _summaryFuture,
           builder: (context, summarySnapshot) {
-            if (summarySnapshot.connectionState == ConnectionState.waiting) {
+            final summaryData = summarySnapshot.data ?? _lastSummary;
+            if (summarySnapshot.connectionState == ConnectionState.waiting &&
+                summaryData == null) {
               return const Center(
                 child: Padding(
                   padding: EdgeInsets.all(20),
@@ -543,14 +568,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               );
             }
 
-            if (summarySnapshot.hasError || !summarySnapshot.hasData) {
+            if (summaryData == null) {
               return const Text(
                 'Unable to calculate account balances.',
                 style: TextStyle(color: ArthamColors.debit),
               );
             }
 
-            final balances = summarySnapshot.data!.accountBalancesPaise;
+            final balances = summaryData.accountBalancesPaise;
 
             return Wrap(
               spacing: 12,
@@ -625,9 +650,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return FutureBuilder<MonthlyBudgetSummary?>(
       future: _budgetSummaryFuture,
       builder: (context, snapshot) {
-        final summary = snapshot.data;
+        final summary =
+            snapshot.data ?? (_hasLastBudget ? _lastBudget : null);
 
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            !_hasLastBudget) {
           return Container(
             width: double.infinity,
             padding: const EdgeInsets.all(24),
@@ -814,7 +841,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     return FutureBuilder<List<RecentTransaction>>(
       future: _recentTransactionsFuture,
       builder: (context, snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
+        if (snapshot.connectionState == ConnectionState.waiting &&
+            _lastRecent == null) {
           return const Padding(
             padding: EdgeInsets.all(22),
             child: Center(
@@ -839,7 +867,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           );
         }
 
-        final recentTransactions = snapshot.data ?? [];
+        final recentTransactions = snapshot.data ?? _lastRecent ?? [];
 
         if (recentTransactions.isEmpty) {
           return Container(
