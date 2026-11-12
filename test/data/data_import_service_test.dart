@@ -150,7 +150,7 @@ void main() {
 
   test('rejects an unsupported backup without changing local records',
       () async {
-    final existingAccountId = await targetDatabase.into(targetDatabase.bankAccounts).insert(
+    await targetDatabase.into(targetDatabase.bankAccounts).insert(
           BankAccountsCompanion.insert(
             bankName: 'Keep This Bank',
             accountName: 'Existing account',
@@ -174,7 +174,7 @@ void main() {
   });
 
   test('rolls back the replacement if a database insert fails', () async {
-    await targetDatabase.into(targetDatabase.bankAccounts).insert(
+    final existingAccountId = await targetDatabase.into(targetDatabase.bankAccounts).insert(
           BankAccountsCompanion.insert(
             bankName: 'Keep This Bank',
             accountName: 'Existing account',
