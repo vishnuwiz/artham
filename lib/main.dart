@@ -12,6 +12,7 @@ import 'data/repositories/category_repository.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/onboarding/onboarding_gate.dart';
+import 'features/setup/first_time_setup_gate.dart';
 import 'splash/artham_splash.dart';
 
 late final AppDatabase appDatabase;
@@ -65,7 +66,14 @@ class ArthamApp extends StatelessWidget {
       theme: buildArthamTheme(),
       home: _skipStartupSplashForTests
           ? const HomeScreen()
-          : const SplashGate(child: OnboardingGate(child: HomeScreen())),
+          : SplashGate(
+              child: OnboardingGate(
+                child: FirstTimeSetupGate(
+                  database: appDatabase,
+                  child: const HomeScreen(),
+                ),
+              ),
+            ),
     );
   }
 }
