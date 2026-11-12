@@ -6,6 +6,23 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Transaction date and time (2026-11-12)
+
+#### Added
+- Added a transaction time picker below Transaction Date when creating or editing income, expense and internal transfer records.
+- Displayed the saved transaction time alongside the date in transaction details, using a 12-hour AM/PM format.
+
+#### Changed
+- Changing the transaction date preserves the selected hours and minutes; selecting a time updates the existing transaction timestamp.
+
+#### Data compatibility
+- Reused the existing `transactionDate` DateTime field. No database schema migration is required, and existing transaction records remain compatible.
+
+#### Verification
+- `flutter analyze` completed with no issues.
+- `flutter test` passed all 126 tests.
+- The release APK built successfully and the updated app was installed and tested on an Android phone.
+
 ### Custom categories (2026-11-12)
 
 #### Added
