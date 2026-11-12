@@ -6,7 +6,6 @@ import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 import 'add_account_screen.dart';
-import 'transfer_money_screen.dart';
 import 'account_history_screen.dart';
 
 const Color accountsGreen = ArthamColors.lavender;
@@ -47,14 +46,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
     final balances = await _transactionRepository.getBalanceSummary();
     return _AccountsData(accounts: accounts, balances: balances.accountBalancesPaise,
         totalBalancePaise: balances.totalBalancePaise);
-  }
-
-  Future<void> _openTransfer() async {
-    final result = await Navigator.push<bool>(
-      context,
-      MaterialPageRoute(builder: (_) => TransferMoneyScreen(database: widget.database)),
-    );
-    if (result == true && mounted) setState(_loadAccounts);
   }
 
   Future<void> _addAccount() async {
@@ -175,16 +166,6 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       Text(_formatAmount(data.totalBalancePaise),
                         style: const TextStyle(color: Colors.white,
                           fontSize: 25, fontWeight: FontWeight.w800)),
-                      const SizedBox(height: 14),
-                      OutlinedButton.icon(
-                        onPressed: _openTransfer,
-                        icon: const Icon(Icons.swap_horiz_rounded),
-                        label: const Text('Transfer between accounts'),
-                        style: OutlinedButton.styleFrom(
-                          foregroundColor: Colors.white,
-                          side: const BorderSide(color: Colors.white70),
-                        ),
-                      ),
                     ],
                   ),
                 ),
