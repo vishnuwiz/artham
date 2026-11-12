@@ -12,18 +12,24 @@ import 'app_database.dart';
 /// Builds local exports from Artham's Drift database.
 ///
 /// Monetary values are kept as integer paise in JSON. The CSV additionally
-/// includes a two-decimal INR column for spreadsheet use. Export files are
-/// written to the operating system's temporary directory before sharing.
+/// includes a two-decimal INR column for spreadsheet use. Shareable export
+/// files use the temporary directory; pre-restore safety copies use app storage.
 class DataExportService {
   final AppDatabase database;
+  final Future<Directory> Function()? documentsDirectoryProvider;
 
-  DataExportService(this.database);
+  DataExportService(this.database, {this.documentsDirectoryProvider});
 
   /// Creates a spreadsheet-friendly CSV containing all saved transactions.
   ///
   /// Account, category, merchant and transfer-destination names are resolved
   /// locally. Text fields are protected against spreadsheet formula injection.
-  Future<String> buildTransactionsCsv() async {
+  /// All related reads use one database snapshot.
+  Future<String> buildTransactionsCsv() {
+    return database.transaction(_buildTransactionsCsvSnapshot);
+  }
+
+  Future<String> _buildTransactionsCsvSnapshot() async {
     final accounts = await database.select(database.bankAccounts).get();
     final categories = await database.select(database.categories).get();
     final merchants = await database.select(database.merchants).get();
@@ -117,7 +123,12 @@ class DataExportService {
   /// Legacy pending SMS review rows are included when present so backups from
   /// earlier versions do not silently lose locally stored review data. Current
   /// versions do not create or consume those rows. Raw SMS bodies are never exported.
-  Future<String> buildFullBackupJson() async {
+  /// All table reads use one database snapshot to keep references consistent.
+  Future<String> buildFullBackupJson() {
+    return database.transaction(_buildFullBackupJsonSnapshot);
+  }
+
+  Future<String> _buildFullBackupJsonSnapshot() async {
     final accounts = await database.select(database.bankAccounts).get();
     final categories = await database.select(database.categories).get();
     final merchants = await database.select(database.merchants).get();
@@ -280,6 +291,42 @@ class DataExportService {
       extension: 'json',
       mimeType: 'application/json',
     );
+  }
+
+  /// Saves a persistent private copy of the current data before a restore.
+  ///
+  /// This file is written to the app documents directory (not the temporary
+  /// share directory), so it remains available if the selected restore fails
+  /// or the user needs to recover the data that was on this device.
+  Future<File> createLocalSafetyBackupFile() async {
+    final json = await buildFullBackupJson();
+    final directoryProvider = documentsDirectoryProvider;
+    final documentsDirectory = directoryProvider == null
+        ? await getApplicationDocumentsDirectory()
+        : await directoryProvider();
+    final backupDirectory = Directory(
+      p.join(documentsDirectory.path, 'Artham', 'restore_safety_backups'),
+    );
+    await backupDirectory.create(recursive: true);
+
+    // Colons are not valid in Windows filenames. Use a UTC timestamp to make
+    // filenames sortable and safe across supported platforms.
+    final timestamp = DateTime.now().toUtc().toIso8601String().replaceAll(
+      RegExp(r'[:.]'),
+      '-',
+    );
+    final file = File(
+      p.join(backupDirectory.path, 'artham_pre_restore_$timestamp.json'),
+    );
+    await file.writeAsString(json, encoding: utf8, flush: true);
+
+    if (!await file.exists() || await file.length() == 0) {
+      throw FileSystemException(
+        'The safety backup could not be saved completely.',
+        file.path,
+      );
+    }
+    return file;
   }
 
   Future<XFile> _writeExportFile({

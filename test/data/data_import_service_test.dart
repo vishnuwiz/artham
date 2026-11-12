@@ -288,7 +288,140 @@ void main() {
     },
   );
 
-  test('rolls back the replacement if a database insert fails', () async {
+  test('rejects duplicate record IDs before changing local data', () async {
+    await targetDatabase
+        .into(targetDatabase.bankAccounts)
+        .insert(
+          BankAccountsCompanion.insert(
+            bankName: 'Keep This Bank',
+            accountName: 'Existing account',
+            openingBalancePaise: 900,
+            openingDate: DateTime(2026, 1, 1),
+          ),
+        );
+    await sourceDatabase
+        .into(sourceDatabase.bankAccounts)
+        .insert(
+          BankAccountsCompanion.insert(
+            bankName: 'Backup Bank',
+            accountName: 'Backup account',
+            openingBalancePaise: 1000,
+            openingDate: DateTime(2026, 1, 1),
+          ),
+        );
+
+    final backup = jsonDecode(
+      await DataExportService(sourceDatabase).buildFullBackupJson(),
+    ) as Map<String, dynamic>;
+    final data = backup['data'] as Map<String, dynamic>;
+    final accounts = data['bankAccounts'] as List<dynamic>;
+    accounts.add(Map<String, dynamic>.from(accounts.single as Map));
+
+    expect(
+      () =>
+          DataImportService(targetDatabase)
+              .inspectFullBackupJson(jsonEncode(backup)),
+      throwsA(isA<FormatException>()),
+    );
+
+    final existing = await targetDatabase
+        .select(targetDatabase.bankAccounts)
+        .get();
+    expect(existing, hasLength(1));
+    expect(existing.single.bankName, 'Keep This Bank');
+  });
+
+  test(
+    'rejects transaction references to missing accounts before restore',
+    () async {
+      final accountId = await sourceDatabase
+          .into(sourceDatabase.bankAccounts)
+          .insert(
+            BankAccountsCompanion.insert(
+              bankName: 'Backup Bank',
+              accountName: 'Backup account',
+              openingBalancePaise: 1000,
+              openingDate: DateTime(2026, 1, 1),
+            ),
+          );
+      await sourceDatabase
+          .into(sourceDatabase.moneyTransactions)
+          .insert(
+            MoneyTransactionsCompanion.insert(
+              accountId: accountId,
+              amountPaise: 2500,
+              transactionType: 'expense',
+              transactionDate: DateTime(2026, 11, 10),
+            ),
+          );
+      await targetDatabase
+          .into(targetDatabase.bankAccounts)
+          .insert(
+            BankAccountsCompanion.insert(
+              bankName: 'Keep This Bank',
+              accountName: 'Existing account',
+              openingBalancePaise: 900,
+              openingDate: DateTime(2026, 1, 1),
+            ),
+          );
+
+      final backup = jsonDecode(
+        await DataExportService(sourceDatabase).buildFullBackupJson(),
+      ) as Map<String, dynamic>;
+      final data = backup['data'] as Map<String, dynamic>;
+      final transactions = data['moneyTransactions'] as List<dynamic>;
+      (transactions.single as Map<String, dynamic>)['accountId'] = 999999;
+
+      expect(
+        () =>
+            DataImportService(targetDatabase)
+                .inspectFullBackupJson(jsonEncode(backup)),
+        throwsA(isA<FormatException>()),
+      );
+
+      final existing = await targetDatabase
+          .select(targetDatabase.bankAccounts)
+          .get();
+      expect(existing, hasLength(1));
+      expect(existing.single.bankName, 'Keep This Bank');
+    },
+  );
+
+  test('rejects duplicate processed SMS fingerprints before restore', () async {
+    await sourceDatabase
+        .into(sourceDatabase.processedSms)
+        .insert(
+          ProcessedSmsCompanion.insert(
+            fingerprint: 'sms-fingerprint-1',
+            receivedAt: DateTime(2026, 11, 10),
+          ),
+        );
+    await sourceDatabase
+        .into(sourceDatabase.processedSms)
+        .insert(
+          ProcessedSmsCompanion.insert(
+            fingerprint: 'sms-fingerprint-2',
+            receivedAt: DateTime(2026, 11, 11),
+          ),
+        );
+
+    final backup = jsonDecode(
+      await DataExportService(sourceDatabase).buildFullBackupJson(),
+    ) as Map<String, dynamic>;
+    final data = backup['data'] as Map<String, dynamic>;
+    final records = data['processedSms'] as List<dynamic>;
+    (records.last as Map<String, dynamic>)['fingerprint'] =
+        (records.first as Map<String, dynamic>)['fingerprint'];
+
+    expect(
+      () =>
+          DataImportService(targetDatabase)
+              .inspectFullBackupJson(jsonEncode(backup)),
+      throwsA(isA<FormatException>()),
+    );
+  });
+
+  test('rolls back the replacement after a database insert failure', () async {
     final existingAccountId = await targetDatabase
         .into(targetDatabase.bankAccounts)
         .insert(
@@ -310,17 +443,21 @@ void main() {
             openingDate: DateTime(2026, 1, 1),
           ),
         );
-    final backup = jsonDecode(
-      await DataExportService(sourceDatabase).buildFullBackupJson(),
-    ) as Map<String, dynamic>;
-    final data = backup['data'] as Map<String, dynamic>;
-    final accounts = data['bankAccounts'] as List<dynamic>;
-    accounts.add(Map<String, dynamic>.from(accounts.single as Map));
-    (accounts.last as Map<String, dynamic>)['bankName'] = 'Duplicate ID';
+    final backup = await DataExportService(sourceDatabase)
+        .buildFullBackupJson();
+
+    // Force a database-layer error after the restore has begun. This keeps
+    // coverage for the transaction rollback independently of preflight checks.
+    await targetDatabase.customStatement('''
+      CREATE TRIGGER fail_bank_account_restore
+      BEFORE INSERT ON bank_accounts
+      BEGIN
+        SELECT RAISE(ABORT, 'simulated restore insert failure');
+      END
+    ''');
 
     expect(
-      DataImportService(targetDatabase)
-          .restoreFullBackupJson(jsonEncode(backup)),
+      DataImportService(targetDatabase).restoreFullBackupJson(backup),
       throwsA(anything),
     );
 

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:artham/data/app_database.dart';
 import 'package:artham/data/data_export_service.dart';
@@ -72,6 +73,32 @@ void main() {
       expect(rows[1][10], 'Cafe, Kochi');
     },
   );
+
+  test('creates a persistent local safety backup file', () async {
+    final documentsDirectory = await Directory.systemTemp.createTemp(
+      'artham-safety-backup-test-',
+    );
+    addTearDown(() async {
+      await documentsDirectory.delete(recursive: true);
+    });
+
+    final service = DataExportService(
+      database,
+      documentsDirectoryProvider: () async => documentsDirectory,
+    );
+
+    final file = await service.createLocalSafetyBackupFile();
+
+    expect(await file.exists(), isTrue);
+    expect(file.path, contains('restore_safety_backups'));
+    expect(file.path, endsWith('.json'));
+
+    final backup =
+        jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+    expect(backup['format'], 'artham_backup');
+    expect(backup['app'], 'Artham');
+    expect(backup['formatVersion'], 1);
+  });
 
   test('JSON backup contains every database table and paise amounts', () async {
     final accountId = await database

@@ -193,8 +193,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   ],
                   const SizedBox(height: 14),
                   const Text(
-                    'Make sure you have a separate backup of your current '
-                    'data before continuing. This action cannot be undone.',
+                    'Before replacing your data, Artham will automatically '
+                    "save a safety copy in this app's private storage. Keep "
+                    'a separate backup outside the app for additional protection.',
                     style: TextStyle(
                       color: ArthamColors.debit,
                       fontWeight: FontWeight.w600,
@@ -224,10 +225,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
       if (!mounted || shouldRestore != true) return;
 
+      // Preserve the current local data before the destructive replacement.
+      // If this safety copy cannot be written, do not proceed with the restore.
+      await DataExportService(widget.database).createLocalSafetyBackupFile();
+
       final restored = await importService.restoreFullBackupJson(contents);
       if (mounted) {
         _showMessage(
-          'Backup restored: ${restored.bankAccountCount} accounts and ${restored.transactionCount} transactions. Switch to Home to refresh the dashboard.',
+          'Backup restored: ${restored.bankAccountCount} accounts and ${restored.transactionCount} transactions. A safety copy of your previous data was saved on this device. Switch to Home to refresh the dashboard.',
         );
       }
     } catch (error) {
@@ -347,7 +352,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Text(
             'Exports are generated on this device. JSON backups are not '
             'encrypted and contain personal financial information; store '
-            'them securely. Restoring replaces the data currently stored on this device, so keep a separate backup before importing.',
+            'them securely. Before a restore, Artham automatically saves a '
+            "safety copy of the current data in the app's private storage.",
             style: TextStyle(
               color: ArthamColors.muted,
               fontSize: 11,

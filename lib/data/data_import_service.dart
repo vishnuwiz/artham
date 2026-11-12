@@ -169,6 +169,17 @@ class DataImportService {
       data['pendingSmsImports'],
     );
 
+    _validateBackupRelationships(
+      bankAccounts: bankAccounts,
+      categories: categories,
+      merchants: merchants,
+      transactions: transactions,
+      budgets: budgets,
+      budgetTemplates: budgetTemplates,
+      processedSms: processedSms,
+      recurringSchedules: recurringSchedules,
+    );
+
     return _ParsedBackup(
       bankAccounts: bankAccounts,
       categories: categories,
@@ -192,6 +203,132 @@ class DataImportService {
         legacyPendingSmsImportCount: pendingSmsImports,
       ),
     );
+  }
+
+  void _validateBackupRelationships({
+    required List<BankAccountsCompanion> bankAccounts,
+    required List<CategoriesCompanion> categories,
+    required List<MerchantsCompanion> merchants,
+    required List<MoneyTransactionsCompanion> transactions,
+    required List<BudgetsCompanion> budgets,
+    required List<BudgetTemplatesCompanion> budgetTemplates,
+    required List<ProcessedSmsCompanion> processedSms,
+    required List<RecurringSchedulesCompanion> recurringSchedules,
+  }) {
+    final accountIds = _uniqueRecordIds(
+      bankAccounts.map((row) => row.id.value),
+      'bankAccounts',
+    );
+    final categoryIds = _uniqueRecordIds(
+      categories.map((row) => row.id.value),
+      'categories',
+    );
+    final merchantIds = _uniqueRecordIds(
+      merchants.map((row) => row.id.value),
+      'merchants',
+    );
+    _uniqueRecordIds(
+      transactions.map((row) => row.id.value),
+      'moneyTransactions',
+    );
+    _uniqueRecordIds(budgets.map((row) => row.id.value), 'budgets');
+    _uniqueRecordIds(
+      budgetTemplates.map((row) => row.id.value),
+      'budgetTemplates',
+    );
+    _uniqueRecordIds(processedSms.map((row) => row.id.value), 'processedSms');
+    _uniqueRecordIds(
+      recurringSchedules.map((row) => row.id.value),
+      'recurringSchedules',
+    );
+
+    final fingerprints = <String>{};
+    for (final sms in processedSms) {
+      final fingerprint = sms.fingerprint.value;
+      if (!fingerprints.add(fingerprint)) {
+        throw FormatException(
+          'The processedSms list contains a duplicate fingerprint.',
+        );
+      }
+    }
+
+    for (final merchant in merchants) {
+      _requireReference(
+        merchant.defaultCategoryId.value,
+        categoryIds,
+        'merchants.defaultCategoryId',
+      );
+    }
+
+    for (final transaction in transactions) {
+      _requireReference(
+        transaction.accountId.value,
+        accountIds,
+        'moneyTransactions.accountId',
+      );
+      _requireReference(
+        transaction.transferToAccountId.value,
+        accountIds,
+        'moneyTransactions.transferToAccountId',
+      );
+      _requireReference(
+        transaction.categoryId.value,
+        categoryIds,
+        'moneyTransactions.categoryId',
+      );
+      _requireReference(
+        transaction.merchantId.value,
+        merchantIds,
+        'moneyTransactions.merchantId',
+      );
+    }
+
+    for (final budget in budgets) {
+      _requireReference(
+        budget.categoryId.value,
+        categoryIds,
+        'budgets.categoryId',
+      );
+    }
+
+    for (final template in budgetTemplates) {
+      _requireReference(
+        template.categoryId.value,
+        categoryIds,
+        'budgetTemplates.categoryId',
+      );
+    }
+
+    for (final schedule in recurringSchedules) {
+      _requireReference(
+        schedule.accountId.value,
+        accountIds,
+        'recurringSchedules.accountId',
+      );
+      _requireReference(
+        schedule.categoryId.value,
+        categoryIds,
+        'recurringSchedules.categoryId',
+      );
+    }
+  }
+
+  Set<int> _uniqueRecordIds(Iterable<int> ids, String collectionName) {
+    final uniqueIds = <int>{};
+    for (final id in ids) {
+      if (!uniqueIds.add(id)) {
+        throw FormatException(
+          'The $collectionName list contains duplicate record ID $id.',
+        );
+      }
+    }
+    return uniqueIds;
+  }
+
+  void _requireReference(int? id, Set<int> availableIds, String fieldName) {
+    if (id != null && !availableIds.contains(id)) {
+      throw FormatException('$fieldName references missing record ID $id.');
+    }
   }
 
   List<T> _parseRows<T>(

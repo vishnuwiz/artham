@@ -33,6 +33,10 @@ void main() {
     expect(find.text('Export your data'), findsOneWidget);
     expect(find.text('Save JSON'), findsOneWidget);
     expect(find.text('Restore from JSON backup'), findsOneWidget);
+    expect(
+      find.textContaining('automatically saves a safety copy'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('category management still opens from Settings', (tester) async {
