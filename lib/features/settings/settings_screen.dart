@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -132,24 +131,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
 
     setState(() => _isExporting = true);
     try {
-      final selection = await FilePicker.pickFiles(
+      final selectedFile = await FilePicker.pickFile(
         type: FileType.custom,
         allowedExtensions: ['json'],
-        withData: true,
       );
 
-      if (!mounted || selection == null || selection.files.isEmpty) return;
+      if (!mounted || selectedFile == null) return;
 
-      final selectedFile = selection.files.single;
-      final bytes = selectedFile.bytes ??
-          (selectedFile.path == null
-              ? null
-              : await File(selectedFile.path!).readAsBytes());
-      if (bytes == null) {
-        throw const FormatException(
-          'The selected backup could not be read. Choose a local JSON file.',
-        );
-      }
+      final bytes = await selectedFile.readAsBytes();
 
       final contents = utf8.decode(bytes);
       final importService = DataImportService(widget.database);
