@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -7,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../data/app_database.dart';
 import '../../data/data_export_service.dart';
+import '../../data/data_import_service.dart';
 import '../../theme/artham_theme.dart';
 
 class SettingsScreen extends StatefulWidget {
@@ -125,6 +127,167 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _restoreBackup() async {
+    if (_isExporting) return;
+
+    setState(() => _isExporting = true);
+    try {
+      final selection = await FilePicker.platform.pickFiles(
+        type: FileType.custom,
+        allowedExtensions: ['json'],
+        withData: true,
+      );
+
+      if (!mounted || selection == null || selection.files.isEmpty) return;
+
+      final selectedFile = selection.files.single;
+      final bytes = selectedFile.bytes ??
+          (selectedFile.path == null
+              ? null
+              : await File(selectedFile.path!).readAsBytes());
+      if (bytes == null) {
+        throw const FormatException(
+          'The selected backup could not be read. Choose a local JSON file.',
+        );
+      }
+
+      final contents = utf8.decode(bytes);
+      final importService = DataImportService(widget.database);
+      final preview = importService.inspectFullBackupJson(contents);
+
+      if (!mounted) return;
+      final shouldRestore = await showDialog<bool>(
+        context: context,
+        barrierDismissible: false,
+        builder: (dialogContext) {
+          return AlertDialog(
+            title: const Text('Restore this backup?'),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const Text(
+                    'This will replace the Artham data currently stored on '
+                    'this device with the contents of the selected backup.',
+                  ),
+                  const SizedBox(height: 14),
+                  Text(
+                    'Backup date: ' +
+                        preview.exportedAt.toLocal().toString(),
+                    style: const TextStyle(
+                      color: ArthamColors.muted,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  _restoreCountLine('Bank accounts', preview.bankAccountCount),
+                  _restoreCountLine('Transactions', preview.transactionCount),
+                  _restoreCountLine('Categories', preview.categoryCount),
+                  _restoreCountLine('Merchants', preview.merchantCount),
+                  _restoreCountLine('Budgets', preview.budgetCount),
+                  _restoreCountLine(
+                    'Budget templates',
+                    preview.budgetTemplateCount,
+                  ),
+                  _restoreCountLine(
+                    'Recurring schedules',
+                    preview.recurringScheduleCount,
+                  ),
+                  _restoreCountLine(
+                    'Processed SMS records',
+                    preview.processedSmsCount,
+                  ),
+                  if (preview.legacyPendingSmsImportCount > 0) ...[
+                    const SizedBox(height: 12),
+                    Text(
+                      'This backup also contains ' +
+                          preview.legacyPendingSmsImportCount.toString() +
+                          ' older pending SMS review item(s). The current '
+                              'version cannot restore those legacy items.',
+                      style: const TextStyle(
+                        color: ArthamColors.debit,
+                        fontSize: 12,
+                      ),
+                    ),
+                  ],
+                  const SizedBox(height: 14),
+                  const Text(
+                    'Make sure you have a separate backup of your current '
+                    'data before continuing. This action cannot be undone.',
+                    style: TextStyle(
+                      color: ArthamColors.debit,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(dialogContext).pop(false),
+                child: const Text('Cancel'),
+              ),
+              FilledButton(
+                onPressed: () => Navigator.of(dialogContext).pop(true),
+                style: FilledButton.styleFrom(
+                  backgroundColor: ArthamColors.debit,
+                  foregroundColor: Colors.white,
+                ),
+                child: const Text('Replace local data'),
+              ),
+            ],
+          );
+        },
+      );
+
+      if (!mounted || shouldRestore != true) return;
+
+      final restored = await importService.restoreFullBackupJson(contents);
+      if (mounted) {
+        _showMessage(
+          'Backup restored: ' +
+              restored.bankAccountCount.toString() +
+              ' accounts and ' +
+              restored.transactionCount.toString() +
+              ' transactions. Switch to Home to refresh the dashboard.',
+        );
+      }
+    } catch (error) {
+      if (mounted) {
+        _showMessage('Unable to restore the backup: $error');
+      }
+    } finally {
+      if (mounted) {
+        setState(() => _isExporting = false);
+      }
+    }
+  }
+
+  Widget _restoreCountLine(String label, int count) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 2),
+      child: Row(
+        children: [
+          Expanded(
+            child: Text(
+              label,
+              style: const TextStyle(fontSize: 13),
+            ),
+          ),
+          Text(
+            count.toString(),
+            style: const TextStyle(
+              fontWeight: FontWeight.w700,
+              fontSize: 13,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ArthamScaffold(
@@ -174,7 +337,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           const Text(
             'Exports are generated on this device. JSON backups are not '
             'encrypted and contain personal financial information; store '
-            'them securely. Restore is not included yet.',
+            'them securely. Restoring replaces current local data, so keep '
+            'a backup before importing another one.',
             style: TextStyle(
               color: ArthamColors.muted,
               fontSize: 11,
@@ -261,6 +425,15 @@ class _SettingsScreenState extends State<SettingsScreen> {
                 ),
               ),
             ],
+          ),
+          const SizedBox(height: 14),
+          OutlinedButton.icon(
+            onPressed: _isExporting ? null : _restoreBackup,
+            icon: const Icon(Icons.settings_backup_restore_rounded),
+            label: const Text('Restore from JSON backup'),
+            style: OutlinedButton.styleFrom(
+              foregroundColor: ArthamColors.debit,
+            ),
           ),
         ],
       ),
