@@ -150,7 +150,7 @@ void main() {
 
   test('rejects an unsupported backup without changing local records',
       () async {
-    await targetDatabase.into(targetDatabase.bankAccounts).insert(
+    final existingAccountId = await targetDatabase.into(targetDatabase.bankAccounts).insert(
           BankAccountsCompanion.insert(
             bankName: 'Keep This Bank',
             accountName: 'Existing account',
@@ -183,7 +183,7 @@ void main() {
           ),
         );
 
-    final accountId = await sourceDatabase.into(sourceDatabase.bankAccounts).insert(
+    await sourceDatabase.into(sourceDatabase.bankAccounts).insert(
           BankAccountsCompanion.insert(
             bankName: 'Backup Bank',
             accountName: 'Backup account',
@@ -210,7 +210,7 @@ void main() {
         await targetDatabase.select(targetDatabase.bankAccounts).get();
     expect(restoredAccounts, hasLength(1));
     expect(restoredAccounts.single.bankName, 'Keep This Bank');
-    expect(restoredAccounts.single.id, isNot(accountId));
+    expect(restoredAccounts.single.id, existingAccountId);
   });
 
   test('rejects a backup created by a newer database schema', () async {
