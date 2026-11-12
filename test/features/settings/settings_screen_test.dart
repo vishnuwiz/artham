@@ -37,6 +37,13 @@ void main() {
       find.textContaining('automatically saves a safety copy'),
       findsOneWidget,
     );
+
+    await tester.scrollUntilVisible(
+      find.text('Manage backups'),
+      300,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Manage backups'), findsOneWidget);
   });
 
   testWidgets('category management still opens from Settings', (tester) async {

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:material_ui/material_ui.dart';
 
 import 'theme/artham_theme.dart';
@@ -5,6 +7,7 @@ import 'features/transactions/activity_screen.dart';
 import 'features/budgets/budgets_screen.dart';
 import 'features/insights/insights_screen.dart';
 import 'data/app_database.dart';
+import 'data/backup_manager.dart';
 import 'data/repositories/account_repository.dart';
 import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
@@ -88,6 +91,10 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   int selectedTab = 0;
   bool showBalance = true;
+  late final BackupManagerService _backupManager = BackupManagerService(
+    appDatabase,
+  );
+  bool _isCheckingAutomaticBackup = false;
 
   late Future<List<BankAccount>> _accountsFuture;
   late Future<AccountBalanceSummary> _summaryFuture;
@@ -107,12 +114,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     super.initState();
     WidgetsBinding.instance.addObserver(this);
     _loadAccounts();
+    if (!_skipStartupSplashForTests) {
+      unawaited(_checkScheduledBackup());
+    }
   }
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
     if (state == AppLifecycleState.resumed && mounted) {
       setState(_loadAccounts);
+      unawaited(_checkScheduledBackup());
     }
   }
 
@@ -120,6 +131,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   void dispose() {
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  Future<void> _checkScheduledBackup() async {
+    if (_skipStartupSplashForTests || _isCheckingAutomaticBackup) return;
+    _isCheckingAutomaticBackup = true;
+    try {
+      final backup = await _backupManager.maybeCreateScheduledBackup();
+      if (backup != null) {
+        debugPrint('Artham automatic backup saved: ${backup.path}');
+      }
+    } catch (error) {
+      debugPrint('Artham automatic backup failed: $error');
+    } finally {
+      _isCheckingAutomaticBackup = false;
+    }
   }
 
   void _loadAccounts() {
