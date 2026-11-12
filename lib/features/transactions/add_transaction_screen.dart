@@ -180,8 +180,42 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
 
     if (selected != null) {
-      setState(() => _transactionDate = selected);
+      setState(() {
+        _transactionDate = DateTime(
+          selected.year,
+          selected.month,
+          selected.day,
+          _transactionDate.hour,
+          _transactionDate.minute,
+        );
+      });
     }
+  }
+
+  Future<void> _selectTime() async {
+    final selected = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_transactionDate),
+    );
+
+    if (selected != null) {
+      setState(() {
+        _transactionDate = DateTime(
+          _transactionDate.year,
+          _transactionDate.month,
+          _transactionDate.day,
+          selected.hour,
+          selected.minute,
+        );
+      });
+    }
+  }
+
+  String _formatTime(DateTime date) {
+    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
   }
 
   String _formatDate(DateTime date) {
@@ -635,6 +669,31 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               child: Row(
                 children: [
                   Expanded(child: Text(_formatDate(_transactionDate))),
+                  const Icon(
+                    Icons.keyboard_arrow_down_rounded,
+                    color: transactionGreen,
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          const SizedBox(height: 12),
+
+          InkWell(
+            onTap: _selectTime,
+            borderRadius: BorderRadius.circular(15),
+            child: InputDecorator(
+              decoration: _decoration(
+                'Transaction Time',
+                prefix: const Icon(
+                  Icons.access_time_rounded,
+                  color: transactionGreen,
+                ),
+              ),
+              child: Row(
+                children: [
+                  Expanded(child: Text(_formatTime(_transactionDate))),
                   const Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: transactionGreen,
