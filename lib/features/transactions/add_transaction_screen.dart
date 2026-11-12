@@ -37,6 +37,8 @@ class _AddTransactionScreenState
   List<Category> _categories = [];
 
   int? _selectedAccountId;
+  int? _toAccountId;
+  AccountBalanceSummary? _balanceSummary;
   int? _selectedCategoryId;
   int? _defaultCategoryId;
   bool _categoryWasManuallySelected = false;
@@ -47,6 +49,10 @@ class _AddTransactionScreenState
 
   bool _isLoading = true;
   bool _isSaving = false;
+
+  bool get _isTransfer => _transactionType == 'transfer';
+
+  String _money(int paise) => '₹${(paise / 100).toStringAsFixed(2)}';
 
   @override
   void initState() {
@@ -67,6 +73,7 @@ class _AddTransactionScreenState
       await _repository.seedDefaultCategories();
 
       final accounts = await _repository.getActiveAccounts();
+      final balanceSummary = await _repository.getBalanceSummary();
       final categories =
           await _repository.getCategories(_transactionType);
 
@@ -75,8 +82,10 @@ class _AddTransactionScreenState
       setState(() {
         _accounts = accounts;
         _categories = categories;
+        _balanceSummary = balanceSummary;
         _selectedAccountId =
             accounts.isNotEmpty ? accounts.first.id : null;
+        _toAccountId = accounts.length > 1 ? accounts[1].id : null;
         _defaultCategoryId =
             categories.isNotEmpty ? categories.first.id : null;
         _selectedCategoryId = _defaultCategoryId;
@@ -96,6 +105,16 @@ class _AddTransactionScreenState
 
   Future<void> _changeTransactionType(String type) async {
     if (_transactionType == type) return;
+
+    if (type == 'transfer') {
+      // Transfers have no category, so there is nothing to load.
+      setState(() {
+        _transactionType = type;
+        _merchantSuggestion = null;
+        _ensureDifferentDestination();
+      });
+      return;
+    }
 
     setState(() {
       _transactionType = type;
@@ -127,6 +146,18 @@ class _AddTransactionScreenState
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Unable to load categories: $e')),
       );
+    }
+  }
+
+  /// Keeps the destination account different from the source account.
+  void _ensureDifferentDestination() {
+    if (_accounts.length < 2) {
+      _toAccountId = null;
+      return;
+    }
+    if (_toAccountId == null || _toAccountId == _selectedAccountId) {
+      _toAccountId =
+          _accounts.firstWhere((a) => a.id != _selectedAccountId).id;
     }
   }
 
@@ -168,7 +199,57 @@ class _AddTransactionScreenState
         '${date.year}';
   }
 
+  Future<void> _saveTransfer() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final fromId = _selectedAccountId;
+    final toId = _toAccountId;
+    if (fromId == null || toId == null || fromId == toId) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Choose two different accounts for the transfer.'),
+        ),
+      );
+      return;
+    }
+
+    final amount = double.tryParse(_amountController.text.trim());
+    if (amount == null || !amount.isFinite || amount <= 0) return;
+
+    setState(() => _isSaving = true);
+
+    try {
+      final description = _descriptionController.text.trim();
+      await _repository.addTransfer(
+        fromAccountId: fromId,
+        toAccountId: toId,
+        amountPaise: (amount * 100).round(),
+        transactionDate: _transactionDate,
+        description: description.isEmpty ? 'Own account transfer' : description,
+      );
+
+      if (!mounted) return;
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Transfer saved successfully!')),
+      );
+      Navigator.pop(context, true);
+    } catch (e) {
+      if (!mounted) return;
+
+      setState(() => _isSaving = false);
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(e.toString().replaceFirst('Bad state: ', '')),
+        ),
+      );
+    }
+  }
+
   Future<void> _saveTransaction() async {
+    if (_isTransfer) return _saveTransfer();
+
     if (!_formKey.currentState!.validate()) return;
 
     if (_selectedAccountId == null ||
@@ -254,7 +335,8 @@ class _AddTransactionScreenState
   @override
   Widget build(BuildContext context) {
     final isIncome = _transactionType == 'income';
-    final accent = isIncome ? transactionGreen : ArthamColors.debit;
+    final accent =
+        _transactionType == 'expense' ? ArthamColors.debit : transactionGreen;
 
     return ArthamScaffold(
       appBar: AppBar(
@@ -296,7 +378,13 @@ class _AddTransactionScreenState
                 label: Text('Income'),
                 icon: Icon(Icons.arrow_downward_rounded),
               ),
+              ButtonSegment(
+                value: 'transfer',
+                label: Text('Transfer'),
+                icon: Icon(Icons.swap_horiz_rounded),
+              ),
             ],
+            showSelectedIcon: false,
             selected: {_transactionType},
             onSelectionChanged: (selection) {
               _changeTransactionType(selection.first);
@@ -320,7 +408,9 @@ class _AddTransactionScreenState
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  isIncome ? 'INCOME AMOUNT' : 'EXPENSE AMOUNT',
+                  _isTransfer
+                      ? 'TRANSFER AMOUNT'
+                      : (isIncome ? 'INCOME AMOUNT' : 'EXPENSE AMOUNT'),
                   style: const TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
@@ -370,6 +460,15 @@ class _AddTransactionScreenState
                       return 'Amount must be at least ₹0.01';
                     }
 
+                    if (_isTransfer) {
+                      final available = _balanceSummary
+                              ?.accountBalancesPaise[_selectedAccountId] ??
+                          0;
+                      if ((amount * 100).round() > available) {
+                        return 'Amount exceeds available balance';
+                      }
+                    }
+
                     return null;
                   },
                 ),
@@ -379,8 +478,17 @@ class _AddTransactionScreenState
 
           const SizedBox(height: 24),
 
-          const Text(
-            'TRANSACTION DETAILS',
+          if (_isTransfer) ...[
+            const Text(
+              'Move money between your own accounts. Transfers do not count '
+              'as income or expenses.',
+              style: TextStyle(color: ArthamColors.muted, fontSize: 12.5),
+            ),
+            const SizedBox(height: 16),
+          ],
+
+          Text(
+            _isTransfer ? 'TRANSFER DETAILS' : 'TRANSACTION DETAILS',
             style: TextStyle(
               color: ArthamColors.muted,
               fontSize: 11,
@@ -395,7 +503,7 @@ class _AddTransactionScreenState
             initialValue: _selectedAccountId,
             isExpanded: true,
             decoration: _decoration(
-              'Bank Account',
+              _isTransfer ? 'From account' : 'Bank Account',
               prefix: const Icon(
                 Icons.account_balance_outlined,
                 color: transactionGreen,
@@ -411,40 +519,94 @@ class _AddTransactionScreenState
               );
             }).toList(),
             onChanged: (value) {
-              setState(() => _selectedAccountId = value);
+              setState(() {
+                _selectedAccountId = value;
+                if (_isTransfer) _ensureDifferentDestination();
+              });
             },
             validator: (value) =>
                 value == null ? 'Select a bank account' : null,
           ),
 
-          const SizedBox(height: 16),
-
-          DropdownButtonFormField<int>(
-            key: ValueKey<int?>(_selectedCategoryId),
-            initialValue: _selectedCategoryId,
-            isExpanded: true,
-            decoration: _decoration(
-              'Category',
-              prefix: const Icon(
-                Icons.category_outlined,
-                color: transactionGreen,
+          if (_isTransfer) ...[
+            if (_selectedAccountId != null) ...[
+              const SizedBox(height: 6),
+              Text(
+                'Available: ${_money(_balanceSummary?.accountBalancesPaise[_selectedAccountId] ?? 0)}',
+                style: const TextStyle(
+                  color: ArthamColors.muted,
+                  fontSize: 12,
+                ),
               ),
-            ),
-            items: _categories.map((category) {
-              return DropdownMenuItem<int>(
-                value: category.id,
-                child: Text(category.name),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedCategoryId = value;
-                _categoryWasManuallySelected = true;
-              });
-            },
-            validator: (value) =>
-                value == null ? 'Select a category' : null,
-          ),
+            ],
+            const SizedBox(height: 16),
+            if (_accounts.length < 2)
+              const Text(
+                'Add at least two active bank accounts to make a transfer.',
+                style: TextStyle(color: ArthamColors.debit, fontSize: 13),
+              )
+            else
+              DropdownButtonFormField<int>(
+                key: ValueKey<int?>(_toAccountId),
+                initialValue: _toAccountId,
+                isExpanded: true,
+                decoration: _decoration(
+                  'To account',
+                  prefix: const Icon(
+                    Icons.account_balance_outlined,
+                    color: transactionGreen,
+                  ),
+                ),
+                items: _accounts
+                    .where((account) => account.id != _selectedAccountId)
+                    .map((account) {
+                  return DropdownMenuItem<int>(
+                    value: account.id,
+                    child: Text(
+                      bankAccountDisplayLabel(
+                        account.bankName,
+                        account.accountNumberLast4,
+                      ),
+                      overflow: TextOverflow.ellipsis,
+                    ),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() => _toAccountId = value);
+                },
+                validator: (value) =>
+                    value == null ? 'Select a destination account' : null,
+              ),
+          ] else ...[
+              const SizedBox(height: 16),
+
+              DropdownButtonFormField<int>(
+                key: ValueKey<int?>(_selectedCategoryId),
+                initialValue: _selectedCategoryId,
+                isExpanded: true,
+                decoration: _decoration(
+                  'Category',
+                  prefix: const Icon(
+                    Icons.category_outlined,
+                    color: transactionGreen,
+                  ),
+                ),
+                items: _categories.map((category) {
+                  return DropdownMenuItem<int>(
+                    value: category.id,
+                    child: Text(category.name),
+                  );
+                }).toList(),
+                onChanged: (value) {
+                  setState(() {
+                    _selectedCategoryId = value;
+                    _categoryWasManuallySelected = true;
+                  });
+                },
+                validator: (value) =>
+                    value == null ? 'Select a category' : null,
+              ),
+          ],
 
           const SizedBox(height: 16),
 
@@ -518,7 +680,9 @@ class _AddTransactionScreenState
           SizedBox(
             height: 55,
             child: FilledButton.icon(
-              onPressed: _isSaving ? null : _saveTransaction,
+              onPressed: _isSaving || (_isTransfer && _accounts.length < 2)
+                  ? null
+                  : _saveTransaction,
               style: FilledButton.styleFrom(
                 backgroundColor: accent,
                 foregroundColor: ArthamColors.onAccent,
@@ -537,7 +701,9 @@ class _AddTransactionScreenState
                     )
                   : const Icon(Icons.check_circle_outline_rounded),
               label: Text(
-                _isSaving ? 'Saving...' : 'Save Transaction',
+                _isSaving
+                    ? 'Saving...'
+                    : (_isTransfer ? 'Confirm Transfer' : 'Save Transaction'),
                 style: const TextStyle(
                   fontWeight: FontWeight.w700,
                   fontSize: 15,
