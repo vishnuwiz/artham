@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
 import '../../theme/artham_theme.dart';
+import '../../widgets/micro_interactions.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
@@ -669,7 +670,9 @@ class _ActivityScreenState extends State<ActivityScreen>
                     final card = _buildTransactionCard(transaction, data);
                     if (index >= 8) return card;
                     return _ActivityEntryReveal(
-                      key: ValueKey<int>(transaction.id),
+                      // Including the type in the key replays the staggered entrance
+                      // whenever the All / Income / Expenses filter changes.
+                      key: ValueKey<String>('$_selectedType-${transaction.id}'),
                       delay: Duration(milliseconds: index * 32),
                       child: card,
                     );
@@ -692,36 +695,19 @@ class _ActivityScreenState extends State<ActivityScreen>
     return Row(
       children: [
         Expanded(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: types.map((item) {
-                final selected = _selectedType == item.$2;
-                return Padding(
-                  padding: const EdgeInsets.only(right: 7),
-                  child: ChoiceChip(
-                    label: Text(item.$1),
-                    selected: selected,
-                    onSelected: (_) {
-                      if (!selected) HapticFeedback.selectionClick();
-                      setState(() => _selectedType = item.$2);
-                    },
-                    selectedColor: activityGreen.withValues(alpha: 0.13),
-                    backgroundColor: ArthamColors.glass,
-                    labelStyle: TextStyle(
-                      color: selected ? activityGreen : ArthamColors.muted,
-                      fontWeight: FontWeight.w700,
-                      fontSize: 12,
-                    ),
-                    side: BorderSide(
-                      color: selected
-                          ? activityGreen.withValues(alpha: 0.3)
-                          : ArthamColors.line,
-                    ),
-                    showCheckmark: false,
-                  ),
-                );
-              }).toList(),
+          child: Align(
+            alignment: Alignment.centerLeft,
+            child: SlidingSegmented(
+              labels: [for (final item in types) item.$1],
+              selectedIndex: types.indexWhere(
+                (item) => item.$2 == _selectedType,
+              ),
+              accent: activityGreen,
+              onChanged: (index) {
+                if (types[index].$2 == _selectedType) return;
+                HapticFeedback.selectionClick();
+                setState(() => _selectedType = types[index].$2);
+              },
             ),
           ),
         ),

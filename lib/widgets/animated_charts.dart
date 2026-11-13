@@ -670,3 +670,158 @@ class _DonutPainter extends CustomPainter {
         old.strokeWidth != strokeWidth;
   }
 }
+
+/// A ring that sweeps to [value] (0..1) with a lavender-to-mint gradient,
+/// counts the percentage up in its centre and glows once as it lands.
+class AnimatedRing extends StatelessWidget {
+  const AnimatedRing({
+    super.key,
+    required this.value,
+    this.size = 88,
+    this.strokeWidth = 9,
+    this.caption = 'SAVED',
+    this.duration = const Duration(milliseconds: 1500),
+  });
+
+  final double value;
+  final double size;
+  final double strokeWidth;
+  final String caption;
+  final Duration duration;
+
+  @override
+  Widget build(BuildContext context) {
+    final target = value.isNaN ? 0.0 : value.clamp(0.0, 1.0).toDouble();
+    final sweep = _motion(context, duration);
+    const glowTime = Duration(milliseconds: 900);
+
+    return Semantics(
+      label: '$caption ${(target * 100).round()} percent',
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: TweenAnimationBuilder<double>(
+          tween: Tween<double>(begin: 0, end: target),
+          duration: sweep,
+          curve: Curves.easeOutCubic,
+          builder: (context, v, _) {
+            return TweenAnimationBuilder<double>(
+              tween: Tween<double>(begin: 0, end: 1),
+              duration: sweep == Duration.zero ? Duration.zero : sweep + glowTime,
+              curve: sweep == Duration.zero
+                  ? Curves.linear
+                  : Interval(
+                      sweep.inMilliseconds /
+                          (sweep + glowTime).inMilliseconds,
+                      1,
+                      curve: Curves.easeInOut,
+                    ),
+              builder: (context, g, _) {
+                return CustomPaint(
+                  painter: _RingPainter(
+                    progress: v,
+                    glow: sweep == Duration.zero ? 0 : math.sin(math.pi * g),
+                    strokeWidth: strokeWidth,
+                  ),
+                  child: Center(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Text(
+                          '${(v * 100).round()}%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 17,
+                            fontWeight: FontWeight.w800,
+                          ),
+                        ),
+                        Text(
+                          caption,
+                          style: const TextStyle(
+                            color: Colors.white70,
+                            fontSize: 8,
+                            letterSpacing: 0.8,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                );
+              },
+            );
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _RingPainter extends CustomPainter {
+  _RingPainter({
+    required this.progress,
+    required this.glow,
+    required this.strokeWidth,
+  });
+
+  final double progress;
+  final double glow;
+  final double strokeWidth;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final rect = (Offset.zero & size).deflate(strokeWidth);
+    canvas.drawArc(
+      rect,
+      0,
+      2 * math.pi,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..color = Colors.white24,
+    );
+    if (progress <= 0) return;
+
+    final sweep = progress * 2 * math.pi;
+    final shader = SweepGradient(
+      startAngle: 0,
+      endAngle: math.max(sweep, 0.01),
+      colors: const [ArthamColors.lavender, ArthamColors.mint],
+      transform: const GradientRotation(-math.pi / 2),
+    ).createShader(rect);
+
+    if (glow > 0) {
+      canvas.drawArc(
+        rect,
+        -math.pi / 2,
+        sweep,
+        false,
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = strokeWidth + 2
+          ..strokeCap = StrokeCap.round
+          ..shader = shader
+          ..color = Colors.white.withValues(alpha: glow)
+          ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7 * glow),
+      );
+    }
+    canvas.drawArc(
+      rect,
+      -math.pi / 2,
+      sweep,
+      false,
+      Paint()
+        ..style = PaintingStyle.stroke
+        ..strokeWidth = strokeWidth
+        ..strokeCap = StrokeCap.round
+        ..shader = shader,
+    );
+  }
+
+  @override
+  bool shouldRepaint(covariant _RingPainter old) =>
+      old.progress != progress ||
+      old.glow != glow ||
+      old.strokeWidth != strokeWidth;
+}

@@ -1144,30 +1144,47 @@ class _InsightsScreenState extends State<InsightsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
-            'NET SAVINGS THIS MONTH',
-            style: TextStyle(
-              color: Colors.white70,
-              fontSize: 11,
-              letterSpacing: 1,
-              fontWeight: FontWeight.w700,
-            ),
-          ),
-          const SizedBox(height: 9),
-          AnimatedAmountText(
-            paise: netSavings.abs(),
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 30,
-              fontWeight: FontWeight.w800,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            positive
-                ? 'You are spending within your income'
-                : 'Expenses exceed income',
-            style: const TextStyle(color: Colors.white70, fontSize: 11),
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Text(
+                      'NET SAVINGS THIS MONTH',
+                      style: TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                        letterSpacing: 1,
+                        fontWeight: FontWeight.w700,
+                      ),
+                    ),
+                    const SizedBox(height: 9),
+                    AnimatedAmountText(
+                      paise: netSavings.abs(),
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 30,
+                        fontWeight: FontWeight.w800,
+                      ),
+                    ),
+                    const SizedBox(height: 5),
+                    Text(
+                      positive
+                          ? 'You are spending within your income'
+                          : 'Expenses exceed income',
+                      style: const TextStyle(
+                        color: Colors.white70,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(width: 12),
+              AnimatedRing(value: savingsRate),
+            ],
           ),
           const SizedBox(height: 20),
           const Divider(color: Colors.white24),
