@@ -444,8 +444,13 @@ class _TabButton extends StatelessWidget {
                 tween: ColorTween(end: color),
                 duration: ArthamTabBar.slideDuration,
                 curve: ArthamTabBar.slideCurve,
-                builder: (context, value, _) =>
-                    Icon(tab.icon, size: 22, color: value),
+                builder: (context, value, _) => AnimatedScale(
+                  // The selected icon pops slightly as the capsule arrives.
+                  scale: selected ? 1.14 : 1,
+                  duration: ArthamTabBar.slideDuration,
+                  curve: Curves.easeOutBack,
+                  child: Icon(tab.icon, size: 22, color: value),
+                ),
               ),
               const SizedBox(height: 2),
               AnimatedDefaultTextStyle(

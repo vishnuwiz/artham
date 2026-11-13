@@ -45,6 +45,9 @@ class AnimatedProgressBar extends StatelessWidget {
     this.delay = Duration.zero,
     this.duration = const Duration(milliseconds: 900),
     this.glow = true,
+    this.pulse = false,
+    this.shake = false,
+    this.pulseColor = ArthamColors.peach,
   });
 
   /// Fraction filled, 0..1 (values outside the range are clamped).
@@ -61,8 +64,57 @@ class AnimatedProgressBar extends StatelessWidget {
   /// Draws a soft glow under the fill.
   final bool glow;
 
+  /// Once the fill has finished growing, glows in [pulseColor] a single time.
+  /// Use for budgets at or near their limit.
+  final bool pulse;
+
+  /// Also gives the bar a short horizontal shake after it fills. Use for
+  /// budgets that are over their limit.
+  final bool shake;
+  final Color pulseColor;
+
   @override
   Widget build(BuildContext context) {
+    final bar = _buildBar(context);
+    if (!pulse && !shake) return bar;
+    final base = _motion(context, duration);
+    if (base == Duration.zero) return bar;
+
+    const effect = Duration(milliseconds: 1000);
+    final total = base + delay;
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: total + effect,
+      curve: Interval(
+        total.inMilliseconds / (total + effect).inMilliseconds,
+        1,
+        curve: Curves.easeInOut,
+      ),
+      child: bar,
+      builder: (context, t, child) {
+        final glowAmount = pulse ? math.sin(math.pi * t) : 0.0;
+        final dx = shake ? math.sin(t * math.pi * 6) * (1 - t) * 3 : 0.0;
+        return Transform.translate(
+          offset: Offset(dx, 0),
+          child: DecoratedBox(
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(height),
+              boxShadow: [
+                BoxShadow(
+                  color: pulseColor.withValues(alpha: 0.6 * glowAmount),
+                  blurRadius: 14 * glowAmount,
+                  spreadRadius: 1.5 * glowAmount,
+                ),
+              ],
+            ),
+            child: child,
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildBar(BuildContext context) {
     final target = value.isNaN ? 0.0 : value.clamp(0.0, 1.0).toDouble();
     final base = _motion(context, duration);
     final wait = base == Duration.zero ? Duration.zero : delay;

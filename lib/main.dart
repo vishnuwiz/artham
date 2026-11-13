@@ -14,6 +14,7 @@ import 'data/repositories/budget_repository.dart';
 import 'data/repositories/category_repository.dart';
 import 'features/accounts/accounts_screen.dart';
 import 'widgets/animated_charts.dart';
+import 'widgets/micro_interactions.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/onboarding/onboarding_gate.dart';
 import 'features/setup/first_time_setup_gate.dart';
@@ -664,12 +665,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             final summaryData = summarySnapshot.data ?? _lastSummary;
             if (summarySnapshot.connectionState == ConnectionState.waiting &&
                 summaryData == null) {
-              return const Center(
-                child: Padding(
-                  padding: EdgeInsets.all(20),
-                  child: CircularProgressIndicator(color: primaryGreen),
-                ),
-              );
+              return const SkeletonAccountRow();
             }
 
             if (summaryData == null) {
@@ -690,12 +686,15 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
                 return SizedBox(
                   width: (MediaQuery.of(context).size.width - 52) / 2,
-                  child: accountCard(
-                    account.bankName,
-                    '•••• ${account.accountNumberLast4 ?? '----'}',
-                    balancePaise,
-                    Icons.account_balance,
-                    primaryGreen,
+                  child: PressableScale(
+                    onTap: _openAccounts,
+                    child: accountCard(
+                      account.bankName,
+                      '•••• ${account.accountNumberLast4 ?? '----'}',
+                      balancePaise,
+                      Icons.account_balance,
+                      primaryGreen,
+                    ),
                   ),
                 );
               }).toList(),
@@ -902,6 +901,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 color: isOverBudget ? ArthamColors.debit : primaryGreen,
                 endColor: isOverBudget ? ArthamColors.debit : ArthamColors.mint,
                 duration: const Duration(milliseconds: 1100),
+                // Glow once near the limit, and shake as well when over it.
+                pulse: rawProgress >= 0.8,
+                shake: isOverBudget,
+                pulseColor: isOverBudget
+                    ? ArthamColors.debit
+                    : ArthamColors.peach,
               ),
               const SizedBox(height: 13),
               Row(

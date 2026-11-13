@@ -6,6 +6,17 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Micro-interactions (2026-11-13)
+
+#### Added
+- Home account cards and Budgets category cards shrink slightly while pressed and spring back; Home account cards also open Accounts on tap.
+- Shimmering skeleton placeholders replace the loading spinners on Home accounts, Insights and Budgets.
+- Budget bars glow once when they reach 80% of their limit, and also shake briefly when over it (Home, Budgets and Insights).
+- Insights bar charts: tap a month to highlight it, dim the others and see its exact amounts; tap again to clear.
+- The selected tab icon pops slightly as the tab capsule slides in.
+
+All effects are skipped when the system "reduce motion" setting is on.
+
 _No unreleased changes yet._
 
 ## [0.1.0] - 2026-11-13

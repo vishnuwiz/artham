@@ -8,6 +8,7 @@ import '../../data/merchant_spending_insights.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../../widgets/animated_charts.dart';
+import '../../widgets/micro_interactions.dart';
 
 const Color _insightsGreen = ArthamColors.lavender;
 const Color _insightsNavy = ArthamColors.text;
@@ -29,6 +30,66 @@ class InsightsScreen extends StatefulWidget {
 class _InsightsScreenState extends State<InsightsScreen> {
   late Future<_InsightsData> _dataFuture;
   _InsightsData? _lastData; // shown while a refresh is in flight
+
+  // Month column currently highlighted in each bar chart (null = none).
+  int? _selectedPlanMonth;
+  int? _selectedFlowMonth;
+
+  /// Wraps one month's bars so a tap highlights it and dims the others.
+  Widget _selectableColumn({
+    required int index,
+    required int? selected,
+    required ValueChanged<int?> onSelect,
+    required Widget child,
+  }) {
+    final dimmed = selected != null && selected != index;
+    return Expanded(
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => onSelect(selected == index ? null : index),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 220),
+          opacity: dimmed ? 0.35 : 1,
+          child: AnimatedScale(
+            duration: const Duration(milliseconds: 260),
+            curve: Curves.easeOutBack,
+            alignment: Alignment.bottomCenter,
+            scale: selected == index ? 1.12 : 1,
+            child: child,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// A one-line readout under a chart's legend that cross-fades between months.
+  Widget _chartReadout(String? text, String hint) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 220),
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.3),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
+      ),
+      child: Align(
+        key: ValueKey(text ?? hint),
+        alignment: Alignment.centerLeft,
+        child: Text(
+          text ?? hint,
+          style: TextStyle(
+            color: text == null ? ArthamColors.muted : ArthamColors.text,
+            fontSize: 11,
+            fontWeight: text == null ? FontWeight.w500 : FontWeight.w700,
+          ),
+        ),
+      ),
+    );
+  }
 
   @override
   void initState() {
@@ -279,8 +340,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting &&
                 _lastData == null) {
-              return const Center(
-                child: CircularProgressIndicator(color: _insightsGreen),
+              return const SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+                child: SkeletonCards(count: 4, height: 130),
               );
             }
             if (snapshot.hasError) {
@@ -474,6 +537,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
               height: 8,
               color: over ? ArthamColors.debit : _insightsGreen,
               endColor: over ? ArthamColors.debit : ArthamColors.mint,
+              pulse: ratio >= 0.8,
+              shake: over,
+              pulseColor: over ? ArthamColors.debit : ArthamColors.peach,
             ),
             const SizedBox(height: 6),
             AnimatedPercentText(
@@ -840,7 +906,16 @@ class _InsightsScreenState extends State<InsightsScreen> {
               _legend(ArthamColors.debit, 'Actual'),
             ],
           ),
-          const SizedBox(height: 18),
+          const SizedBox(height: 10),
+          _chartReadout(
+            _selectedPlanMonth != null && _selectedPlanMonth! < months.length
+                ? '${_monthShort(months[_selectedPlanMonth!].month)} · '
+                      'Planned ${months[_selectedPlanMonth!].hasBudget ? _money(months[_selectedPlanMonth!].availableBudgetPaise) : 'not set'} · '
+                      'Actual ${_money(months[_selectedPlanMonth!].expensesPaise)}'
+                : null,
+            'Tap a month for exact amounts',
+          ),
+          const SizedBox(height: 10),
           SizedBox(
             height: 145,
             child: Row(
@@ -855,7 +930,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 final actualHeight = maxValue == 0
                     ? 0.0
                     : 100 * item.expensesPaise / maxValue;
-                return Expanded(
+                return _selectableColumn(
+                  index: index,
+                  selected: _selectedPlanMonth,
+                  onSelect: (value) =>
+                      setState(() => _selectedPlanMonth = value),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
@@ -998,6 +1077,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     color: over ? ArthamColors.debit : _insightsGreen,
                     endColor: over ? ArthamColors.debit : ArthamColors.mint,
                     delay: Duration(milliseconds: 80 * itemIndex),
+                    pulse: ratio >= 0.8,
+                    shake: over,
+                    pulseColor: over ? ArthamColors.debit : ArthamColors.peach,
                   ),
                   const SizedBox(height: 4),
                   Align(
@@ -1154,7 +1236,16 @@ class _InsightsScreenState extends State<InsightsScreen> {
               _legend(ArthamColors.debit, 'Expenses'),
             ],
           ),
-          const SizedBox(height: 20),
+          const SizedBox(height: 10),
+          _chartReadout(
+            _selectedFlowMonth != null && _selectedFlowMonth! < months.length
+                ? '${_monthShort(months[_selectedFlowMonth!].month)} · '
+                      'Income ${_money(months[_selectedFlowMonth!].income)} · '
+                      'Expenses ${_money(months[_selectedFlowMonth!].expenses)}'
+                : null,
+            'Tap a month for exact amounts',
+          ),
+          const SizedBox(height: 12),
           SizedBox(
             height: 150,
             child: Row(
@@ -1168,7 +1259,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 final expenseHeight = maxValue == 0
                     ? 0.0
                     : 105 * item.expenses / maxValue;
-                return Expanded(
+                return _selectableColumn(
+                  index: entry.$1,
+                  selected: _selectedFlowMonth,
+                  onSelect: (value) =>
+                      setState(() => _selectedFlowMonth = value),
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.end,
                     children: [
