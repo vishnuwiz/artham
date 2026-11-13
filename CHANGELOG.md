@@ -6,6 +6,16 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### Animated charts and balances (2026-11-13)
+
+#### Added
+- Insights > Where your money goes: an animated donut (pie) chart of this month's spending by category. The ring sweeps open, and tapping a slice pops it out and shows its amount and share in the centre. Smaller categories are grouped as "Other".
+- Budgets > Budget split: an animated donut chart of how the available budget is divided between categories.
+- Home: the total balance, monthly income and expenses, account balances and the monthly budget amount count up when they appear, glide to new values when they change, and fade when the balance is hidden or shown.
+
+#### Changed
+- Every progress bar and bar chart on Home, Insights and Budgets now animates from zero with an eased, staggered fill, and percentages count up alongside. Animations are skipped when the system "reduce motion" setting is on.
+
 ### Custom categories (2026-11-12)
 
 #### Added
