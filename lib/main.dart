@@ -349,7 +349,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }) {
     final Widget child;
     if (paise == null) {
-      child = Text(placeholder, key: const ValueKey('placeholder'), style: style);
+      child = Text(
+        placeholder,
+        key: const ValueKey('placeholder'),
+        style: style,
+      );
     } else if (!showBalance) {
       child = Text(masked, key: const ValueKey('masked'), style: style);
     } else {
@@ -389,7 +393,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       curve: Curves.easeOutCubic,
       builder: (context, t, child) => Opacity(
         opacity: t,
-        child: Transform.translate(offset: Offset(0, (1 - t) * 18), child: child),
+        child: Transform.translate(
+          offset: Offset(0, (1 - t) * 18),
+          child: child,
+        ),
       ),
       child: _buildBalanceCardBody(),
     );
@@ -552,11 +559,16 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         ),
         const Spacer(),
         TextButton(
+          key: title == 'Recent transactions'
+              ? const ValueKey('home-recent-transactions-see-all')
+              : null,
           onPressed: title == 'My accounts'
               ? _openAccounts
               : title == 'Monthly budget'
               ? _openBudgets
-              : () {},
+              : title == 'Recent transactions'
+              ? () => setState(() => selectedTab = 1)
+              : null,
           child: Text(
             action,
             style: const TextStyle(
@@ -1025,11 +1037,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             final amount =
                 '$amountPrefix${_formatRupees(transaction.amountPaise)}';
             final icon = _transactionIcon(transactionType, categoryName);
-            final background = isIncome
-                ? ArthamColors.mintTint
+            final accentColor = isIncome
+                ? ArthamColors.mint
                 : isTransfer
-                ? ArthamColors.blueTint
-                : ArthamColors.debitTint;
+                ? ArthamColors.lavender
+                : ArthamColors.debit;
 
             return transactionItem(
               title,
@@ -1037,8 +1049,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               _formatTransactionDate(transaction.transactionDate),
               amount,
               icon,
-              background,
-              isIncome,
+              accentColor,
+              isTransfer,
             );
           }).toList(),
         );
@@ -1112,8 +1124,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     String date,
     String amount,
     IconData icon,
-    Color background,
-    bool isIncome,
+    Color accentColor,
+    bool isTransfer,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
@@ -1126,13 +1138,21 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       child: Row(
         children: [
           Container(
+            key: isTransfer
+                ? const ValueKey('home-transfer-icon-background')
+                : null,
             width: 44,
             height: 44,
             decoration: BoxDecoration(
-              color: background,
+              color: accentColor.withValues(alpha: 0.10),
               borderRadius: BorderRadius.circular(14),
             ),
-            child: Icon(icon, color: primaryGreen, size: 21),
+            child: Icon(
+              icon,
+              key: isTransfer ? const ValueKey('home-transfer-icon') : null,
+              color: accentColor,
+              size: 21,
+            ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -1175,7 +1195,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 14,
-              color: isIncome ? ArthamColors.mint : ArthamColors.debit,
+              color: accentColor,
             ),
           ),
         ],
