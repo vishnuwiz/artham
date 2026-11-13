@@ -5,6 +5,7 @@ import '../../theme/artham_theme.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../widgets/animated_charts.dart';
+import '../../widgets/micro_interactions.dart';
 
 const Color _green = ArthamColors.lavender;
 const Color _navy = ArthamColors.text;
@@ -621,8 +622,10 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting &&
                 _lastData == null) {
-              return const Center(
-                child: CircularProgressIndicator(color: _green),
+              return const SingleChildScrollView(
+                physics: NeverScrollableScrollPhysics(),
+                padding: EdgeInsets.fromLTRB(20, 24, 20, 0),
+                child: SkeletonCards(count: 4, height: 130),
               );
             }
             if (snapshot.hasError) {
@@ -711,7 +714,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         ),
                         const SizedBox(height: 12),
                         ...data.categories.indexed.map(
-                          (entry) => _buildCategoryCard(entry.$2, entry.$1),
+                          (entry) => PressableScale(
+                            child: _buildCategoryCard(entry.$2, entry.$1),
+                          ),
                         ),
                       ]),
                     ),
@@ -1045,6 +1050,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             color: over ? ArthamColors.debit : const Color(0xFF68DFB4),
             endColor: over ? ArthamColors.debit : Colors.white,
             duration: const Duration(milliseconds: 1100),
+            pulse: ratio >= 0.8,
+            shake: over,
+            pulseColor: over ? ArthamColors.debit : ArthamColors.peach,
           ),
           const SizedBox(height: 15),
           SizedBox(
@@ -1197,6 +1205,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               color: over ? ArthamColors.debit : _green,
               endColor: over ? ArthamColors.debit : ArthamColors.mint,
               delay: Duration(milliseconds: 80 * index),
+              pulse: ratio >= 0.8,
+              shake: over,
+              pulseColor: over ? ArthamColors.debit : ArthamColors.peach,
             ),
             const SizedBox(height: 8),
             Row(
