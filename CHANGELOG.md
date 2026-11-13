@@ -1,32 +1,26 @@
-# Changelog
-
-All notable changes to Artham are documented in this file.
-
-The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0). App version numbers and build numbers should be added to each release entry when they are confirmed.
-
 ## [Unreleased]
 
-### More micro-interactions (2026-11-13)
-
-#### Added
-- Activity: the All / Income / Expenses filter is now a single segmented control whose highlight glides, with a small overshoot, to the chosen option. Changing the filter replays the staggered row entrance.
-- Add transaction and transfers: saving shows a confirmation where a mint circle pops in, a tick draws itself and a ring pulses outward, then the screen closes.
-- Insights: the savings card has a ring that sweeps to your savings rate, counts the percentage up and glows once as it lands.
-
-All effects are skipped when the system "reduce motion" setting is on.
-
-### Micro-interactions (2026-11-13)
-
-#### Added
-- Home account cards and Budgets category cards shrink slightly while pressed and spring back; Home account cards also open Accounts on tap.
-- Shimmering skeleton placeholders replace the loading spinners on Home accounts, Insights and Budgets.
-- Budget bars glow once when they reach 80% of their limit, and also shake briefly when over it (Home, Budgets and Insights).
-- Insights bar charts: tap a month to highlight it, dim the others and see its exact amounts; tap again to clear.
-- The selected tab icon pops slightly as the tab capsule slides in.
-
-All effects are skipped when the system "reduce motion" setting is on.
-
 _No unreleased changes yet._
+
+## [0.1.1] - 2026-11-13
+
+**GitHub release tag:** \`v0.1.1\`  
+**Platform:** Android beta APK · [Download APK](https://github.com/vishnuwiz/artham/releases/download/v0.1.1/app-release.apk) · [GitHub release page](https://github.com/vishnuwiz/artham/releases/tag/v0.1.1)
+
+A polish release focused on motion and interaction feedback. All effects are skipped when the system "reduce motion" setting is on.
+
+### Added
+- **Activity filter:** Replaced the separate All / Income / Expenses options with a single segmented control whose highlight glides to the selected option; switching filters replays the staggered transaction-row entrance.
+- **Save confirmation:** Saving a transaction or transfer displays a mint confirmation circle, a drawing tick and an outward-pulsing ring before the screen closes.
+- **Savings ring:** The Insights savings card animates its ring to the savings rate, counts the percentage up and glows once when it reaches the value.
+- **Press feedback:** Home account cards and Budgets category cards shrink slightly while pressed and spring back. Home account cards also open Accounts when tapped.
+- **Shimmer placeholders:** Replaced loading spinners with shimmering skeleton placeholders on Home accounts, Insights and Budgets.
+- **Budget alerts:** Budget bars glow once at 80% of their limit and shake briefly when over the limit (Home, Budgets and Insights).
+- **Chart selection:** Tap a month in the Insights bar charts to highlight it, dim the other months and view exact amounts; tap again to clear the selection.
+- **Tab feedback:** The selected tab icon pops slightly as the tab capsule slides in.
+
+### Fixed
+- Fixed a small layout overflow in the sliding filter on narrow widths.
 
 ## [0.1.0] - 2026-11-13
 
