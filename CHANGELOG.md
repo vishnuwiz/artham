@@ -6,6 +6,18 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+_No unreleased changes yet._
+
+## [0.1.1] - 2026-11-13
+
+**GitHub release tag:** `v0.1.1`  
+**Platform:** Android beta APK · [GitHub release page](https://github.com/vishnuwiz/artham/releases/tag/v0.1.1)
+
+A polish release focused on motion and micro-interactions.
+
+### Fixed
+- Fixed a small layout overflow in the sliding Activity filter on narrow widths.
+
 ### More micro-interactions (2026-11-13)
 
 #### Added
@@ -25,8 +37,6 @@ All effects are skipped when the system "reduce motion" setting is on.
 - The selected tab icon pops slightly as the tab capsule slides in.
 
 All effects are skipped when the system "reduce motion" setting is on.
-
-_No unreleased changes yet._
 
 ## [0.1.0] - 2026-11-13
 
