@@ -73,6 +73,13 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
         '${date.year}';
   }
 
+  String _formatTime(DateTime date) {
+    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
+  }
+
   Future<void> _editTransaction() async {
     final updated = await Navigator.push<bool>(
       context,
@@ -256,6 +263,10 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                     _detailRow(
                       'Date',
                       _formatDate(transaction.transactionDate),
+                    ),
+                    _detailRow(
+                      'Time',
+                      _formatTime(transaction.transactionDate),
                     ),
                     _detailRow('Type', isIncome ? 'Income' : 'Expense'),
                     _detailRow('Source', transaction.source),
@@ -463,6 +474,32 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
         '${date.year}';
   }
 
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay.fromDateTime(_selectedDate),
+    );
+
+    if (picked != null) {
+      setState(() {
+        _selectedDate = DateTime(
+          _selectedDate.year,
+          _selectedDate.month,
+          _selectedDate.day,
+          picked.hour,
+          picked.minute,
+        );
+      });
+    }
+  }
+
+  String _formatTime(DateTime date) {
+    final hour = date.hour % 12 == 0 ? 12 : date.hour % 12;
+    final minute = date.minute.toString().padLeft(2, '0');
+    final period = date.hour >= 12 ? 'PM' : 'AM';
+    return '$hour:$minute $period';
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedAccountId == null || _selectedCategoryId == null) {
@@ -639,6 +676,19 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                               suffixIcon: Icon(Icons.calendar_month_outlined),
                             ),
                             child: Text(_formatDate(_selectedDate)),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        InkWell(
+                          onTap: _pickTime,
+                          borderRadius: BorderRadius.circular(10),
+                          child: InputDecorator(
+                            decoration: const InputDecoration(
+                              labelText: 'Transaction time',
+                              border: OutlineInputBorder(),
+                              suffixIcon: Icon(Icons.access_time_rounded),
+                            ),
+                            child: Text(_formatTime(_selectedDate)),
                           ),
                         ),
                       ],

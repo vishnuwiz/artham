@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:file_picker/file_picker.dart';
@@ -10,6 +11,7 @@ import '../../data/data_export_service.dart';
 import '../../data/data_import_service.dart';
 import '../../theme/artham_theme.dart';
 import 'categories_screen.dart';
+import 'backup_management_screen.dart';
 
 class SettingsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -121,21 +123,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
-  Future<void> _restoreBackup() async {
+  Future<void> _restoreBackup([File? backupFile]) async {
     if (_isExporting) return;
 
     setState(() => _isExporting = true);
     try {
-      final selectedFile = await FilePicker.pickFile(
-        type: FileType.custom,
-        allowedExtensions: ['json'],
-      );
-
-      if (!mounted || selectedFile == null) return;
-
-      final bytes = await selectedFile.readAsBytes();
-
-      final contents = utf8.decode(bytes);
+      late final String contents;
+      if (backupFile == null) {
+        final selectedFile = await FilePicker.pickFile(
+          type: FileType.custom,
+          allowedExtensions: ['json'],
+        );
+        if (!mounted || selectedFile == null) return;
+        contents = utf8.decode(await selectedFile.readAsBytes());
+      } else {
+        contents = await backupFile.readAsString();
+      }
       final importService = DataImportService(widget.database);
       final preview = importService.inspectFullBackupJson(contents);
 
@@ -246,6 +249,19 @@ class _SettingsScreenState extends State<SettingsScreen> {
     }
   }
 
+  Future<void> _restoreManagedBackup(File file) => _restoreBackup(file);
+
+  void _openBackupManagement() {
+    Navigator.of(context).push(
+      MaterialPageRoute<void>(
+        builder: (_) => BackupManagementScreen(
+          database: widget.database,
+          onRestoreBackup: _restoreManagedBackup,
+        ),
+      ),
+    );
+  }
+
   Widget _restoreCountLine(String label, int count) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 2),
@@ -281,6 +297,8 @@ class _SettingsScreenState extends State<SettingsScreen> {
           _buildCategoriesCard(),
           const SizedBox(height: 18),
           _buildDataExportCard(),
+          const SizedBox(height: 18),
+          _buildBackupManagementCard(),
           const SizedBox(height: 18),
           _buildSmsPrivacyCard(),
         ],
@@ -449,6 +467,41 @@ class _SettingsScreenState extends State<SettingsScreen> {
             label: const Text('Restore from JSON backup'),
             style: OutlinedButton.styleFrom(
               foregroundColor: ArthamColors.debit,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBackupManagementCard() {
+    return _SettingsCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const _SectionHeading(
+            icon: Icons.backup_outlined,
+            title: 'Backup management',
+          ),
+          const SizedBox(height: 8),
+          const Text(
+            'Manage automatic local backups, review saved copies and restore '
+            'a previous backup from this device.',
+            style: TextStyle(
+              color: ArthamColors.muted,
+              fontSize: 12,
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 14),
+          FilledButton.icon(
+            key: const Key('manage-backups-button'),
+            onPressed: _isExporting ? null : _openBackupManagement,
+            icon: const Icon(Icons.history_rounded),
+            label: const Text('Manage backups'),
+            style: FilledButton.styleFrom(
+              backgroundColor: ArthamColors.lavender,
+              foregroundColor: ArthamColors.onAccent,
             ),
           ),
         ],
