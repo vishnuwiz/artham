@@ -9,9 +9,9 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ## Download for Android
 
-**Artham Android beta — GitHub release tag `v0.1.0`.**
+**Latest Android beta — Artham v0.1.1.**
 
-[**Download the APK**](https://github.com/vishnuwiz/artham/releases/download/v0.1.0/app-release.apk) · [View the GitHub release and release notes](https://github.com/vishnuwiz/artham/releases/tag/v0.1.0)
+[**Download the APK**](https://github.com/vishnuwiz/artham/releases/download/v0.1.1/app-release.apk) · [View the GitHub release and release notes](https://github.com/vishnuwiz/artham/releases/tag/v0.1.1)
 
 This is a beta build for Android. Install the downloaded APK on your device and review Android's install-source prompt when asked. Artham does not require SMS permissions; bank and UPI alerts can only be imported when you explicitly paste or share a message into the app.
 
