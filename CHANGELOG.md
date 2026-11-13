@@ -6,6 +6,35 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+_No unreleased changes yet._
+
+## [0.1.0] - 2026-11-13
+
+**GitHub release tag:** `v0.1.0`  
+**Platform:** Android beta APK · [Download APK](https://github.com/vishnuwiz/artham/releases/download/v0.1.0/app-release.apk) · [GitHub release page](https://github.com/vishnuwiz/artham/releases/tag/v0.1.0)
+
+This is the first public Android beta of Artham. It brings together the local-first finance tracker, transaction and account management, budget planning, recurring transactions, offline merchant recognition, user-initiated SMS import, and local CSV/JSON export.
+
+### Added
+- Published the Android beta APK as `app-release.apk` on GitHub Releases.
+- Animated spending-by-category and budget-split donut charts, with animated balance, income, expense and progress values.
+- Salary as a dedicated built-in Income category, while retaining the general Income category for other credits.
+
+### Changed
+- Made the Settings export area more compact, with the export actions initially collapsed and concise CSV/JSON share and save controls.
+- Matched Home's own-account transfer styling to the lavender transfer treatment used in Activity.
+- Connected Home's Recent Transactions **See all** action to the Activity screen.
+- Kept internal transfers as their own transaction type rather than Income or Expense categories.
+
+### Fixed
+- Fixed the Home Recent Transactions **See all** control, which previously did not navigate.
+- Corrected the Home transfer amount and icon colours so transfers are not styled as expenses.
+
+### Verification
+- `flutter analyze` completed with no issues.
+- `flutter test` passed all 139 tests.
+- The Android release APK was built and uploaded to the GitHub release linked above.
+
 ### Animated charts and balances (2026-11-13)
 
 #### Added
@@ -37,13 +66,14 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 #### Added
 - Settings > Categories: add your own expense and income categories with a name, a Material icon and a colour, and edit or remove existing ones.
-- New default categories: Investment, Income, Personal, Work, Business, Restaurants, Housing, Electricity, Transport & Fuel, Food & Grocery, Medical, Travel, Fitness, Insurance, Entertainment, Internet & Telecom, Gift, Taxes, Utility, Shopping, Card Repayment, ATM, Bank Charges, Reimbursement, Self Transfer, Loan and Education, plus Other. Investment, Business, Gift and Self Transfer exist as both expense and income categories.
+- Added Salary as a built-in Income category while retaining the general Income category for other credits.
 - Category icons in the Add Transaction, transaction edit, recurring schedule and SMS import pickers.
 - SMS import suggests the new categories, including ATM, Card Repayment, Loan, Electricity, Internet & Telecom, Insurance and Reimbursement.
 
 #### Changed
 - Database schema version 5 adds `seed_key` and `is_archived` to `categories`. Built-in categories from earlier versions are renamed in place (for example Food & Dining → Restaurants, Groceries → Food & Grocery, Salary → Income), so existing transactions, budgets and schedules keep their category. Interest is kept as it is.
 - A category that transactions, budgets, schedules or merchants still use is hidden rather than deleted, and can be restored. Built-in categories are always hidden rather than deleted, so they are not re-created.
+- Self Transfer is not an Income or Expense category; moving money between the user's own accounts uses the dedicated transfer transaction type.
 - The merchant catalogue now uses the new names. Bills & Utilities merchants are split into Electricity, Internet & Telecom and Utility, and Health merchants into Medical, Fitness and Insurance.
 - Default categories are created at app start rather than when Add Transaction is first opened.
 - JSON backups include each category's seed key and hidden state.
