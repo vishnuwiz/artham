@@ -94,6 +94,7 @@ void sharedSlidingTests() {
     final before = tester.getTopLeft(pill).dx;
 
     await tester.tap(find.text('Expenses'));
+    await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
     final during = tester.getTopLeft(pill).dx;
     await tester.pumpAndSettle();
