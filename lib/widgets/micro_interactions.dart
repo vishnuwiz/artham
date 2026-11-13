@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -235,4 +237,247 @@ class SkeletonAccountRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A pill-shaped segmented control whose highlight glides (with a small
+/// overshoot) from one option to the next instead of each option toggling on
+/// its own.
+class SlidingSegmented extends StatelessWidget {
+  const SlidingSegmented({
+    super.key,
+    required this.labels,
+    required this.selectedIndex,
+    required this.onChanged,
+    this.accent = ArthamColors.lavender,
+    this.segmentWidth = 84,
+    this.height = 40,
+  });
+
+  final List<String> labels;
+  final int selectedIndex;
+  final ValueChanged<int> onChanged;
+  final Color accent;
+  final double segmentWidth;
+  final double height;
+
+  static const Duration slideDuration = Duration(milliseconds: 380);
+
+  @override
+  Widget build(BuildContext context) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    final duration = reduce ? Duration.zero : slideDuration;
+    const pad = 3.0;
+    const border = 1.0;
+    const chrome = (pad + border) * 2;
+    final radius = BorderRadius.circular(height);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desired = segmentWidth * labels.length + chrome;
+        final width = constraints.maxWidth.isFinite
+            ? math.min(desired, constraints.maxWidth)
+            : desired;
+        final segment = (width - chrome) / labels.length;
+
+        return Container(
+          width: width,
+          height: height,
+          padding: const EdgeInsets.all(pad),
+          decoration: BoxDecoration(
+            color: ArthamColors.glass,
+            borderRadius: radius,
+            border: Border.all(color: ArthamColors.line, width: border),
+          ),
+          child: Stack(
+            children: [
+              AnimatedPositioned(
+                duration: duration,
+                curve: Curves.easeOutBack,
+                left: selectedIndex * segment,
+                top: 0,
+                bottom: 0,
+                width: segment,
+                child: DecoratedBox(
+                  key: const ValueKey('sliding-segmented-pill'),
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.18),
+                    borderRadius: radius,
+                    border: Border.all(color: accent.withValues(alpha: 0.4)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accent.withValues(alpha: 0.22),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  for (var i = 0; i < labels.length; i++)
+                    SizedBox(
+                      width: segment,
+                      child: Semantics(
+                        button: true,
+                        selected: i == selectedIndex,
+                        child: InkWell(
+                          borderRadius: radius,
+                          onTap: () => onChanged(i),
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: duration,
+                              style: TextStyle(
+                                color: i == selectedIndex
+                                    ? accent
+                                    : ArthamColors.muted,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              child: Text(labels[i]),
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+/// Shows a full-screen "saved" confirmation (a circle that pops in, a tick
+/// that draws itself and a ring that pulses outward) for a moment, then closes
+/// it. Skipped when the system "reduce motion" setting is on.
+Future<void> showSavedCheck(BuildContext context) async {
+  if (MediaQuery.of(context).disableAnimations) return;
+  final navigator = Navigator.of(context, rootNavigator: true);
+  HapticFeedback.mediumImpact();
+  showGeneralDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    barrierColor: Colors.transparent,
+    transitionDuration: Duration.zero,
+    pageBuilder: (context, animation, secondaryAnimation) =>
+        const SuccessCheckOverlay(),
+  );
+  await Future<void>.delayed(const Duration(milliseconds: 950));
+  if (navigator.mounted) navigator.pop();
+}
+
+class SuccessCheckOverlay extends StatefulWidget {
+  const SuccessCheckOverlay({super.key});
+
+  @override
+  State<SuccessCheckOverlay> createState() => _SuccessCheckOverlayState();
+}
+
+class _SuccessCheckOverlayState extends State<SuccessCheckOverlay>
+    with SingleTickerProviderStateMixin {
+  late final AnimationController _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..forward();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return AnimatedBuilder(
+      animation: _controller,
+      builder: (context, _) {
+        final t = _controller.value;
+        final scrim = Curves.easeOut.transform((t / 0.25).clamp(0.0, 1.0));
+        final pop = Curves.easeOutBack.transform((t / 0.4).clamp(0.0, 1.0));
+        final tick = Curves.easeInOut.transform(
+          ((t - 0.3) / 0.4).clamp(0.0, 1.0),
+        );
+        final pulse = ((t - 0.35) / 0.6).clamp(0.0, 1.0);
+        final fadeOut = 1 - ((t - 0.85) / 0.15).clamp(0.0, 1.0);
+
+        return Opacity(
+          opacity: fadeOut,
+          child: ColoredBox(
+            color: Colors.black.withValues(alpha: 0.45 * scrim),
+            child: Center(
+              child: SizedBox(
+                width: 200,
+                height: 200,
+                child: CustomPaint(
+                  painter: _CheckPainter(pop: pop, tick: tick, pulse: pulse),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _CheckPainter extends CustomPainter {
+  _CheckPainter({required this.pop, required this.tick, required this.pulse});
+
+  final double pop;
+  final double tick;
+  final double pulse;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final center = size.center(Offset.zero);
+    const radius = 46.0;
+
+    if (pulse > 0 && pulse < 1) {
+      canvas.drawCircle(
+        center,
+        radius * (1 + pulse * 0.9),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 3
+          ..color = ArthamColors.mint.withValues(alpha: 0.7 * (1 - pulse)),
+      );
+    }
+
+    final circleRadius = radius * pop.clamp(0.0, 1.2);
+    if (circleRadius > 0) {
+      canvas.drawCircle(
+        center,
+        circleRadius,
+        Paint()
+          ..shader = const LinearGradient(
+            colors: [ArthamColors.mint, Color(0xFF68DFB4)],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ).createShader(Rect.fromCircle(center: center, radius: radius)),
+      );
+    }
+
+    if (tick > 0) {
+      final path = Path()
+        ..moveTo(center.dx - 18, center.dy + 1)
+        ..lineTo(center.dx - 5, center.dy + 14)
+        ..lineTo(center.dx + 20, center.dy - 13);
+      final metric = path.computeMetrics().first;
+      canvas.drawPath(
+        metric.extractPath(0, metric.length * tick),
+        Paint()
+          ..style = PaintingStyle.stroke
+          ..strokeWidth = 7
+          ..strokeCap = StrokeCap.round
+          ..strokeJoin = StrokeJoin.round
+          ..color = const Color(0xFF12301F),
+      );
+    }
+  }
+
+  @override
+  bool shouldRepaint(covariant _CheckPainter old) =>
+      old.pop != pop || old.tick != tick || old.pulse != pulse;
 }

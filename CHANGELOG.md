@@ -6,6 +6,15 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 ## [Unreleased]
 
+### More micro-interactions (2026-11-13)
+
+#### Added
+- Activity: the All / Income / Expenses filter is now a single segmented control whose highlight glides, with a small overshoot, to the chosen option. Changing the filter replays the staggered row entrance.
+- Add transaction and transfers: saving shows a confirmation where a mint circle pops in, a tick draws itself and a ring pulses outward, then the screen closes.
+- Insights: the savings card has a ring that sweeps to your savings rate, counts the percentage up and glows once as it lands.
+
+All effects are skipped when the system "reduce motion" setting is on.
+
 ### Micro-interactions (2026-11-13)
 
 #### Added

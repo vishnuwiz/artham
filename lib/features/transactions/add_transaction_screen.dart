@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../theme/artham_theme.dart';
+import '../../widgets/micro_interactions.dart';
 import '../../theme/category_icons.dart';
 
 import 'package:flutter/services.dart';
@@ -258,6 +259,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Transfer saved successfully!')),
       );
+      await showSavedCheck(context);
+      if (!mounted) return;
+
       Navigator.pop(context, true);
     } catch (e) {
       if (!mounted) return;
@@ -309,6 +313,9 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Transaction saved successfully!')),
       );
+
+      await showSavedCheck(context);
+      if (!mounted) return;
 
       Navigator.pop(context, true);
     } catch (e) {
