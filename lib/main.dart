@@ -13,6 +13,7 @@ import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'data/repositories/category_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'widgets/animated_charts.dart';
 import 'features/settings/settings_screen.dart';
 import 'features/onboarding/onboarding_gate.dart';
 import 'features/setup/first_time_setup_gate.dart';
@@ -337,28 +338,72 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     );
   }
 
+  /// A money value that counts up when it first appears (and whenever the
+  /// balance is revealed again), glides to a new value when it changes, and
+  /// cross-fades with its masked form when the eye icon is toggled.
+  Widget _animatedMoney({
+    required int? paise,
+    required String placeholder,
+    required String masked,
+    required TextStyle style,
+  }) {
+    final Widget child;
+    if (paise == null) {
+      child = Text(placeholder, key: const ValueKey('placeholder'), style: style);
+    } else if (!showBalance) {
+      child = Text(masked, key: const ValueKey('masked'), style: style);
+    } else {
+      child = AnimatedAmountText(
+        key: const ValueKey('amount'),
+        paise: paise,
+        style: style,
+      );
+    }
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 280),
+      switchInCurve: Curves.easeOutCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.25),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
+      ),
+      layoutBuilder: (current, previous) => Stack(
+        alignment: Alignment.centerLeft,
+        children: [...previous, ?current],
+      ),
+      child: child,
+    );
+  }
+
   Widget buildBalanceCard() {
+    return TweenAnimationBuilder<double>(
+      tween: Tween<double>(begin: 0, end: 1),
+      duration: MediaQuery.of(context).disableAnimations
+          ? Duration.zero
+          : const Duration(milliseconds: 700),
+      curve: Curves.easeOutCubic,
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(offset: Offset(0, (1 - t) * 18), child: child),
+      ),
+      child: _buildBalanceCardBody(),
+    );
+  }
+
+  Widget _buildBalanceCardBody() {
     return FutureBuilder<AccountBalanceSummary>(
       future: _summaryFuture,
       builder: (context, snapshot) {
         final summary = snapshot.data ?? _lastSummary;
-        final totalBalance = summary == null
-            ? (snapshot.connectionState == ConnectionState.waiting
-                  ? 'Loading...'
-                  : 'Unavailable')
-            : (showBalance
-                  ? _formatRupees(summary.totalBalancePaise)
-                  : '••••••••');
-        final monthlyIncome = summary == null
-            ? '—'
-            : (showBalance
-                  ? _formatRupees(summary.monthlyIncomePaise)
-                  : '••••');
-        final monthlyExpenses = summary == null
-            ? '—'
-            : (showBalance
-                  ? _formatRupees(summary.monthlyExpensesPaise)
-                  : '••••');
+        final totalPlaceholder =
+            snapshot.connectionState == ConnectionState.waiting
+            ? 'Loading...'
+            : 'Unavailable';
 
         return Container(
           padding: const EdgeInsets.all(23),
@@ -397,8 +442,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ],
               ),
               const SizedBox(height: 5),
-              Text(
-                totalBalance,
+              _animatedMoney(
+                paise: summary?.totalBalancePaise,
+                placeholder: totalPlaceholder,
+                masked: '••••••••',
                 style: const TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.w800,
@@ -434,7 +481,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   Expanded(
                     child: balanceSummary(
                       'INCOME THIS MONTH',
-                      monthlyIncome,
+                      summary?.monthlyIncomePaise,
                       Icons.trending_up,
                       const Color(0xFF68DFB4),
                     ),
@@ -442,7 +489,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   Expanded(
                     child: balanceSummary(
                       'EXPENSES THIS MONTH',
-                      monthlyExpenses,
+                      summary?.monthlyExpensesPaise,
                       Icons.trending_down,
                       ArthamColors.debit,
                     ),
@@ -458,7 +505,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
 
   Widget balanceSummary(
     String label,
-    String amount,
+    int? amountPaise,
     IconData icon,
     Color color,
   ) {
@@ -478,8 +525,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ],
         ),
         const SizedBox(height: 8),
-        Text(
-          amount,
+        _animatedMoney(
+          paise: amountPaise,
+          placeholder: '—',
+          masked: '••••',
           style: const TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
@@ -632,7 +681,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   child: accountCard(
                     account.bankName,
                     '•••• ${account.accountNumberLast4 ?? '----'}',
-                    _formatRupees(balancePaise),
+                    balancePaise,
                     Icons.account_balance,
                     primaryGreen,
                   ),
@@ -648,7 +697,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   Widget accountCard(
     String name,
     String number,
-    String amount,
+    int amountPaise,
     IconData icon,
     Color color,
   ) {
@@ -676,8 +725,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
           ),
           const SizedBox(height: 12),
-          Text(
-            amount,
+          AnimatedAmountText(
+            paise: amountPaise,
             style: const TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 17,
@@ -810,8 +859,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ],
               ),
               const SizedBox(height: 10),
-              Text(
-                _formatRupees(expenses),
+              AnimatedAmountText(
+                paise: expenses,
                 style: const TextStyle(
                   color: darkNavy,
                   fontWeight: FontWeight.w800,
@@ -835,14 +884,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 ),
               ],
               const SizedBox(height: 18),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(20),
-                child: LinearProgressIndicator(
-                  value: progress,
-                  minHeight: 10,
-                  backgroundColor: ArthamColors.line,
-                  color: isOverBudget ? ArthamColors.debit : primaryGreen,
-                ),
+              AnimatedProgressBar(
+                value: progress,
+                height: 10,
+                color: isOverBudget ? ArthamColors.debit : primaryGreen,
+                endColor: isOverBudget ? ArthamColors.debit : ArthamColors.mint,
+                duration: const Duration(milliseconds: 1100),
               ),
               const SizedBox(height: 13),
               Row(

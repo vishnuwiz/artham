@@ -4,6 +4,7 @@ import '../../theme/artham_theme.dart';
 
 import '../../data/app_database.dart';
 import '../../data/repositories/budget_repository.dart';
+import '../../widgets/animated_charts.dart';
 
 const Color _green = ArthamColors.lavender;
 const Color _navy = ArthamColors.text;
@@ -599,14 +600,11 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             ),
           if (hasBudget) ...[
             const SizedBox(height: 7),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(8),
-              child: LinearProgressIndicator(
-                value: ratio.clamp(0.0, 1.0).toDouble(),
-                minHeight: 5,
-                backgroundColor: ArthamColors.line,
-                color: over ? ArthamColors.debit : _green,
-              ),
+            AnimatedProgressBar(
+              value: ratio,
+              height: 5,
+              color: over ? ArthamColors.debit : _green,
+              endColor: over ? ArthamColors.debit : ArthamColors.mint,
             ),
           ],
         ],
@@ -687,6 +685,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         const SizedBox(height: 18),
                         _buildOverallCard(data.overall),
                         _buildBudgetAlerts(data),
+                        _buildBudgetSplit(data),
                         const SizedBox(height: 28),
                         Row(
                           children: [
@@ -711,7 +710,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                           ],
                         ),
                         const SizedBox(height: 12),
-                        ...data.categories.map(_buildCategoryCard),
+                        ...data.categories.indexed.map(
+                          (entry) => _buildCategoryCard(entry.$2, entry.$1),
+                        ),
                       ]),
                     ),
                   ),
@@ -720,6 +721,87 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             );
           },
         ),
+      ),
+    );
+  }
+
+  /// Pie chart of how the available budget is divided between categories.
+  Widget _buildBudgetSplit(_BudgetScreenData data) {
+    final planned =
+        data.categories.where((item) => item.availableBudgetPaise > 0).toList()
+          ..sort(
+            (a, b) => b.availableBudgetPaise.compareTo(a.availableBudgetPaise),
+          );
+    if (planned.isEmpty) return const SizedBox.shrink();
+
+    const maxSlices = 6;
+    final head = planned.length > maxSlices + 1
+        ? planned.take(maxSlices).toList()
+        : planned;
+    final slices = <DonutSlice>[
+      for (var i = 0; i < head.length; i++)
+        DonutSlice(
+          label: head[i].category.name,
+          value: head[i].availableBudgetPaise.toDouble(),
+          color: ArthamChartPalette.at(i),
+        ),
+    ];
+    if (head.length < planned.length) {
+      slices.add(
+        DonutSlice(
+          label: 'Other',
+          value: planned
+              .skip(head.length)
+              .fold<int>(0, (sum, item) => sum + item.availableBudgetPaise)
+              .toDouble(),
+          color: ArthamChartPalette.other,
+        ),
+      );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 28),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Expanded(
+                child: Text(
+                  'Budget split',
+                  style: TextStyle(
+                    color: _navy,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                  ),
+                ),
+              ),
+              Text(
+                'Tap a slice',
+                style: TextStyle(
+                  color: _green.withValues(alpha: 0.9),
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 12),
+          Container(
+            width: double.infinity,
+            padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
+            decoration: BoxDecoration(
+              gradient: ArthamColors.glassGradient,
+              border: ArthamColors.glassBorder,
+              borderRadius: BorderRadius.circular(21),
+            ),
+            child: AnimatedDonutChart(
+              slices: slices,
+              centerLabel: 'Planned',
+              formatValue: (value) => _money(value.round()),
+            ),
+          ),
+        ],
       ),
     );
   }
@@ -909,14 +991,24 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          Text(
-            hasBudget ? _money(budget) : 'Not set',
-            style: const TextStyle(
-              color: Colors.white,
-              fontSize: 29,
-              fontWeight: FontWeight.w800,
+          if (hasBudget)
+            AnimatedAmountText(
+              paise: budget,
+              style: const TextStyle(
+                color: Colors.white,
+                fontSize: 29,
+                fontWeight: FontWeight.w800,
+              ),
+            )
+          else
+            const Text(
+              'Not set',
+              style: TextStyle(
+                color: Colors.white,
+                fontSize: 29,
+                fontWeight: FontWeight.w800,
+              ),
             ),
-          ),
           if (hasBudget && repeatsMonthly) ...[
             const SizedBox(height: 5),
             const Text(
@@ -946,14 +1038,13 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             ],
           ),
           const SizedBox(height: 18),
-          ClipRRect(
-            borderRadius: BorderRadius.circular(12),
-            child: LinearProgressIndicator(
-              value: ratio.clamp(0.0, 1.0).toDouble(),
-              minHeight: 9,
-              backgroundColor: Colors.white24,
-              color: over ? ArthamColors.debit : const Color(0xFF68DFB4),
-            ),
+          AnimatedProgressBar(
+            value: ratio,
+            height: 9,
+            trackColor: Colors.white24,
+            color: over ? ArthamColors.debit : const Color(0xFF68DFB4),
+            endColor: over ? ArthamColors.debit : Colors.white,
+            duration: const Duration(milliseconds: 1100),
           ),
           const SizedBox(height: 15),
           SizedBox(
@@ -1001,7 +1092,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
     );
   }
 
-  Widget _buildCategoryCard(CategoryBudgetSummary item) {
+  Widget _buildCategoryCard(CategoryBudgetSummary item, [int index = 0]) {
     final hasBudget = item.budgetPaise > 0;
     final ratio = hasBudget ? item.percentageUsed : 0.0;
     final over = hasBudget && item.remainingPaise < 0;
@@ -1100,20 +1191,19 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           ],
           if (hasBudget) ...[
             const SizedBox(height: 13),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: LinearProgressIndicator(
-                value: ratio.clamp(0.0, 1.0).toDouble(),
-                minHeight: 7,
-                backgroundColor: ArthamColors.line,
-                color: over ? ArthamColors.debit : _green,
-              ),
+            AnimatedProgressBar(
+              value: ratio,
+              height: 7,
+              color: over ? ArthamColors.debit : _green,
+              endColor: over ? ArthamColors.debit : ArthamColors.mint,
+              delay: Duration(milliseconds: 80 * index),
             ),
             const SizedBox(height: 8),
             Row(
               children: [
-                Text(
-                  '${(ratio * 100).toStringAsFixed(1)}% used',
+                AnimatedPercentText(
+                  fraction: ratio,
+                  suffix: ' used',
                   style: TextStyle(
                     color: over ? ArthamColors.debit : _green,
                     fontSize: 11,

@@ -7,6 +7,7 @@ import '../../data/budget_forecast.dart';
 import '../../data/merchant_spending_insights.dart';
 import '../../data/repositories/budget_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
+import '../../widgets/animated_charts.dart';
 
 const Color _insightsGreen = ArthamColors.lavender;
 const Color _insightsNavy = ArthamColors.text;
@@ -468,19 +469,18 @@ class _InsightsScreenState extends State<InsightsScreen> {
               ],
             ),
             const SizedBox(height: 14),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: LinearProgressIndicator(
-                value: ratio.clamp(0.0, 1.0).toDouble(),
-                minHeight: 8,
-                backgroundColor: ArthamColors.line,
-                color: over ? ArthamColors.debit : _insightsGreen,
-              ),
+            AnimatedProgressBar(
+              value: ratio,
+              height: 8,
+              color: over ? ArthamColors.debit : _insightsGreen,
+              endColor: over ? ArthamColors.debit : ArthamColors.mint,
             ),
             const SizedBox(height: 6),
-            Text(
-              '${(ratio * 100).toStringAsFixed(1)}% of the available plan used'
-              '${overall.rolloverPaise > 0 ? ' · includes ${_money(overall.rolloverPaise)} carried in' : ''}',
+            AnimatedPercentText(
+              fraction: ratio,
+              suffix:
+                  ' of the available plan used'
+                  '${overall.rolloverPaise > 0 ? ' · includes ${_money(overall.rolloverPaise)} carried in' : ''}',
               style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ] else ...[
@@ -607,18 +607,12 @@ class _InsightsScreenState extends State<InsightsScreen> {
               ],
             ),
             const SizedBox(height: 13),
-            ClipRRect(
-              borderRadius: BorderRadius.circular(10),
-              child: LinearProgressIndicator(
-                value:
-                    ((overall.projectedSpendPaise ?? overall.spentToDatePaise) /
-                            overall.budgetPaise)
-                        .clamp(0.0, 1.0)
-                        .toDouble(),
-                minHeight: 8,
-                backgroundColor: ArthamColors.line,
-                color: _forecastColor(overall.status),
-              ),
+            AnimatedProgressBar(
+              value:
+                  (overall.projectedSpendPaise ?? overall.spentToDatePaise) /
+                  overall.budgetPaise,
+              height: 8,
+              color: _forecastColor(overall.status),
             ),
             const SizedBox(height: 8),
             Text(
@@ -717,17 +711,11 @@ class _InsightsScreenState extends State<InsightsScreen> {
           ],
         ),
         const SizedBox(height: 7),
-        ClipRRect(
-          borderRadius: BorderRadius.circular(8),
-          child: LinearProgressIndicator(
-            value:
-                ((estimate ?? forecast.spentToDatePaise) / forecast.budgetPaise)
-                    .clamp(0.0, 1.0)
-                    .toDouble(),
-            minHeight: 6,
-            backgroundColor: ArthamColors.line,
-            color: _forecastColor(forecast.status),
-          ),
+        AnimatedProgressBar(
+          value: (estimate ?? forecast.spentToDatePaise) / forecast.budgetPaise,
+          height: 6,
+          color: _forecastColor(forecast.status),
+          delay: const Duration(milliseconds: 150),
         ),
         const SizedBox(height: 6),
         Text(
@@ -857,7 +845,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
             height: 145,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: months.map((item) {
+              children: months.indexed.map((entry) {
+                final index = entry.$1;
+                final item = entry.$2;
+                final delay = Duration(milliseconds: 90 * index);
                 final planHeight = maxValue == 0 || !item.hasBudget
                     ? 0.0
                     : 100 * item.availableBudgetPaise / maxValue;
@@ -873,9 +864,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _bar(planHeight, color: _insightsGreen),
+                            _bar(planHeight, color: _insightsGreen, delay: delay),
                             const SizedBox(width: 3),
-                            _bar(actualHeight, color: ArthamColors.debit),
+                            _bar(
+                              actualHeight,
+                              color: ArthamColors.debit,
+                              delay: delay + const Duration(milliseconds: 60),
+                            ),
                           ],
                         ),
                       ),
@@ -947,7 +942,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
-        children: items.map((item) {
+        children: items.indexed.map((entry) {
+          final itemIndex = entry.$1;
+          final item = entry.$2;
           final hasBudget = item.budgetPaise > 0;
           final over = hasBudget && item.remainingPaise < 0;
           final ratio = hasBudget ? item.percentageUsed : 0.0;
@@ -995,20 +992,19 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 ),
                 if (hasBudget) ...[
                   const SizedBox(height: 7),
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(8),
-                    child: LinearProgressIndicator(
-                      value: ratio.clamp(0.0, 1.0).toDouble(),
-                      minHeight: 6,
-                      backgroundColor: ArthamColors.line,
-                      color: over ? ArthamColors.debit : _insightsGreen,
-                    ),
+                  AnimatedProgressBar(
+                    value: ratio,
+                    height: 6,
+                    color: over ? ArthamColors.debit : _insightsGreen,
+                    endColor: over ? ArthamColors.debit : ArthamColors.mint,
+                    delay: Duration(milliseconds: 80 * itemIndex),
                   ),
                   const SizedBox(height: 4),
                   Align(
                     alignment: Alignment.centerRight,
-                    child: Text(
-                      '${(ratio * 100).toStringAsFixed(1)}% used',
+                    child: AnimatedPercentText(
+                      fraction: ratio,
+                      suffix: ' used',
                       style: TextStyle(
                         color: over ? ArthamColors.debit : _insightsGreen,
                         fontSize: 10,
@@ -1076,8 +1072,8 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ),
           ),
           const SizedBox(height: 9),
-          Text(
-            _money(netSavings.abs()),
+          AnimatedAmountText(
+            paise: netSavings.abs(),
             style: const TextStyle(
               color: Colors.white,
               fontSize: 30,
@@ -1163,7 +1159,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
             height: 150,
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: months.map((item) {
+              children: months.indexed.map((entry) {
+                final delay = Duration(milliseconds: 90 * entry.$1);
+                final item = entry.$2;
                 final incomeHeight = maxValue == 0
                     ? 0.0
                     : 105 * item.income / maxValue;
@@ -1179,9 +1177,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            _bar(incomeHeight),
+                            _bar(incomeHeight, delay: delay),
                             const SizedBox(width: 4),
-                            _bar(expenseHeight, color: ArthamColors.debit),
+                            _bar(
+                              expenseHeight,
+                              color: ArthamColors.debit,
+                              delay: delay + const Duration(milliseconds: 60),
+                            ),
                           ],
                         ),
                       ),
@@ -1204,15 +1206,12 @@ class _InsightsScreenState extends State<InsightsScreen> {
     );
   }
 
-  Widget _bar(double height, {Color color = _insightsGreen}) {
-    return Container(
-      width: 9,
-      height: height.clamp(2.0, 105.0).toDouble(),
-      decoration: BoxDecoration(
-        color: color,
-        borderRadius: const BorderRadius.vertical(top: Radius.circular(5)),
-      ),
-    );
+  Widget _bar(
+    double height, {
+    Color color = _insightsGreen,
+    Duration delay = Duration.zero,
+  }) {
+    return AnimatedBar(height: height, color: color, delay: delay);
   }
 
   Widget _legend(Color color, String label) {
@@ -1259,7 +1258,9 @@ class _InsightsScreenState extends State<InsightsScreen> {
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
-        children: items.map((item) {
+        children: items.indexed.map((entry) {
+          final rowIndex = entry.$1;
+          final item = entry.$2;
           final share = largestSpend > 0
               ? item.currentMonthSpendPaise / largestSpend
               : 0.0;
@@ -1302,14 +1303,12 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    value: share.clamp(0.0, 1.0).toDouble(),
-                    minHeight: 7,
-                    backgroundColor: ArthamColors.line,
-                    color: _insightsGreen,
-                  ),
+                AnimatedProgressBar(
+                  value: share,
+                  height: 7,
+                  color: _insightsGreen,
+                  endColor: ArthamColors.mint,
+                  delay: Duration(milliseconds: 80 * rowIndex),
                 ),
               ],
             ),
@@ -1477,7 +1476,20 @@ class _InsightsScreenState extends State<InsightsScreen> {
         borderRadius: BorderRadius.circular(21),
       ),
       child: Column(
-        children: categories.map((item) {
+        children: [
+          AnimatedDonutChart(
+            slices: _pieSlices(categories),
+            centerLabel: 'Spent',
+            formatValue: (value) => _money(value.round()),
+            // The rows below already list every category with its colour.
+            showLegend: false,
+          ),
+          const SizedBox(height: 14),
+          const Divider(height: 1),
+          const SizedBox(height: 16),
+          ...categories.indexed.map((entry) {
+          final index = entry.$1;
+          final item = entry.$2;
           final share = total > 0 ? item.amount / total : 0.0;
           return Padding(
             padding: const EdgeInsets.only(bottom: 15),
@@ -1506,20 +1518,20 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   ],
                 ),
                 const SizedBox(height: 8),
-                ClipRRect(
-                  borderRadius: BorderRadius.circular(10),
-                  child: LinearProgressIndicator(
-                    value: share.clamp(0.0, 1.0).toDouble(),
-                    minHeight: 7,
-                    backgroundColor: ArthamColors.line,
-                    color: _insightsGreen,
-                  ),
+                AnimatedProgressBar(
+                  value: share,
+                  height: 7,
+                  // Matches the pie: categories past the sixth are "Other".
+                  color: categories.length > 7 && index >= 6
+                      ? ArthamChartPalette.other
+                      : ArthamChartPalette.at(index),
+                  delay: Duration(milliseconds: 80 * index),
                 ),
                 const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerRight,
-                  child: Text(
-                    '${(share * 100).toStringAsFixed(1)}%',
+                  child: AnimatedPercentText(
+                    fraction: share,
                     style: const TextStyle(
                       color: ArthamColors.muted,
                       fontSize: 10,
@@ -1529,9 +1541,42 @@ class _InsightsScreenState extends State<InsightsScreen> {
               ],
             ),
           );
-        }).toList(),
+          }),
+        ],
       ),
     );
+  }
+
+  /// Largest categories get their own slice; the rest are grouped as "Other"
+  /// so the pie stays readable.
+  List<DonutSlice> _pieSlices(List<_CategoryTotal> categories) {
+    const maxSlices = 6;
+    final slices = <DonutSlice>[];
+    final head = categories.length > maxSlices + 1
+        ? categories.take(maxSlices).toList()
+        : categories;
+    for (var i = 0; i < head.length; i++) {
+      slices.add(
+        DonutSlice(
+          label: head[i].name,
+          value: head[i].amount.toDouble(),
+          color: ArthamChartPalette.at(i),
+        ),
+      );
+    }
+    if (head.length < categories.length) {
+      final rest = categories
+          .skip(head.length)
+          .fold<int>(0, (sum, item) => sum + item.amount);
+      slices.add(
+        DonutSlice(
+          label: 'Other',
+          value: rest.toDouble(),
+          color: ArthamChartPalette.other,
+        ),
+      );
+    }
+    return slices;
   }
 }
 
