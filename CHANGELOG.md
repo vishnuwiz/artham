@@ -1,10 +1,16 @@
+# Changelog
+
+All notable changes to Artham are documented in this file.
+
+The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0). App version numbers and build numbers should be added to each release entry when they are confirmed.
+
 ## [Unreleased]
 
 _No unreleased changes yet._
 
 ## [0.1.1] - 2026-11-13
 
-**GitHub release tag:** \`v0.1.1\`  
+**GitHub release tag:** `v0.1.1`  
 **Platform:** Android beta APK · [Download APK](https://github.com/vishnuwiz/artham/releases/download/v0.1.1/app-release.apk) · [GitHub release page](https://github.com/vishnuwiz/artham/releases/tag/v0.1.1)
 
 A polish release focused on motion and interaction feedback. All effects are skipped when the system "reduce motion" setting is on.
