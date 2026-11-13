@@ -42,6 +42,8 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
   String? _error;
   bool _isParsing = false;
   bool _isSaving = false;
+  bool _accountMatched = false;
+  String? _accountMatchMessage;
 
   @override
   void initState() {
@@ -69,6 +71,8 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
       _isParsing = true;
       _parsed = null;
       _error = null;
+      _accountMatched = false;
+      _accountMatchMessage = null;
     });
 
     try {
@@ -99,6 +103,31 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
       final categories = await _transactionRepository.getCategories(
         parsed.transactionType,
       );
+      final accountMatches = parsed.accountLastFour == null
+          ? <BankAccount>[]
+          : accounts
+                .where(
+                  (account) =>
+                      _normaliseLastFour(account.accountNumberLast4) ==
+                      parsed.accountLastFour,
+                )
+                .toList();
+      final matchedAccount = accountMatches.length == 1
+          ? accountMatches.single
+          : null;
+      final String accountMatchMessage;
+      if (parsed.accountLastFour == null) {
+        accountMatchMessage = 'No account number was detected in this SMS. Select the bank account manually.';
+      } else if (accountMatches.length == 1) {
+        accountMatchMessage =
+            'Matched the saved account ending in ${parsed.accountLastFour}. Please verify it.';
+      } else if (accountMatches.isEmpty) {
+        accountMatchMessage =
+            'No saved account ends in ${parsed.accountLastFour}. Select the bank account manually.';
+      } else {
+        accountMatchMessage =
+            'More than one saved account ends in ${parsed.accountLastFour}. Select the correct account manually.';
+      }
 
       if (!mounted) return;
 
@@ -120,7 +149,9 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
         _parsed = parsed;
         _accounts = accounts;
         _categories = categories;
-        _selectedAccountId = accounts.first.id;
+        _selectedAccountId = matchedAccount?.id;
+        _accountMatched = matchedAccount != null;
+        _accountMatchMessage = accountMatchMessage;
         _selectedCategoryId = suggestedCategory.isNotEmpty
             ? suggestedCategory.first.id
             : (categories.isNotEmpty ? categories.first.id : null);
@@ -137,6 +168,12 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
         _isParsing = false;
       });
     }
+  }
+
+  String? _normaliseLastFour(String? value) {
+    final digits = (value ?? '').replaceAll(RegExp(r'[^0-9]'), '');
+    if (digits.length < 4) return null;
+    return digits.substring(digits.length - 4);
   }
 
   Future<void> _chooseDate() async {
@@ -283,8 +320,10 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
           ),
           const SizedBox(height: 13),
           DropdownButtonFormField<int>(
+            key: const Key('sms-account-dropdown'),
             initialValue: _selectedAccountId,
             isExpanded: true,
+            hint: const Text('Select account'),
             decoration: const InputDecoration(
               labelText: 'Bank account',
               border: OutlineInputBorder(),
@@ -301,8 +340,42 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                 ),
               );
             }).toList(),
-            onChanged: (value) => setState(() => _selectedAccountId = value),
+            onChanged: (value) => setState(() {
+              _selectedAccountId = value;
+              _accountMatched = false;
+              _accountMatchMessage = 'Account selected manually.';
+            }),
           ),
+          if (_accountMatchMessage != null) ...[
+            const SizedBox(height: 8),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  _accountMatched
+                      ? Icons.check_circle_outline_rounded
+                      : Icons.info_outline_rounded,
+                  size: 16,
+                  color: _accountMatched
+                      ? ArthamColors.mint
+                      : ArthamColors.peach,
+                ),
+                const SizedBox(width: 7),
+                Expanded(
+                  child: Text(
+                    _accountMatchMessage!,
+                    style: TextStyle(
+                      color: _accountMatched
+                          ? ArthamColors.mint
+                          : ArthamColors.peach,
+                      fontSize: 11,
+                      height: 1.35,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ],
           const SizedBox(height: 13),
           DropdownButtonFormField<int>(
             initialValue: _selectedCategoryId,
@@ -422,12 +495,15 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             controller: _smsController,
             minLines: 5,
             maxLines: 8,
+            key: const Key('sms-message-field'),
             onChanged: (_) {
               if (_parsed != null || _error != null) {
                 setState(() {
                   _parsed = null;
                   _fingerprint = null;
                   _error = null;
+                  _accountMatched = false;
+                  _accountMatchMessage = null;
                 });
               }
             },
@@ -450,6 +526,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
           SizedBox(
             width: double.infinity,
             child: FilledButton.icon(
+              key: const Key('parse-sms-button'),
               onPressed: _isParsing ? null : _parseMessage,
               style: FilledButton.styleFrom(
                 backgroundColor: ArthamColors.lavender,

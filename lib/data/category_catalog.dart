@@ -63,9 +63,9 @@ DefaultCategory _income(String key, String name, String icon, String color) =>
       colorHex: color,
     );
 
-/// The default category list. Categories that money can flow both ways
-/// through (Investment, Business, Gift, Self Transfer) exist once as an
-/// expense category and once as an income category.
+/// The default category list. Investment, Business and Gift exist as both
+/// expense and income categories. Transfers between owned accounts use the
+/// dedicated transfer transaction type, not an income or expense category.
 final List<DefaultCategory> defaultCategoryCatalog = [
   // Expense
   _expense('investment', 'Investment', 'trending_up', _mint),
@@ -90,18 +90,19 @@ final List<DefaultCategory> defaultCategoryCatalog = [
   _expense('card_repayment', 'Card Repayment', 'credit_card', _lavender),
   _expense('atm', 'ATM', 'local_atm', _mint),
   _expense('bank_charges', 'Bank Charges', 'account_balance', _rose),
-  _expense('self_transfer', 'Self Transfer', 'sync_alt', _lavender),
+
   _expense('loan', 'Loan', 'request_quote', _peach),
   _expense('education', 'Education', 'school', _lemon),
   _expense('other', 'Other', 'category', _lavender),
 
   // Income
   _income('income', 'Income', 'payments', _mint),
+  _income('salary', 'Salary', 'payments', _mint),
   _income('reimbursement', 'Reimbursement', 'currency_exchange', _teal),
   _income('investment', 'Investment', 'trending_up', _mint),
   _income('business', 'Business', 'sell', _teal),
   _income('gift', 'Gift', 'card_giftcard', _pink),
-  _income('self_transfer', 'Self Transfer', 'sync_alt', _lavender),
+
   _income('other', 'Other', 'category', _lavender),
 ];
 
@@ -123,7 +124,7 @@ const Map<String, String> legacyCategorySeedKeys = {
   'expense|Education': 'expense.education',
   'expense|Travel': 'expense.travel',
   'expense|Other Expense': 'expense.other',
-  'income|Salary': 'income.income',
+  'income|Salary': 'income.salary',
   'income|Business Income': 'income.business',
   'income|Investment Returns': 'income.investment',
   'income|Gift': 'income.gift',

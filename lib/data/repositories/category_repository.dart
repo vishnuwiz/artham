@@ -72,7 +72,25 @@ class CategoryRepository {
         bySeedKey[seedKey] = row;
       }
 
-      // 2. Insert any defaults that don't exist yet.
+      // 2. Retire Self Transfer category defaults for both transaction flows.
+      // Moving money between owned accounts is represented by a transfer
+      // transaction, not by an income or expense category. Archive old system
+      // rows instead of deleting them so linked transaction history survives.
+      for (final row in rows) {
+        final isSelfTransferCategory =
+            (row.type == 'income' || row.type == 'expense') &&
+            row.isSystem &&
+            (row.seedKey == 'income.self_transfer' ||
+                row.seedKey == 'expense.self_transfer' ||
+                (row.seedKey == null && _sameName(row.name, 'Self Transfer')));
+        if (!isSelfTransferCategory || row.isArchived) continue;
+
+        await (database.update(database.categories)
+              ..where((category) => category.id.equals(row.id)))
+            .write(const CategoriesCompanion(isArchived: Value(true)));
+      }
+
+      // 3. Insert any defaults that don't exist yet.
       final current = await database.select(database.categories).get();
       for (final item in defaultCategoryCatalog) {
         if (bySeedKey.containsKey(item.seedKey)) continue;

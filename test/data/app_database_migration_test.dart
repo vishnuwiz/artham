@@ -117,8 +117,15 @@ void main() {
     expect(restaurants.seedKey, 'expense.restaurants');
     expect(restaurants.iconKey, 'restaurant');
 
-    final income = await byId(8);
-    expect(income.name, 'Income');
+    final salary = await byId(8);
+    expect(salary.name, 'Salary');
+    expect(salary.seedKey, 'income.salary');
+
+    final income =
+        await (database.select(database.categories)..where(
+              (row) => row.name.equals('Income') & row.type.equals('income'),
+            ))
+            .getSingle();
     expect(income.seedKey, 'income.income');
 
     // Old built-ins with no new equivalent, and the user's own categories,

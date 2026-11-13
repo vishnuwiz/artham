@@ -18,7 +18,7 @@ void main() {
     await database.close();
   });
 
-  testWidgets('keeps category management and adds JSON restore controls', (
+  testWidgets('shows the glass settings layout and supported actions', (
     tester,
   ) async {
     await tester.pumpWidget(
@@ -28,24 +28,68 @@ void main() {
       ),
     );
 
+    expect(find.text('Settings'), findsOneWidget);
+    expect(find.text('Manage your Artham experience'), findsOneWidget);
     expect(find.text('Categories'), findsOneWidget);
-    expect(find.text('Manage categories'), findsOneWidget);
     expect(find.text('Export your data'), findsOneWidget);
-    expect(find.text('Save JSON'), findsOneWidget);
-    expect(find.text('Restore from JSON backup'), findsOneWidget);
+    // Export controls are intentionally hidden until the compact card is expanded.
+
+    expect(find.byKey(const Key('share-csv-button')), findsNothing);
+    expect(find.byKey(const Key('save-csv-button')), findsNothing);
+    expect(find.byKey(const Key('share-json-button')), findsNothing);
+    expect(find.byKey(const Key('save-json-button')), findsNothing);
+    expect(find.byKey(const Key('restore-json-backup-button')), findsNothing);
+    await tester.scrollUntilVisible(
+      find.text('Backup management'),
+      280,
+      scrollable: find.byType(Scrollable).first,
+    );
+    expect(find.text('Backup management'), findsOneWidget);
+    expect(find.text('View backups and manage storage.'), findsOneWidget);
+
+    // Unsupported preferences and system-storage controls are deliberately
+    // not shown as inactive or placeholder rows.
+    expect(find.text('Appearance'), findsNothing);
+    expect(find.text('Notifications'), findsNothing);
+    expect(find.text('App language'), findsNothing);
+    expect(find.text('App storage'), findsNothing);
+    expect(find.text('About Artham'), findsNothing);
+  });
+
+  testWidgets('export section starts collapsed and can be expanded', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildArthamTheme(),
+        home: SettingsScreen(database: database),
+      ),
+    );
+
+    final header = find.byKey(const Key('settings-export-header'));
+    expect(find.byKey(const Key('share-csv-button')), findsNothing);
+    expect(find.byKey(const Key('save-csv-button')), findsNothing);
+    expect(find.byKey(const Key('share-json-button')), findsNothing);
+    expect(find.byKey(const Key('save-json-button')), findsNothing);
+    expect(find.byKey(const Key('restore-json-backup-button')), findsNothing);
+
+    await tester.tap(header);
+    await tester.pumpAndSettle();
+
+    expect(find.byKey(const Key('share-csv-button')), findsOneWidget);
+    expect(find.byKey(const Key('save-csv-button')), findsOneWidget);
+    expect(find.byKey(const Key('share-json-button')), findsOneWidget);
+    expect(find.byKey(const Key('save-json-button')), findsOneWidget);
+    expect(find.byKey(const Key('restore-json-backup-button')), findsOneWidget);
     expect(
-      find.textContaining('automatically saves a safety copy'),
+      find.text('JSON backups are not encrypted. Store backup files securely.'),
       findsOneWidget,
     );
 
-    await tester.scrollUntilVisible(
-      find.text('Manage backups'),
-      300,
-      scrollable: find.byType(Scrollable).first,
-    );
-    expect(find.text('Manage backups'), findsOneWidget);
+    await tester.tap(header);
+    await tester.pumpAndSettle();
+    expect(find.byKey(const Key('share-csv-button')), findsNothing);
   });
-
   testWidgets('category management still opens from Settings', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -54,7 +98,7 @@ void main() {
       ),
     );
 
-    await tester.tap(find.text('Manage categories'));
+    await tester.tap(find.byKey(const Key('settings-categories-row')));
     await tester.pumpAndSettle();
 
     expect(find.byType(CategoriesScreen), findsOneWidget);

@@ -8,6 +8,7 @@ class ParsedSmsTransaction {
   final String description;
   final String suggestedCategory;
   final String? merchantName;
+  final String? accountLastFour;
 
   const ParsedSmsTransaction({
     required this.amountPaise,
@@ -17,6 +18,7 @@ class ParsedSmsTransaction {
     required this.description,
     required this.suggestedCategory,
     this.merchantName,
+    this.accountLastFour,
   });
 }
 
@@ -42,6 +44,13 @@ class SmsTransactionParser {
 
   static final RegExp _amountPattern = RegExp(
     r'(?:₹|\bINR\b|\bRs\.?\s*)\s*([0-9][0-9,]*(?:\.[0-9]{1,2})?)',
+    caseSensitive: false,
+  );
+
+  static final RegExp _accountLastFourPattern = RegExp(
+    r'\b(?:a\s*/\s*c|account|acct\.?)(?:\s*(?:no\.?|number))?'
+    r'(?:\s*(?:ending(?:\s+(?:in|with))?|ends?\s+with|last\s+4(?:\s+digits?)?))?'
+    r'\s*[:#-]?\s*(?:(?:x|\*|â€¢|Â·)\s*)*[-\s]*([0-9]{4,})\b',
     caseSensitive: false,
   );
 
@@ -117,7 +126,14 @@ class SmsTransactionParser {
       description: description,
       suggestedCategory: suggestedCategory,
       merchantName: merchant?.name,
+      accountLastFour: _extractAccountLastFour(text),
     );
+  }
+
+  String? _extractAccountLastFour(String text) {
+    final digits = _accountLastFourPattern.firstMatch(text)?.group(1);
+    if (digits == null || digits.length < 4) return null;
+    return digits.substring(digits.length - 4);
   }
 
   int? _parsePaise(String value) {
@@ -235,7 +251,7 @@ class SmsTransactionParser {
   String _suggestCategory(String text, String transactionType) {
     final lower = text.toLowerCase();
     if (transactionType == 'income') {
-      if (lower.contains('salary')) return 'Income';
+      if (lower.contains('salary')) return 'Salary';
       if (RegExp(r'refund|reimburs|cashback').hasMatch(lower)) {
         return 'Reimbursement';
       }

@@ -1,3 +1,4 @@
+import 'package:drift/drift.dart' show Value;
 import 'package:drift/native.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -25,6 +26,26 @@ void main() {
     late AppDatabase database;
     await tester.runAsync(() async {
       database = AppDatabase.forTesting(NativeDatabase.memory());
+      await database
+          .into(database.categories)
+          .insert(
+            CategoriesCompanion.insert(
+              name: 'Self Transfer',
+              type: 'expense',
+              isSystem: const Value(true),
+              seedKey: const Value('expense.self_transfer'),
+            ),
+          );
+      await database
+          .into(database.categories)
+          .insert(
+            CategoriesCompanion.insert(
+              name: 'Self Transfer',
+              type: 'income',
+              isSystem: const Value(true),
+              seedKey: const Value('income.self_transfer'),
+            ),
+          );
     });
 
     await tester.pumpWidget(
@@ -42,11 +63,14 @@ void main() {
     expect(find.byType(CategoriesScreen), findsOneWidget);
     expect(find.text('Restaurants'), findsOneWidget);
     expect(find.text('Food & Grocery'), findsOneWidget);
+    expect(find.text('Self Transfer'), findsNothing);
 
     // Income tab shows the income defaults.
     await tester.tap(find.text('Income').first);
     await settle(tester);
     expect(find.text('Reimbursement'), findsOneWidget);
+    expect(find.text('Salary'), findsOneWidget);
+    expect(find.text('Self Transfer'), findsNothing);
 
     // Back to Expense and add a custom category.
     await tester.tap(find.text('Expense').first);

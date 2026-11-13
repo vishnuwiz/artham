@@ -6,6 +6,16 @@ import '../../data/repositories/category_repository.dart';
 import '../../theme/artham_theme.dart';
 import '../../theme/category_icons.dart';
 
+/// Archived transfer-category rows are retained for old transaction history,
+/// but transfers are handled by Artham's dedicated transfer transaction type.
+bool _isRetiredSelfTransferCategory(Category category) {
+  return category.seedKey == 'expense.self_transfer' ||
+      category.seedKey == 'income.self_transfer' ||
+      (category.isSystem &&
+          (category.type == 'expense' || category.type == 'income') &&
+          category.name.trim().toLowerCase() == 'self transfer');
+}
+
 /// Settings > Categories: add, edit, hide and restore categories.
 class CategoriesScreen extends StatefulWidget {
   final AppDatabase database;
@@ -163,7 +173,11 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
   @override
   Widget build(BuildContext context) {
     final visible = _categories.where((item) => !item.isArchived).toList();
-    final hidden = _categories.where((item) => item.isArchived).toList();
+    final hidden = _categories
+        .where(
+          (item) => item.isArchived && !_isRetiredSelfTransferCategory(item),
+        )
+        .toList();
 
     return ArthamScaffold(
       appBar: AppBar(

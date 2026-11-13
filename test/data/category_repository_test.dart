@@ -58,6 +58,7 @@ void main() {
       const requested = [
         'Investment',
         'Income',
+        'Salary',
         'Personal',
         'Work',
         'Business',
@@ -80,11 +81,15 @@ void main() {
         'ATM',
         'Bank Charges',
         'Reimbursement',
-        'Self Transfer',
         'Loan',
         'Education',
       ];
       expect(all, containsAll(requested));
+
+      final income = await names('income');
+      expect(income, contains('Salary'));
+      expect(income, isNot(contains('Self Transfer')));
+      expect(await names('expense'), isNot(contains('Self Transfer')));
 
       final rows = await database.select(database.categories).get();
       expect(rows, hasLength(defaultCategoryCatalog.length));
@@ -92,6 +97,47 @@ void main() {
         expect(row.iconKey, isNotNull, reason: row.name);
         expect(row.seedKey, isNotNull, reason: row.name);
         expect(row.isSystem, isTrue);
+      }
+    },
+  );
+
+  test(
+    'archives legacy Self Transfer categories for both account flows',
+    () async {
+      for (final type in ['income', 'expense']) {
+        await database
+            .into(database.categories)
+            .insert(
+              CategoriesCompanion.insert(
+                name: 'Self Transfer',
+                type: type,
+                iconKey: const Value('sync_alt'),
+                colorHex: const Value('#B9A5F5'),
+                isSystem: const Value(true),
+                seedKey: Value('$type.self_transfer'),
+              ),
+            );
+        await database
+            .into(database.categories)
+            .insert(
+              CategoriesCompanion.insert(
+                name: 'Self Transfer',
+                type: type,
+                isSystem: const Value(true),
+              ),
+            );
+      }
+
+      await repository.ensureDefaultCategories();
+
+      for (final type in ['income', 'expense']) {
+        final archived = (await repository.getCategories(
+          type,
+          includeArchived: true,
+        )).where((item) => item.name == 'Self Transfer').toList();
+        expect(archived, hasLength(2), reason: type);
+        expect(archived.every((item) => item.isArchived), isTrue, reason: type);
+        expect(await names(type), isNot(contains('Self Transfer')));
       }
     },
   );

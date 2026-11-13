@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:flutter/services.dart';
 
 import '../../theme/artham_theme.dart';
 
@@ -628,11 +629,25 @@ class _ActivityScreenState extends State<ActivityScreen>
                       ),
                     ),
                     const Spacer(),
-                    Text(
-                      '${transactions.length} records',
-                      style: const TextStyle(
-                        color: ArthamColors.muted,
-                        fontSize: 12,
+                    AnimatedSwitcher(
+                      duration: const Duration(milliseconds: 210),
+                      transitionBuilder: (child, animation) => FadeTransition(
+                        opacity: animation,
+                        child: ScaleTransition(
+                          scale: Tween<double>(
+                            begin: 0.96,
+                            end: 1,
+                          ).animate(animation),
+                          child: child,
+                        ),
+                      ),
+                      child: Text(
+                        '${transactions.length} records',
+                        key: ValueKey<int>(transactions.length),
+                        style: const TextStyle(
+                          color: ArthamColors.muted,
+                          fontSize: 12,
+                        ),
                       ),
                     ),
                     const SizedBox(width: 8),
@@ -648,7 +663,17 @@ class _ActivityScreenState extends State<ActivityScreen>
                 if (transactions.isEmpty)
                   _buildNoResults()
                 else
-                  ...transactions.map((tx) => _buildTransactionCard(tx, data)),
+                  ...transactions.asMap().entries.map((entry) {
+                    final index = entry.key;
+                    final transaction = entry.value;
+                    final card = _buildTransactionCard(transaction, data);
+                    if (index >= 8) return card;
+                    return _ActivityEntryReveal(
+                      key: ValueKey<int>(transaction.id),
+                      delay: Duration(milliseconds: index * 32),
+                      child: card,
+                    );
+                  }),
               ],
             ),
           );
@@ -677,7 +702,10 @@ class _ActivityScreenState extends State<ActivityScreen>
                   child: ChoiceChip(
                     label: Text(item.$1),
                     selected: selected,
-                    onSelected: (_) => setState(() => _selectedType = item.$2),
+                    onSelected: (_) {
+                      if (!selected) HapticFeedback.selectionClick();
+                      setState(() => _selectedType = item.$2);
+                    },
                     selectedColor: activityGreen.withValues(alpha: 0.13),
                     backgroundColor: ArthamColors.glass,
                     labelStyle: TextStyle(
@@ -776,9 +804,9 @@ class _ActivityScreenState extends State<ActivityScreen>
                 style: TextStyle(color: Colors.white70, fontSize: 12),
               ),
               const Spacer(),
-              Text(
+              _animatedAmount(
                 _formatAmount(income - expenses),
-                style: const TextStyle(
+                const TextStyle(
                   color: Colors.white,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
@@ -793,6 +821,25 @@ class _ActivityScreenState extends State<ActivityScreen>
           ),
         ],
       ),
+    );
+  }
+
+  Widget _animatedAmount(String value, TextStyle style) {
+    return AnimatedSwitcher(
+      duration: const Duration(milliseconds: 260),
+      switchInCurve: Curves.easeOutCubic,
+      switchOutCurve: Curves.easeInCubic,
+      transitionBuilder: (child, animation) => FadeTransition(
+        opacity: animation,
+        child: SlideTransition(
+          position: Tween<Offset>(
+            begin: const Offset(0, 0.18),
+            end: Offset.zero,
+          ).animate(animation),
+          child: child,
+        ),
+      ),
+      child: Text(value, key: ValueKey<String>(value), style: style),
     );
   }
 
@@ -811,13 +858,9 @@ class _ActivityScreenState extends State<ActivityScreen>
           ],
         ),
         const SizedBox(height: 8),
-        Text(
+        _animatedAmount(
           amount,
-          style: TextStyle(
-            color: color,
-            fontSize: 17,
-            fontWeight: FontWeight.w800,
-          ),
+          TextStyle(color: color, fontSize: 17, fontWeight: FontWeight.w800),
         ),
       ],
     );
@@ -846,86 +889,91 @@ class _ActivityScreenState extends State<ActivityScreen>
         ? '$sourceAccount → $destinationAccount'
         : sourceAccount;
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 11),
-      decoration: BoxDecoration(
-        gradient: ArthamColors.glassGradient,
-        border: ArthamColors.glassBorder,
-        borderRadius: BorderRadius.circular(18),
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
+    return _ActivityPressScale(
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 11),
+        decoration: BoxDecoration(
+          gradient: ArthamColors.glassGradient,
+          border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(18),
-          onTap: () => _openTransaction(transaction),
-          child: Padding(
-            padding: const EdgeInsets.all(15),
-            child: Row(
-              children: [
-                Container(
-                  height: 46,
-                  width: 46,
-                  decoration: BoxDecoration(
-                    color: color.withValues(alpha: 0.10),
-                    borderRadius: BorderRadius.circular(14),
+        ),
+        child: Material(
+          color: Colors.transparent,
+          child: InkWell(
+            borderRadius: BorderRadius.circular(18),
+            onTap: () {
+              HapticFeedback.selectionClick();
+              _openTransaction(transaction);
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(15),
+              child: Row(
+                children: [
+                  Container(
+                    height: 46,
+                    width: 46,
+                    decoration: BoxDecoration(
+                      color: color.withValues(alpha: 0.10),
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Icon(
+                      isTransfer
+                          ? Icons.swap_horiz_rounded
+                          : _categoryIcon(categoryName),
+                      color: color,
+                      size: 22,
+                    ),
                   ),
-                  child: Icon(
-                    isTransfer
-                        ? Icons.swap_horiz_rounded
-                        : _categoryIcon(categoryName),
-                    color: color,
-                    size: 22,
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        data.merchantNames[transaction.merchantId] ??
-                            (transaction.description?.isNotEmpty == true
-                                ? transaction.description!
-                                : categoryName),
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: activityNavy,
-                          fontWeight: FontWeight.w700,
-                          fontSize: 13,
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          data.merchantNames[transaction.merchantId] ??
+                              (transaction.description?.isNotEmpty == true
+                                  ? transaction.description!
+                                  : categoryName),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: activityNavy,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        '$categoryName · $accountName',
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
-                          color: ArthamColors.muted,
-                          fontSize: 10,
+                        const SizedBox(height: 4),
+                        Text(
+                          '$categoryName · $accountName',
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            color: ArthamColors.muted,
+                            fontSize: 10,
+                          ),
                         ),
-                      ),
-                      const SizedBox(height: 4),
-                      Text(
-                        _formatDate(transaction.transactionDate),
-                        style: const TextStyle(
-                          color: ArthamColors.faint,
-                          fontSize: 10,
+                        const SizedBox(height: 4),
+                        Text(
+                          _formatDate(transaction.transactionDate),
+                          style: const TextStyle(
+                            color: ArthamColors.faint,
+                            fontSize: 10,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                const SizedBox(width: 8),
-                Text(
-                  '${isIncome ? '+' : '−'}${_formatAmount(transaction.amountPaise)}',
-                  style: TextStyle(
-                    color: color,
-                    fontWeight: FontWeight.w800,
-                    fontSize: 13,
+                  const SizedBox(width: 8),
+                  Text(
+                    '${isIncome ? '+' : '−'}${_formatAmount(transaction.amountPaise)}',
+                    style: TextStyle(
+                      color: color,
+                      fontWeight: FontWeight.w800,
+                      fontSize: 13,
+                    ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
           ),
         ),
@@ -996,6 +1044,83 @@ class _ActivityScreenState extends State<ActivityScreen>
             child: const Text('Clear search and filters'),
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _ActivityEntryReveal extends StatefulWidget {
+  const _ActivityEntryReveal({
+    super.key,
+    required this.child,
+    required this.delay,
+  });
+
+  final Widget child;
+  final Duration delay;
+
+  @override
+  State<_ActivityEntryReveal> createState() => _ActivityEntryRevealState();
+}
+
+class _ActivityEntryRevealState extends State<_ActivityEntryReveal> {
+  bool _visible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    Future<void>.delayed(widget.delay, () {
+      if (mounted) setState(() => _visible = true);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return IgnorePointer(
+      ignoring: !_visible,
+      child: AnimatedOpacity(
+        opacity: _visible ? 1 : 0,
+        duration: const Duration(milliseconds: 240),
+        curve: Curves.easeOutCubic,
+        child: AnimatedSlide(
+          offset: _visible ? Offset.zero : const Offset(0, 0.035),
+          duration: const Duration(milliseconds: 280),
+          curve: Curves.easeOutCubic,
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+class _ActivityPressScale extends StatefulWidget {
+  const _ActivityPressScale({required this.child});
+
+  final Widget child;
+
+  @override
+  State<_ActivityPressScale> createState() => _ActivityPressScaleState();
+}
+
+class _ActivityPressScaleState extends State<_ActivityPressScale> {
+  bool _pressed = false;
+
+  void _setPressed(bool value) {
+    if (_pressed == value || !mounted) return;
+    setState(() => _pressed = value);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Listener(
+      onPointerDown: (_) => _setPressed(true),
+      onPointerUp: (_) => _setPressed(false),
+      onPointerCancel: (_) => _setPressed(false),
+      child: AnimatedScale(
+        scale: _pressed ? 0.985 : 1,
+        duration: const Duration(milliseconds: 130),
+        curve: Curves.easeOutCubic,
+        child: widget.child,
       ),
     );
   }

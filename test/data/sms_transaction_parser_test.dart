@@ -18,6 +18,42 @@ void main() {
     expect(result.suggestedCategory, 'Restaurants');
   });
 
+  test('extracts last four digits from a masked bank account number', () {
+    final result = SmsTransactionParser().parse(
+      'Your A/c XX1234 was debited by Rs. 500 on 10-11-2026 to Swiggy.',
+    );
+
+    expect(result, isNotNull);
+    expect(result!.accountLastFour, '1234');
+  });
+
+  test('extracts last four digits from an account-ending phrase', () {
+    final result = SmsTransactionParser().parse(
+      'Rs. 500 debited from account ending in 5678 on 10-11-2026.',
+    );
+
+    expect(result, isNotNull);
+    expect(result!.accountLastFour, '5678');
+  });
+
+  test('extracts the suffix from a full account number after A/c No.', () {
+    final result = SmsTransactionParser().parse(
+      'A/c No. 1234567890 debited by Rs. 500 on 10-11-2026.',
+    );
+
+    expect(result, isNotNull);
+    expect(result!.accountLastFour, '7890');
+  });
+
+  test('does not mistake a UPI reference for the bank account suffix', () {
+    final result = SmsTransactionParser().parse(
+      'Rs. 500 debited for a purchase. UPI Ref 123456789012',
+    );
+
+    expect(result, isNotNull);
+    expect(result!.accountLastFour, isNull);
+  });
+
   test('recognises Instamart as groceries rather than regular Swiggy', () {
     final result = SmsTransactionParser().parse(
       'Rs. 650 debited to SWIGGY INSTAMART on 10-11-2026. UPI Ref 123456789012',
@@ -62,7 +98,7 @@ void main() {
 
     expect(result, isNotNull);
     expect(result!.transactionType, 'income');
-    expect(result.suggestedCategory, 'Income');
+    expect(result.suggestedCategory, 'Salary');
     expect(result.amountPaise, 8250000);
   });
 
