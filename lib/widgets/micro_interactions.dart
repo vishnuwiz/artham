@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/services.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -265,72 +267,84 @@ class SlidingSegmented extends StatelessWidget {
     final reduce = MediaQuery.of(context).disableAnimations;
     final duration = reduce ? Duration.zero : slideDuration;
     const pad = 3.0;
+    const border = 1.0;
+    const chrome = (pad + border) * 2;
     final radius = BorderRadius.circular(height);
 
-    return Container(
-      width: segmentWidth * labels.length + pad * 2,
-      height: height,
-      padding: const EdgeInsets.all(pad),
-      decoration: BoxDecoration(
-        color: ArthamColors.glass,
-        borderRadius: radius,
-        border: Border.all(color: ArthamColors.line),
-      ),
-      child: Stack(
-        children: [
-          AnimatedPositioned(
-            duration: duration,
-            curve: Curves.easeOutBack,
-            left: selectedIndex * segmentWidth,
-            top: 0,
-            bottom: 0,
-            width: segmentWidth,
-            child: DecoratedBox(
-              key: const ValueKey('sliding-segmented-pill'),
-              decoration: BoxDecoration(
-                color: accent.withValues(alpha: 0.18),
-                borderRadius: radius,
-                border: Border.all(color: accent.withValues(alpha: 0.4)),
-                boxShadow: [
-                  BoxShadow(
-                    color: accent.withValues(alpha: 0.22),
-                    blurRadius: 10,
-                  ),
-                ],
-              ),
-            ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final desired = segmentWidth * labels.length + chrome;
+        final width = constraints.maxWidth.isFinite
+            ? math.min(desired, constraints.maxWidth)
+            : desired;
+        final segment = (width - chrome) / labels.length;
+
+        return Container(
+          width: width,
+          height: height,
+          padding: const EdgeInsets.all(pad),
+          decoration: BoxDecoration(
+            color: ArthamColors.glass,
+            borderRadius: radius,
+            border: Border.all(color: ArthamColors.line, width: border),
           ),
-          Row(
+          child: Stack(
             children: [
-              for (var i = 0; i < labels.length; i++)
-                SizedBox(
-                  width: segmentWidth,
-                  child: Semantics(
-                    button: true,
-                    selected: i == selectedIndex,
-                    child: InkWell(
-                      borderRadius: radius,
-                      onTap: () => onChanged(i),
-                      child: Center(
-                        child: AnimatedDefaultTextStyle(
-                          duration: duration,
-                          style: TextStyle(
-                            color: i == selectedIndex
-                                ? accent
-                                : ArthamColors.muted,
-                            fontSize: 12,
-                            fontWeight: FontWeight.w700,
+              AnimatedPositioned(
+                duration: duration,
+                curve: Curves.easeOutBack,
+                left: selectedIndex * segment,
+                top: 0,
+                bottom: 0,
+                width: segment,
+                child: DecoratedBox(
+                  key: const ValueKey('sliding-segmented-pill'),
+                  decoration: BoxDecoration(
+                    color: accent.withValues(alpha: 0.18),
+                    borderRadius: radius,
+                    border: Border.all(color: accent.withValues(alpha: 0.4)),
+                    boxShadow: [
+                      BoxShadow(
+                        color: accent.withValues(alpha: 0.22),
+                        blurRadius: 10,
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  for (var i = 0; i < labels.length; i++)
+                    SizedBox(
+                      width: segment,
+                      child: Semantics(
+                        button: true,
+                        selected: i == selectedIndex,
+                        child: InkWell(
+                          borderRadius: radius,
+                          onTap: () => onChanged(i),
+                          child: Center(
+                            child: AnimatedDefaultTextStyle(
+                              duration: duration,
+                              style: TextStyle(
+                                color: i == selectedIndex
+                                    ? accent
+                                    : ArthamColors.muted,
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                              ),
+                              child: Text(labels[i]),
+                            ),
                           ),
-                          child: Text(labels[i]),
                         ),
                       ),
                     ),
-                  ),
-                ),
+                ],
+              ),
             ],
           ),
-        ],
-      ),
+        );
+      },
     );
   }
 }
