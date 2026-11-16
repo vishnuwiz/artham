@@ -33,6 +33,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
 
   final _amountController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _tagController = TextEditingController();
+  final List<String> _tags = [];
 
   List<BankAccount> _accounts = [];
   List<Category> _categories = [];
@@ -66,6 +68,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
   void dispose() {
     _amountController.dispose();
     _descriptionController.dispose();
+    _tagController.dispose();
     super.dispose();
   }
 
@@ -175,6 +178,102 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     });
   }
 
+  void _addTag([String? rawValue]) {
+    final value = (rawValue ?? _tagController.text)
+        .trim()
+        .replaceFirst(RegExp(r'^#+'), '')
+        .replaceAll(RegExp(r'\s+'), ' ');
+    if (value.isEmpty) return;
+
+    if (_tags.length >= 8) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('You can add up to 8 tags.')),
+      );
+      return;
+    }
+    if (_tags.any((tag) => tag.toLowerCase() == value.toLowerCase())) {
+      _tagController.clear();
+      return;
+    }
+
+    HapticFeedback.selectionClick();
+    setState(() {
+      _tags.add(value);
+      _tagController.clear();
+    });
+  }
+
+  void _removeTag(String tag) {
+    HapticFeedback.selectionClick();
+    setState(() => _tags.remove(tag));
+  }
+
+  String? get _tagNotes =>
+      _tags.isEmpty ? null : _tags.map((tag) => '#$tag').join(', ');
+
+  Widget _buildTagsField() {
+    return AnimatedSize(
+      duration: const Duration(milliseconds: 240),
+      curve: Curves.easeInOutCubic,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          TextField(
+            controller: _tagController,
+            textCapitalization: TextCapitalization.words,
+            textInputAction: TextInputAction.done,
+            onSubmitted: (_) => _addTag(),
+            decoration:
+                _decoration(
+                  'Tags (optional)',
+                  hint: 'Add a tag and press enter',
+                  prefix: const Icon(
+                    Icons.sell_outlined,
+                    color: transactionGreen,
+                  ),
+                ).copyWith(
+                  suffixIcon: IconButton(
+                    tooltip: 'Add tag',
+                    onPressed: () => _addTag(),
+                    icon: const Icon(Icons.add_circle_outline_rounded),
+                  ),
+                ),
+          ),
+          if (_tags.isNotEmpty) ...[
+            const SizedBox(height: 9),
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: _tags.map((tag) {
+                return AnimatedSwitcher(
+                  duration: const Duration(milliseconds: 180),
+                  switchInCurve: Curves.easeOutBack,
+                  switchOutCurve: Curves.easeIn,
+                  child: InputChip(
+                    key: ValueKey(tag),
+                    label: Text('#$tag'),
+                    onDeleted: () => _removeTag(tag),
+                    deleteIcon: const Icon(Icons.close_rounded, size: 15),
+                    backgroundColor: transactionGreen.withValues(alpha: 0.12),
+                    side: BorderSide(
+                      color: transactionGreen.withValues(alpha: 0.35),
+                    ),
+                    labelStyle: const TextStyle(
+                      color: transactionNavy,
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                    visualDensity: VisualDensity.compact,
+                  ),
+                );
+              }).toList(),
+            ),
+          ],
+        ],
+      ),
+    );
+  }
+
   Future<void> _selectDate() async {
     final selected = await showDatePicker(
       context: context,
@@ -255,6 +354,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         amountPaise: (amount * 100).round(),
         transactionDate: _transactionDate,
         description: description.isEmpty ? 'Own account transfer' : description,
+        notes: _tagNotes,
       );
 
       if (!mounted) return;
@@ -309,6 +409,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         transactionType: _transactionType,
         transactionDate: _transactionDate,
         description: _descriptionController.text.trim(),
+        notes: _tagNotes,
       );
 
       if (!mounted) return;
@@ -952,6 +1053,8 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               prefix: const Icon(Icons.notes_rounded, color: transactionGreen),
             ),
           ),
+          const SizedBox(height: 12),
+          _buildTagsField(),
           if (_merchantSuggestion != null) ...[
             const SizedBox(height: 6),
             Row(

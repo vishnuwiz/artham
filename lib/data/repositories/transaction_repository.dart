@@ -63,6 +63,7 @@ class TransactionRepository {
     required String transactionType,
     required DateTime transactionDate,
     String? description,
+    String? notes,
   }) async {
     if (transactionType != 'income' && transactionType != 'expense') {
       throw ArgumentError('Invalid transaction type');
@@ -93,6 +94,9 @@ class TransactionRepository {
               description == null || description.trim().isEmpty
                   ? null
                   : description.trim(),
+            ),
+            notes: Value(
+              notes == null || notes.trim().isEmpty ? null : notes.trim(),
             ),
             source: const Value('manual'),
           ),
