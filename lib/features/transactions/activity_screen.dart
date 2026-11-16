@@ -507,12 +507,13 @@ class _ActivityScreenState extends State<ActivityScreen>
           const SizedBox(width: 6),
         ],
       ),
-      floatingActionButton: FloatingActionButton.extended(
+      floatingActionButton: FloatingActionButton(
         onPressed: _addTransaction,
+        tooltip: 'Add transaction',
         backgroundColor: activityGreen,
         foregroundColor: ArthamColors.onAccent,
-        icon: const Icon(Icons.add_rounded),
-        label: const Text('Add Transaction'),
+        shape: const CircleBorder(),
+        child: const Icon(Icons.add_rounded, size: 30),
       ),
       body: FutureBuilder<_ActivityData>(
         future: _activityFuture,

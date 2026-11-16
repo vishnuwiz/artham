@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:material_ui/material_ui.dart';
 
 import '../../theme/artham_theme.dart';
@@ -8,6 +10,7 @@ import 'package:flutter/services.dart';
 
 import '../../data/app_database.dart';
 import '../../data/merchant_intelligence.dart';
+import '../../data/repositories/category_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
 const Color transactionGreen = ArthamColors.lavender;
@@ -329,6 +332,309 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
+  Category? get _selectedCategory {
+    for (final category in _categories) {
+      if (category.id == _selectedCategoryId) return category;
+    }
+    return null;
+  }
+
+  Future<int?> _createCategoryFromPicker() async {
+    final controller = TextEditingController();
+    try {
+      final name = await showDialog<String>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('New category'),
+          content: TextField(
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+            maxLength: CategoryRepository.maxNameLength,
+            decoration: const InputDecoration(
+              labelText: 'Category name',
+              hintText: 'e.g. Coffee',
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              onPressed: () => Navigator.pop(dialogContext, controller.text),
+              child: const Text('Create'),
+            ),
+          ],
+        ),
+      );
+
+      if (name == null || name.trim().isEmpty) return null;
+
+      final id = await CategoryRepository(widget.database).createCategory(
+        name: name,
+        type: _transactionType,
+        iconKey: fallbackCategoryIconKey,
+        colorHex: '#B99AFF',
+      );
+      final categories = await _repository.getCategories(_transactionType);
+
+      if (!mounted) return null;
+      setState(() {
+        _categories = categories;
+        _selectedCategoryId = id;
+        _categoryWasManuallySelected = true;
+      });
+      return id;
+    } catch (error) {
+      if (mounted) {
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text(error.toString())));
+      }
+      return null;
+    } finally {
+      controller.dispose();
+    }
+  }
+
+  Future<void> _selectCategory() async {
+    if (_categories.isEmpty) return;
+
+    final selectedId = await showModalBottomSheet<int>(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      barrierColor: Colors.black.withValues(alpha: 0.48),
+      builder: (sheetContext) {
+        var query = '';
+
+        return StatefulBuilder(
+          builder: (context, setSheetState) {
+            final filteredCategories = _categories.where((category) {
+              return category.name.toLowerCase().contains(
+                query.trim().toLowerCase(),
+              );
+            }).toList();
+
+            return SafeArea(
+              top: false,
+              child: Padding(
+                padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom,
+                ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(30),
+                  ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.76,
+                      decoration: BoxDecoration(
+                        // A darker, more opaque tint keeps the form behind the
+                        // sheet from competing with the category picker.
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xE91D1B30),
+                            Color(0xED292738),
+                            Color(0xEF20202B),
+                          ],
+                        ),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.20),
+                          width: 1,
+                        ),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.28),
+                            blurRadius: 28,
+                            offset: const Offset(0, -8),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Container(
+                            width: 42,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.white38,
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
+                            child: Row(
+                              children: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(sheetContext),
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(color: ArthamColors.debit),
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: Text(
+                                    'Select Category',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: transactionNavy,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () async {
+                                    final id =
+                                        await _createCategoryFromPicker();
+                                    if (id != null && sheetContext.mounted) {
+                                      Navigator.pop(sheetContext, id);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.add_rounded, size: 19),
+                                  label: const Text('New'),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: ArthamColors.lavender,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+                            child: TextField(
+                              onChanged: (value) =>
+                                  setSheetState(() => query = value),
+                              decoration: InputDecoration(
+                                hintText: 'Search category...',
+                                prefixIcon: const Icon(Icons.search_rounded),
+                                filled: true,
+                                fillColor: Colors.white.withValues(
+                                  alpha: 0.055,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: const BorderSide(
+                                    color: ArthamColors.line,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: const BorderSide(
+                                    color: ArthamColors.line,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                          Expanded(
+                            child: filteredCategories.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'No matching categories',
+                                      style: TextStyle(
+                                        color: ArthamColors.muted,
+                                      ),
+                                    ),
+                                  )
+                                : SingleChildScrollView(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      18,
+                                      4,
+                                      18,
+                                      24,
+                                    ),
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 8,
+                                      runSpacing: 10,
+                                      children: filteredCategories.map((
+                                        category,
+                                      ) {
+                                        final selected =
+                                            category.id == _selectedCategoryId;
+                                        final color = categoryColorFor(
+                                          category.colorHex,
+                                        );
+
+                                        return ChoiceChip(
+                                          showCheckmark: false,
+                                          selected: selected,
+                                          onSelected: (_) {
+                                            HapticFeedback.selectionClick();
+                                            Navigator.pop(
+                                              sheetContext,
+                                              category.id,
+                                            );
+                                          },
+                                          avatar: Icon(
+                                            categoryIconFor(category.iconKey),
+                                            size: 17,
+                                            color: color,
+                                          ),
+                                          label: Text(category.name),
+                                          labelStyle: TextStyle(
+                                            color: selected
+                                                ? color
+                                                : transactionNavy,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                          ),
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.035),
+                                          selectedColor: color.withValues(
+                                            alpha: 0.19,
+                                          ),
+                                          side: BorderSide(
+                                            color: color.withValues(
+                                              alpha: selected ? 1 : 0.65,
+                                            ),
+                                            width: selected ? 1.8 : 1,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              26,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 9,
+                                            vertical: 8,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+            );
+          },
+        );
+      },
+    );
+
+    if (selectedId != null && mounted) {
+      setState(() {
+        _selectedCategoryId = selectedId;
+        _categoryWasManuallySelected = true;
+      });
+    }
+  }
+
   InputDecoration _decoration(String label, {String? hint, Widget? prefix}) {
     return InputDecoration(
       labelText: label,
@@ -364,7 +670,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         foregroundColor: transactionNavy,
         elevation: 0,
         title: const Text(
-          'Add Transaction',
+          'New Transaction',
           style: TextStyle(fontWeight: FontWeight.w800),
         ),
       ),
@@ -596,30 +902,41 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           ] else ...[
             const SizedBox(height: 16),
 
-            DropdownButtonFormField<int>(
-              key: ValueKey<int?>(_selectedCategoryId),
-              initialValue: _selectedCategoryId,
-              isExpanded: true,
-              decoration: _decoration(
-                'Category',
-                prefix: const Icon(
-                  Icons.category_outlined,
-                  color: transactionGreen,
+            InkWell(
+              onTap: _selectCategory,
+              borderRadius: BorderRadius.circular(15),
+              child: InputDecorator(
+                decoration: _decoration('Category'),
+                child: Row(
+                  children: [
+                    if (_selectedCategory != null)
+                      CategoryIconBadge.forCategory(
+                        _selectedCategory!,
+                        size: 30,
+                      )
+                    else
+                      const CategoryIconBadge(
+                        iconKey: fallbackCategoryIconKey,
+                        colorHex: '#B99AFF',
+                        size: 30,
+                      ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Text(
+                        _selectedCategory?.name ?? 'Choose a category',
+                        style: const TextStyle(
+                          color: transactionNavy,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ),
+                    const Icon(
+                      Icons.keyboard_arrow_down_rounded,
+                      color: transactionGreen,
+                    ),
+                  ],
                 ),
               ),
-              items: _categories.map((category) {
-                return DropdownMenuItem<int>(
-                  value: category.id,
-                  child: CategoryLabel(category: category),
-                );
-              }).toList(),
-              onChanged: (value) {
-                setState(() {
-                  _selectedCategoryId = value;
-                  _categoryWasManuallySelected = true;
-                });
-              },
-              validator: (value) => value == null ? 'Select a category' : null,
             ),
           ],
 
