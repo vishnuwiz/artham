@@ -7,12 +7,15 @@ import 'features/transactions/activity_screen.dart';
 import 'features/budgets/budgets_screen.dart';
 import 'features/insights/insights_screen.dart';
 import 'data/app_database.dart';
+import 'data/alerts/alert_center.dart';
+import 'data/alerts/notification_service.dart';
 import 'data/backup_manager.dart';
 import 'data/repositories/account_repository.dart';
 import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'data/repositories/category_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'features/alerts/alerts_screen.dart';
 import 'widgets/animated_charts.dart';
 import 'widgets/micro_interactions.dart';
 import 'features/settings/settings_screen.dart';
@@ -118,7 +121,34 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     _loadAccounts();
     if (!_skipStartupSplashForTests) {
       unawaited(_checkScheduledBackup());
+      unawaited(_startAlerts());
     }
+  }
+
+  Future<void> _startAlerts() async {
+    // Tapping a notification while the app is open lands on the Alerts screen.
+    NotificationService.instance.onOpenAlerts = () {
+      if (mounted) unawaited(_openAlerts());
+    };
+    await AlertCenter.instance.start(appDatabase);
+    if (!mounted) return;
+    if (await NotificationService.instance.wasLaunchedByNotification()) {
+      if (mounted) unawaited(_openAlerts());
+    }
+  }
+
+  void _refreshAlerts() {
+    if (_skipStartupSplashForTests) return;
+    unawaited(AlertCenter.instance.refresh(appDatabase));
+  }
+
+  Future<void> _openAlerts() async {
+    await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => AlertsScreen(database: appDatabase)),
+    );
+    // Reading alerts can change the unread badge.
+    await AlertCenter.instance.load();
   }
 
   @override
@@ -126,11 +156,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     if (state == AppLifecycleState.resumed && mounted) {
       setState(_loadAccounts);
       unawaited(_checkScheduledBackup());
+      _refreshAlerts();
     }
   }
 
   @override
   void dispose() {
+    NotificationService.instance.onOpenAlerts = null;
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
   }
@@ -250,6 +282,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               _loadAccounts();
             }
           });
+          _refreshAlerts();
         },
         tabs: const [
           ArthamTab(icon: Icons.home_outlined, label: 'Home'),
@@ -325,9 +358,41 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ],
         ),
         const Spacer(),
-        IconButton.filledTonal(
-          onPressed: () {},
-          icon: const Icon(Icons.notifications_none_rounded),
+        ValueListenableBuilder<int>(
+          valueListenable: AlertCenter.instance.unreadCount,
+          builder: (context, unread, _) {
+            return Stack(
+              clipBehavior: Clip.none,
+              children: [
+                IconButton.filledTonal(
+                  key: const Key('home-alerts-button'),
+                  tooltip: unread > 0 ? 'Alerts, $unread new' : 'Alerts',
+                  onPressed: _openAlerts,
+                  icon: const Icon(Icons.notifications_none_rounded),
+                ),
+                if (unread > 0)
+                  Positioned(
+                    right: 9,
+                    top: 9,
+                    child: IgnorePointer(
+                      child: Container(
+                        key: const Key('home-alerts-badge'),
+                        width: 11,
+                        height: 11,
+                        decoration: BoxDecoration(
+                          color: ArthamColors.debit,
+                          shape: BoxShape.circle,
+                          border: Border.all(
+                            color: ArthamColors.sheet,
+                            width: 2,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+              ],
+            );
+          },
         ),
         const SizedBox(width: 4),
         CircleAvatar(
