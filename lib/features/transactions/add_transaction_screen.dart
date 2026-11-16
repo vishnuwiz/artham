@@ -1,3 +1,5 @@
+import 'dart:ui' show ImageFilter;
+
 import 'package:material_ui/material_ui.dart';
 
 import '../../theme/artham_theme.dart';
@@ -420,166 +422,202 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 padding: EdgeInsets.only(
                   bottom: MediaQuery.of(context).viewInsets.bottom,
                 ),
-                child: Container(
-                  height: MediaQuery.of(context).size.height * 0.76,
-                  decoration: BoxDecoration(
-                    gradient: ArthamColors.glassGradient,
-                    border: Border.all(color: ArthamColors.line),
-                    borderRadius: const BorderRadius.vertical(
-                      top: Radius.circular(30),
-                    ),
+                child: ClipRRect(
+                  borderRadius: const BorderRadius.vertical(
+                    top: Radius.circular(30),
                   ),
-                  child: Column(
-                    children: [
-                      const SizedBox(height: 12),
-                      Container(
-                        width: 42,
-                        height: 4,
-                        decoration: BoxDecoration(
-                          color: Colors.white38,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                      ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
-                        child: Row(
-                          children: [
-                            TextButton(
-                              onPressed: () => Navigator.pop(sheetContext),
-                              child: const Text(
-                                'Cancel',
-                                style: TextStyle(color: ArthamColors.debit),
-                              ),
-                            ),
-                            const Expanded(
-                              child: Text(
-                                'Select Category',
-                                textAlign: TextAlign.center,
-                                style: TextStyle(
-                                  color: transactionNavy,
-                                  fontSize: 17,
-                                  fontWeight: FontWeight.w800,
-                                ),
-                              ),
-                            ),
-                            TextButton.icon(
-                              onPressed: () async {
-                                final id = await _createCategoryFromPicker();
-                                if (id != null && sheetContext.mounted) {
-                                  Navigator.pop(sheetContext, id);
-                                }
-                              },
-                              icon: const Icon(Icons.add_rounded, size: 19),
-                              label: const Text('New'),
-                              style: TextButton.styleFrom(
-                                foregroundColor: ArthamColors.lavender,
-                              ),
-                            ),
+                  child: BackdropFilter(
+                    filter: ImageFilter.blur(sigmaX: 22, sigmaY: 22),
+                    child: Container(
+                      height: MediaQuery.of(context).size.height * 0.76,
+                      decoration: BoxDecoration(
+                        // A darker, more opaque tint keeps the form behind the
+                        // sheet from competing with the category picker.
+                        gradient: const LinearGradient(
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                          colors: [
+                            Color(0xE91D1B30),
+                            Color(0xED292738),
+                            Color(0xEF20202B),
                           ],
                         ),
+                        border: Border.all(
+                          color: Colors.white.withValues(alpha: 0.20),
+                          width: 1,
+                        ),
+                        borderRadius: const BorderRadius.vertical(
+                          top: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.28),
+                            blurRadius: 28,
+                            offset: const Offset(0, -8),
+                          ),
+                        ],
                       ),
-                      Padding(
-                        padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
-                        child: TextField(
-                          onChanged: (value) =>
-                              setSheetState(() => query = value),
-                          decoration: InputDecoration(
-                            hintText: 'Search category...',
-                            prefixIcon: const Icon(Icons.search_rounded),
-                            filled: true,
-                            fillColor: Colors.white.withValues(alpha: 0.055),
-                            contentPadding: const EdgeInsets.symmetric(
-                              vertical: 12,
+                      child: Column(
+                        children: [
+                          const SizedBox(height: 12),
+                          Container(
+                            width: 42,
+                            height: 4,
+                            decoration: BoxDecoration(
+                              color: Colors.white38,
+                              borderRadius: BorderRadius.circular(8),
                             ),
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(
-                                color: ArthamColors.line,
-                              ),
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(18, 16, 18, 12),
+                            child: Row(
+                              children: [
+                                TextButton(
+                                  onPressed: () => Navigator.pop(sheetContext),
+                                  child: const Text(
+                                    'Cancel',
+                                    style: TextStyle(color: ArthamColors.debit),
+                                  ),
+                                ),
+                                const Expanded(
+                                  child: Text(
+                                    'Select Category',
+                                    textAlign: TextAlign.center,
+                                    style: TextStyle(
+                                      color: transactionNavy,
+                                      fontSize: 17,
+                                      fontWeight: FontWeight.w800,
+                                    ),
+                                  ),
+                                ),
+                                TextButton.icon(
+                                  onPressed: () async {
+                                    final id =
+                                        await _createCategoryFromPicker();
+                                    if (id != null && sheetContext.mounted) {
+                                      Navigator.pop(sheetContext, id);
+                                    }
+                                  },
+                                  icon: const Icon(Icons.add_rounded, size: 19),
+                                  label: const Text('New'),
+                                  style: TextButton.styleFrom(
+                                    foregroundColor: ArthamColors.lavender,
+                                  ),
+                                ),
+                              ],
                             ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(24),
-                              borderSide: const BorderSide(
-                                color: ArthamColors.line,
+                          ),
+                          Padding(
+                            padding: const EdgeInsets.fromLTRB(20, 0, 20, 14),
+                            child: TextField(
+                              onChanged: (value) =>
+                                  setSheetState(() => query = value),
+                              decoration: InputDecoration(
+                                hintText: 'Search category...',
+                                prefixIcon: const Icon(Icons.search_rounded),
+                                filled: true,
+                                fillColor: Colors.white.withValues(
+                                  alpha: 0.055,
+                                ),
+                                contentPadding: const EdgeInsets.symmetric(
+                                  vertical: 12,
+                                ),
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: const BorderSide(
+                                    color: ArthamColors.line,
+                                  ),
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(24),
+                                  borderSide: const BorderSide(
+                                    color: ArthamColors.line,
+                                  ),
+                                ),
                               ),
                             ),
                           ),
-                        ),
-                      ),
-                      Expanded(
-                        child: filteredCategories.isEmpty
-                            ? const Center(
-                                child: Text(
-                                  'No matching categories',
-                                  style: TextStyle(color: ArthamColors.muted),
-                                ),
-                              )
-                            : SingleChildScrollView(
-                                padding: const EdgeInsets.fromLTRB(
-                                  18,
-                                  4,
-                                  18,
-                                  24,
-                                ),
-                                child: Wrap(
-                                  alignment: WrapAlignment.center,
-                                  spacing: 8,
-                                  runSpacing: 10,
-                                  children: filteredCategories.map((category) {
-                                    final selected =
-                                        category.id == _selectedCategoryId;
-                                    final color = categoryColorFor(
-                                      category.colorHex,
-                                    );
-
-                                    return ChoiceChip(
-                                      showCheckmark: false,
-                                      selected: selected,
-                                      onSelected: (_) {
-                                        HapticFeedback.selectionClick();
-                                        Navigator.pop(
-                                          sheetContext,
-                                          category.id,
+                          Expanded(
+                            child: filteredCategories.isEmpty
+                                ? const Center(
+                                    child: Text(
+                                      'No matching categories',
+                                      style: TextStyle(
+                                        color: ArthamColors.muted,
+                                      ),
+                                    ),
+                                  )
+                                : SingleChildScrollView(
+                                    padding: const EdgeInsets.fromLTRB(
+                                      18,
+                                      4,
+                                      18,
+                                      24,
+                                    ),
+                                    child: Wrap(
+                                      alignment: WrapAlignment.center,
+                                      spacing: 8,
+                                      runSpacing: 10,
+                                      children: filteredCategories.map((
+                                        category,
+                                      ) {
+                                        final selected =
+                                            category.id == _selectedCategoryId;
+                                        final color = categoryColorFor(
+                                          category.colorHex,
                                         );
-                                      },
-                                      avatar: Icon(
-                                        categoryIconFor(category.iconKey),
-                                        size: 17,
-                                        color: color,
-                                      ),
-                                      label: Text(category.name),
-                                      labelStyle: TextStyle(
-                                        color: selected
-                                            ? color
-                                            : transactionNavy,
-                                        fontWeight: FontWeight.w600,
-                                        fontSize: 12,
-                                      ),
-                                      backgroundColor: Colors.white.withValues(
-                                        alpha: 0.035,
-                                      ),
-                                      selectedColor: color.withValues(
-                                        alpha: 0.19,
-                                      ),
-                                      side: BorderSide(
-                                        color: color.withValues(
-                                          alpha: selected ? 1 : 0.65,
-                                        ),
-                                        width: selected ? 1.8 : 1,
-                                      ),
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(26),
-                                      ),
-                                      padding: const EdgeInsets.symmetric(
-                                        horizontal: 9,
-                                        vertical: 8,
-                                      ),
-                                    );
-                                  }).toList(),
-                                ),
-                              ),
+
+                                        return ChoiceChip(
+                                          showCheckmark: false,
+                                          selected: selected,
+                                          onSelected: (_) {
+                                            HapticFeedback.selectionClick();
+                                            Navigator.pop(
+                                              sheetContext,
+                                              category.id,
+                                            );
+                                          },
+                                          avatar: Icon(
+                                            categoryIconFor(category.iconKey),
+                                            size: 17,
+                                            color: color,
+                                          ),
+                                          label: Text(category.name),
+                                          labelStyle: TextStyle(
+                                            color: selected
+                                                ? color
+                                                : transactionNavy,
+                                            fontWeight: FontWeight.w600,
+                                            fontSize: 12,
+                                          ),
+                                          backgroundColor: Colors.white
+                                              .withValues(alpha: 0.035),
+                                          selectedColor: color.withValues(
+                                            alpha: 0.19,
+                                          ),
+                                          side: BorderSide(
+                                            color: color.withValues(
+                                              alpha: selected ? 1 : 0.65,
+                                            ),
+                                            width: selected ? 1.8 : 1,
+                                          ),
+                                          shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(
+                                              26,
+                                            ),
+                                          ),
+                                          padding: const EdgeInsets.symmetric(
+                                            horizontal: 9,
+                                            vertical: 8,
+                                          ),
+                                        );
+                                      }).toList(),
+                                    ),
+                                  ),
+                          ),
+                        ],
                       ),
-                    ],
+                    ),
                   ),
                 ),
               ),
