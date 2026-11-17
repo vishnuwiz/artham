@@ -1,3 +1,4 @@
+import '../../data/split/split_sources.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
@@ -553,10 +554,18 @@ class _ActivityScreenState extends State<ActivityScreen>
           final data = snapshot.data!;
           final transactions = _applyFilters(data);
           final income = transactions
-              .where((tx) => tx.transactionType == 'income')
+              .where(
+                (tx) =>
+                    tx.transactionType == 'income' &&
+                    !isSplitCashFlow(tx.source),
+              )
               .fold<int>(0, (sum, tx) => sum + tx.amountPaise);
           final expenses = transactions
-              .where((tx) => tx.transactionType == 'expense')
+              .where(
+                (tx) =>
+                    tx.transactionType == 'expense' &&
+                    !isSplitCashFlow(tx.source),
+              )
               .fold<int>(0, (sum, tx) => sum + tx.amountPaise);
 
           return RefreshIndicator(

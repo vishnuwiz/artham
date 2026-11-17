@@ -15,6 +15,8 @@ import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'data/repositories/category_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'features/split/shared_money_card.dart';
+import 'data/split/split_repository.dart';
 import 'features/alerts/alerts_screen.dart';
 import 'widgets/animated_charts.dart';
 import 'widgets/micro_interactions.dart';
@@ -142,6 +144,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     unawaited(AlertCenter.instance.refresh(appDatabase));
   }
 
+  late final SplitRepository _splitRepository = SplitRepository(appDatabase);
+
   Future<void> _openAlerts() async {
     await Navigator.push(
       context,
@@ -183,6 +187,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _loadAccounts() {
+    unawaited(_splitRepository.load());
     _accountsFuture = AccountRepository(appDatabase)
         .getActiveAccounts()
         .then((value) {
@@ -308,6 +313,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               buildHeader(),
               const SizedBox(height: 24),
               buildBalanceCard(),
+              const SizedBox(height: 20),
+              SharedMoneyCard(
+                repository: _splitRepository,
+                database: appDatabase,
+                onChanged: () {
+                  if (mounted) setState(_loadAccounts);
+                },
+              ),
               const SizedBox(height: 28),
               buildSectionTitle('My accounts', 'See all'),
               const SizedBox(height: 14),

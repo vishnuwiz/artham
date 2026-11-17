@@ -1,3 +1,4 @@
+import '../../data/split/split_sources.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../theme/artham_theme.dart';
@@ -85,6 +86,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
           int income = 0;
           int expenses = 0;
           for (final tx in data.transactions) {
+            if (isSplitCashFlow(tx.source)) continue;
             if (tx.transactionType == 'income') income += tx.amountPaise;
             if (tx.transactionType == 'expense') expenses += tx.amountPaise;
           }
