@@ -374,7 +374,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     padding: const EdgeInsets.fromLTRB(20, 22, 20, 32),
                     sliver: SliverList(
                       delegate: SliverChildListDelegate([
-                        const Text(
+                        Text(
                           'Insights',
                           style: TextStyle(
                             color: _insightsNavy,
@@ -385,7 +385,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 5),
                         Text(
                           'Your financial overview · ${_monthLong(DateTime.now())}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.muted,
                             fontSize: 12,
                           ),
@@ -434,7 +434,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                         const SizedBox(height: 12),
                         _buildUnusualSpend(data.merchantInsights),
                         const SizedBox(height: 20),
-                        const Text(
+                        Text(
                           'Insights are based on transactions saved in Artham. Transfers are excluded.',
                           style: TextStyle(
                             color: ArthamColors.muted,
@@ -472,7 +472,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -512,7 +512,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           if (overall != null) ...[
             Text(
               over ? 'Overall plan exceeded' : 'Overall monthly plan',
-              style: const TextStyle(
+              style: TextStyle(
                 color: _insightsNavy,
                 fontWeight: FontWeight.w800,
                 fontSize: 14,
@@ -547,10 +547,10 @@ class _InsightsScreenState extends State<InsightsScreen> {
               suffix:
                   ' of the available plan used'
                   '${overall.rolloverPaise > 0 ? ' · includes ${_money(overall.rolloverPaise)} carried in' : ''}',
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ] else ...[
-            const Text(
+            Text(
               'No overall monthly limit set',
               style: TextStyle(
                 color: _insightsNavy,
@@ -561,7 +561,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             const SizedBox(height: 5),
             Text(
               '${budgetedCategories.length} category budgets cover ${_money(budgetedCategories.fold<int>(0, (sum, item) => sum + item.availableBudgetPaise))} in planned spending.',
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
           ],
           const SizedBox(height: 15),
@@ -606,7 +606,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Text(
+        child: Text(
           'Set an overall or category budget to see month-end spending estimates and daily spending guidance.',
           style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
@@ -625,7 +625,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           if (overall != null) ...[
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Overall spending estimate',
                     style: TextStyle(
@@ -683,12 +683,12 @@ class _InsightsScreenState extends State<InsightsScreen> {
             const SizedBox(height: 8),
             Text(
               _forecastMessage(overall),
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
             const SizedBox(height: 8),
             Text(
               _dailySpendingGuide(overall),
-              style: const TextStyle(
+              style: TextStyle(
                 color: _insightsNavy,
                 fontSize: 11,
                 fontWeight: FontWeight.w700,
@@ -701,7 +701,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
               const Divider(height: 1),
               const SizedBox(height: 14),
             ],
-            const Text(
+            Text(
               'CATEGORY OUTLOOK',
               style: TextStyle(
                 color: ArthamColors.muted,
@@ -717,7 +717,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ],
           ],
           const SizedBox(height: 12),
-          const Text(
+          Text(
             'Estimates use the average daily spending recorded so far this month. A projection appears after at least 3 elapsed days and can change when new transactions are recorded and Insights is refreshed.',
             style: TextStyle(color: ArthamColors.muted, fontSize: 10),
           ),
@@ -740,7 +740,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             Expanded(
               child: Text(
                 item.name,
-                style: const TextStyle(
+                style: TextStyle(
                   color: _insightsNavy,
                   fontSize: 12,
                   fontWeight: FontWeight.w800,
@@ -763,7 +763,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             Expanded(
               child: Text(
                 displayedAmount,
-                style: const TextStyle(
+                style: TextStyle(
                   color: _insightsNavy,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -772,7 +772,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ),
             Text(
               'Plan ${_money(forecast.budgetPaise)}',
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 10),
             ),
           ],
         ),
@@ -786,7 +786,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         const SizedBox(height: 6),
         Text(
           _dailySpendingGuide(forecast),
-          style: const TextStyle(color: ArthamColors.muted, fontSize: 10),
+          style: TextStyle(color: ArthamColors.muted, fontSize: 10),
         ),
       ],
     );
@@ -861,7 +861,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(
+          style: TextStyle(
             color: ArthamColors.muted,
             fontSize: 9,
             fontWeight: FontWeight.w700,
@@ -872,7 +872,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             color: _insightsNavy,
             fontSize: 13,
             fontWeight: FontWeight.w800,
@@ -956,7 +956,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _monthShort(item.month),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 10,
                         ),
@@ -968,7 +968,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ),
           ),
           const SizedBox(height: 8),
-          const Align(
+          Align(
             alignment: Alignment.centerLeft,
             child: Text(
               'Months without an overall budget show actual spending only.',
@@ -1006,7 +1006,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Text(
+        child: Text(
           'Category budget comparisons will appear once you set category limits and record spending.',
           style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
@@ -1038,7 +1038,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     Expanded(
                       child: Text(
                         item.category.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: _insightsNavy,
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -1064,7 +1064,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   hasBudget
                       ? 'Actual ${_money(item.expensesPaise)} · Plan ${_money(item.availableBudgetPaise)}'
                       : 'Actual spending ${_money(item.expensesPaise)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 10,
                   ),
@@ -1109,7 +1109,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: _insightsNavy,
               fontSize: 18,
               fontWeight: FontWeight.w800,
@@ -1118,7 +1118,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         ),
         Text(
           subtitle,
-          style: const TextStyle(
+          style: TextStyle(
             color: _insightsGreen,
             fontSize: 11,
             fontWeight: FontWeight.w700,
@@ -1151,7 +1151,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'NET SAVINGS THIS MONTH',
                       style: TextStyle(
                         color: ArthamColors.onHeroMuted,
@@ -1163,7 +1163,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     const SizedBox(height: 9),
                     AnimatedAmountText(
                       paise: netSavings.abs(),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.onHero,
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
@@ -1174,7 +1174,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       positive
                           ? 'You are spending within your income'
                           : 'Expenses exceed income',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.onHeroMuted,
                         fontSize: 11,
                       ),
@@ -1187,7 +1187,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          const Divider(color: ArthamColors.onHeroLine),
+          Divider(color: ArthamColors.onHeroLine),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -1214,13 +1214,13 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: ArthamColors.onHeroFaint, fontSize: 9)),
+        Text(label, style: TextStyle(color: ArthamColors.onHeroFaint, fontSize: 9)),
         const SizedBox(height: 6),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
-          style: const TextStyle(
+          style: TextStyle(
             color: ArthamColors.onHero,
             fontSize: 13,
             fontWeight: FontWeight.w800,
@@ -1302,7 +1302,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       const SizedBox(height: 8),
                       Text(
                         _monthShort(item.month),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 10,
                         ),
@@ -1320,10 +1320,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
 
   Widget _bar(
     double height, {
-    Color color = _insightsGreen,
+    Color? color,
     Duration delay = Duration.zero,
   }) {
-    return AnimatedBar(height: height, color: color, delay: delay);
+    return AnimatedBar(
+      height: height,
+      color: color ?? _insightsGreen,
+      delay: delay,
+    );
   }
 
   Widget _legend(Color color, String label) {
@@ -1337,7 +1341,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
         const SizedBox(width: 6),
         Text(
           label,
-          style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+          style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
       ],
     );
@@ -1354,7 +1358,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Text(
+        child: Text(
           'Merchant spending insights will appear for recognised merchants.',
           style: TextStyle(color: ArthamColors.muted, fontSize: 11),
         ),
@@ -1389,7 +1393,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     Expanded(
                       child: Text(
                         item.merchantName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: _insightsNavy,
                           fontSize: 13,
                           fontWeight: FontWeight.w800,
@@ -1398,7 +1402,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     Text(
                       _money(item.currentMonthSpendPaise),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: _insightsNavy,
                         fontSize: 12,
                         fontWeight: FontWeight.w800,
@@ -1409,7 +1413,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 const SizedBox(height: 4),
                 Text(
                   '${item.categoryName ?? 'Uncategorised'} · $countLabel',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 10,
                   ),
@@ -1441,7 +1445,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Column(
+        child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Row(
@@ -1493,7 +1497,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     Expanded(
                       child: Text(
                         item.merchantName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: _insightsNavy,
                           fontSize: 12,
                           fontWeight: FontWeight.w800,
@@ -1511,7 +1515,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                       ),
                       child: Text(
                         '+${item.percentageAboveUsual}% above usual',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.debit,
                           fontSize: 9,
                           fontWeight: FontWeight.w800,
@@ -1523,7 +1527,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 const SizedBox(height: 5),
                 Text(
                   '${item.categoryName ?? 'Uncategorised'} · ${item.currentMonthTransactionCount} current-month payments',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 10,
                   ),
@@ -1531,7 +1535,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                 const SizedBox(height: 5),
                 Text(
                   'Spent ${_money(item.currentMonthSpendPaise)} · Usual by today ${_money(item.expectedSpendToDatePaise)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.debit,
                     fontSize: 10,
                     fontWeight: FontWeight.w700,
@@ -1555,7 +1559,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
           border: ArthamColors.glassBorder,
           borderRadius: BorderRadius.circular(20),
         ),
-        child: const Column(
+        child: Column(
           children: [
             Icon(
               Icons.pie_chart_outline_rounded,
@@ -1612,7 +1616,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     Expanded(
                       child: Text(
                         item.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: _insightsNavy,
                           fontSize: 13,
                           fontWeight: FontWeight.w700,
@@ -1621,7 +1625,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     ),
                     Text(
                       _money(item.amount),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: _insightsNavy,
                         fontSize: 12,
                         fontWeight: FontWeight.w700,
@@ -1644,7 +1648,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                   alignment: Alignment.centerRight,
                   child: AnimatedPercentText(
                     fraction: share,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.muted,
                       fontSize: 10,
                     ),

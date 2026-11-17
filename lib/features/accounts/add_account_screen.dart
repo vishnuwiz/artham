@@ -75,7 +75,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       builder: (context, child) {
         return Theme(
           data: Theme.of(context).copyWith(
-            colorScheme: const ColorScheme.dark(
+            colorScheme: ColorScheme.dark(
               primary: arthamGreen,
               onPrimary: ArthamColors.onAccent,
               surface: ArthamColors.sheet,
@@ -233,7 +233,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
               const SizedBox(height: 28),
 
-              const Text(
+              Text(
                 'Bank details',
                 style: TextStyle(
                   color: arthamNavy,
@@ -340,7 +340,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                   ),
                   child: Row(
                     children: [
-                      const Icon(
+                      Icon(
                         Icons.calendar_month_rounded,
                         color: arthamGreen,
                       ),
@@ -348,13 +348,13 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                       Expanded(
                         child: Text(
                           _formatDate(_openingDate),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: arthamNavy,
                             fontSize: 15,
                           ),
                         ),
                       ),
-                      const Icon(
+                      Icon(
                         Icons.keyboard_arrow_down_rounded,
                         color: ArthamColors.muted,
                       ),
@@ -382,7 +382,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       if (_isSaving)
-                        const SizedBox(
+                        SizedBox(
                           width: 19,
                           height: 19,
                           child: CircularProgressIndicator(
@@ -415,7 +415,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
 
               const SizedBox(height: 12),
 
-              const Text(
+              Text(
                 'Only the last four digits are requested. '
                 'Never enter your PIN, CVV or internet banking password.',
                 textAlign: TextAlign.center,
@@ -433,7 +433,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       padding: const EdgeInsets.only(bottom: 8),
       child: Text(
         label,
-        style: const TextStyle(
+        style: TextStyle(
           color: arthamNavy,
           fontWeight: FontWeight.w600,
           fontSize: 14,
@@ -462,15 +462,15 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: arthamGreen, width: 1.5),
+        borderSide: BorderSide(color: arthamGreen, width: 1.5),
       ),
       errorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: ArthamColors.debit),
+        borderSide: BorderSide(color: ArthamColors.debit),
       ),
       focusedErrorBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: ArthamColors.debit),
+        borderSide: BorderSide(color: ArthamColors.debit),
       ),
     );
   }

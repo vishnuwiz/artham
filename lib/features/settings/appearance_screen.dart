@@ -8,14 +8,13 @@ import '../../widgets/micro_interactions.dart';
 /// Lets the user choose between the original Artham look and the flat Dark
 /// and Light themes.
 class AppearanceScreen extends StatelessWidget {
-  const AppearanceScreen({super.key, ArthamThemeController? controller})
-    : _controller = controller;
+  const AppearanceScreen({super.key, this.controller});
 
-  final ArthamThemeController? _controller;
+  final ArthamThemeController? controller;
 
   @override
   Widget build(BuildContext context) {
-    final controller = _controller ?? ArthamThemeController.instance;
+    final controller = this.controller ?? ArthamThemeController.instance;
     return ArthamScaffold(
       body: SafeArea(
         child: ListenableBuilder(

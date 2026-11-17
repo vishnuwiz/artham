@@ -256,7 +256,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               constraints: BoxConstraints(
                 maxHeight: MediaQuery.of(context).size.height * 0.86,
               ),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: ArthamColors.glassSoft,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
               ),
@@ -269,7 +269,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                       padding: const EdgeInsets.fromLTRB(20, 20, 12, 12),
                       child: Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               'Budget history',
                               style: TextStyle(
@@ -287,7 +287,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         ],
                       ),
                     ),
-                    const Padding(
+                    Padding(
                       padding: EdgeInsets.fromLTRB(20, 0, 20, 12),
                       child: Align(
                         alignment: Alignment.centerLeft,
@@ -353,7 +353,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                             Expanded(
                                               child: Text(
                                                 _monthLabel(item.month),
-                                                style: const TextStyle(
+                                                style: TextStyle(
                                                   color: _navy,
                                                   fontWeight: FontWeight.w800,
                                                   fontSize: 14,
@@ -361,7 +361,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               ),
                                             ),
                                             if (isSelected)
-                                              const Text(
+                                              Text(
                                                 'VIEWING',
                                                 style: TextStyle(
                                                   color: _green,
@@ -382,7 +382,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                         const SizedBox(height: 8),
                                         Text(
                                           'Spent  ${_money(item.expensesPaise)}',
-                                          style: const TextStyle(
+                                          style: TextStyle(
                                             color: _navy,
                                             fontSize: 13,
                                             fontWeight: FontWeight.w600,
@@ -410,14 +410,14 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                             ),
                                             child: Text(
                                               '${_money(item.rolloverPaise)} carried from previous month',
-                                              style: const TextStyle(
+                                              style: TextStyle(
                                                 color: _green,
                                                 fontSize: 10,
                                               ),
                                             ),
                                           ),
                                         if (hasBudget && item.rolloverEnabled)
-                                          const Padding(
+                                          Padding(
                                             padding: EdgeInsets.only(top: 3),
                                             child: Text(
                                               'Unused balance carries into next month',
@@ -448,7 +448,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                       crossAxisAlignment:
                                           CrossAxisAlignment.start,
                                       children: [
-                                        const Text(
+                                        Text(
                                           'CATEGORY BREAKDOWN',
                                           style: TextStyle(
                                             color: ArthamColors.muted,
@@ -465,7 +465,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                           builder: (context, snapshot) {
                                             if (snapshot.connectionState ==
                                                 ConnectionState.waiting) {
-                                              return const Padding(
+                                              return Padding(
                                                 padding: EdgeInsets.all(16),
                                                 child: Center(
                                                   child:
@@ -476,7 +476,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                               );
                                             }
                                             if (snapshot.hasError) {
-                                              return const Text(
+                                              return Text(
                                                 'Unable to load category history.',
                                                 style: TextStyle(
                                                   color: ArthamColors.debit,
@@ -487,7 +487,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                                             final categories =
                                                 snapshot.data ?? [];
                                             if (categories.isEmpty) {
-                                              return const Text(
+                                              return Text(
                                                 'No expense categories found.',
                                                 style: TextStyle(
                                                   color: ArthamColors.muted,
@@ -564,7 +564,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               Expanded(
                 child: Text(
                   item.category.name,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: _navy,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -573,7 +573,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               ),
               Text(
                 _money(item.expensesPaise),
-                style: const TextStyle(
+                style: TextStyle(
                   color: _navy,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -596,7 +596,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               padding: const EdgeInsets.only(top: 3),
               child: Text(
                 '${_money(item.rolloverPaise)} carried from previous month',
-                style: const TextStyle(color: _green, fontSize: 10),
+                style: TextStyle(color: _green, fontSize: 10),
               ),
             ),
           if (hasBudget) ...[
@@ -653,7 +653,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                       delegate: SliverChildListDelegate([
                         Row(
                           children: [
-                            const Expanded(
+                            Expanded(
                               child: Text(
                                 'Budgets',
                                 style: TextStyle(
@@ -674,7 +674,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                             ),
                             Text(
                               _monthLabel(_selectedMonth),
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: _navy,
                                 fontWeight: FontWeight.w700,
                               ),
@@ -692,7 +692,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                         const SizedBox(height: 28),
                         Row(
                           children: [
-                            const Expanded(
+                            Expanded(
                               child: Text(
                                 'Category budgets',
                                 style: TextStyle(
@@ -704,7 +704,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                             ),
                             Text(
                               '${data.categories.where((item) => item.budgetPaise > 0).length} set',
-                              style: const TextStyle(
+                              style: TextStyle(
                                 color: _green,
                                 fontWeight: FontWeight.w700,
                                 fontSize: 12,
@@ -771,7 +771,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Budget split',
                   style: TextStyle(
@@ -867,7 +867,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Budget alerts',
                   style: TextStyle(
@@ -879,7 +879,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               ),
               Text(
                 '${alerts.length} ${alerts.length == 1 ? 'alert' : 'alerts'}',
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.muted,
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -931,7 +931,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               children: [
                 Text(
                   alert.title,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: _navy,
                     fontSize: 13,
                     fontWeight: FontWeight.w800,
@@ -951,7 +951,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 const SizedBox(height: 3),
                 Text(
                   '${_money(alert.spentPaise)} spent of ${_money(alert.budgetPaise)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
                   ),
@@ -986,7 +986,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'TOTAL MONTHLY BUDGET',
             style: TextStyle(
               color: ArthamColors.onHeroMuted,
@@ -999,14 +999,14 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           if (hasBudget)
             AnimatedAmountText(
               paise: budget,
-              style: const TextStyle(
+              style: TextStyle(
                 color: ArthamColors.onHero,
                 fontSize: 29,
                 fontWeight: FontWeight.w800,
               ),
             )
           else
-            const Text(
+            Text(
               'Not set',
               style: TextStyle(
                 color: ArthamColors.onHero,
@@ -1016,7 +1016,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             ),
           if (hasBudget && repeatsMonthly) ...[
             const SizedBox(height: 5),
-            const Text(
+            Text(
               'Repeats every month',
               style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11),
             ),
@@ -1027,7 +1027,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               rolloverPaise > 0
                   ? '${_money(available)} available · includes ${_money(rolloverPaise)} carried in'
                   : 'Unused balance will carry into next month',
-              style: const TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11),
+              style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11),
             ),
           ],
           const SizedBox(height: 18),
@@ -1070,7 +1070,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               ),
               style: OutlinedButton.styleFrom(
                 foregroundColor: ArthamColors.onHero,
-                side: const BorderSide(color: ArthamColors.onHeroFaint),
+                side: BorderSide(color: ArthamColors.onHeroFaint),
               ),
             ),
           ),
@@ -1085,12 +1085,12 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(color: ArthamColors.onHeroFaint, fontSize: 10),
+          style: TextStyle(color: ArthamColors.onHeroFaint, fontSize: 10),
         ),
         const SizedBox(height: 5),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             color: ArthamColors.onHero,
             fontSize: 16,
             fontWeight: FontWeight.w800,
@@ -1125,7 +1125,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   color: ArthamColors.mintTint,
                   borderRadius: BorderRadius.circular(13),
                 ),
-                child: const Icon(Icons.category_outlined, color: _green),
+                child: Icon(Icons.category_outlined, color: _green),
               ),
               const SizedBox(width: 11),
               Expanded(
@@ -1134,7 +1134,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   children: [
                     Text(
                       item.category.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: _navy,
                         fontWeight: FontWeight.w700,
                         fontSize: 14,
@@ -1145,7 +1145,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                       hasBudget
                           ? '${_money(item.expensesPaise)} of ${_money(item.availableBudgetPaise)} available'
                           : '${_money(item.expensesPaise)} spent · No limit set',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 11,
                       ),
@@ -1163,7 +1163,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   currentPaise: item.budgetPaise,
                   currentRolloverEnabled: item.rolloverEnabled,
                 ),
-                icon: const Icon(Icons.edit_outlined, color: _green, size: 20),
+                icon: Icon(Icons.edit_outlined, color: _green, size: 20),
               ),
             ],
           ),
@@ -1173,13 +1173,13 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               alignment: Alignment.centerLeft,
               child: Text(
                 '${_money(item.rolloverPaise)} carried from previous month',
-                style: const TextStyle(color: _green, fontSize: 10),
+                style: TextStyle(color: _green, fontSize: 10),
               ),
             ),
           ],
           if (hasBudget && item.repeatsMonthly) ...[
             const SizedBox(height: 3),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Repeats every month',
@@ -1189,7 +1189,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           ],
           if (hasBudget && item.rolloverEnabled) ...[
             const SizedBox(height: 3),
-            const Align(
+            Align(
               alignment: Alignment.centerLeft,
               child: Text(
                 'Unused balance carries into next month',
@@ -1226,7 +1226,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                   over
                       ? '${_money(item.remainingPaise.abs())} over'
                       : '${_money(item.remainingPaise)} left',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
                   ),

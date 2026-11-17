@@ -452,7 +452,7 @@ class _CheckPainter extends CustomPainter {
         center,
         circleRadius,
         Paint()
-          ..shader = const LinearGradient(
+          ..shader = LinearGradient(
             colors: [ArthamColors.mint, Color(0xFF68DFB4)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

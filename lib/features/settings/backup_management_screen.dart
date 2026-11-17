@@ -153,7 +153,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
   Widget build(BuildContext context) {
     return ArthamScaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Backup management',
           style: TextStyle(
             color: ArthamColors.text,
@@ -182,7 +182,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                   const SizedBox(height: 12),
                   Text(
                     _error!,
-                    style: const TextStyle(color: ArthamColors.debit),
+                    style: TextStyle(color: ArthamColors.debit),
                   ),
                 ],
               ],
@@ -201,7 +201,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             title: 'Automatic backups',
           ),
           const SizedBox(height: 8),
-          const Text(
+          Text(
             'Artham checks the schedule when you open the app or return to it. '
             'A backup is created when the selected interval has elapsed.',
             style: TextStyle(
@@ -215,7 +215,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             key: const Key('automatic-backups-switch'),
             contentPadding: EdgeInsets.zero,
             activeThumbColor: ArthamColors.lavender,
-            title: const Text(
+            title: Text(
               'Enable automatic backups',
               style: TextStyle(
                 color: ArthamColors.text,
@@ -227,7 +227,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
               settings.automaticBackupsEnabled
                   ? 'Your data is backed up on this device.'
                   : 'Automatic backups are currently off.',
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 11),
             ),
             value: settings.automaticBackupsEnabled,
             onChanged: _isBusy
@@ -238,10 +238,10 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                   ),
           ),
           if (settings.automaticBackupsEnabled) ...[
-            const Divider(color: ArthamColors.line),
+            Divider(color: ArthamColors.line),
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Backup frequency',
                     style: TextStyle(
@@ -275,7 +275,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             ),
             Row(
               children: [
-                const Expanded(
+                Expanded(
                   child: Text(
                     'Keep automatic backups',
                     style: TextStyle(
@@ -310,7 +310,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             if (settings.lastAutomaticBackupAt != null)
               Text(
                 'Last automatic backup: ${_formatDate(settings.lastAutomaticBackupAt!)}',
-                style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+                style: TextStyle(color: ArthamColors.muted, fontSize: 11),
               ),
           ],
           const SizedBox(height: 12),
@@ -328,7 +328,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             ),
           ),
           const SizedBox(height: 10),
-          const Text(
+          Text(
             'Backups stay in this device’s app storage. They are not encrypted '
             'or uploaded to cloud storage. Save a separate copy outside the '
             'app for protection if this device is lost or reset.',
@@ -355,11 +355,11 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
           const SizedBox(height: 6),
           Text(
             '${_history.length} saved backup${_history.length == 1 ? '' : 's'} on this device',
-            style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+            style: TextStyle(color: ArthamColors.muted, fontSize: 11),
           ),
           const SizedBox(height: 12),
           if (_history.isEmpty)
-            const Padding(
+            Padding(
               padding: EdgeInsets.symmetric(vertical: 18),
               child: Center(
                 child: Text(
@@ -384,7 +384,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
       key: ValueKey(entry.file.path),
       margin: const EdgeInsets.only(top: 8),
       padding: const EdgeInsets.symmetric(vertical: 9),
-      decoration: const BoxDecoration(
+      decoration: BoxDecoration(
         border: Border(top: BorderSide(color: ArthamColors.line)),
       ),
       child: Row(
@@ -407,7 +407,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
               children: [
                 Text(
                   entry.kind.label,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.text,
                     fontSize: 12,
                     fontWeight: FontWeight.w700,
@@ -416,7 +416,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
                 const SizedBox(height: 3),
                 Text(
                   '${_formatDate(entry.createdAt)} · ${_formatBytes(entry.sizeBytes)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 10,
                   ),
@@ -428,7 +428,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             tooltip: 'Restore this backup',
             visualDensity: VisualDensity.compact,
             onPressed: _isBusy ? null : () => _restoreBackup(entry),
-            icon: const Icon(
+            icon: Icon(
               Icons.settings_backup_restore_rounded,
               color: ArthamColors.lavender,
               size: 20,
@@ -438,7 +438,7 @@ class _BackupManagementScreenState extends State<BackupManagementScreen> {
             tooltip: 'Delete this backup',
             visualDensity: VisualDensity.compact,
             onPressed: _isBusy ? null : () => _deleteBackup(entry),
-            icon: const Icon(
+            icon: Icon(
               Icons.delete_outline_rounded,
               color: ArthamColors.muted,
               size: 20,
@@ -501,7 +501,7 @@ class _BackupHeading extends StatelessWidget {
         Expanded(
           child: Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: ArthamColors.text,
               fontWeight: FontWeight.w800,
               fontSize: 16,

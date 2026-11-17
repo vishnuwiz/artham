@@ -163,7 +163,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                   const SizedBox(height: 14),
                   Text(
                     'Backup date: ${preview.exportedAt.toLocal()}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.muted,
                       fontSize: 12,
                     ),
@@ -190,14 +190,14 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     const SizedBox(height: 12),
                     Text(
                       'This backup also contains ${preview.legacyPendingSmsImportCount} older pending SMS review item(s). The current version cannot restore those legacy items.',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.debit,
                         fontSize: 12,
                       ),
                     ),
                   ],
                   const SizedBox(height: 14),
-                  const Text(
+                  Text(
                     'Before replacing your data, Artham will automatically '
                     "save a safety copy in this app's private storage. Keep "
                     'a separate backup outside the app for additional protection.',
@@ -372,7 +372,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Settings',
                   style: TextStyle(
                     color: ArthamColors.text,
@@ -423,7 +423,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                       size: 58,
                     ),
                     const SizedBox(width: 13),
-                    const Expanded(
+                    Expanded(
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -451,7 +451,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     AnimatedRotation(
                       turns: _isExportExpanded ? 0.5 : 0,
                       duration: const Duration(milliseconds: 220),
-                      child: const Icon(
+                      child: Icon(
                         Icons.keyboard_arrow_down_rounded,
                         color: ArthamColors.text,
                         size: 28,
@@ -475,7 +475,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
           ),
           if (_isExporting) ...[
             const SizedBox(height: 10),
-            const LinearProgressIndicator(
+            LinearProgressIndicator(
               color: ArthamColors.lavender,
               minHeight: 3,
             ),
@@ -503,7 +503,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             description: 'Export your transactions as a spreadsheet.',
             fullBackup: false,
           ),
-          const Padding(
+          Padding(
             padding: EdgeInsets.symmetric(vertical: 10),
             child: Divider(height: 1, color: ArthamColors.line),
           ),
@@ -544,7 +544,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
             ),
           ),
           const SizedBox(height: 9),
-          const Row(
+          Row(
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Icon(Icons.shield_outlined, color: ArthamColors.muted, size: 14),
@@ -592,7 +592,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     title,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.text,
                       fontWeight: FontWeight.w800,
                       fontSize: 14,
@@ -603,7 +603,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
                     description,
                     maxLines: 2,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.muted,
                       fontSize: 11,
                       height: 1.3,
@@ -696,7 +696,7 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return GlassPanel(
       borderRadius: BorderRadius.circular(22),
       padding: const EdgeInsets.all(16),
-      child: const Row(
+      child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           _SettingsIconBadge(
@@ -746,7 +746,7 @@ class _SettingsSectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(left: 4),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           color: ArthamColors.muted,
           fontSize: 11,
           fontWeight: FontWeight.w700,
@@ -824,7 +824,7 @@ class _SettingsNavigationCard extends StatelessWidget {
                     children: [
                       Text(
                         title,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.text,
                           fontSize: 17,
                           fontWeight: FontWeight.w800,
@@ -833,7 +833,7 @@ class _SettingsNavigationCard extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         subtitle,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 12,
                           height: 1.3,
@@ -843,7 +843,7 @@ class _SettingsNavigationCard extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(width: 7),
-                const Icon(
+                Icon(
                   Icons.chevron_right_rounded,
                   color: ArthamColors.text,
                   size: 25,

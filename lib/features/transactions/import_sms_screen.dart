@@ -264,7 +264,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
         children: [
           Row(
             children: [
-              const Expanded(
+              Expanded(
                 child: Text(
                   'Review transaction',
                   style: TextStyle(
@@ -406,7 +406,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               ),
               child: Text(
                 _formatDate(_selectedDate ?? DateTime.now()),
-                style: const TextStyle(
+                style: TextStyle(
                   color: smsNavy,
                   fontWeight: FontWeight.w600,
                 ),
@@ -417,7 +417,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
             const SizedBox(height: 12),
             Text(
               'Reference: ${parsed.referenceNumber}',
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 12),
             ),
           ],
           const SizedBox(height: 18),
@@ -431,7 +431,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 15),
               ),
               icon: _isSaving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
@@ -469,7 +469,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               color: ArthamColors.mintTint,
               borderRadius: BorderRadius.circular(16),
             ),
-            child: const Row(
+            child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Icon(Icons.lock_outline_rounded, color: smsGreen),
@@ -514,11 +514,11 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               fillColor: ArthamColors.glass,
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: ArthamColors.line),
+                borderSide: BorderSide(color: ArthamColors.line),
               ),
               enabledBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(16),
-                borderSide: const BorderSide(color: ArthamColors.line),
+                borderSide: BorderSide(color: ArthamColors.line),
               ),
             ),
           ),
@@ -534,7 +534,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
                 padding: const EdgeInsets.symmetric(vertical: 14),
               ),
               icon: _isParsing
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 18,
                       height: 18,
                       child: CircularProgressIndicator(
@@ -556,7 +556,7 @@ class _ImportSmsScreenState extends State<ImportSmsScreen> {
               ),
               child: Text(
                 _error!,
-                style: const TextStyle(color: ArthamColors.debit, fontSize: 13),
+                style: TextStyle(color: ArthamColors.debit, fontSize: 13),
               ),
             ),
           ],

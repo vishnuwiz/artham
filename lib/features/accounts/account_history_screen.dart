@@ -72,7 +72,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: historyGreen),
             );
           }
@@ -106,14 +106,14 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     children: [
                       Text(
                         widget.account.bankName,
-                        style: const TextStyle(color: ArthamColors.onHeroMuted),
+                        style: TextStyle(color: ArthamColors.onHeroMuted),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         accountNumberLastFourLabel(
                           widget.account.accountNumberLast4,
                         ),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.onHero,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
@@ -121,7 +121,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                         ),
                       ),
                       const SizedBox(height: 18),
-                      const Text(
+                      Text(
                         'CURRENT BALANCE',
                         style: TextStyle(
                           color: ArthamColors.onHeroMuted,
@@ -131,7 +131,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                       ),
                       Text(
                         _money(data.balance),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.onHero,
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
@@ -162,7 +162,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                 const SizedBox(height: 22),
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       'Transactions',
                       style: TextStyle(
                         color: historyNavy,
@@ -173,7 +173,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     const Spacer(),
                     Text(
                       '${data.transactions.length} records',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 12,
                       ),
@@ -232,14 +232,14 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                               children: [
                                 Text(
                                   title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: historyNavy,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                                 Text(
                                   _date(tx.transactionDate),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: ArthamColors.muted,
                                     fontSize: 11,
                                   ),
@@ -269,7 +269,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
   Widget _summary(String label, int amount, Color color) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(label, style: const TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11)),
+      Text(label, style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11)),
       const SizedBox(height: 5),
       Text(
         _money(amount),

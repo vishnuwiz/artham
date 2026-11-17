@@ -509,7 +509,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
               fit: BoxFit.scaleDown,
               child: Text(
                 amount,
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.text,
                   fontSize: 19,
                   fontWeight: FontWeight.w800,
@@ -520,7 +520,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
               const SizedBox(height: 2),
               Text(
                 share,
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.muted,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -572,7 +572,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
               ),
               Text(
                 widget.formatValue(slice.value),
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.text,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -583,7 +583,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
                 child: Text(
                   '${(share * 100).toStringAsFixed(1)}%',
                   textAlign: TextAlign.end,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
                   ),
@@ -733,7 +733,7 @@ class AnimatedRing extends StatelessWidget {
                       children: [
                         Text(
                           '${(v * 100).round()}%',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.onHero,
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
@@ -741,7 +741,7 @@ class AnimatedRing extends StatelessWidget {
                         ),
                         Text(
                           caption,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.onHeroMuted,
                             fontSize: 8,
                             letterSpacing: 0.8,
@@ -791,7 +791,7 @@ class _RingPainter extends CustomPainter {
     final shader = SweepGradient(
       startAngle: 0,
       endAngle: math.max(sweep, 0.01),
-      colors: const [ArthamColors.lavender, ArthamColors.mint],
+      colors: [ArthamColors.lavender, ArthamColors.mint],
       transform: const GradientRotation(-math.pi / 2),
     ).createShader(rect);
 
