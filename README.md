@@ -9,9 +9,9 @@ The app follows a **local-first architecture**, using Drift and SQLite to store 
 
 ## Download for Android
 
-**Latest Android beta — Artham v0.1.1.**
+**Latest Android beta — Artham v0.1.2 (17 November 2026).**
 
-[**Download the APK**](https://github.com/vishnuwiz/artham/releases/download/v0.1.1/app-release.apk) · [View the GitHub release and release notes](https://github.com/vishnuwiz/artham/releases/tag/v0.1.1)
+[**Download the APK**](https://github.com/vishnuwiz/artham/releases/download/v0.1.2/app-release.apk) · [View the GitHub release and release notes](https://github.com/vishnuwiz/artham/releases/tag/v0.1.2)
 
 This is a beta build for Android. Install the downloaded APK on your device and review Android's install-source prompt when asked. Artham does not require SMS permissions; bank and UPI alerts can only be imported when you explicitly paste or share a message into the app.
 
@@ -21,11 +21,18 @@ This is a beta build for Android. Install the downloaded APK on your device and 
 
 - **Home dashboard** — View a summary of finances and account balances, with animated balance and monthly metric transitions.
 - **Transaction management** — Record and manage income and expenses.
+- **Split Expenses & Shared Money** — Manage people, split shared expenses equally, by custom amounts or percentages, view each person's ledger, track amounts owed and owing, and record repayments/settlements.
+- **Shared Money dashboard** — View a summary of shared balances from Home.
+- **Transaction tags** — Add up to eight optional custom tags to a transaction, remove tags individually and prevent duplicate tags.
+- **Appearance settings** — Switch between Dark and Light themes with theme-aware screens and components.
+- **Alerts centre** — Review local alerts, see the unread count, mark one alert or all alerts as read, and manage notification preferences.
+- **Local notifications** — Receive on-device notifications for budget thresholds/overruns, upcoming recurring payments, backup reminders and monthly financial summaries. Scheduled notifications are restored after device restarts.
 - **Transaction date and time** — Set or edit the date and time for income, expense and internal transfer records. The selected time is preserved when changing the date and is shown in transaction details.
 - **Data export** — Share all transaction history as an Excel-friendly CSV, or create a structured JSON backup of the Drift tables. Legacy pending-SMS review records from older installations are preserved in backups when present. Exports are generated locally; JSON backups are unencrypted and should be stored securely.
 - **Offline merchant recognition** — Recognise more than 1,000 India-focused merchants in transaction descriptions and bank SMS alerts using a local rule-based catalogue generated from a single version-controlled source. Suggest categories such as Restaurants, Food & Grocery, Shopping, Travel, Medical, Electricity, Internet & Telecom and Entertainment; users retain control to change the selected category. Recognised merchants are linked to transactions locally, while unknown payees are left unclassified.
 - **Custom categories** — Manage expense and income categories in Settings > Categories. Built-in categories include Salary and the general Income category, plus Restaurants, Housing, Electricity, Transport & Fuel, Medical, Card Repayment, ATM and Loan. Each has a Material icon and colour. Add your own, rename or recolour any category, and hide ones you don't use; hidden categories keep their history.
 - **Manual SMS import** — choose Activity > Import SMS, then paste or share an individual bank/UPI alert. Review the parsed fields and confirm before saving; local fingerprints prevent duplicate imports. Artham does not monitor incoming messages or scan the SMS inbox.
+- **Redesigned transaction entry** — Updated Add Transaction layout and a frosted-glass category picker.
 - **Live account balances** — Keep account balances updated as transactions change.
 - **Internal transfers** — Transfer money between accounts while preserving the overall balance. Transfers use their own transaction type rather than appearing as income or expense categories.
 - **Account history** — Review transactions associated with an account.
@@ -36,7 +43,7 @@ This is a beta build for Android. Install the downloaded APK on your device and 
 - **Predictive budget forecasts** — Estimate month-end spending from the average daily pace, identify budgets approaching or likely to exceed their limits, and show a daily spending guide for overall and category plans. Estimates appear after at least three elapsed days and recalculate when Insights is refreshed.
 - **Automatic budget refresh** — Budget progress updates when relevant transactions change.
 - **Activity screen** — Review, search, filter, and sort transaction activity. Home's Recent Transactions shortcut opens the full Activity screen.
-- **Insights screen** — View financial insights, including animated spending-by-category charts and budget breakdowns.
+- **Insights screen** — View financial insights, including animated spending-by-category charts and budget breakdowns. Shared-money lending and repayment flows are excluded from income, expenses, budgets and insights.
 - **Merchant spending insights** — Rank recognised merchants by current-month spend and flag unusual increases against the same day-of-month in the previous three completed months. Flags require sufficient history, a rise of more than 50%, and at least ₹500 above the usual amount.
 - **Recurring transactions** — Create recurring income or expense schedules with daily, weekly, monthly, or yearly frequencies and a custom interval.
   - **Pattern suggestions** — Detect likely weekly, monthly, quarterly, half-yearly, and yearly payments from at least three similar local transactions. Review the proposed amount, account, category, frequency, and next expected date; Artham never creates a schedule or transaction from a detected pattern without your action.
@@ -52,7 +59,6 @@ This is a beta build for Android. Install the downloaded APK on your device and 
 - Bank statement import.
 - Database encryption and additional security improvements.
 - JSON backup restore/import (export is implemented first; restore is not included yet).
-- Expanded Settings options.
 - Further performance improvements.
 
 ## Tech Stack
@@ -173,6 +179,10 @@ Other screens, repositories, and features are maintained in their respective fol
 - Prevent duplicate recurring transactions for the same schedule and due date.
 - Regenerate Drift code after changing database definitions.
 - Add a dated entry to `CHANGELOG.md` when a feature, fix, or notable change is included in a build.
+
+## Latest release
+
+Artham v0.1.2 is the latest public Android beta, published 17 November 2026. [Download the APK](https://github.com/vishnuwiz/artham/releases/download/v0.1.2/app-release.apk) or [view release notes](https://github.com/vishnuwiz/artham/releases/tag/v0.1.2).
 
 ## Changelog
 
