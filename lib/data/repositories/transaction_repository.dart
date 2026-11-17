@@ -1,6 +1,7 @@
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import '../split/split_sources.dart';
 import 'category_repository.dart';
 import 'merchant_repository.dart';
 
@@ -388,6 +389,9 @@ class TransactionRepository {
       if (date.isBefore(monthStart) || !date.isBefore(nextMonthStart)) {
         continue;
       }
+
+      // Lending to or being repaid by a friend is not income or spending.
+      if (isSplitCashFlow(transaction.source)) continue;
 
       if (transaction.transactionType == 'income') {
         monthlyIncome += transaction.amountPaise;

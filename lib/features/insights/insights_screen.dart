@@ -1,3 +1,4 @@
+import '../../data/split/split_sources.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../theme/artham_theme.dart';
@@ -191,6 +192,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             !transaction.transactionDate.isBefore(nextMonth)) {
           continue;
         }
+        if (isSplitCashFlow(transaction.source)) continue;
         if (transaction.transactionType == 'income') {
           income += transaction.amountPaise;
         } else if (transaction.transactionType == 'expense') {
@@ -214,6 +216,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
     for (final transaction in transactions) {
       final date = transaction.transactionDate;
       if (date.isBefore(currentStart) || !date.isBefore(nextStart)) continue;
+      if (isSplitCashFlow(transaction.source)) continue;
 
       if (transaction.transactionType == 'income') {
         currentIncome += transaction.amountPaise;

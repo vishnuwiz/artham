@@ -1,3 +1,4 @@
+import '../split/split_sources.dart';
 import 'dart:async';
 import 'dart:io';
 
@@ -250,6 +251,7 @@ class AlertCenter {
     var income = 0;
     var expense = 0;
     for (final row in rows) {
+      if (isSplitCashFlow(row.source)) continue;
       if (row.transactionType == 'income') income += row.amountPaise;
       if (row.transactionType == 'expense') expense += row.amountPaise;
     }
