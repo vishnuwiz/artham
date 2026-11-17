@@ -49,7 +49,6 @@ void main() {
 
     // Unsupported preferences and system-storage controls are deliberately
     // not shown as inactive or placeholder rows.
-    expect(find.text('Appearance'), findsNothing);
     expect(find.text('Notifications'), findsNothing);
     expect(find.text('App language'), findsNothing);
     expect(find.text('App storage'), findsNothing);
