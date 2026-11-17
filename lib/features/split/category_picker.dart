@@ -42,7 +42,7 @@ class CategoryPickerField extends StatelessWidget {
                         shape: BoxShape.circle,
                         border: Border.all(color: ArthamColors.line),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.category_outlined,
                         size: 18,
                         color: ArthamColors.muted,
@@ -58,7 +58,7 @@ class CategoryPickerField extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'Category',
                     style: TextStyle(color: ArthamColors.muted, fontSize: 11),
                   ),
@@ -81,7 +81,7 @@ class CategoryPickerField extends StatelessWidget {
                 ],
               ),
             ),
-            const Icon(Icons.expand_more_rounded, color: ArthamColors.muted),
+            Icon(Icons.expand_more_rounded, color: ArthamColors.muted),
           ],
         ),
       ),
@@ -203,7 +203,7 @@ class _CategorySheetState extends State<_CategorySheet> {
                 children: [
                   TextButton(
                     onPressed: () => Navigator.pop(context),
-                    child: const Text(
+                    child: Text(
                       'Cancel',
                       style: TextStyle(
                         color: ArthamColors.debit,
@@ -211,7 +211,7 @@ class _CategorySheetState extends State<_CategorySheet> {
                       ),
                     ),
                   ),
-                  const Expanded(
+                  Expanded(
                     child: Text(
                       'Select Category',
                       textAlign: TextAlign.center,
@@ -240,7 +240,7 @@ class _CategorySheetState extends State<_CategorySheet> {
                 key: const Key('split-category-search'),
                 controller: _search,
                 onChanged: (value) => setState(() => _query = value),
-                style: const TextStyle(color: ArthamColors.text),
+                style: TextStyle(color: ArthamColors.text),
                 decoration: InputDecoration(
                   hintText: 'Search category...',
                   prefixIcon: const Icon(Icons.search_rounded),
@@ -249,15 +249,15 @@ class _CategorySheetState extends State<_CategorySheet> {
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: ArthamColors.line),
+                    borderSide: BorderSide(color: ArthamColors.line),
                   ),
                   enabledBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(color: ArthamColors.line),
+                    borderSide: BorderSide(color: ArthamColors.line),
                   ),
                   focusedBorder: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(999),
-                    borderSide: const BorderSide(
+                    borderSide: BorderSide(
                       color: ArthamColors.lavender,
                       width: 1.5,
                     ),
@@ -267,7 +267,7 @@ class _CategorySheetState extends State<_CategorySheet> {
             ),
             Expanded(
               child: shown.isEmpty
-                  ? const Center(
+                  ? Center(
                       child: Text(
                         'No category found',
                         style: TextStyle(color: ArthamColors.muted),

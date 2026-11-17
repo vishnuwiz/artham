@@ -114,7 +114,7 @@ class _PeopleScreenState extends State<PeopleScreen> {
                       onTap: () => Navigator.pop(context),
                     ),
                     const SizedBox(width: 12),
-                    const Expanded(
+                    Expanded(
                       child: Text(
                         'People',
                         style: TextStyle(
@@ -198,7 +198,7 @@ class _PeopleScreenState extends State<PeopleScreen> {
                   ),
                 ],
                 const SizedBox(height: 18),
-                const SplitPanel(
+                SplitPanel(
                   tint: ArthamColors.lavenderTint,
                   borderColor: Color(0x4DB9A5F5),
                   child: Text(
@@ -245,7 +245,7 @@ class _AddExpenseButton extends StatelessWidget {
             ),
           ],
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.add_rounded, color: ArthamColors.onAccent),
@@ -298,7 +298,7 @@ class _PersonRow extends StatelessWidget {
                     person.name,
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.text,
                       fontSize: 15,
                       fontWeight: FontWeight.w700,
@@ -306,7 +306,7 @@ class _PersonRow extends StatelessWidget {
                   ),
                   Text(
                     count == 1 ? '1 shared expense' : '$count shared expenses',
-                    style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+                    style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                   ),
                 ],
               ),
@@ -324,7 +324,7 @@ class _PersonRow extends StatelessWidget {
                 ),
                 Text(
                   owedToMe ? 'owes you' : 'you owe',
-                  style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+                  style: TextStyle(color: ArthamColors.muted, fontSize: 11),
                 ),
               ],
             ),
@@ -365,13 +365,13 @@ class _SettledGroup extends StatelessWidget {
             tint: ArthamColors.glassSoft,
             child: Row(
               children: [
-                const Icon(Icons.check_circle_outline_rounded, color: ArthamColors.mint),
+                Icon(Icons.check_circle_outline_rounded, color: ArthamColors.mint),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Settled people',
                         style: TextStyle(
                           color: ArthamColors.text,
@@ -381,7 +381,7 @@ class _SettledGroup extends StatelessWidget {
                       ),
                       Text(
                         summary,
-                        style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+                        style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                       ),
                     ],
                   ),
@@ -390,7 +390,7 @@ class _SettledGroup extends StatelessWidget {
                   turns: expanded ? 0.25 : 0,
                   duration: const Duration(milliseconds: 250),
                   curve: Curves.easeOutCubic,
-                  child: const Icon(Icons.chevron_right_rounded, color: ArthamColors.faint),
+                  child: Icon(Icons.chevron_right_rounded, color: ArthamColors.faint),
                 ),
               ],
             ),
@@ -447,7 +447,7 @@ class _EmptyState extends StatelessWidget {
           Text(
             message,
             textAlign: TextAlign.center,
-            style: const TextStyle(color: ArthamColors.muted, fontSize: 14, height: 1.5),
+            style: TextStyle(color: ArthamColors.muted, fontSize: 14, height: 1.5),
           ),
         ],
       ),

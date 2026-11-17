@@ -48,7 +48,7 @@ class PersonLedgerScreen extends StatelessWidget {
       context: context,
       builder: (context) => AlertDialog(
         backgroundColor: ArthamColors.sheet,
-        title: const Text(
+        title: Text(
           'Delete this entry?',
           style: TextStyle(color: ArthamColors.text),
         ),
@@ -57,7 +57,7 @@ class PersonLedgerScreen extends StatelessWidget {
               ? 'The repayment and its transaction will be removed.'
               : 'This removes the whole split for everyone, and the '
                     'transactions it created.',
-          style: const TextStyle(color: ArthamColors.muted),
+          style: TextStyle(color: ArthamColors.muted),
         ),
         actions: [
           TextButton(
@@ -86,7 +86,7 @@ class PersonLedgerScreen extends StatelessWidget {
           builder: (context, ledger, _) {
             final person = ledger.personById(personId);
             if (person == null) {
-              return const Center(
+              return Center(
                 child: Text(
                   'This person is no longer in your list.',
                   style: TextStyle(color: ArthamColors.muted),
@@ -118,7 +118,7 @@ class PersonLedgerScreen extends StatelessWidget {
                       child: Text(
                         person.name,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.text,
                           fontSize: 20,
                           fontWeight: FontWeight.w800,
@@ -149,7 +149,7 @@ class PersonLedgerScreen extends StatelessWidget {
                                 ? '${person.name} owes you'
                                 : 'You owe ${person.name}',
                             key: ValueKey('$settled$owesYou'),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: ArthamColors.muted,
                               fontSize: 12,
                             ),
@@ -188,7 +188,7 @@ class PersonLedgerScreen extends StatelessWidget {
                                       color: ArthamColors.glass,
                                       border: Border.all(color: ArthamColors.line),
                                     ),
-                                    child: const Row(
+                                    child: Row(
                                       mainAxisAlignment: MainAxisAlignment.center,
                                       children: [
                                         Icon(Icons.ios_share_rounded, size: 18, color: ArthamColors.text),
@@ -214,7 +214,7 @@ class PersonLedgerScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 24),
-                const Text(
+                Text(
                   'HISTORY',
                   style: TextStyle(
                     color: ArthamColors.lavender,
@@ -225,7 +225,7 @@ class PersonLedgerScreen extends StatelessWidget {
                 ),
                 const SizedBox(height: 10),
                 if (entries.isEmpty)
-                  const Padding(
+                  Padding(
                     padding: EdgeInsets.symmetric(vertical: 24),
                     child: Text(
                       'Nothing here yet.',
@@ -249,7 +249,7 @@ class PersonLedgerScreen extends StatelessWidget {
                             color: ArthamColors.debitTint,
                             borderRadius: BorderRadius.circular(18),
                           ),
-                          child: const Icon(Icons.delete_outline_rounded, color: ArthamColors.debit),
+                          child: Icon(Icons.delete_outline_rounded, color: ArthamColors.debit),
                         ),
                         child: _EntryTile(entry: entries[i]),
                       ),
@@ -260,7 +260,7 @@ class PersonLedgerScreen extends StatelessWidget {
                   Text(
                     _sumLine(entries, balance),
                     textAlign: TextAlign.center,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.faint,
                       fontSize: 12,
                       height: 1.5,
@@ -345,7 +345,7 @@ class _EntryTile extends StatelessWidget {
                   entry.title,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.text,
                     fontSize: 14,
                     fontWeight: FontWeight.w700,
@@ -353,7 +353,7 @@ class _EntryTile extends StatelessWidget {
                 ),
                 Text(
                   '$date · $detail',
-                  style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+                  style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                 ),
               ],
             ),

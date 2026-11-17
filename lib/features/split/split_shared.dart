@@ -21,7 +21,7 @@ int? parseRupeesToPaise(String input) {
   return (value * 100).round();
 }
 
-const List<Color> splitAvatarColors = [
+List<Color> get splitAvatarColors => [
   ArthamColors.mint,
   Color(0xFF8CBEFF),
   ArthamColors.peach,
@@ -289,7 +289,7 @@ class SplitPrimaryButton extends StatelessWidget {
                 child: AnimatedSwitcher(
                   duration: const Duration(milliseconds: 200),
                   child: busy
-                      ? const SizedBox(
+                      ? SizedBox(
                           key: ValueKey('busy'),
                           width: 22,
                           height: 22,
@@ -301,7 +301,7 @@ class SplitPrimaryButton extends StatelessWidget {
                       : Text(
                           label,
                           key: ValueKey(label),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.onAccent,
                             fontSize: 15,
                             fontWeight: FontWeight.w800,
@@ -372,11 +372,11 @@ InputDecoration splitFieldDecoration(String label, {String? hint}) {
     ),
     enabledBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(15),
-      borderSide: const BorderSide(color: ArthamColors.line),
+      borderSide: BorderSide(color: ArthamColors.line),
     ),
     focusedBorder: OutlineInputBorder(
       borderRadius: BorderRadius.circular(15),
-      borderSide: const BorderSide(color: ArthamColors.lavender, width: 1.5),
+      borderSide: BorderSide(color: ArthamColors.lavender, width: 1.5),
     ),
   );
 }
@@ -430,7 +430,7 @@ Future<String?> askPersonNameLike(
           const SizedBox(height: 18),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               color: ArthamColors.text,
               fontSize: 20,
               fontWeight: FontWeight.w800,
@@ -440,7 +440,7 @@ Future<String?> askPersonNameLike(
             const SizedBox(height: 6),
             Text(
               note,
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 13),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 13),
             ),
           ],
           const SizedBox(height: 16),
@@ -449,7 +449,7 @@ Future<String?> askPersonNameLike(
             controller: controller,
             autofocus: true,
             textCapitalization: TextCapitalization.words,
-            style: const TextStyle(color: ArthamColors.text),
+            style: TextStyle(color: ArthamColors.text),
             decoration: splitFieldDecoration(hint),
             onSubmitted: (value) => Navigator.pop(context, value),
           ),

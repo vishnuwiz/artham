@@ -181,13 +181,13 @@ class _SettleSheetState extends State<_SettleSheet> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text(
+                    Text(
                       'Settle up with',
                       style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                     ),
                     Text(
                       name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.text,
                         fontSize: 21,
                         fontWeight: FontWeight.w800,
@@ -214,7 +214,7 @@ class _SettleSheetState extends State<_SettleSheet> {
                 _chip = 2;
                 _error = null;
               }),
-              style: const TextStyle(
+              style: TextStyle(
                 color: ArthamColors.text,
                 fontSize: 26,
                 fontWeight: FontWeight.w800,
@@ -252,7 +252,7 @@ class _SettleSheetState extends State<_SettleSheet> {
               key: ValueKey(_accounts.length),
               initialValue: _accountId,
               dropdownColor: ArthamColors.sheet,
-              style: const TextStyle(color: ArthamColors.text),
+              style: TextStyle(color: ArthamColors.text),
               decoration: splitFieldDecoration(
                 _received ? 'Received into' : 'Paid from',
               ),
@@ -279,11 +279,11 @@ class _SettleSheetState extends State<_SettleSheet> {
                 radius: 15,
                 child: Row(
                   children: [
-                    const Text('Date', style: TextStyle(color: ArthamColors.muted, fontSize: 13)),
+                    Text('Date', style: TextStyle(color: ArthamColors.muted, fontSize: 13)),
                     const Spacer(),
                     Text(
                       '${_date.day}/${_date.month}/${_date.year}',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.text,
                         fontWeight: FontWeight.w700,
                       ),
@@ -302,7 +302,7 @@ class _SettleSheetState extends State<_SettleSheet> {
                 child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Icon(Icons.info_outline_rounded, size: 18, color: ArthamColors.mint),
+                    Icon(Icons.info_outline_rounded, size: 18, color: ArthamColors.mint),
                     const SizedBox(width: 10),
                     Expanded(
                       child: Text(
@@ -332,7 +332,7 @@ class _SettleSheetState extends State<_SettleSheet> {
                       padding: const EdgeInsets.only(top: 10),
                       child: Text(
                         _error!,
-                        style: const TextStyle(color: ArthamColors.debit, fontSize: 13),
+                        style: TextStyle(color: ArthamColors.debit, fontSize: 13),
                       ),
                     ),
             ),

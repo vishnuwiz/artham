@@ -285,7 +285,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                         onTap: () => Navigator.pop(context),
                       ),
                       const SizedBox(width: 12),
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Split an expense',
                           style: TextStyle(
@@ -324,7 +324,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                         children: [
                           Text(
                             _iPaid ? 'TOTAL YOU PAID' : 'TOTAL BILL',
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: ArthamColors.muted,
                               fontSize: 11,
                               fontWeight: FontWeight.w700,
@@ -339,13 +339,13 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                               decimal: true,
                             ),
                             onChanged: (_) => setState(() => _error = null),
-                            style: const TextStyle(
+                            style: TextStyle(
                               color: ArthamColors.text,
                               fontSize: 40,
                               fontWeight: FontWeight.w800,
                               letterSpacing: -1,
                             ),
-                            decoration: const InputDecoration(
+                            decoration: InputDecoration(
                               border: InputBorder.none,
                               enabledBorder: InputBorder.none,
                               focusedBorder: InputBorder.none,
@@ -380,12 +380,12 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                       key: const Key('split-title'),
                       controller: _title,
                       textCapitalization: TextCapitalization.sentences,
-                      style: const TextStyle(color: ArthamColors.text),
+                      style: TextStyle(color: ArthamColors.text),
                       decoration: splitFieldDecoration(
                         'Description',
                         hint: 'Team lunch',
                       ).copyWith(
-                        prefixIcon: const Icon(
+                        prefixIcon: Icon(
                           Icons.edit_note_rounded,
                           color: ArthamColors.muted,
                         ),
@@ -406,7 +406,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                           if (_iPaid) ...[
                             Row(
                               children: [
-                                const Icon(
+                                Icon(
                                   Icons.account_balance_outlined,
                                   size: 18,
                                   color: ArthamColors.muted,
@@ -419,17 +419,17 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                                       value: _accountId,
                                       isExpanded: true,
                                       dropdownColor: ArthamColors.sheet,
-                                      icon: const Icon(
+                                      icon: Icon(
                                         Icons.expand_more_rounded,
                                         color: ArthamColors.muted,
                                       ),
-                                      hint: const Text(
+                                      hint: Text(
                                         'Paid from',
                                         style: TextStyle(
                                           color: ArthamColors.faint,
                                         ),
                                       ),
-                                      style: const TextStyle(
+                                      style: TextStyle(
                                         color: ArthamColors.text,
                                         fontSize: 14,
                                         fontWeight: FontWeight.w700,
@@ -451,7 +451,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                                 ),
                               ],
                             ),
-                            const Divider(height: 1, color: ArthamColors.line),
+                            Divider(height: 1, color: ArthamColors.line),
                           ],
                           PressableScale(
                             onTap: _pickDate,
@@ -460,13 +460,13 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                               padding: const EdgeInsets.symmetric(vertical: 15),
                               child: Row(
                                 children: [
-                                  const Icon(
+                                  Icon(
                                     Icons.calendar_today_outlined,
                                     size: 18,
                                     color: ArthamColors.muted,
                                   ),
                                   const SizedBox(width: 12),
-                                  const Expanded(
+                                  Expanded(
                                     child: Text(
                                       'Date',
                                       style: TextStyle(
@@ -477,7 +477,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                                   ),
                                   Text(
                                     '${_date.day}/${_date.month}/${_date.year}',
-                                    style: const TextStyle(
+                                    style: TextStyle(
                                       color: ArthamColors.text,
                                       fontSize: 14,
                                       fontWeight: FontWeight.w700,
@@ -575,7 +575,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                             padding: const EdgeInsets.only(top: 8, left: 4),
                             child: Text(
                               problem,
-                              style: const TextStyle(color: ArthamColors.peach, fontSize: 12, fontWeight: FontWeight.w700),
+                              style: TextStyle(color: ArthamColors.peach, fontSize: 12, fontWeight: FontWeight.w700),
                             ),
                           ),
                   ),
@@ -589,7 +589,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                       child: Row(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Icon(Icons.info_outline_rounded, size: 18, color: ArthamColors.mint),
+                          Icon(Icons.info_outline_rounded, size: 18, color: ArthamColors.mint),
                           const SizedBox(width: 10),
                           Expanded(
                             child: Text(
@@ -613,7 +613,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                             padding: const EdgeInsets.only(top: 10),
                             child: Text(
                               _error!,
-                              style: const TextStyle(color: ArthamColors.debit, fontSize: 13),
+                              style: TextStyle(color: ArthamColors.debit, fontSize: 13),
                             ),
                           ),
                   ),
@@ -655,7 +655,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
 
   Widget _sectionLabel(String text) => Text(
     text,
-    style: const TextStyle(
+    style: TextStyle(
       color: ArthamColors.lavender,
       fontSize: 11,
       fontWeight: FontWeight.w700,
@@ -703,11 +703,11 @@ class _PersonChip extends StatelessWidget {
                       key: const ValueKey('on'),
                       width: 28,
                       height: 28,
-                      decoration: const BoxDecoration(
+                      decoration: BoxDecoration(
                         shape: BoxShape.circle,
                         color: ArthamColors.lavender,
                       ),
-                      child: const Icon(Icons.check_rounded, size: 16, color: ArthamColors.onAccent),
+                      child: Icon(Icons.check_rounded, size: 16, color: ArthamColors.onAccent),
                     )
                   : SplitAvatar(
                       key: const ValueKey('off'),
@@ -747,7 +747,7 @@ class _AddChip extends StatelessWidget {
           borderRadius: BorderRadius.circular(999),
           border: Border.all(color: ArthamColors.line),
         ),
-        child: const Row(
+        child: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(Icons.add_rounded, size: 16, color: ArthamColors.lavender),
@@ -792,7 +792,7 @@ class _ShareRow extends StatelessWidget {
       decoration: BoxDecoration(
         border: isLast
             ? null
-            : const Border(bottom: BorderSide(color: ArthamColors.glassSoft)),
+            : Border(bottom: BorderSide(color: ArthamColors.glassSoft)),
       ),
       child: Row(
         children: [
@@ -801,7 +801,7 @@ class _ShareRow extends StatelessWidget {
           Expanded(
             child: Text(
               person?.name ?? 'You',
-              style: const TextStyle(
+              style: TextStyle(
                 color: ArthamColors.text,
                 fontSize: 14,
                 fontWeight: FontWeight.w700,
@@ -810,10 +810,10 @@ class _ShareRow extends StatelessWidget {
           ),
           if (mode == SplitMode.equal || controller == null)
             computedPaise == null
-                ? const Text('—', style: TextStyle(color: ArthamColors.faint))
+                ? Text('—', style: TextStyle(color: ArthamColors.faint))
                 : AnimatedMoney(
                     paise: computedPaise!,
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.text,
                       fontSize: 14,
                       fontWeight: FontWeight.w800,
@@ -827,14 +827,14 @@ class _ShareRow extends StatelessWidget {
                 textAlign: TextAlign.right,
                 keyboardType: const TextInputType.numberWithOptions(decimal: true),
                 onChanged: (_) => onChanged(),
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.text,
                   fontWeight: FontWeight.w800,
                 ),
                 decoration: InputDecoration(
                   isDense: true,
                   hintText: '0',
-                  hintStyle: const TextStyle(color: ArthamColors.faint),
+                  hintStyle: TextStyle(color: ArthamColors.faint),
                   suffixText: mode == SplitMode.percent ? '%' : null,
                   prefixText: mode == SplitMode.amounts ? '₹' : null,
                   border: InputBorder.none,

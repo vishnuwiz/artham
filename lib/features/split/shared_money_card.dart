@@ -77,10 +77,10 @@ class SharedMoneyCard extends StatelessWidget {
             color: ArthamColors.lavenderTint,
             borderRadius: BorderRadius.circular(15),
           ),
-          child: const Icon(Icons.group_outlined, color: ArthamColors.lavender),
+          child: Icon(Icons.group_outlined, color: ArthamColors.lavender),
         ),
         const SizedBox(width: 14),
-        const Expanded(
+        Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -100,7 +100,7 @@ class SharedMoneyCard extends StatelessWidget {
             ],
           ),
         ),
-        const Icon(Icons.chevron_right_rounded, color: ArthamColors.lavender),
+        Icon(Icons.chevron_right_rounded, color: ArthamColors.lavender),
       ],
     );
   }
@@ -110,7 +110,7 @@ class SharedMoneyCard extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Row(
+        Row(
           children: [
             Expanded(
               child: Text(
@@ -168,7 +168,7 @@ class SharedMoneyCard extends StatelessWidget {
               : net > 0
               ? 'Net: you are owed ${splitMoney(net)}'
               : 'Net: you owe ${splitMoney(-net)}',
-          style: const TextStyle(
+          style: TextStyle(
             color: ArthamColors.muted,
             fontSize: 12,
             fontWeight: FontWeight.w600,
@@ -205,7 +205,7 @@ class _Tile extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: const TextStyle(color: ArthamColors.muted, fontSize: 11)),
+          Text(label, style: TextStyle(color: ArthamColors.muted, fontSize: 11)),
           const SizedBox(height: 2),
           FittedBox(
             fit: BoxFit.scaleDown,
@@ -220,7 +220,7 @@ class _Tile extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 2),
-          Text(caption, style: const TextStyle(color: ArthamColors.muted, fontSize: 11)),
+          Text(caption, style: TextStyle(color: ArthamColors.muted, fontSize: 11)),
         ],
       ),
     );
