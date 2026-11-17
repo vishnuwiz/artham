@@ -5,6 +5,7 @@ import 'package:artham/theme/artham_theme.dart';
 import 'package:artham/theme/theme_controller.dart';
 
 void main() {
+  TestWidgetsFlutterBinding.ensureInitialized();
   tearDown(() => ArthamColors.use(ArthamPalette.artham));
 
   test('unknown or missing ids fall back to the original Artham theme', () {
