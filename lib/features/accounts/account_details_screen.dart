@@ -5,8 +5,8 @@ import '../../theme/artham_theme.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
 
-const Color detailsGreen = ArthamColors.lavender;
-const Color detailsNavy = ArthamColors.text;
+Color get detailsGreen => ArthamColors.lavender;
+Color get detailsNavy => ArthamColors.text;
 const Color detailsBackground = Colors.transparent;
 
 class AccountDetailsScreen extends StatefulWidget {
@@ -120,7 +120,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 14),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 14),
             ),
           ),
           const SizedBox(width: 12),
@@ -156,7 +156,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
         future: _accountFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: detailsGreen),
             );
           }
@@ -192,7 +192,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                         color: detailsGreen.withValues(alpha: 0.10),
                         borderRadius: BorderRadius.circular(19),
                       ),
-                      child: const Icon(
+                      child: Icon(
                         Icons.account_balance_rounded,
                         color: detailsGreen,
                         size: 34,
@@ -201,7 +201,7 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     const SizedBox(height: 15),
                     Text(
                       account.bankName,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: detailsNavy,
                         fontSize: 21,
                         fontWeight: FontWeight.w800,
@@ -210,13 +210,13 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     const SizedBox(height: 5),
                     Text(
                       accountNumberLastFourLabel(account.accountNumberLast4),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         letterSpacing: 1,
                       ),
                     ),
                     const SizedBox(height: 22),
-                    const Text(
+                    Text(
                       'OPENING BALANCE',
                       style: TextStyle(
                         color: ArthamColors.muted,
@@ -228,14 +228,14 @@ class _AccountDetailsScreenState extends State<AccountDetailsScreen> {
                     const SizedBox(height: 7),
                     Text(
                       _formatAmount(account.openingBalancePaise),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: detailsNavy,
                         fontSize: 29,
                         fontWeight: FontWeight.w800,
                       ),
                     ),
                     const SizedBox(height: 5),
-                    const Text(
+                    Text(
                       'This is the recorded opening balance, not the live bank balance.',
                       textAlign: TextAlign.center,
                       style: TextStyle(color: ArthamColors.muted, fontSize: 11),
@@ -448,11 +448,11 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: ArthamColors.line),
+        borderSide: BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(14),
-        borderSide: const BorderSide(color: detailsGreen, width: 1.5),
+        borderSide: BorderSide(color: detailsGreen, width: 1.5),
       ),
     );
   }
@@ -534,7 +534,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                 child: Row(
                   children: [
                     Expanded(child: Text(_formatDate(_openingDate))),
-                    const Icon(
+                    Icon(
                       Icons.calendar_month_rounded,
                       color: detailsGreen,
                     ),
@@ -555,7 +555,7 @@ class _EditAccountScreenState extends State<EditAccountScreen> {
                   ),
                 ),
                 child: _isSaving
-                    ? const SizedBox(
+                    ? SizedBox(
                         height: 22,
                         width: 22,
                         child: CircularProgressIndicator(

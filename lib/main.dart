@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 
 import 'theme/artham_theme.dart';
+import 'theme/theme_controller.dart';
 import 'features/transactions/activity_screen.dart';
 import 'features/budgets/budgets_screen.dart';
 import 'features/insights/insights_screen.dart';
@@ -15,6 +16,8 @@ import 'data/repositories/transaction_repository.dart';
 import 'data/repositories/budget_repository.dart';
 import 'data/repositories/category_repository.dart';
 import 'features/accounts/accounts_screen.dart';
+import 'features/split/shared_money_card.dart';
+import 'data/split/split_repository.dart';
 import 'features/alerts/alerts_screen.dart';
 import 'widgets/animated_charts.dart';
 import 'widgets/micro_interactions.dart';
@@ -57,31 +60,36 @@ Future<void> main() async {
     debugPrint('Artham category setup error: $e');
   }
 
+  await ArthamThemeController.instance.load();
+
   runApp(const ArthamApp());
 }
 
-const Color primaryGreen = ArthamColors.lavender;
-const Color darkNavy = ArthamColors.text;
+Color get primaryGreen => ArthamColors.lavender;
+Color get darkNavy => ArthamColors.text;
 
 class ArthamApp extends StatelessWidget {
   const ArthamApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Artham',
-      debugShowCheckedModeBanner: false,
-      theme: buildArthamTheme(),
-      home: _skipStartupSplashForTests
-          ? const HomeScreen()
-          : SplashGate(
-              child: OnboardingGate(
-                child: FirstTimeSetupGate(
-                  database: appDatabase,
-                  child: const HomeScreen(),
+    return ListenableBuilder(
+      listenable: ArthamThemeController.instance,
+      builder: (context, _) => MaterialApp(
+        title: 'Artham',
+        debugShowCheckedModeBanner: false,
+        theme: buildArthamTheme(),
+        home: _skipStartupSplashForTests
+            ? const HomeScreen()
+            : SplashGate(
+                child: OnboardingGate(
+                  child: FirstTimeSetupGate(
+                    database: appDatabase,
+                    child: const HomeScreen(),
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }
@@ -142,6 +150,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     unawaited(AlertCenter.instance.refresh(appDatabase));
   }
 
+  late final SplitRepository _splitRepository = SplitRepository(appDatabase);
+
   Future<void> _openAlerts() async {
     await Navigator.push(
       context,
@@ -183,6 +193,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   void _loadAccounts() {
+    unawaited(_splitRepository.load());
     _accountsFuture = AccountRepository(appDatabase)
         .getActiveAccounts()
         .then((value) {
@@ -308,6 +319,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               buildHeader(),
               const SizedBox(height: 24),
               buildBalanceCard(),
+              const SizedBox(height: 20),
+              SharedMoneyCard(
+                repository: _splitRepository,
+                database: appDatabase,
+                onChanged: () {
+                  if (mounted) setState(_loadAccounts);
+                },
+              ),
               const SizedBox(height: 28),
               buildSectionTitle('My accounts', 'See all'),
               const SizedBox(height: 14),
@@ -340,7 +359,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
         const SizedBox(width: 12),
-        const Column(
+        Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
@@ -398,7 +417,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
         CircleAvatar(
           radius: 21,
           backgroundColor: primaryGreen.withValues(alpha: 0.12),
-          child: const Icon(Icons.person_outline, color: primaryGreen),
+          child: Icon(Icons.person_outline, color: primaryGreen),
         ),
       ],
     );
@@ -490,10 +509,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             children: [
               Row(
                 children: [
-                  const Text(
+                  Text(
                     'TOTAL AVAILABLE BALANCE',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: ArthamColors.onHeroMuted,
                       fontSize: 11,
                       letterSpacing: 1.1,
                       fontWeight: FontWeight.w600,
@@ -508,7 +527,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       showBalance
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: Colors.white70,
+                      color: ArthamColors.onHeroMuted,
                       size: 20,
                     ),
                   ),
@@ -519,10 +538,10 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 paise: summary?.totalBalancePaise,
                 placeholder: totalPlaceholder,
                 masked: '••••••••',
-                style: const TextStyle(
+                style: TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: ArthamColors.onHero,
                   letterSpacing: -1,
                 ),
               ),
@@ -540,14 +559,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ? 'Unable to calculate balance'
                         : 'Calculated from your saved transactions',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: ArthamColors.text.withValues(alpha: 0.7),
                       fontSize: 11,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              const Divider(color: Colors.white24),
+              Divider(color: ArthamColors.onHeroLine),
               const SizedBox(height: 15),
               Row(
                 children: [
@@ -592,7 +611,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Flexible(
               child: Text(
                 label,
-                style: const TextStyle(color: Colors.white60, fontSize: 9),
+                style: TextStyle(color: ArthamColors.onHeroFaint, fontSize: 9),
               ),
             ),
           ],
@@ -602,8 +621,8 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           paise: amountPaise,
           placeholder: '—',
           masked: '••••',
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: ArthamColors.onHero,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),
@@ -617,7 +636,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       children: [
         Text(
           title,
-          style: const TextStyle(
+          style: TextStyle(
             color: darkNavy,
             fontSize: 18,
             fontWeight: FontWeight.w800,
@@ -637,7 +656,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               : null,
           child: Text(
             action,
-            style: const TextStyle(
+            style: TextStyle(
               color: primaryGreen,
               fontWeight: FontWeight.w700,
               fontSize: 12,
@@ -654,7 +673,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
             _lastAccounts == null) {
-          return const Center(
+          return Center(
             child: Padding(
               padding: EdgeInsets.all(25),
               child: CircularProgressIndicator(color: primaryGreen),
@@ -670,7 +689,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               border: ArthamColors.glassBorder,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: const Text(
+            child: Text(
               'Unable to load bank accounts.',
               style: TextStyle(color: ArthamColors.debit),
             ),
@@ -696,7 +715,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   color: primaryGreen.withValues(alpha: 0.8),
                 ),
                 const SizedBox(height: 10),
-                const Text(
+                Text(
                   'No bank accounts added yet',
                   style: TextStyle(
                     color: darkNavy,
@@ -705,7 +724,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Add your first bank account to get started.',
                   textAlign: TextAlign.center,
                   style: TextStyle(color: ArthamColors.muted, fontSize: 12),
@@ -734,7 +753,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             }
 
             if (summaryData == null) {
-              return const Text(
+              return Text(
                 'Unable to calculate account balances.',
                 style: TextStyle(color: ArthamColors.debit),
               );
@@ -798,12 +817,12 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           const SizedBox(height: 3),
           Text(
             number,
-            style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+            style: TextStyle(color: ArthamColors.muted, fontSize: 11),
           ),
           const SizedBox(height: 12),
           AnimatedAmountText(
             paise: amountPaise,
-            style: const TextStyle(
+            style: TextStyle(
               fontWeight: FontWeight.w800,
               fontSize: 17,
               color: darkNavy,
@@ -830,7 +849,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               border: ArthamColors.glassBorder,
               borderRadius: BorderRadius.circular(22),
             ),
-            child: const Center(
+            child: Center(
               child: CircularProgressIndicator(color: primaryGreen),
             ),
           );
@@ -845,7 +864,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               border: ArthamColors.glassBorder,
               borderRadius: BorderRadius.circular(22),
             ),
-            child: const Text(
+            child: Text(
               'Unable to load monthly budget.',
               style: TextStyle(color: ArthamColors.debit, fontSize: 12),
             ),
@@ -866,13 +885,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               children: [
                 Text(
                   _currentMonthLabel(),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 12,
                   ),
                 ),
                 const SizedBox(height: 12),
-                const Text(
+                Text(
                   'No monthly budget set',
                   style: TextStyle(
                     color: darkNavy,
@@ -881,7 +900,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   ),
                 ),
                 const SizedBox(height: 5),
-                const Text(
+                Text(
                   'Set a spending limit to track your monthly expenses.',
                   style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                 ),
@@ -921,13 +940,13 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 children: [
                   Text(
                     _currentMonthLabel(),
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: ArthamColors.muted,
                       fontSize: 12,
                     ),
                   ),
                   const Spacer(),
-                  const Icon(
+                  Icon(
                     Icons.calendar_month_outlined,
                     color: primaryGreen,
                     size: 20,
@@ -937,7 +956,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               const SizedBox(height: 10),
               AnimatedAmountText(
                 paise: expenses,
-                style: const TextStyle(
+                style: TextStyle(
                   color: darkNavy,
                   fontWeight: FontWeight.w800,
                   fontSize: 27,
@@ -946,7 +965,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               const SizedBox(height: 5),
               Text(
                 'of ${_formatRupees(budget)} available this month',
-                style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+                style: TextStyle(color: ArthamColors.muted, fontSize: 12),
               ),
               if (summary.rolloverPaise > 0 || summary.repeatsMonthly) ...[
                 const SizedBox(height: 4),
@@ -956,7 +975,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       '${_formatRupees(summary.rolloverPaise)} carried forward',
                     if (summary.repeatsMonthly) 'Repeats monthly',
                   ].join(' · '),
-                  style: const TextStyle(color: primaryGreen, fontSize: 10),
+                  style: TextStyle(color: primaryGreen, fontSize: 10),
                 ),
               ],
               const SizedBox(height: 18),
@@ -993,7 +1012,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                           ? '${_formatRupees(remaining.abs())} over'
                           : '${_formatRupees(remaining)} remaining',
                       textAlign: TextAlign.end,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 12,
                       ),
@@ -1014,7 +1033,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting &&
             _lastRecent == null) {
-          return const Padding(
+          return Padding(
             padding: EdgeInsets.all(22),
             child: Center(
               child: CircularProgressIndicator(color: primaryGreen),
@@ -1031,7 +1050,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               border: ArthamColors.glassBorder,
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Text(
+            child: Text(
               'Unable to load recent transactions.',
               style: TextStyle(color: ArthamColors.debit, fontSize: 12),
             ),
@@ -1049,7 +1068,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
               border: ArthamColors.glassBorder,
               borderRadius: BorderRadius.circular(18),
             ),
-            child: const Column(
+            child: Column(
               children: [
                 Icon(
                   Icons.receipt_long_outlined,
@@ -1243,7 +1262,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   subtitle,
                   maxLines: 1,
                   overflow: TextOverflow.ellipsis,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 10,
                   ),
@@ -1251,7 +1270,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 const SizedBox(height: 3),
                 Text(
                   date,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.faint,
                     fontSize: 10,
                   ),
@@ -1282,14 +1301,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           const SizedBox(height: 15),
           Text(
             title,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 23,
               fontWeight: FontWeight.bold,
               color: darkNavy,
             ),
           ),
           const SizedBox(height: 6),
-          const Text(
+          Text(
             'Coming soon to Artham',
             style: TextStyle(color: ArthamColors.muted),
           ),

@@ -1,3 +1,4 @@
+import '../../data/split/split_sources.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../theme/artham_theme.dart';
@@ -5,8 +6,8 @@ import '../../theme/artham_theme.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color historyGreen = ArthamColors.lavender;
-const Color historyNavy = ArthamColors.text;
+Color get historyGreen => ArthamColors.lavender;
+Color get historyNavy => ArthamColors.text;
 const Color historyBackground = Colors.transparent;
 
 class AccountHistoryScreen extends StatefulWidget {
@@ -72,7 +73,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
         future: _future,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: historyGreen),
             );
           }
@@ -85,6 +86,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
           int income = 0;
           int expenses = 0;
           for (final tx in data.transactions) {
+            if (isSplitCashFlow(tx.source)) continue;
             if (tx.transactionType == 'income') income += tx.amountPaise;
             if (tx.transactionType == 'expense') expenses += tx.amountPaise;
           }
@@ -106,33 +108,33 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     children: [
                       Text(
                         widget.account.bankName,
-                        style: const TextStyle(color: Colors.white70),
+                        style: TextStyle(color: ArthamColors.onHeroMuted),
                       ),
                       const SizedBox(height: 5),
                       Text(
                         accountNumberLastFourLabel(
                           widget.account.accountNumberLast4,
                         ),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: ArthamColors.onHero,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1,
                         ),
                       ),
                       const SizedBox(height: 18),
-                      const Text(
+                      Text(
                         'CURRENT BALANCE',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: ArthamColors.onHeroMuted,
                           fontSize: 10,
                           letterSpacing: 1,
                         ),
                       ),
                       Text(
                         _money(data.balance),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: ArthamColors.onHero,
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
                         ),
@@ -162,7 +164,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                 const SizedBox(height: 22),
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       'Transactions',
                       style: TextStyle(
                         color: historyNavy,
@@ -173,7 +175,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     const Spacer(),
                     Text(
                       '${data.transactions.length} records',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 12,
                       ),
@@ -232,14 +234,14 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                               children: [
                                 Text(
                                   title,
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: historyNavy,
                                     fontWeight: FontWeight.w700,
                                   ),
                                 ),
                                 Text(
                                   _date(tx.transactionDate),
-                                  style: const TextStyle(
+                                  style: TextStyle(
                                     color: ArthamColors.muted,
                                     fontSize: 11,
                                   ),
@@ -269,7 +271,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
   Widget _summary(String label, int amount, Color color) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+      Text(label, style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11)),
       const SizedBox(height: 5),
       Text(
         _money(amount),

@@ -97,7 +97,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
 
     return ArthamScaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Alerts',
           style: TextStyle(
             color: ArthamColors.text,
@@ -152,7 +152,7 @@ class _AlertsScreenState extends State<AlertsScreen> {
           for (final alert in earlier) _buildCard(alert, now),
         ],
         const SizedBox(height: 18),
-        const Text(
+        Text(
           'Alerts are created on this phone. Nothing is sent anywhere.',
           textAlign: TextAlign.center,
           style: TextStyle(color: ArthamColors.faint, fontSize: 12),
@@ -186,7 +186,7 @@ class _SectionLabel extends StatelessWidget {
       padding: const EdgeInsets.only(bottom: 10),
       child: Text(
         text,
-        style: const TextStyle(
+        style: TextStyle(
           color: ArthamColors.lavender,
           fontSize: 11,
           fontWeight: FontWeight.w800,
@@ -214,12 +214,12 @@ class _NotificationsSwitch extends StatelessWidget {
       ),
       child: Row(
         children: [
-          const Icon(
+          Icon(
             Icons.notifications_active_outlined,
             color: ArthamColors.lavender,
           ),
           const SizedBox(width: 12),
-          const Expanded(
+          Expanded(
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -255,7 +255,7 @@ class _EmptyAlerts extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(vertical: 48),
       child: Column(
         children: [
@@ -294,25 +294,25 @@ class _AlertStyle {
   const _AlertStyle(this.icon, this.color, this.tint, this.label);
 
   static _AlertStyle of(AlertKind kind) => switch (kind) {
-    AlertKind.budget => const _AlertStyle(
+    AlertKind.budget => _AlertStyle(
       Icons.warning_amber_rounded,
       ArthamColors.debit,
       ArthamColors.debitTint,
       'Budgets',
     ),
-    AlertKind.recurring => const _AlertStyle(
+    AlertKind.recurring => _AlertStyle(
       Icons.event_repeat_rounded,
       ArthamColors.lavender,
       ArthamColors.lavenderTint,
       'Recurring',
     ),
-    AlertKind.backup => const _AlertStyle(
+    AlertKind.backup => _AlertStyle(
       Icons.backup_rounded,
       ArthamColors.mint,
       ArthamColors.mintTint,
       'Backup',
     ),
-    AlertKind.summary => const _AlertStyle(
+    AlertKind.summary => _AlertStyle(
       Icons.bar_chart_rounded,
       ArthamColors.peach,
       ArthamColors.peachTint,
@@ -417,7 +417,7 @@ class _AlertCard extends StatelessWidget {
                       const SizedBox(height: 3),
                       Text(
                         alert.body,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 13,
                           height: 1.4,
@@ -426,7 +426,7 @@ class _AlertCard extends StatelessWidget {
                       const SizedBox(height: 8),
                       Text(
                         '${style.label} · ${_ago(now, alert.createdAt)}',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.faint,
                           fontSize: 12,
                         ),

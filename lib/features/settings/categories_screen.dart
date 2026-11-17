@@ -181,7 +181,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
 
     return ArthamScaffold(
       appBar: AppBar(
-        title: const Text(
+        title: Text(
           'Categories',
           style: TextStyle(
             color: ArthamColors.text,
@@ -223,19 +223,19 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
           ),
           const SizedBox(height: 16),
           if (_isLoading)
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(40),
               child: Center(
                 child: CircularProgressIndicator(color: ArthamColors.lavender),
               ),
             )
           else if (_error != null)
-            Text(_error!, style: const TextStyle(color: ArthamColors.debit))
+            Text(_error!, style: TextStyle(color: ArthamColors.debit))
           else ...[
             Text(
               '${visible.length} ${_type == 'expense' ? 'expense' : 'income'} '
               '${visible.length == 1 ? 'category' : 'categories'}',
-              style: const TextStyle(
+              style: TextStyle(
                 color: ArthamColors.muted,
                 fontSize: 12,
                 fontWeight: FontWeight.w600,
@@ -251,7 +251,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                     trailing: IconButton(
                       tooltip: 'Remove ${category.name}',
                       onPressed: () => _delete(category),
-                      icon: const Icon(
+                      icon: Icon(
                         Icons.delete_outline_rounded,
                         color: ArthamColors.faint,
                       ),
@@ -261,7 +261,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
             ),
             if (hidden.isNotEmpty) ...[
               const SizedBox(height: 22),
-              const Text(
+              Text(
                 'Hidden',
                 style: TextStyle(
                   color: ArthamColors.text,
@@ -269,7 +269,7 @@ class _CategoriesScreenState extends State<CategoriesScreen> {
                 ),
               ),
               const SizedBox(height: 4),
-              const Text(
+              Text(
                 'Not offered for new entries. Existing records keep them.',
                 style: TextStyle(color: ArthamColors.muted, fontSize: 12),
               ),
@@ -319,7 +319,7 @@ class _CategoryGroup extends StatelessWidget {
             for (var i = 0; i < children.length; i++) ...[
               children[i],
               if (i < children.length - 1)
-                const Divider(height: 1, indent: 64, color: ArthamColors.line),
+                Divider(height: 1, indent: 64, color: ArthamColors.line),
             ],
           ],
         ),
@@ -351,7 +351,7 @@ class _CategoryTile extends StatelessWidget {
         leading: CategoryIconBadge.forCategory(category, size: 38),
         title: Text(
           category.name,
-          style: const TextStyle(
+          style: TextStyle(
             color: ArthamColors.text,
             fontWeight: FontWeight.w700,
           ),
@@ -454,7 +454,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.9,
         ),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: ArthamColors.sheet,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
@@ -468,7 +468,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
                   Expanded(
                     child: Text(
                       _isEditing ? 'Edit category' : 'New $typeLabel category',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.text,
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -483,7 +483,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
                 ],
               ),
             ),
-            const Divider(height: 1, color: ArthamColors.line),
+            Divider(height: 1, color: ArthamColors.line),
             Flexible(
               child: ListView(
                 shrinkWrap: true,
@@ -555,7 +555,7 @@ class _CategoryEditorSheetState extends State<CategoryEditorSheet> {
                     Text(
                       'This is an $typeLabel category. To use it for the '
                       'other type, create a new category.',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 12,
                       ),
@@ -590,7 +590,7 @@ class _SheetLabel extends StatelessWidget {
   Widget build(BuildContext context) {
     return Text(
       text,
-      style: const TextStyle(
+      style: TextStyle(
         color: ArthamColors.text,
         fontWeight: FontWeight.w700,
       ),
@@ -629,7 +629,7 @@ class _ColorDot extends StatelessWidget {
             ),
           ),
           child: selected
-              ? const Icon(
+              ? Icon(
                   Icons.check_rounded,
                   size: 18,
                   color: ArthamColors.onAccent,

@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:drift/drift.dart';
 
 import '../app_database.dart';
+import '../split/split_sources.dart';
 
 class BudgetRolloverAmounts {
   final int baseBudgetPaise;
@@ -442,6 +443,7 @@ class BudgetRepository {
         await (database.select(database.moneyTransactions)..where(
               (transaction) =>
                   transaction.transactionType.equals('expense') &
+                  transaction.source.isNotIn(kSplitCashSources) &
                   transaction.transactionDate.isBiggerOrEqualValue(start) &
                   transaction.transactionDate.isSmallerThanValue(end),
             ))
@@ -463,6 +465,7 @@ class BudgetRepository {
         await (database.select(database.moneyTransactions)..where(
               (transaction) =>
                   transaction.transactionType.equals('expense') &
+                  transaction.source.isNotIn(kSplitCashSources) &
                   transaction.categoryId.equals(categoryId) &
                   transaction.transactionDate.isBiggerOrEqualValue(start) &
                   transaction.transactionDate.isSmallerThanValue(end),

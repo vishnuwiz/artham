@@ -11,8 +11,8 @@ import '../../data/app_database.dart';
 import '../../data/recurring_pattern_detector.dart';
 import '../../data/repositories/recurring_transaction_repository.dart';
 
-const Color recurringGreen = ArthamColors.lavender;
-const Color recurringNavy = ArthamColors.text;
+Color get recurringGreen => ArthamColors.lavender;
+Color get recurringNavy => ArthamColors.text;
 const Color recurringBackground = Colors.transparent;
 
 class RecurringTransactionsScreen extends StatefulWidget {
@@ -240,7 +240,7 @@ class _RecurringTransactionsScreenState
         future: _screenData,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: recurringGreen),
             );
           }
@@ -267,7 +267,7 @@ class _RecurringTransactionsScreenState
                 ],
                 const SizedBox(height: 22),
                 if (data.schedules.isNotEmpty) ...[
-                  const Text(
+                  Text(
                     'YOUR SCHEDULES',
                     style: TextStyle(
                       color: ArthamColors.muted,
@@ -317,7 +317,7 @@ class _RecurringTransactionsScreenState
           Expanded(
             child: _summaryValue('Active schedules', activeCount.toString()),
           ),
-          Container(width: 1, height: 42, color: Colors.white24),
+          Container(width: 1, height: 42, color: ArthamColors.onHeroLine),
           const SizedBox(width: 18),
           Expanded(
             child: _summaryValue(
@@ -336,8 +336,8 @@ class _RecurringTransactionsScreenState
       children: [
         Text(
           value,
-          style: const TextStyle(
-            color: Colors.white,
+          style: TextStyle(
+            color: ArthamColors.onHero,
             fontSize: 25,
             fontWeight: FontWeight.w800,
           ),
@@ -345,7 +345,7 @@ class _RecurringTransactionsScreenState
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
+          style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 12),
         ),
       ],
     );
@@ -355,7 +355,7 @@ class _RecurringTransactionsScreenState
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text(
+        Text(
           'POSSIBLE RECURRING PAYMENTS',
           style: TextStyle(
             color: ArthamColors.muted,
@@ -365,7 +365,7 @@ class _RecurringTransactionsScreenState
           ),
         ),
         const SizedBox(height: 6),
-        const Text(
+        Text(
           'Artham found patterns in your past transactions. Review each one '
           'before saving a schedule.',
           style: TextStyle(
@@ -421,7 +421,7 @@ class _RecurringTransactionsScreenState
                       suggestion.description,
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: recurringNavy,
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -432,7 +432,7 @@ class _RecurringTransactionsScreenState
                       '${suggestion.categoryName} · ${suggestion.accountLabel}',
                       maxLines: 2,
                       overflow: TextOverflow.ellipsis,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 11,
                       ),
@@ -465,7 +465,7 @@ class _RecurringTransactionsScreenState
           Text(
             'Next expected: ${_formatDate(suggestion.nextExpectedDate)}. '
             'This is an estimate based on transaction history.',
-            style: const TextStyle(
+            style: TextStyle(
               color: ArthamColors.muted,
               fontSize: 11,
               height: 1.4,
@@ -508,7 +508,7 @@ class _RecurringTransactionsScreenState
         border: ArthamColors.glassBorder,
         borderRadius: BorderRadius.circular(18),
       ),
-      child: const Text(
+      child: Text(
         'No schedules created yet. You can review a detected pattern above '
         'or create a schedule manually.',
         style: TextStyle(color: ArthamColors.muted, fontSize: 12, height: 1.4),
@@ -563,7 +563,7 @@ class _RecurringTransactionsScreenState
                   children: [
                     Text(
                       item.category.name,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: recurringNavy,
                         fontSize: 15,
                         fontWeight: FontWeight.w800,
@@ -575,7 +575,7 @@ class _RecurringTransactionsScreenState
                         item.account.bankName,
                         item.account.accountNumberLast4,
                       ),
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: ArthamColors.muted,
                         fontSize: 12,
                       ),
@@ -609,7 +609,7 @@ class _RecurringTransactionsScreenState
             const SizedBox(height: 10),
             Text(
               schedule.description!,
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 12),
             ),
           ],
           const SizedBox(height: 12),
@@ -640,7 +640,7 @@ class _RecurringTransactionsScreenState
               IconButton(
                 tooltip: 'Delete schedule',
                 onPressed: () => _deleteSchedule(item),
-                icon: const Icon(
+                icon: Icon(
                   Icons.delete_outline_rounded,
                   color: ArthamColors.debit,
                 ),
@@ -684,14 +684,14 @@ class _RecurringTransactionsScreenState
                 color: recurringGreen.withValues(alpha: 0.10),
                 borderRadius: BorderRadius.circular(24),
               ),
-              child: const Icon(
+              child: Icon(
                 Icons.event_repeat_rounded,
                 color: recurringGreen,
                 size: 38,
               ),
             ),
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'No recurring transactions yet',
               style: TextStyle(
                 color: recurringNavy,
@@ -700,7 +700,7 @@ class _RecurringTransactionsScreenState
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Set up regular income or expenses such as salary, rent, '
               'subscriptions or bills.',
               textAlign: TextAlign.center,
@@ -729,7 +729,7 @@ class _RecurringTransactionsScreenState
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.error_outline,
               color: ArthamColors.debit,
               size: 40,
@@ -744,7 +744,7 @@ class _RecurringTransactionsScreenState
             Text(
               message,
               textAlign: TextAlign.center,
-              style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+              style: TextStyle(color: ArthamColors.muted, fontSize: 12),
             ),
             const SizedBox(height: 14),
             OutlinedButton(
@@ -958,7 +958,7 @@ class _AddRecurringScheduleSheetState
                   padding: const EdgeInsets.fromLTRB(20, 16, 12, 8),
                   child: Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: Text(
                           'Repeat every',
                           style: TextStyle(
@@ -971,7 +971,7 @@ class _AddRecurringScheduleSheetState
                       TextButton(
                         onPressed: () =>
                             Navigator.pop(sheetContext, selectedInterval),
-                        child: const Text(
+                        child: Text(
                           'Done',
                           style: TextStyle(
                             color: recurringGreen,
@@ -997,7 +997,7 @@ class _AddRecurringScheduleSheetState
                       (index) => Center(
                         child: Text(
                           '${index + 1} ${_frequencyUnit(index + 1)}',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: recurringNavy,
                             fontSize: 18,
                           ),
@@ -1074,15 +1074,15 @@ class _AddRecurringScheduleSheetState
       fillColor: ArthamColors.glass,
       border: OutlineInputBorder(
         borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: ArthamColors.line),
+        borderSide: BorderSide(color: ArthamColors.line),
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: ArthamColors.line),
+        borderSide: BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(13),
-        borderSide: const BorderSide(color: recurringGreen, width: 1.4),
+        borderSide: BorderSide(color: recurringGreen, width: 1.4),
       ),
     );
   }
@@ -1102,7 +1102,7 @@ class _AddRecurringScheduleSheetState
         constraints: BoxConstraints(
           maxHeight: MediaQuery.of(context).size.height * 0.92,
         ),
-        decoration: const BoxDecoration(
+        decoration: BoxDecoration(
           color: ArthamColors.glassSoft,
           borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
         ),
@@ -1118,7 +1118,7 @@ class _AddRecurringScheduleSheetState
                       widget.suggestion == null
                           ? 'New recurring schedule'
                           : 'Review detected pattern',
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: recurringNavy,
                         fontSize: 18,
                         fontWeight: FontWeight.w800,
@@ -1135,7 +1135,7 @@ class _AddRecurringScheduleSheetState
             const Divider(height: 1),
             Flexible(
               child: _isLoading
-                  ? const Center(
+                  ? Center(
                       child: Padding(
                         padding: EdgeInsets.all(30),
                         child: CircularProgressIndicator(color: recurringGreen),
@@ -1171,7 +1171,7 @@ class _AddRecurringScheduleSheetState
                 'Found in ${widget.suggestion!.occurrenceCount} similar '
                 'transactions. Check the amount, account, category and '
                 'frequency. No schedule is created until you save.',
-                style: const TextStyle(
+                style: TextStyle(
                   color: recurringNavy,
                   fontSize: 12,
                   height: 1.45,
@@ -1281,7 +1281,7 @@ class _AddRecurringScheduleSheetState
             onTap: _pickRepeatInterval,
             child: InputDecorator(
               decoration: _decoration('Repeat every').copyWith(
-                suffixIcon: const Icon(
+                suffixIcon: Icon(
                   Icons.unfold_more_rounded,
                   color: recurringGreen,
                 ),
@@ -1292,14 +1292,14 @@ class _AddRecurringScheduleSheetState
                 children: [
                   Text(
                     '$_interval',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: recurringNavy,
                       fontSize: 16,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
                   const Spacer(),
-                  const Text(
+                  Text(
                     'Tap to change',
                     style: TextStyle(color: ArthamColors.muted, fontSize: 12),
                   ),
@@ -1347,7 +1347,7 @@ class _AddRecurringScheduleSheetState
                 ),
               ),
               child: _isSaving
-                  ? const SizedBox(
+                  ? SizedBox(
                       width: 20,
                       height: 20,
                       child: CircularProgressIndicator(

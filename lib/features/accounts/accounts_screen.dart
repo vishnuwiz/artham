@@ -8,8 +8,8 @@ import '../../data/repositories/transaction_repository.dart';
 import 'add_account_screen.dart';
 import 'account_history_screen.dart';
 
-const Color accountsGreen = ArthamColors.lavender;
-const Color accountsNavy = ArthamColors.text;
+Color get accountsGreen => ArthamColors.lavender;
+Color get accountsNavy => ArthamColors.text;
 const Color accountsBackground = Colors.transparent;
 
 class AccountsScreen extends StatefulWidget {
@@ -98,7 +98,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
         future: _accountsFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: accountsGreen),
             );
           }
@@ -134,7 +134,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                 Text(
                   '${accounts.length} active '
                   '${accounts.length == 1 ? 'account' : 'accounts'}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 13,
                     fontWeight: FontWeight.w500,
@@ -151,10 +151,10 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'TOTAL ACCOUNT BALANCE',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: ArthamColors.onHeroMuted,
                           fontSize: 10,
                           letterSpacing: 1,
                           fontWeight: FontWeight.w700,
@@ -163,8 +163,8 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       const SizedBox(height: 7),
                       Text(
                         _formatAmount(data.totalBalancePaise),
-                        style: const TextStyle(
-                          color: Colors.white,
+                        style: TextStyle(
+                          color: ArthamColors.onHero,
                           fontSize: 25,
                           fontWeight: FontWeight.w800,
                         ),
@@ -190,7 +190,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                   style: OutlinedButton.styleFrom(
                     foregroundColor: accountsGreen,
                     minimumSize: const Size(double.infinity, 52),
-                    side: const BorderSide(color: accountsGreen),
+                    side: BorderSide(color: accountsGreen),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(15),
                     ),
@@ -245,7 +245,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     color: accountsGreen.withValues(alpha: 0.10),
                     borderRadius: BorderRadius.circular(14),
                   ),
-                  child: const Icon(
+                  child: Icon(
                     Icons.account_balance_rounded,
                     color: accountsGreen,
                     size: 25,
@@ -258,7 +258,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                     children: [
                       Text(
                         account.bankName,
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: accountsNavy,
                           fontWeight: FontWeight.w800,
                           fontSize: 16,
@@ -267,7 +267,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       const SizedBox(height: 4),
                       Text(
                         accountNumberLastFourLabel(account.accountNumberLast4),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 12,
                           letterSpacing: 1,
@@ -293,14 +293,14 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       ),
                     ),
                   ],
-                  icon: const Icon(Icons.more_vert, color: accountsNavy),
+                  icon: Icon(Icons.more_vert, color: accountsNavy),
                 ),
               ],
             ),
 
             const SizedBox(height: 20),
 
-            const Text(
+            Text(
               'CURRENT BALANCE',
               style: TextStyle(
                 color: ArthamColors.muted,
@@ -314,7 +314,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
             Text(
               _formatAmount(currentBalancePaise),
-              style: const TextStyle(
+              style: TextStyle(
                 color: accountsNavy,
                 fontSize: 23,
                 fontWeight: FontWeight.w800,
@@ -325,7 +325,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
 
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.calendar_today_outlined,
                   size: 13,
                   color: ArthamColors.muted,
@@ -333,7 +333,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                 const SizedBox(width: 6),
                 Text(
                   'Opening date: ${_formatDate(account.openingDate)}',
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
                   ),
@@ -353,13 +353,13 @@ class _AccountsScreenState extends State<AccountsScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.account_balance_outlined,
               size: 65,
               color: accountsGreen,
             ),
             const SizedBox(height: 18),
-            const Text(
+            Text(
               'No bank accounts yet',
               style: TextStyle(
                 color: accountsNavy,
@@ -368,7 +368,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Add your first bank account to start '
               'managing your finances.',
               textAlign: TextAlign.center,

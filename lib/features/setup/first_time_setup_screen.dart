@@ -185,7 +185,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                       children: [
                         Text(
                           'STEP ${_step + 1} OF 3',
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.muted,
                             fontSize: 10,
                             fontWeight: FontWeight.w800,
@@ -195,7 +195,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                         const Spacer(),
                         Text(
                           labels[_step],
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.lavender,
                             fontWeight: FontWeight.w700,
                           ),
@@ -213,7 +213,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                           return Stack(
                             alignment: Alignment.centerLeft,
                             children: [
-                              const Positioned.fill(
+                              Positioned.fill(
                                 child: ColoredBox(color: ArthamColors.line),
                               ),
                               AnimatedContainer(
@@ -258,7 +258,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                   FilledButton.icon(
                     onPressed: _busy || _isTransitioning ? null : _next,
                     icon: _busy || _isTransitioning
-                        ? const SizedBox(
+                        ? SizedBox(
                             width: 17,
                             height: 17,
                             child: CircularProgressIndicator(
@@ -295,7 +295,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
       key: const ValueKey('setup-account'),
       padding: const EdgeInsets.fromLTRB(22, 8, 22, 24),
       children: [
-        const Text(
+        Text(
           'YOUR MONEY, IN ONE PLACE',
           style: TextStyle(
             color: ArthamColors.lavender,
@@ -305,7 +305,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Bring your accounts together.',
           style: TextStyle(
             color: ArthamColors.text,
@@ -315,7 +315,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Add a bank account to see your available balance and organise '
           'your transactions in Artham.',
           style: TextStyle(
@@ -336,14 +336,14 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               if (snapshot.hasError) {
                 return Text(
                   'Unable to load accounts: ${snapshot.error}',
-                  style: const TextStyle(color: ArthamColors.debit),
+                  style: TextStyle(color: ArthamColors.debit),
                 );
               }
               final accounts = snapshot.data ?? [];
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text(
+                  Text(
                     'BANK ACCOUNTS',
                     style: TextStyle(
                       color: ArthamColors.muted,
@@ -354,7 +354,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                   ),
                   const SizedBox(height: 12),
                   if (accounts.isEmpty)
-                    const Text(
+                    Text(
                       'No accounts added yet. You can add one now or skip '
                       'and do it later.',
                       style: TextStyle(color: ArthamColors.muted),
@@ -363,7 +363,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                     for (final account in accounts)
                       ListTile(
                         contentPadding: EdgeInsets.zero,
-                        leading: const Icon(
+                        leading: Icon(
                           Icons.account_balance_outlined,
                           color: ArthamColors.lavender,
                         ),
@@ -373,7 +373,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
                             account.accountNumberLast4,
                           ),
                         ),
-                        trailing: const Icon(
+                        trailing: Icon(
                           Icons.check_circle_rounded,
                           color: ArthamColors.mint,
                         ),
@@ -397,7 +397,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
           ),
         ),
         const SizedBox(height: 14),
-        const Text(
+        Text(
           'Only the bank name, last four digits and opening balance are '
           'needed. Never enter your PIN, CVV or banking password.',
           style: TextStyle(
@@ -417,7 +417,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
       primary: false,
       padding: const EdgeInsets.fromLTRB(22, 8, 22, 24),
       children: [
-        const Text(
+        Text(
           'A CLEARER VIEW OF EVERY RUPEE',
           style: TextStyle(
             color: ArthamColors.lavender,
@@ -427,7 +427,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Start with useful categories.',
           style: TextStyle(
             color: ArthamColors.text,
@@ -437,7 +437,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Artham has prepared starter categories for your income and '
           'expenses. You can change the category whenever you record a '
           'transaction.',
@@ -452,7 +452,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
         const SizedBox(height: 14),
         _categoryPanel('INCOME CATEGORIES', _income, ArthamColors.mint),
         const SizedBox(height: 12),
-        const Text(
+        Text(
           'These categories are saved locally on your device.',
           style: TextStyle(color: ArthamColors.faint, fontSize: 11),
         ),
@@ -481,7 +481,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               ),
               Text(
                 '${items.length}',
-                style: const TextStyle(color: ArthamColors.muted),
+                style: TextStyle(color: ArthamColors.muted),
               ),
             ],
           ),
@@ -510,13 +510,13 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
       key: const ValueKey('setup-ready'),
       padding: const EdgeInsets.fromLTRB(22, 30, 22, 24),
       children: [
-        const CircleAvatar(
+        CircleAvatar(
           radius: 42,
           backgroundColor: ArthamColors.mintTint,
           child: Icon(Icons.check_rounded, color: ArthamColors.mint, size: 44),
         ),
         const SizedBox(height: 24),
-        const Text(
+        Text(
           "You're all set.",
           textAlign: TextAlign.center,
           style: TextStyle(
@@ -526,7 +526,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
           ),
         ),
         const SizedBox(height: 10),
-        const Text(
+        Text(
           'Your Artham workspace is ready. Start adding transactions and '
           'let your financial picture take shape.',
           textAlign: TextAlign.center,
@@ -568,7 +568,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
             if (snapshot.data?.isNotEmpty ?? false) {
               return const SizedBox.shrink();
             }
-            return const Text(
+            return Text(
               'No account added yet? That is okay. You can add one later '
               'from Home → My accounts.',
               textAlign: TextAlign.center,
@@ -595,7 +595,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
             children: [
               Text(
                 title,
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.text,
                   fontWeight: FontWeight.w700,
                 ),
@@ -603,7 +603,7 @@ class _FirstTimeSetupScreenState extends State<FirstTimeSetupScreen> {
               const SizedBox(height: 3),
               Text(
                 detail,
-                style: const TextStyle(color: ArthamColors.muted, fontSize: 11),
+                style: TextStyle(color: ArthamColors.muted, fontSize: 11),
               ),
             ],
           ),

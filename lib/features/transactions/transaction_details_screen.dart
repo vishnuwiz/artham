@@ -6,8 +6,8 @@ import '../../theme/category_icons.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transactionGreen = ArthamColors.lavender;
-const Color transactionNavy = ArthamColors.text;
+Color get transactionGreen => ArthamColors.lavender;
+Color get transactionNavy => ArthamColors.text;
 const Color transactionBackground = Colors.transparent;
 
 class TransactionDetailsScreen extends StatefulWidget {
@@ -220,7 +220,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                     const SizedBox(height: 16),
                     Text(
                       isIncome ? 'Income' : 'Expense',
-                      style: const TextStyle(color: ArthamColors.muted),
+                      style: TextStyle(color: ArthamColors.muted),
                     ),
                     const SizedBox(height: 8),
                     Text(
@@ -237,7 +237,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                           ? transaction.description!
                           : categoryName,
                       textAlign: TextAlign.center,
-                      style: const TextStyle(
+                      style: TextStyle(
                         color: transactionNavy,
                         fontSize: 15,
                         fontWeight: FontWeight.w700,
@@ -285,7 +285,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
                 style: OutlinedButton.styleFrom(
                   foregroundColor: transactionGreen,
                   padding: const EdgeInsets.symmetric(vertical: 15),
-                  side: const BorderSide(color: transactionGreen),
+                  side: BorderSide(color: transactionGreen),
                 ),
               ),
               const SizedBox(height: 10),
@@ -313,7 +313,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
           Expanded(
             child: Text(
               label,
-              style: const TextStyle(color: ArthamColors.muted),
+              style: TextStyle(color: ArthamColors.muted),
             ),
           ),
           const SizedBox(width: 12),
@@ -321,7 +321,7 @@ class _TransactionDetailsScreenState extends State<TransactionDetailsScreen> {
             child: Text(
               value,
               textAlign: TextAlign.end,
-              style: const TextStyle(
+              style: TextStyle(
                 color: transactionNavy,
                 fontWeight: FontWeight.w600,
               ),
@@ -586,7 +586,7 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                       children: [
                         Text(
                           typeLabel,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: transactionGreen,
                             fontWeight: FontWeight.w700,
                           ),
@@ -702,7 +702,7 @@ class _EditTransactionScreenState extends State<_EditTransactionScreen> {
                       padding: const EdgeInsets.symmetric(vertical: 16),
                     ),
                     child: _isSaving
-                        ? const SizedBox(
+                        ? SizedBox(
                             height: 20,
                             width: 20,
                             child: CircularProgressIndicator(

@@ -1,3 +1,5 @@
+import 'split/split_sources.dart';
+
 /// Conservative, on-device detection of likely recurring income and expenses.
 ///
 /// The detector never writes to the database. It only returns suggestions for
@@ -82,7 +84,8 @@ class RecurringPatternDetector {
       if (transaction.amountPaise <= 0 ||
           transaction.categoryId <= 0 ||
           transaction.accountId <= 0 ||
-          transaction.source == 'recurring') {
+          transaction.source == 'recurring' ||
+          isSplitCashFlow(transaction.source)) {
         continue;
       }
 

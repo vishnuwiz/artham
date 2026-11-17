@@ -1,3 +1,4 @@
+import '../../data/split/split_sources.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
@@ -11,8 +12,8 @@ import 'transaction_details_screen.dart';
 import 'recurring_transactions_screen.dart';
 import 'import_sms_screen.dart';
 
-const Color activityGreen = ArthamColors.lavender;
-const Color activityNavy = ArthamColors.text;
+Color get activityGreen => ArthamColors.lavender;
+Color get activityNavy => ArthamColors.text;
 const Color activityBackground = Colors.transparent;
 
 enum _TransactionSort { newest, oldest, highest, lowest }
@@ -286,7 +287,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                   22,
                   22 + MediaQuery.of(context).viewInsets.bottom,
                 ),
-                decoration: const BoxDecoration(
+                decoration: BoxDecoration(
                   color: ArthamColors.glassSoft,
                   borderRadius: BorderRadius.vertical(top: Radius.circular(26)),
                 ),
@@ -308,7 +309,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                       const SizedBox(height: 20),
                       Row(
                         children: [
-                          const Expanded(
+                          Expanded(
                             child: Text(
                               'Filter transactions',
                               style: TextStyle(
@@ -332,7 +333,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                       DropdownButtonFormField<int?>(
                         initialValue: categoryId,
                         isExpanded: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Category',
                           border: OutlineInputBorder(),
                           filled: true,
@@ -359,7 +360,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                       DropdownButtonFormField<int?>(
                         initialValue: accountId,
                         isExpanded: true,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Bank account',
                           border: OutlineInputBorder(),
                           filled: true,
@@ -449,7 +450,7 @@ class _ActivityScreenState extends State<ActivityScreen>
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Padding(
+            Padding(
               padding: EdgeInsets.all(18),
               child: Text(
                 'Sort transactions',
@@ -476,7 +477,7 @@ class _ActivityScreenState extends State<ActivityScreen>
     return ListTile(
       title: Text(label),
       trailing: _sort == value
-          ? const Icon(Icons.check_circle, color: activityGreen)
+          ? Icon(Icons.check_circle, color: activityGreen)
           : null,
       onTap: () => Navigator.pop(context, value),
     );
@@ -519,7 +520,7 @@ class _ActivityScreenState extends State<ActivityScreen>
         future: _activityFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
-            return const Center(
+            return Center(
               child: CircularProgressIndicator(color: activityGreen),
             );
           }
@@ -530,7 +531,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    const Icon(
+                    Icon(
                       Icons.error_outline,
                       color: ArthamColors.debit,
                       size: 40,
@@ -554,10 +555,18 @@ class _ActivityScreenState extends State<ActivityScreen>
           final data = snapshot.data!;
           final transactions = _applyFilters(data);
           final income = transactions
-              .where((tx) => tx.transactionType == 'income')
+              .where(
+                (tx) =>
+                    tx.transactionType == 'income' &&
+                    !isSplitCashFlow(tx.source),
+              )
               .fold<int>(0, (sum, tx) => sum + tx.amountPaise);
           final expenses = transactions
-              .where((tx) => tx.transactionType == 'expense')
+              .where(
+                (tx) =>
+                    tx.transactionType == 'expense' &&
+                    !isSplitCashFlow(tx.source),
+              )
               .fold<int>(0, (sum, tx) => sum + tx.amountPaise);
 
           return RefreshIndicator(
@@ -622,7 +631,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                 const SizedBox(height: 20),
                 Row(
                   children: [
-                    const Text(
+                    Text(
                       'Transactions',
                       style: TextStyle(
                         color: activityNavy,
@@ -646,7 +655,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                       child: Text(
                         '${transactions.length} records',
                         key: ValueKey<int>(transactions.length),
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: ArthamColors.muted,
                           fontSize: 12,
                         ),
@@ -657,7 +666,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                       tooltip: 'Sort',
                       onPressed: _openSortSheet,
                       visualDensity: VisualDensity.compact,
-                      icon: const Icon(Icons.sort_rounded, color: activityNavy),
+                      icon: Icon(Icons.sort_rounded, color: activityNavy),
                     ),
                   ],
                 ),
@@ -750,10 +759,10 @@ class _ActivityScreenState extends State<ActivityScreen>
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'TRANSACTION SUMMARY',
             style: TextStyle(
-              color: Colors.white70,
+              color: ArthamColors.onHeroMuted,
               fontSize: 11,
               letterSpacing: 1,
               fontWeight: FontWeight.w600,
@@ -782,19 +791,19 @@ class _ActivityScreenState extends State<ActivityScreen>
             ],
           ),
           const SizedBox(height: 18),
-          const Divider(color: Colors.white24),
+          Divider(color: ArthamColors.onHeroLine),
           const SizedBox(height: 10),
           Row(
             children: [
-              const Text(
+              Text(
                 'Net movement',
-                style: TextStyle(color: Colors.white70, fontSize: 12),
+                style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 12),
               ),
               const Spacer(),
               _animatedAmount(
                 _formatAmount(income - expenses),
-                const TextStyle(
-                  color: Colors.white,
+                TextStyle(
+                  color: ArthamColors.onHero,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
@@ -802,9 +811,9 @@ class _ActivityScreenState extends State<ActivityScreen>
             ],
           ),
           const SizedBox(height: 5),
-          const Text(
+          Text(
             'Based on current filters',
-            style: TextStyle(color: Colors.white54, fontSize: 10),
+            style: TextStyle(color: ArthamColors.onHeroFaint, fontSize: 10),
           ),
         ],
       ),
@@ -840,7 +849,7 @@ class _ActivityScreenState extends State<ActivityScreen>
             const SizedBox(width: 6),
             Text(
               title,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 12),
             ),
           ],
         ),
@@ -923,7 +932,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                                   : categoryName),
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: activityNavy,
                             fontWeight: FontWeight.w700,
                             fontSize: 13,
@@ -934,7 +943,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                           '$categoryName · $accountName',
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.muted,
                             fontSize: 10,
                           ),
@@ -942,7 +951,7 @@ class _ActivityScreenState extends State<ActivityScreen>
                         const SizedBox(height: 4),
                         Text(
                           _formatDate(transaction.transactionDate),
-                          style: const TextStyle(
+                          style: TextStyle(
                             color: ArthamColors.faint,
                             fontSize: 10,
                           ),
@@ -1009,9 +1018,9 @@ class _ActivityScreenState extends State<ActivityScreen>
       ),
       child: Column(
         children: [
-          const Icon(Icons.search_off_rounded, color: activityGreen, size: 48),
+          Icon(Icons.search_off_rounded, color: activityGreen, size: 48),
           const SizedBox(height: 14),
-          const Text(
+          Text(
             'No matching transactions',
             style: TextStyle(
               color: activityNavy,
@@ -1020,7 +1029,7 @@ class _ActivityScreenState extends State<ActivityScreen>
             ),
           ),
           const SizedBox(height: 7),
-          const Text(
+          Text(
             'Try changing your search or filters.',
             textAlign: TextAlign.center,
             style: TextStyle(color: ArthamColors.muted, fontSize: 12),

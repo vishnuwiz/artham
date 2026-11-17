@@ -248,7 +248,7 @@ class SlidingSegmented extends StatelessWidget {
     required this.labels,
     required this.selectedIndex,
     required this.onChanged,
-    this.accent = ArthamColors.lavender,
+    this.accent,
     this.segmentWidth = 84,
     this.height = 40,
   });
@@ -256,7 +256,7 @@ class SlidingSegmented extends StatelessWidget {
   final List<String> labels;
   final int selectedIndex;
   final ValueChanged<int> onChanged;
-  final Color accent;
+  final Color? accent;
   final double segmentWidth;
   final double height;
 
@@ -270,6 +270,7 @@ class SlidingSegmented extends StatelessWidget {
     const border = 1.0;
     const chrome = (pad + border) * 2;
     final radius = BorderRadius.circular(height);
+    final accent = this.accent ?? ArthamColors.lavender;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -451,7 +452,7 @@ class _CheckPainter extends CustomPainter {
         center,
         circleRadius,
         Paint()
-          ..shader = const LinearGradient(
+          ..shader = LinearGradient(
             colors: [ArthamColors.mint, Color(0xFF68DFB4)],
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,

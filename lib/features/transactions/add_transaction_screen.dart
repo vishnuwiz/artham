@@ -13,8 +13,8 @@ import '../../data/merchant_intelligence.dart';
 import '../../data/repositories/category_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transactionGreen = ArthamColors.lavender;
-const Color transactionNavy = ArthamColors.text;
+Color get transactionGreen => ArthamColors.lavender;
+Color get transactionNavy => ArthamColors.text;
 const Color transactionBackground = Colors.transparent;
 
 class AddTransactionScreen extends StatefulWidget {
@@ -227,7 +227,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 _decoration(
                   'Tags (optional)',
                   hint: 'Add a tag and press enter',
-                  prefix: const Icon(
+                  prefix: Icon(
                     Icons.sell_outlined,
                     color: transactionGreen,
                   ),
@@ -258,7 +258,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     side: BorderSide(
                       color: transactionGreen.withValues(alpha: 0.35),
                     ),
-                    labelStyle: const TextStyle(
+                    labelStyle: TextStyle(
                       color: transactionNavy,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
@@ -544,7 +544,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ],
                         ),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.20),
+                          color: ArthamColors.text.withValues(alpha: 0.20),
                           width: 1,
                         ),
                         borderRadius: const BorderRadius.vertical(
@@ -565,7 +565,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             width: 42,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: Colors.white38,
+                              color: ArthamColors.onHeroFaint,
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
@@ -575,12 +575,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                               children: [
                                 TextButton(
                                   onPressed: () => Navigator.pop(sheetContext),
-                                  child: const Text(
+                                  child: Text(
                                     'Cancel',
                                     style: TextStyle(color: ArthamColors.debit),
                                   ),
                                 ),
-                                const Expanded(
+                                Expanded(
                                   child: Text(
                                     'Select Category',
                                     textAlign: TextAlign.center,
@@ -617,7 +617,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 hintText: 'Search category...',
                                 prefixIcon: const Icon(Icons.search_rounded),
                                 filled: true,
-                                fillColor: Colors.white.withValues(
+                                fillColor: ArthamColors.text.withValues(
                                   alpha: 0.055,
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
@@ -625,13 +625,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 ),
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(24),
-                                  borderSide: const BorderSide(
+                                  borderSide: BorderSide(
                                     color: ArthamColors.line,
                                   ),
                                 ),
                                 enabledBorder: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(24),
-                                  borderSide: const BorderSide(
+                                  borderSide: BorderSide(
                                     color: ArthamColors.line,
                                   ),
                                 ),
@@ -640,7 +640,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ),
                           Expanded(
                             child: filteredCategories.isEmpty
-                                ? const Center(
+                                ? Center(
                                     child: Text(
                                       'No matching categories',
                                       style: TextStyle(
@@ -691,7 +691,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                             fontWeight: FontWeight.w600,
                                             fontSize: 12,
                                           ),
-                                          backgroundColor: Colors.white
+                                          backgroundColor: ArthamColors.onHero
                                               .withValues(alpha: 0.035),
                                           selectedColor: color.withValues(
                                             alpha: 0.19,
@@ -749,11 +749,11 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       ),
       enabledBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: ArthamColors.line),
+        borderSide: BorderSide(color: ArthamColors.line),
       ),
       focusedBorder: OutlineInputBorder(
         borderRadius: BorderRadius.circular(15),
-        borderSide: const BorderSide(color: transactionGreen, width: 1.5),
+        borderSide: BorderSide(color: transactionGreen, width: 1.5),
       ),
     );
   }
@@ -776,7 +776,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         ),
       ),
       body: _isLoading
-          ? const Center(
+          ? Center(
               child: CircularProgressIndicator(color: transactionGreen),
             )
           : _accounts.isEmpty
@@ -836,7 +836,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   _isTransfer
                       ? 'TRANSFER AMOUNT'
                       : (isIncome ? 'INCOME AMOUNT' : 'EXPENSE AMOUNT'),
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
                     fontWeight: FontWeight.w700,
@@ -901,7 +901,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
           const SizedBox(height: 24),
 
           if (_isTransfer) ...[
-            const Text(
+            Text(
               'Move money between your own accounts. Transfers do not count '
               'as income or expenses.',
               style: TextStyle(color: ArthamColors.muted, fontSize: 12.5),
@@ -926,7 +926,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             isExpanded: true,
             decoration: _decoration(
               _isTransfer ? 'From account' : 'Bank Account',
-              prefix: const Icon(
+              prefix: Icon(
                 Icons.account_balance_outlined,
                 color: transactionGreen,
               ),
@@ -958,12 +958,12 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               const SizedBox(height: 6),
               Text(
                 'Available: ${_money(_balanceSummary?.accountBalancesPaise[_selectedAccountId] ?? 0)}',
-                style: const TextStyle(color: ArthamColors.muted, fontSize: 12),
+                style: TextStyle(color: ArthamColors.muted, fontSize: 12),
               ),
             ],
             const SizedBox(height: 16),
             if (_accounts.length < 2)
-              const Text(
+              Text(
                 'Add at least two active bank accounts to make a transfer.',
                 style: TextStyle(color: ArthamColors.debit, fontSize: 13),
               )
@@ -974,7 +974,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 isExpanded: true,
                 decoration: _decoration(
                   'To account',
-                  prefix: const Icon(
+                  prefix: Icon(
                     Icons.account_balance_outlined,
                     color: transactionGreen,
                   ),
@@ -1025,13 +1025,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                     Expanded(
                       child: Text(
                         _selectedCategory?.name ?? 'Choose a category',
-                        style: const TextStyle(
+                        style: TextStyle(
                           color: transactionNavy,
                           fontWeight: FontWeight.w600,
                         ),
                       ),
                     ),
-                    const Icon(
+                    Icon(
                       Icons.keyboard_arrow_down_rounded,
                       color: transactionGreen,
                     ),
@@ -1050,7 +1050,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             decoration: _decoration(
               'Description (optional)',
               hint: 'e.g. Lunch with friends',
-              prefix: const Icon(Icons.notes_rounded, color: transactionGreen),
+              prefix: Icon(Icons.notes_rounded, color: transactionGreen),
             ),
           ),
           const SizedBox(height: 12),
@@ -1059,7 +1059,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             const SizedBox(height: 6),
             Row(
               children: [
-                const Icon(
+                Icon(
                   Icons.auto_awesome_rounded,
                   size: 15,
                   color: transactionGreen,
@@ -1069,7 +1069,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                   child: Text(
                     'Recognised ${_merchantSuggestion!.name} · '
                     'suggested ${_merchantSuggestion!.categoryName}',
-                    style: const TextStyle(
+                    style: TextStyle(
                       color: transactionGreen,
                       fontSize: 11,
                       fontWeight: FontWeight.w600,
@@ -1088,7 +1088,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             child: InputDecorator(
               decoration: _decoration(
                 'Transaction Date',
-                prefix: const Icon(
+                prefix: Icon(
                   Icons.calendar_month_outlined,
                   color: transactionGreen,
                 ),
@@ -1096,7 +1096,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               child: Row(
                 children: [
                   Expanded(child: Text(_formatDate(_transactionDate))),
-                  const Icon(
+                  Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: transactionGreen,
                   ),
@@ -1113,7 +1113,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             child: InputDecorator(
               decoration: _decoration(
                 'Transaction Time',
-                prefix: const Icon(
+                prefix: Icon(
                   Icons.access_time_rounded,
                   color: transactionGreen,
                 ),
@@ -1121,7 +1121,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               child: Row(
                 children: [
                   Expanded(child: Text(_formatTime(_transactionDate))),
-                  const Icon(
+                  Icon(
                     Icons.keyboard_arrow_down_rounded,
                     color: transactionGreen,
                   ),
@@ -1146,7 +1146,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                 ),
               ),
               icon: _isSaving
-                  ? const SizedBox(
+                  ? SizedBox(
                       height: 20,
                       width: 20,
                       child: CircularProgressIndicator(
@@ -1178,13 +1178,13 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            const Icon(
+            Icon(
               Icons.account_balance_outlined,
               size: 60,
               color: transactionGreen,
             ),
             const SizedBox(height: 16),
-            const Text(
+            Text(
               'No bank accounts available',
               style: TextStyle(
                 fontSize: 19,
@@ -1193,7 +1193,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               ),
             ),
             const SizedBox(height: 8),
-            const Text(
+            Text(
               'Please add an active bank account before recording a transaction.',
               textAlign: TextAlign.center,
               style: TextStyle(color: ArthamColors.muted),

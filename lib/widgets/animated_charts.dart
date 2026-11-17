@@ -15,7 +15,7 @@ Duration _motion(BuildContext context, Duration duration) {
 
 /// Slice colours for pie charts, ordered so neighbouring slices contrast.
 abstract final class ArthamChartPalette {
-  static const List<Color> slices = [
+  static List<Color> get slices => [
     ArthamColors.lavender,
     ArthamColors.mint,
     ArthamColors.peach,
@@ -26,7 +26,7 @@ abstract final class ArthamChartPalette {
   ];
 
   /// Colour used for the combined "Other" slice.
-  static const Color other = ArthamColors.faint;
+  static Color get other => ArthamColors.faint;
 
   static Color at(int index) => slices[index % slices.length];
 }
@@ -39,15 +39,15 @@ class AnimatedProgressBar extends StatelessWidget {
     super.key,
     required this.value,
     this.height = 8,
-    this.color = ArthamColors.lavender,
+    this.color,
     this.endColor,
-    this.trackColor = ArthamColors.line,
+    this.trackColor,
     this.delay = Duration.zero,
     this.duration = const Duration(milliseconds: 900),
     this.glow = true,
     this.pulse = false,
     this.shake = false,
-    this.pulseColor = ArthamColors.peach,
+    this.pulseColor,
   });
 
   /// Fraction filled, 0..1 (values outside the range are clamped).
@@ -55,9 +55,9 @@ class AnimatedProgressBar extends StatelessWidget {
   final double height;
 
   /// Fill colour. When [endColor] is set the fill is a left-to-right gradient.
-  final Color color;
+  final Color? color;
   final Color? endColor;
-  final Color trackColor;
+  final Color? trackColor;
   final Duration delay;
   final Duration duration;
 
@@ -71,7 +71,7 @@ class AnimatedProgressBar extends StatelessWidget {
   /// Also gives the bar a short horizontal shake after it fills. Use for
   /// budgets that are over their limit.
   final bool shake;
-  final Color pulseColor;
+  final Color? pulseColor;
 
   @override
   Widget build(BuildContext context) {
@@ -101,7 +101,9 @@ class AnimatedProgressBar extends StatelessWidget {
               borderRadius: BorderRadius.circular(height),
               boxShadow: [
                 BoxShadow(
-                  color: pulseColor.withValues(alpha: 0.6 * glowAmount),
+                  color: (pulseColor ?? ArthamColors.peach).withValues(
+                    alpha: 0.6 * glowAmount,
+                  ),
                   blurRadius: 14 * glowAmount,
                   spreadRadius: 1.5 * glowAmount,
                 ),
@@ -127,6 +129,8 @@ class AnimatedProgressBar extends StatelessWidget {
             curve: Curves.easeOutCubic,
           );
     final radius = BorderRadius.circular(height);
+    final fillColor = color ?? ArthamColors.lavender;
+    final track = trackColor ?? ArthamColors.line;
 
     return TweenAnimationBuilder<double>(
       tween: Tween<double>(begin: 0, end: target),
@@ -135,7 +139,7 @@ class AnimatedProgressBar extends StatelessWidget {
       builder: (context, v, _) {
         return Container(
           height: height,
-          decoration: BoxDecoration(color: trackColor, borderRadius: radius),
+          decoration: BoxDecoration(color: track, borderRadius: radius),
           child: LayoutBuilder(
             builder: (context, constraints) {
               final fill = constraints.maxWidth * v;
@@ -150,12 +154,12 @@ class AnimatedProgressBar extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: radius,
                     gradient: LinearGradient(
-                      colors: [color, endColor ?? color],
+                      colors: [fillColor, endColor ?? fillColor],
                     ),
                     boxShadow: glow && v > 0
                         ? [
                             BoxShadow(
-                              color: (endColor ?? color).withValues(
+                              color: (endColor ?? fillColor).withValues(
                                 alpha: 0.35,
                               ),
                               blurRadius: 8,
@@ -505,7 +509,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
               fit: BoxFit.scaleDown,
               child: Text(
                 amount,
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.text,
                   fontSize: 19,
                   fontWeight: FontWeight.w800,
@@ -516,7 +520,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
               const SizedBox(height: 2),
               Text(
                 share,
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.muted,
                   fontSize: 11,
                   fontWeight: FontWeight.w700,
@@ -568,7 +572,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
               ),
               Text(
                 widget.formatValue(slice.value),
-                style: const TextStyle(
+                style: TextStyle(
                   color: ArthamColors.text,
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
@@ -579,7 +583,7 @@ class _AnimatedDonutChartState extends State<AnimatedDonutChart>
                 child: Text(
                   '${(share * 100).toStringAsFixed(1)}%',
                   textAlign: TextAlign.end,
-                  style: const TextStyle(
+                  style: TextStyle(
                     color: ArthamColors.muted,
                     fontSize: 11,
                   ),
@@ -729,16 +733,16 @@ class AnimatedRing extends StatelessWidget {
                       children: [
                         Text(
                           '${(v * 100).round()}%',
-                          style: const TextStyle(
-                            color: Colors.white,
+                          style: TextStyle(
+                            color: ArthamColors.onHero,
                             fontSize: 17,
                             fontWeight: FontWeight.w800,
                           ),
                         ),
                         Text(
                           caption,
-                          style: const TextStyle(
-                            color: Colors.white70,
+                          style: TextStyle(
+                            color: ArthamColors.onHeroMuted,
                             fontSize: 8,
                             letterSpacing: 0.8,
                             fontWeight: FontWeight.w700,
@@ -779,7 +783,7 @@ class _RingPainter extends CustomPainter {
       Paint()
         ..style = PaintingStyle.stroke
         ..strokeWidth = strokeWidth
-        ..color = Colors.white24,
+        ..color = ArthamColors.onHeroLine,
     );
     if (progress <= 0) return;
 
@@ -787,7 +791,7 @@ class _RingPainter extends CustomPainter {
     final shader = SweepGradient(
       startAngle: 0,
       endAngle: math.max(sweep, 0.01),
-      colors: const [ArthamColors.lavender, ArthamColors.mint],
+      colors: [ArthamColors.lavender, ArthamColors.mint],
       transform: const GradientRotation(-math.pi / 2),
     ).createShader(rect);
 
@@ -802,7 +806,7 @@ class _RingPainter extends CustomPainter {
           ..strokeWidth = strokeWidth + 2
           ..strokeCap = StrokeCap.round
           ..shader = shader
-          ..color = Colors.white.withValues(alpha: glow)
+          ..color = ArthamColors.text.withValues(alpha: glow)
           ..maskFilter = MaskFilter.blur(BlurStyle.normal, 7 * glow),
       );
     }
