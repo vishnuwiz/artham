@@ -172,8 +172,8 @@ Route<T> splitRoute<T>(WidgetBuilder builder) {
 }
 
 /// A glass card used for rows and panels.
-class GlassPanel extends StatelessWidget {
-  const GlassPanel({
+class SplitPanel extends StatelessWidget {
+  const SplitPanel({
     super.key,
     required this.child,
     this.padding = const EdgeInsets.all(14),

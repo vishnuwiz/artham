@@ -372,7 +372,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                         Expanded(
                           child: PressableScale(
                             onTap: _pickDate,
-                            child: GlassPanel(
+                            child: SplitPanel(
                               radius: 15,
                               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 17),
                               child: Row(
@@ -448,7 +448,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                     ],
                   ),
                   const SizedBox(height: 10),
-                  GlassPanel(
+                  SplitPanel(
                     padding: EdgeInsets.zero,
                     child: AnimatedSize(
                       duration: const Duration(milliseconds: 280),
@@ -485,7 +485,7 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                   const SizedBox(height: 16),
                   AnimatedSwitcher(
                     duration: const Duration(milliseconds: 250),
-                    child: GlassPanel(
+                    child: SplitPanel(
                       key: ValueKey('${shares != null}$myShare$_iPaid$categoryName'),
                       tint: ArthamColors.mintTint,
                       borderColor: const Color(0x4D8FE3C4),

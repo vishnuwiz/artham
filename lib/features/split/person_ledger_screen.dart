@@ -318,7 +318,7 @@ class _EntryTile extends StatelessWidget {
       SplitEntryKind.paidBack => 'repayment sent',
     };
     final color = settlement ? ArthamColors.lavender : ArthamColors.peach;
-    return GlassPanel(
+    return SplitPanel(
       radius: 18,
       tint: settlement ? ArthamColors.glassSoft : ArthamColors.glass,
       child: Row(

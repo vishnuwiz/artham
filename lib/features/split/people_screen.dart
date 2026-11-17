@@ -198,7 +198,7 @@ class _PeopleScreenState extends State<PeopleScreen> {
                   ),
                 ],
                 const SizedBox(height: 18),
-                const GlassPanel(
+                const SplitPanel(
                   tint: ArthamColors.lavenderTint,
                   borderColor: Color(0x4DB9A5F5),
                   child: Text(
@@ -285,7 +285,7 @@ class _PersonRow extends StatelessWidget {
     final owedToMe = balance > 0;
     return PressableScale(
       onTap: onTap,
-      child: GlassPanel(
+      child: SplitPanel(
         child: Row(
           children: [
             SplitAvatar(person: person, size: 48, hero: true),
@@ -361,7 +361,7 @@ class _SettledGroup extends StatelessWidget {
       children: [
         PressableScale(
           onTap: onToggle,
-          child: GlassPanel(
+          child: SplitPanel(
             tint: ArthamColors.glassSoft,
             child: Row(
               children: [

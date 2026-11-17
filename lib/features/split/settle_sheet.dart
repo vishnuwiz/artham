@@ -274,7 +274,7 @@ class _SettleSheetState extends State<_SettleSheet> {
             const SizedBox(height: 12),
             PressableScale(
               onTap: _pickDate,
-              child: GlassPanel(
+              child: SplitPanel(
                 padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
                 radius: 15,
                 child: Row(
@@ -295,7 +295,7 @@ class _SettleSheetState extends State<_SettleSheet> {
             const SizedBox(height: 14),
             AnimatedSwitcher(
               duration: const Duration(milliseconds: 250),
-              child: GlassPanel(
+              child: SplitPanel(
                 key: ValueKey('$_received$shown$remaining'),
                 tint: ArthamColors.mintTint,
                 borderColor: const Color(0x4D8FE3C4),
