@@ -10,8 +10,8 @@ import '../../data/repositories/sms_import_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 import '../../data/sms_transaction_parser.dart';
 
-const Color smsGreen = ArthamColors.lavender;
-const Color smsNavy = ArthamColors.text;
+Color get smsGreen => ArthamColors.lavender;
+Color get smsNavy => ArthamColors.text;
 const Color smsBackground = Colors.transparent;
 
 class ImportSmsScreen extends StatefulWidget {

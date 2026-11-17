@@ -5,8 +5,8 @@ import '../../theme/artham_theme.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
 
-const Color detailsGreen = ArthamColors.lavender;
-const Color detailsNavy = ArthamColors.text;
+Color get detailsGreen => ArthamColors.lavender;
+Color get detailsNavy => ArthamColors.text;
 const Color detailsBackground = Colors.transparent;
 
 class AccountDetailsScreen extends StatefulWidget {

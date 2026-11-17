@@ -3,69 +3,275 @@ import 'dart:ui';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 
-/// Artham's dark "glass" palette.
+/// One complete set of Artham colours. [ArthamPalette.artham] is the original
+/// purple glass look and the default; [dark] and [light] are calmer, flatter
+/// alternatives.
+class ArthamPalette {
+  const ArthamPalette({
+    required this.id,
+    required this.name,
+    required this.description,
+    required this.brightness,
+    required this.ink,
+    required this.sheet,
+    required this.text,
+    required this.muted,
+    required this.faint,
+    required this.lavender,
+    required this.mint,
+    required this.peach,
+    required this.debit,
+    required this.onAccent,
+    required this.glass,
+    required this.glassSoft,
+    required this.line,
+    required this.hero,
+    required this.lavenderTint,
+    required this.mintTint,
+    required this.peachTint,
+    required this.debitTint,
+    required this.blueTint,
+    required this.glassGradient,
+    required this.heroGradient,
+    required this.onHero,
+    required this.onHeroMuted,
+    required this.onHeroFaint,
+    required this.onHeroLine,
+    this.glows = const [],
+  });
+
+  final String id;
+  final String name;
+  final String description;
+  final Brightness brightness;
+
+  final Color ink;
+  final Color sheet;
+  final Color text;
+  final Color muted;
+  final Color faint;
+  final Color lavender;
+  final Color mint;
+  final Color peach;
+  final Color debit;
+  final Color onAccent;
+  final Color glass;
+  final Color glassSoft;
+  final Color line;
+  final Color hero;
+  final Color lavenderTint;
+  final Color mintTint;
+  final Color peachTint;
+  final Color debitTint;
+  final Color blueTint;
+  final LinearGradient glassGradient;
+  final LinearGradient heroGradient;
+
+  /// Text and lines placed on the hero (balance and summary) cards.
+  final Color onHero;
+  final Color onHeroMuted;
+  final Color onHeroFaint;
+  final Color onHeroLine;
+
+  /// Soft coloured glows painted behind the app. Empty for flat themes.
+  final List<(Alignment, double, Color)> glows;
+
+  /// The original deep purple glass look.
+  static const ArthamPalette artham = ArthamPalette(
+    id: 'artham',
+    name: 'Artham',
+    description: 'The original deep purple glass look',
+    brightness: Brightness.dark,
+    ink: Color(0xFF17132B),
+    sheet: Color(0xFF241D45),
+    text: Color(0xFFF4F1FF),
+    muted: Color(0xFFB8B1D9),
+    faint: Color(0xFF8E87B3),
+    lavender: Color(0xFFB9A5F5),
+    mint: Color(0xFF8FE3C4),
+    peach: Color(0xFFFFD3A0),
+    debit: Color(0xFFFF8F8F),
+    onAccent: Color(0xFF1A1433),
+    glass: Color(0x1FFFFFFF),
+    glassSoft: Color(0x12FFFFFF),
+    line: Color(0x29FFFFFF),
+    hero: Color(0x47B9A5F5),
+    lavenderTint: Color(0x2EB9A5F5),
+    mintTint: Color(0x298FE3C4),
+    peachTint: Color(0x29FFD3A0),
+    debitTint: Color(0x29FF8F8F),
+    blueTint: Color(0x298CBEFF),
+    glassGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0x38B9A5F5), Color(0x178FE3C4), Color(0x1FFFD3A0)],
+      stops: [0, 0.6, 1],
+    ),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0x70B9A5F5), Color(0x338FE3C4), Color(0x47FFD3A0)],
+      stops: [0, 0.62, 1],
+    ),
+    onHero: Colors.white,
+    onHeroMuted: Colors.white70,
+    onHeroFaint: Colors.white60,
+    onHeroLine: Colors.white24,
+    glows: [
+      (Alignment(-1.1, -1.05), 1.25, Color(0xFF4F4285)),
+      (Alignment(1.25, -0.1), 0.95, Color(0x408FE3C4)),
+      (Alignment(-1.2, 0.5), 0.85, Color(0x38FFD3A0)),
+    ],
+  );
+
+  /// Clean, flat and dark.
+  static const ArthamPalette dark = ArthamPalette(
+    id: 'dark',
+    name: 'Dark',
+    description: 'Clean and flat, easy on the eyes at night',
+    brightness: Brightness.dark,
+    ink: Color(0xFF0F0F12),
+    sheet: Color(0xFF1A1A1F),
+    text: Color(0xFFF4F4F6),
+    muted: Color(0xFFA0A0AC),
+    faint: Color(0xFF82828E),
+    lavender: Color(0xFFB9A5F5),
+    mint: Color(0xFF6FD09A),
+    peach: Color(0xFFFFB07A),
+    debit: Color(0xFFFF8A8A),
+    onAccent: Color(0xFF14101F),
+    glass: Color(0xFF1C1C22),
+    glassSoft: Color(0xFF17171C),
+    line: Color(0xFF2B2B33),
+    hero: Color(0xFF2A2447),
+    lavenderTint: Color(0x33B9A5F5),
+    mintTint: Color(0x296FD09A),
+    peachTint: Color(0x29FFB07A),
+    debitTint: Color(0x29FF8A8A),
+    blueTint: Color(0x298CBEFF),
+    glassGradient: LinearGradient(colors: [Color(0xFF1C1C22), Color(0xFF1C1C22)]),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFF2E2753), Color(0xFF211D38)],
+    ),
+    onHero: Color(0xFFF4F4F6),
+    onHeroMuted: Color(0xFFB8B8C4),
+    onHeroFaint: Color(0xFF9A9AA6),
+    onHeroLine: Color(0x33FFFFFF),
+  );
+
+  /// Clean, flat and light.
+  static const ArthamPalette light = ArthamPalette(
+    id: 'light',
+    name: 'Light',
+    description: 'Bright, crisp and minimal for the daytime',
+    brightness: Brightness.light,
+    ink: Color(0xFFFFFFFF),
+    sheet: Color(0xFFFFFFFF),
+    text: Color(0xFF111114),
+    muted: Color(0xFF6B6B76),
+    faint: Color(0xFF7C7C88),
+    lavender: Color(0xFF5B3FE0),
+    mint: Color(0xFF1B7F46),
+    peach: Color(0xFFB85F0C),
+    debit: Color(0xFFC93737),
+    onAccent: Color(0xFFFFFFFF),
+    glass: Color(0xFFF4F4F7),
+    glassSoft: Color(0xFFF9F9FB),
+    line: Color(0xFFE4E4EA),
+    hero: Color(0xFFEEEAFD),
+    lavenderTint: Color(0x1F5B3FE0),
+    mintTint: Color(0x1F1B7F46),
+    peachTint: Color(0x24B85F0C),
+    debitTint: Color(0x1FC93737),
+    blueTint: Color(0x1F1F6FEB),
+    glassGradient: LinearGradient(colors: [Color(0xFFF4F4F7), Color(0xFFF4F4F7)]),
+    heroGradient: LinearGradient(
+      begin: Alignment.topLeft,
+      end: Alignment.bottomRight,
+      colors: [Color(0xFFEAE5FD), Color(0xFFF3F0FE)],
+    ),
+    onHero: Color(0xFF111114),
+    onHeroMuted: Color(0xFF55555F),
+    onHeroFaint: Color(0xFF6B6B76),
+    onHeroLine: Color(0x26000000),
+  );
+
+  static const List<ArthamPalette> all = [artham, dark, light];
+
+  static ArthamPalette byId(String? id) {
+    for (final palette in all) {
+      if (palette.id == id) return palette;
+    }
+    return artham;
+  }
+}
+
+/// The colours the app is drawing with right now.
 ///
-/// A deep purple ground carries the three logo colours: lavender (primary),
-/// mint (income / on track) and peach (attention). Debits are shown in a soft
-/// red. Surfaces are translucent so the background glows show through.
+/// Every member reads the active [ArthamPalette], so switching the palette and
+/// rebuilding the widget tree restyles the whole app. These are getters, not
+/// constants, so they cannot be used inside `const` expressions.
 abstract final class ArthamColors {
-  static const Color ink = Color(0xFF17132B);
-  static const Color sheet = Color(0xFF241D45);
+  static ArthamPalette _palette = ArthamPalette.artham;
 
-  static const Color text = Color(0xFFF4F1FF);
-  static const Color muted = Color(0xFFB8B1D9);
-  static const Color faint = Color(0xFF8E87B3);
+  static ArthamPalette get palette => _palette;
 
-  static const Color lavender = Color(0xFFB9A5F5);
-  static const Color mint = Color(0xFF8FE3C4);
-  static const Color peach = Color(0xFFFFD3A0);
-  static const Color debit = Color(0xFFFF8F8F);
+  static void use(ArthamPalette palette) => _palette = palette;
+
+  static bool get isDark => _palette.brightness == Brightness.dark;
+
+  static Color get ink => _palette.ink;
+  static Color get sheet => _palette.sheet;
+
+  static Color get text => _palette.text;
+  static Color get muted => _palette.muted;
+  static Color get faint => _palette.faint;
+
+  static Color get lavender => _palette.lavender;
+  static Color get mint => _palette.mint;
+  static Color get peach => _palette.peach;
+  static Color get debit => _palette.debit;
 
   /// Text and icons placed on a solid lavender, mint, peach or white fill.
-  static const Color onAccent = Color(0xFF1A1433);
+  static Color get onAccent => _palette.onAccent;
 
-  static const Color glass = Color(0x1FFFFFFF);
-  static const Color glassSoft = Color(0x12FFFFFF);
-  static const Color line = Color(0x29FFFFFF);
-  static const Color hero = Color(0x47B9A5F5);
+  static Color get glass => _palette.glass;
+  static Color get glassSoft => _palette.glassSoft;
+  static Color get line => _palette.line;
+  static Color get hero => _palette.hero;
 
-  static const Color lavenderTint = Color(0x2EB9A5F5);
-  static const Color mintTint = Color(0x298FE3C4);
-  static const Color peachTint = Color(0x29FFD3A0);
-  static const Color debitTint = Color(0x29FF8F8F);
-  static const Color blueTint = Color(0x298CBEFF);
+  static Color get lavenderTint => _palette.lavenderTint;
+  static Color get mintTint => _palette.mintTint;
+  static Color get peachTint => _palette.peachTint;
+  static Color get debitTint => _palette.debitTint;
+  static Color get blueTint => _palette.blueTint;
 
-  static const Border glassBorder = Border.fromBorderSide(
-    BorderSide(color: line),
-  );
+  /// Text and lines placed on the hero (balance and summary) cards.
+  static Color get onHero => _palette.onHero;
+  static Color get onHeroMuted => _palette.onHeroMuted;
+  static Color get onHeroFaint => _palette.onHeroFaint;
+  static Color get onHeroLine => _palette.onHeroLine;
+
+  static Border get glassBorder => Border.all(color: line);
 
   /// Fill for cards, list entries and inputs.
-  static const LinearGradient glassGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0x38B9A5F5), Color(0x178FE3C4), Color(0x1FFFD3A0)],
-    stops: [0, 0.6, 1],
-  );
+  static LinearGradient get glassGradient => _palette.glassGradient;
 
   /// Stronger fill for balance and summary cards.
-  static const LinearGradient heroGradient = LinearGradient(
-    begin: Alignment.topLeft,
-    end: Alignment.bottomRight,
-    colors: [Color(0x70B9A5F5), Color(0x338FE3C4), Color(0x47FFD3A0)],
-    stops: [0, 0.62, 1],
-  );
+  static LinearGradient get heroGradient => _palette.heroGradient;
 
   /// Progress fill for budgets that are on track.
-  static const LinearGradient onTrackGradient = LinearGradient(
-    colors: [lavender, mint],
-  );
+  static LinearGradient get onTrackGradient =>
+      LinearGradient(colors: [lavender, mint]);
 }
 
 ThemeData buildArthamTheme() {
   final scheme =
       ColorScheme.fromSeed(
         seedColor: ArthamColors.lavender,
-        brightness: Brightness.dark,
+        brightness: ArthamColors.palette.brightness,
       ).copyWith(
         primary: ArthamColors.lavender,
         onPrimary: ArthamColors.onAccent,
@@ -102,13 +308,13 @@ ThemeData buildArthamTheme() {
   return ThemeData(
     useMaterial3: true,
     splashFactory: InkRipple.splashFactory,
-    brightness: Brightness.dark,
+    brightness: ArthamColors.palette.brightness,
     colorScheme: scheme,
     scaffoldBackgroundColor: ArthamColors.ink,
     canvasColor: ArthamColors.sheet,
     fontFamily: 'Roboto',
     dividerColor: ArthamColors.line,
-    appBarTheme: const AppBarTheme(
+    appBarTheme: AppBarTheme(
       backgroundColor: Colors.transparent,
       foregroundColor: ArthamColors.text,
       surfaceTintColor: Colors.transparent,
@@ -118,8 +324,8 @@ ThemeData buildArthamTheme() {
     inputDecorationTheme: InputDecorationTheme(
       filled: true,
       fillColor: ArthamColors.glass,
-      labelStyle: const TextStyle(color: ArthamColors.muted),
-      hintStyle: const TextStyle(color: ArthamColors.faint),
+      labelStyle: TextStyle(color: ArthamColors.muted),
+      hintStyle: TextStyle(color: ArthamColors.faint),
       prefixIconColor: ArthamColors.muted,
       suffixIconColor: ArthamColors.muted,
       border: inputBorder(ArthamColors.line),
@@ -146,14 +352,14 @@ ThemeData buildArthamTheme() {
     outlinedButtonTheme: OutlinedButtonThemeData(
       style: OutlinedButton.styleFrom(
         foregroundColor: ArthamColors.lavender,
-        side: const BorderSide(color: ArthamColors.lavender),
+        side: BorderSide(color: ArthamColors.lavender),
         shape: buttonShape,
       ),
     ),
     textButtonTheme: TextButtonThemeData(
       style: TextButton.styleFrom(foregroundColor: ArthamColors.lavender),
     ),
-    floatingActionButtonTheme: const FloatingActionButtonThemeData(
+    floatingActionButtonTheme: FloatingActionButtonThemeData(
       backgroundColor: ArthamColors.peach,
       foregroundColor: ArthamColors.onAccent,
       elevation: 2,
@@ -163,7 +369,7 @@ ThemeData buildArthamTheme() {
       elevation: 0,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(20),
-        side: const BorderSide(color: ArthamColors.line),
+        side: BorderSide(color: ArthamColors.line),
       ),
     ),
     dialogTheme: DialogThemeData(
@@ -171,18 +377,18 @@ ThemeData buildArthamTheme() {
       surfaceTintColor: Colors.transparent,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: const BorderSide(color: ArthamColors.line),
+        side: BorderSide(color: ArthamColors.line),
       ),
     ),
-    bottomSheetTheme: const BottomSheetThemeData(
+    bottomSheetTheme: BottomSheetThemeData(
       backgroundColor: ArthamColors.sheet,
       surfaceTintColor: Colors.transparent,
     ),
-    popupMenuTheme: const PopupMenuThemeData(
+    popupMenuTheme: PopupMenuThemeData(
       color: ArthamColors.sheet,
       surfaceTintColor: Colors.transparent,
     ),
-    snackBarTheme: const SnackBarThemeData(
+    snackBarTheme: SnackBarThemeData(
       backgroundColor: ArthamColors.text,
       contentTextStyle: TextStyle(
         color: ArthamColors.onAccent,
@@ -190,33 +396,33 @@ ThemeData buildArthamTheme() {
       ),
       behavior: SnackBarBehavior.floating,
     ),
-    dividerTheme: const DividerThemeData(color: ArthamColors.line),
-    progressIndicatorTheme: const ProgressIndicatorThemeData(
+    dividerTheme: DividerThemeData(color: ArthamColors.line),
+    progressIndicatorTheme: ProgressIndicatorThemeData(
       color: ArthamColors.lavender,
       linearTrackColor: ArthamColors.line,
     ),
-    listTileTheme: const ListTileThemeData(
+    listTileTheme: ListTileThemeData(
       iconColor: ArthamColors.muted,
       textColor: ArthamColors.text,
     ),
     chipTheme: ChipThemeData(
       backgroundColor: ArthamColors.glass,
       selectedColor: ArthamColors.lavenderTint,
-      side: const BorderSide(color: ArthamColors.line),
+      side: BorderSide(color: ArthamColors.line),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(22)),
     ),
     switchTheme: SwitchThemeData(
       thumbColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
             ? ArthamColors.onAccent
-            : ArthamColors.text,
+            : (ArthamColors.isDark ? ArthamColors.text : Colors.white),
       ),
       trackColor: WidgetStateProperty.resolveWith(
         (states) => states.contains(WidgetState.selected)
             ? ArthamColors.lavender
             : ArthamColors.line,
       ),
-      trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
+      trackOutlineColor: WidgetStatePropertyAll(Colors.transparent),
     ),
   );
 }
@@ -227,19 +433,13 @@ class ArthamBackground extends StatelessWidget {
 
   final Widget? child;
 
-  static const _glows = <(Alignment, double, Color)>[
-    (Alignment(-1.1, -1.05), 1.25, Color(0xFF4F4285)),
-    (Alignment(1.25, -0.1), 0.95, Color(0x408FE3C4)),
-    (Alignment(-1.2, 0.5), 0.85, Color(0x38FFD3A0)),
-  ];
-
   @override
   Widget build(BuildContext context) {
     return Stack(
       fit: StackFit.expand,
       children: [
-        const ColoredBox(color: ArthamColors.ink),
-        for (final (center, radius, color) in _glows)
+        ColoredBox(color: ArthamColors.ink),
+        for (final (center, radius, color) in ArthamColors.palette.glows)
           DecoratedBox(
             decoration: BoxDecoration(
               gradient: RadialGradient(
@@ -299,14 +499,14 @@ class GlassPanel extends StatelessWidget {
     super.key,
     required this.child,
     this.borderRadius = const BorderRadius.all(Radius.circular(24)),
-    this.gradient = ArthamColors.glassGradient,
+    this.gradient,
     this.padding,
     this.blur = 24,
   });
 
   final Widget child;
   final BorderRadius borderRadius;
-  final Gradient gradient;
+  final Gradient? gradient;
   final EdgeInsetsGeometry? padding;
   final double blur;
 
@@ -318,7 +518,7 @@ class GlassPanel extends StatelessWidget {
         filter: ImageFilter.blur(sigmaX: blur, sigmaY: blur),
         child: DecoratedBox(
           decoration: BoxDecoration(
-            gradient: gradient,
+            gradient: gradient ?? ArthamColors.glassGradient,
             borderRadius: borderRadius,
             border: ArthamColors.glassBorder,
           ),

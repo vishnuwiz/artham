@@ -5,8 +5,8 @@ import '../../theme/artham_theme.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/account_repository.dart';
 
-const Color arthamGreen = ArthamColors.lavender;
-const Color arthamNavy = ArthamColors.text;
+Color get arthamGreen => ArthamColors.lavender;
+Color get arthamNavy => ArthamColors.text;
 const Color arthamBackground = Colors.transparent;
 
 class AddAccountScreen extends StatefulWidget {
@@ -209,7 +209,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                                 ? 'Add your account'
                                 : 'Edit your account',
                             style: TextStyle(
-                              color: Colors.white,
+                              color: ArthamColors.onHero,
                               fontSize: 18,
                               fontWeight: FontWeight.bold,
                             ),
@@ -220,7 +220,7 @@ class _AddAccountScreenState extends State<AddAccountScreen> {
                                 ? 'Keep all your bank balances in one place.'
                                 : 'Update your bank account details.',
                             style: TextStyle(
-                              color: Colors.white70,
+                              color: ArthamColors.onHeroMuted,
                               fontSize: 13,
                             ),
                           ),

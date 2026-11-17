@@ -11,8 +11,8 @@ import '../../data/app_database.dart';
 import '../../data/recurring_pattern_detector.dart';
 import '../../data/repositories/recurring_transaction_repository.dart';
 
-const Color recurringGreen = ArthamColors.lavender;
-const Color recurringNavy = ArthamColors.text;
+Color get recurringGreen => ArthamColors.lavender;
+Color get recurringNavy => ArthamColors.text;
 const Color recurringBackground = Colors.transparent;
 
 class RecurringTransactionsScreen extends StatefulWidget {
@@ -317,7 +317,7 @@ class _RecurringTransactionsScreenState
           Expanded(
             child: _summaryValue('Active schedules', activeCount.toString()),
           ),
-          Container(width: 1, height: 42, color: Colors.white24),
+          Container(width: 1, height: 42, color: ArthamColors.onHeroLine),
           const SizedBox(width: 18),
           Expanded(
             child: _summaryValue(
@@ -337,7 +337,7 @@ class _RecurringTransactionsScreenState
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: ArthamColors.onHero,
             fontSize: 25,
             fontWeight: FontWeight.w800,
           ),
@@ -345,7 +345,7 @@ class _RecurringTransactionsScreenState
         const SizedBox(height: 4),
         Text(
           label,
-          style: const TextStyle(color: Colors.white70, fontSize: 12),
+          style: const TextStyle(color: ArthamColors.onHeroMuted, fontSize: 12),
         ),
       ],
     );

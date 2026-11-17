@@ -11,8 +11,8 @@ import 'transaction_details_screen.dart';
 import 'recurring_transactions_screen.dart';
 import 'import_sms_screen.dart';
 
-const Color activityGreen = ArthamColors.lavender;
-const Color activityNavy = ArthamColors.text;
+Color get activityGreen => ArthamColors.lavender;
+Color get activityNavy => ArthamColors.text;
 const Color activityBackground = Colors.transparent;
 
 enum _TransactionSort { newest, oldest, highest, lowest }
@@ -753,7 +753,7 @@ class _ActivityScreenState extends State<ActivityScreen>
           const Text(
             'TRANSACTION SUMMARY',
             style: TextStyle(
-              color: Colors.white70,
+              color: ArthamColors.onHeroMuted,
               fontSize: 11,
               letterSpacing: 1,
               fontWeight: FontWeight.w600,
@@ -782,19 +782,19 @@ class _ActivityScreenState extends State<ActivityScreen>
             ],
           ),
           const SizedBox(height: 18),
-          const Divider(color: Colors.white24),
+          const Divider(color: ArthamColors.onHeroLine),
           const SizedBox(height: 10),
           Row(
             children: [
               const Text(
                 'Net movement',
-                style: TextStyle(color: Colors.white70, fontSize: 12),
+                style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 12),
               ),
               const Spacer(),
               _animatedAmount(
                 _formatAmount(income - expenses),
                 const TextStyle(
-                  color: Colors.white,
+                  color: ArthamColors.onHero,
                   fontSize: 18,
                   fontWeight: FontWeight.w800,
                 ),
@@ -804,7 +804,7 @@ class _ActivityScreenState extends State<ActivityScreen>
           const SizedBox(height: 5),
           const Text(
             'Based on current filters',
-            style: TextStyle(color: Colors.white54, fontSize: 10),
+            style: TextStyle(color: ArthamColors.onHeroFaint, fontSize: 10),
           ),
         ],
       ),
@@ -840,7 +840,7 @@ class _ActivityScreenState extends State<ActivityScreen>
             const SizedBox(width: 6),
             Text(
               title,
-              style: const TextStyle(color: Colors.white70, fontSize: 12),
+              style: const TextStyle(color: ArthamColors.onHeroMuted, fontSize: 12),
             ),
           ],
         ),

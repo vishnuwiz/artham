@@ -8,8 +8,8 @@ import '../../data/repositories/transaction_repository.dart';
 import 'add_account_screen.dart';
 import 'account_history_screen.dart';
 
-const Color accountsGreen = ArthamColors.lavender;
-const Color accountsNavy = ArthamColors.text;
+Color get accountsGreen => ArthamColors.lavender;
+Color get accountsNavy => ArthamColors.text;
 const Color accountsBackground = Colors.transparent;
 
 class AccountsScreen extends StatefulWidget {
@@ -154,7 +154,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       const Text(
                         'TOTAL ACCOUNT BALANCE',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: ArthamColors.onHeroMuted,
                           fontSize: 10,
                           letterSpacing: 1,
                           fontWeight: FontWeight.w700,
@@ -164,7 +164,7 @@ class _AccountsScreenState extends State<AccountsScreen> {
                       Text(
                         _formatAmount(data.totalBalancePaise),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: ArthamColors.onHero,
                           fontSize: 25,
                           fontWeight: FontWeight.w800,
                         ),

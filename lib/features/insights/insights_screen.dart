@@ -10,8 +10,8 @@ import '../../data/repositories/transaction_repository.dart';
 import '../../widgets/animated_charts.dart';
 import '../../widgets/micro_interactions.dart';
 
-const Color _insightsGreen = ArthamColors.lavender;
-const Color _insightsNavy = ArthamColors.text;
+Color get _insightsGreen => ArthamColors.lavender;
+Color get _insightsNavy => ArthamColors.text;
 
 class InsightsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -1154,7 +1154,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     const Text(
                       'NET SAVINGS THIS MONTH',
                       style: TextStyle(
-                        color: Colors.white70,
+                        color: ArthamColors.onHeroMuted,
                         fontSize: 11,
                         letterSpacing: 1,
                         fontWeight: FontWeight.w700,
@@ -1164,7 +1164,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                     AnimatedAmountText(
                       paise: netSavings.abs(),
                       style: const TextStyle(
-                        color: Colors.white,
+                        color: ArthamColors.onHero,
                         fontSize: 30,
                         fontWeight: FontWeight.w800,
                       ),
@@ -1175,7 +1175,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
                           ? 'You are spending within your income'
                           : 'Expenses exceed income',
                       style: const TextStyle(
-                        color: Colors.white70,
+                        color: ArthamColors.onHeroMuted,
                         fontSize: 11,
                       ),
                     ),
@@ -1187,7 +1187,7 @@ class _InsightsScreenState extends State<InsightsScreen> {
             ],
           ),
           const SizedBox(height: 20),
-          const Divider(color: Colors.white24),
+          const Divider(color: ArthamColors.onHeroLine),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -1214,14 +1214,14 @@ class _InsightsScreenState extends State<InsightsScreen> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: const TextStyle(color: Colors.white60, fontSize: 9)),
+        Text(label, style: const TextStyle(color: ArthamColors.onHeroFaint, fontSize: 9)),
         const SizedBox(height: 6),
         Text(
           value,
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: const TextStyle(
-            color: Colors.white,
+            color: ArthamColors.onHero,
             fontSize: 13,
             fontWeight: FontWeight.w800,
           ),

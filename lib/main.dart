@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:material_ui/material_ui.dart';
 
 import 'theme/artham_theme.dart';
+import 'theme/theme_controller.dart';
 import 'features/transactions/activity_screen.dart';
 import 'features/budgets/budgets_screen.dart';
 import 'features/insights/insights_screen.dart';
@@ -57,31 +58,36 @@ Future<void> main() async {
     debugPrint('Artham category setup error: $e');
   }
 
+  await ArthamThemeController.instance.load();
+
   runApp(const ArthamApp());
 }
 
-const Color primaryGreen = ArthamColors.lavender;
-const Color darkNavy = ArthamColors.text;
+Color get primaryGreen => ArthamColors.lavender;
+Color get darkNavy => ArthamColors.text;
 
 class ArthamApp extends StatelessWidget {
   const ArthamApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'Artham',
-      debugShowCheckedModeBanner: false,
-      theme: buildArthamTheme(),
-      home: _skipStartupSplashForTests
-          ? const HomeScreen()
-          : SplashGate(
-              child: OnboardingGate(
-                child: FirstTimeSetupGate(
-                  database: appDatabase,
-                  child: const HomeScreen(),
+    return ListenableBuilder(
+      listenable: ArthamThemeController.instance,
+      builder: (context, _) => MaterialApp(
+        title: 'Artham',
+        debugShowCheckedModeBanner: false,
+        theme: buildArthamTheme(),
+        home: _skipStartupSplashForTests
+            ? const HomeScreen()
+            : SplashGate(
+                child: OnboardingGate(
+                  child: FirstTimeSetupGate(
+                    database: appDatabase,
+                    child: const HomeScreen(),
+                  ),
                 ),
               ),
-            ),
+      ),
     );
   }
 }
@@ -493,7 +499,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                   const Text(
                     'TOTAL AVAILABLE BALANCE',
                     style: TextStyle(
-                      color: Colors.white70,
+                      color: ArthamColors.onHeroMuted,
                       fontSize: 11,
                       letterSpacing: 1.1,
                       fontWeight: FontWeight.w600,
@@ -508,7 +514,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                       showBalance
                           ? Icons.visibility_outlined
                           : Icons.visibility_off_outlined,
-                      color: Colors.white70,
+                      color: ArthamColors.onHeroMuted,
                       size: 20,
                     ),
                   ),
@@ -522,7 +528,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                 style: const TextStyle(
                   fontSize: 34,
                   fontWeight: FontWeight.w800,
-                  color: Colors.white,
+                  color: ArthamColors.onHero,
                   letterSpacing: -1,
                 ),
               ),
@@ -540,14 +546,14 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
                         ? 'Unable to calculate balance'
                         : 'Calculated from your saved transactions',
                     style: TextStyle(
-                      color: Colors.white.withValues(alpha: 0.7),
+                      color: ArthamColors.text.withValues(alpha: 0.7),
                       fontSize: 11,
                     ),
                   ),
                 ],
               ),
               const SizedBox(height: 24),
-              const Divider(color: Colors.white24),
+              const Divider(color: ArthamColors.onHeroLine),
               const SizedBox(height: 15),
               Row(
                 children: [
@@ -592,7 +598,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
             Flexible(
               child: Text(
                 label,
-                style: const TextStyle(color: Colors.white60, fontSize: 9),
+                style: const TextStyle(color: ArthamColors.onHeroFaint, fontSize: 9),
               ),
             ),
           ],
@@ -603,7 +609,7 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           placeholder: '—',
           masked: '••••',
           style: const TextStyle(
-            color: Colors.white,
+            color: ArthamColors.onHero,
             fontWeight: FontWeight.bold,
             fontSize: 18,
           ),

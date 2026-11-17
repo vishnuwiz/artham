@@ -10,6 +10,7 @@ import '../../data/app_database.dart';
 import '../../data/data_export_service.dart';
 import '../../data/data_import_service.dart';
 import '../../theme/artham_theme.dart';
+import 'appearance_screen.dart';
 import 'backup_management_screen.dart';
 import 'categories_screen.dart';
 
@@ -272,6 +273,22 @@ class _SettingsScreenState extends State<SettingsScreen> {
           children: [
             _buildHeader(),
             const SizedBox(height: 24),
+            const _SettingsSectionLabel('APPEARANCE'),
+            const SizedBox(height: 12),
+            _SettingsNavigationCard(
+              key: const Key('settings-appearance-row'),
+              tapKey: const Key('open-appearance-button'),
+              icon: Icons.palette_outlined,
+              accent: const Color(0xFFB9A5F5),
+              title: 'Appearance',
+              subtitle: 'Theme: ${ArthamColors.palette.name}. Tap to change.',
+              onTap: () => Navigator.of(context).push(
+                MaterialPageRoute<void>(
+                  builder: (_) => const AppearanceScreen(),
+                ),
+              ),
+            ),
+            const SizedBox(height: 24),
             const _SettingsSectionLabel('DATA & CUSTOMIZATION'),
             const SizedBox(height: 12),
             _SettingsNavigationCard(
@@ -472,9 +489,9 @@ class _SettingsScreenState extends State<SettingsScreen> {
     return Container(
       padding: const EdgeInsets.fromLTRB(11, 11, 11, 10),
       decoration: BoxDecoration(
-        color: Colors.white.withValues(alpha: 0.055),
+        color: ArthamColors.text.withValues(alpha: 0.055),
         borderRadius: BorderRadius.circular(21),
-        border: Border.all(color: Colors.white.withValues(alpha: 0.13)),
+        border: Border.all(color: ArthamColors.text.withValues(alpha: 0.13)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,

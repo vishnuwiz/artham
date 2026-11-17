@@ -5,8 +5,8 @@ import '../../theme/artham_theme.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color historyGreen = ArthamColors.lavender;
-const Color historyNavy = ArthamColors.text;
+Color get historyGreen => ArthamColors.lavender;
+Color get historyNavy => ArthamColors.text;
 const Color historyBackground = Colors.transparent;
 
 class AccountHistoryScreen extends StatefulWidget {
@@ -106,7 +106,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                     children: [
                       Text(
                         widget.account.bankName,
-                        style: const TextStyle(color: Colors.white70),
+                        style: const TextStyle(color: ArthamColors.onHeroMuted),
                       ),
                       const SizedBox(height: 5),
                       Text(
@@ -114,7 +114,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                           widget.account.accountNumberLast4,
                         ),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: ArthamColors.onHero,
                           fontSize: 18,
                           fontWeight: FontWeight.w700,
                           letterSpacing: 1,
@@ -124,7 +124,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                       const Text(
                         'CURRENT BALANCE',
                         style: TextStyle(
-                          color: Colors.white70,
+                          color: ArthamColors.onHeroMuted,
                           fontSize: 10,
                           letterSpacing: 1,
                         ),
@@ -132,7 +132,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
                       Text(
                         _money(data.balance),
                         style: const TextStyle(
-                          color: Colors.white,
+                          color: ArthamColors.onHero,
                           fontSize: 26,
                           fontWeight: FontWeight.w800,
                         ),
@@ -269,7 +269,7 @@ class _AccountHistoryScreenState extends State<AccountHistoryScreen> {
   Widget _summary(String label, int amount, Color color) => Column(
     crossAxisAlignment: CrossAxisAlignment.start,
     children: [
-      Text(label, style: const TextStyle(color: Colors.white70, fontSize: 11)),
+      Text(label, style: const TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11)),
       const SizedBox(height: 5),
       Text(
         _money(amount),

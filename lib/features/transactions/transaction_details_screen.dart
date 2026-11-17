@@ -6,8 +6,8 @@ import '../../theme/category_icons.dart';
 import '../../data/app_database.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transactionGreen = ArthamColors.lavender;
-const Color transactionNavy = ArthamColors.text;
+Color get transactionGreen => ArthamColors.lavender;
+Color get transactionNavy => ArthamColors.text;
 const Color transactionBackground = Colors.transparent;
 
 class TransactionDetailsScreen extends StatefulWidget {

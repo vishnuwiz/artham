@@ -7,8 +7,8 @@ import '../../data/repositories/budget_repository.dart';
 import '../../widgets/animated_charts.dart';
 import '../../widgets/micro_interactions.dart';
 
-const Color _green = ArthamColors.lavender;
-const Color _navy = ArthamColors.text;
+Color get _green => ArthamColors.lavender;
+Color get _navy => ArthamColors.text;
 
 class BudgetsScreen extends StatefulWidget {
   final AppDatabase database;
@@ -989,7 +989,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           const Text(
             'TOTAL MONTHLY BUDGET',
             style: TextStyle(
-              color: Colors.white70,
+              color: ArthamColors.onHeroMuted,
               fontSize: 11,
               letterSpacing: 1,
               fontWeight: FontWeight.w700,
@@ -1000,7 +1000,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             AnimatedAmountText(
               paise: budget,
               style: const TextStyle(
-                color: Colors.white,
+                color: ArthamColors.onHero,
                 fontSize: 29,
                 fontWeight: FontWeight.w800,
               ),
@@ -1009,7 +1009,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             const Text(
               'Not set',
               style: TextStyle(
-                color: Colors.white,
+                color: ArthamColors.onHero,
                 fontSize: 29,
                 fontWeight: FontWeight.w800,
               ),
@@ -1018,7 +1018,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
             const SizedBox(height: 5),
             const Text(
               'Repeats every month',
-              style: TextStyle(color: Colors.white70, fontSize: 11),
+              style: TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11),
             ),
           ],
           if (hasBudget && (rolloverEnabled || rolloverPaise > 0)) ...[
@@ -1027,7 +1027,7 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
               rolloverPaise > 0
                   ? '${_money(available)} available · includes ${_money(rolloverPaise)} carried in'
                   : 'Unused balance will carry into next month',
-              style: const TextStyle(color: Colors.white70, fontSize: 11),
+              style: const TextStyle(color: ArthamColors.onHeroMuted, fontSize: 11),
             ),
           ],
           const SizedBox(height: 18),
@@ -1046,9 +1046,9 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
           AnimatedProgressBar(
             value: ratio,
             height: 9,
-            trackColor: Colors.white24,
+            trackColor: ArthamColors.onHeroLine,
             color: over ? ArthamColors.debit : const Color(0xFF68DFB4),
-            endColor: over ? ArthamColors.debit : Colors.white,
+            endColor: over ? ArthamColors.debit : ArthamColors.onHero,
             duration: const Duration(milliseconds: 1100),
             pulse: ratio >= 0.8,
             shake: over,
@@ -1069,8 +1069,8 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
                 hasBudget ? 'Edit overall budget' : 'Set overall budget',
               ),
               style: OutlinedButton.styleFrom(
-                foregroundColor: Colors.white,
-                side: const BorderSide(color: Colors.white54),
+                foregroundColor: ArthamColors.onHero,
+                side: const BorderSide(color: ArthamColors.onHeroFaint),
               ),
             ),
           ),
@@ -1085,13 +1085,13 @@ class _BudgetsScreenState extends State<BudgetsScreen> {
       children: [
         Text(
           label,
-          style: const TextStyle(color: Colors.white60, fontSize: 10),
+          style: const TextStyle(color: ArthamColors.onHeroFaint, fontSize: 10),
         ),
         const SizedBox(height: 5),
         Text(
           value,
           style: const TextStyle(
-            color: Colors.white,
+            color: ArthamColors.onHero,
             fontSize: 16,
             fontWeight: FontWeight.w800,
           ),

@@ -13,8 +13,8 @@ import '../../data/merchant_intelligence.dart';
 import '../../data/repositories/category_repository.dart';
 import '../../data/repositories/transaction_repository.dart';
 
-const Color transactionGreen = ArthamColors.lavender;
-const Color transactionNavy = ArthamColors.text;
+Color get transactionGreen => ArthamColors.lavender;
+Color get transactionNavy => ArthamColors.text;
 const Color transactionBackground = Colors.transparent;
 
 class AddTransactionScreen extends StatefulWidget {
@@ -544,7 +544,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                           ],
                         ),
                         border: Border.all(
-                          color: Colors.white.withValues(alpha: 0.20),
+                          color: ArthamColors.text.withValues(alpha: 0.20),
                           width: 1,
                         ),
                         borderRadius: const BorderRadius.vertical(
@@ -565,7 +565,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                             width: 42,
                             height: 4,
                             decoration: BoxDecoration(
-                              color: Colors.white38,
+                              color: ArthamColors.onHeroFaint,
                               borderRadius: BorderRadius.circular(8),
                             ),
                           ),
@@ -617,7 +617,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                 hintText: 'Search category...',
                                 prefixIcon: const Icon(Icons.search_rounded),
                                 filled: true,
-                                fillColor: Colors.white.withValues(
+                                fillColor: ArthamColors.text.withValues(
                                   alpha: 0.055,
                                 ),
                                 contentPadding: const EdgeInsets.symmetric(
@@ -691,7 +691,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
                                             fontWeight: FontWeight.w600,
                                             fontSize: 12,
                                           ),
-                                          backgroundColor: Colors.white
+                                          backgroundColor: ArthamColors.onHero
                                               .withValues(alpha: 0.035),
                                           selectedColor: color.withValues(
                                             alpha: 0.19,
