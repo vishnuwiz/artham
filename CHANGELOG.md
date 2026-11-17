@@ -8,6 +8,37 @@ The format is inspired by [Keep a Changelog](https://keepachangelog.com/en/1.1.0
 
 _No unreleased changes yet._
 
+## [0.1.2] - 2026-11-17
+
+**GitHub release tag:** `v0.1.2`  
+**Platform:** Android beta APK · [Download APK](https://github.com/vishnuwiz/artham/releases/download/v0.1.2/app-release.apk) · [GitHub release page](https://github.com/vishnuwiz/artham/releases/tag/v0.1.2)
+
+A feature release that expands Artham beyond individual transaction tracking with shared-money tools, appearance controls, tags and local alerts.
+
+### Added
+- **Split Expenses & Shared Money:** Manage people and shared balances, split an expense equally, by custom amounts or by percentages, and track who owes you or whom you owe.
+- **People and ledger views:** Review each person's shared-money ledger and outstanding balance.
+- **Settlements and repayments:** Record repayments and settle outstanding shared balances.
+- **Home summary:** Added a Shared Money summary card for a quick view of shared balances.
+- **Transaction tags:** Add multiple optional custom tags to a transaction (up to eight), remove individual tags and prevent duplicate tags.
+- **Appearance settings:** Choose between Dark and Light themes, with theme-aware app surfaces and components.
+- **Alerts centre:** View local alerts, see an unread count, mark individual alerts as read, or mark all as read.
+- **Local notifications:** Support budget threshold/over-limit alerts, upcoming recurring-payment reminders, backup reminders and monthly financial summaries, with notification preferences and restart-safe scheduling.
+
+### Changed
+- **Transaction entry:** Refined the Add Transaction experience and redesigned category selection with a frosted-glass picker.
+- **Shared-money accounting:** Treat the user's own share as ordinary spending while keeping amounts lent to others and repayments outside income, expenses, budgets and insights.
+- **Local data handling:** Shared-money ledger and alert data remain stored locally; no cloud notification service is required.
+- **Compatibility:** The new shared-money and tagging functionality reuses existing storage where applicable and does not require a Drift schema migration.
+
+### UX and interaction
+- Added motion, feedback and usability refinements across the new shared-money flows, theme-aware screens, tag controls, alert interactions and transaction/category selection.
+
+### Release
+- Published the Android beta APK as `app-release.apk`.
+- [Full comparison with v0.1.1](https://github.com/vishnuwiz/artham/compare/v0.1.1...v0.1.2).
+
+
 ## [0.1.1] - 2026-11-13
 
 **GitHub release tag:** `v0.1.1`  
