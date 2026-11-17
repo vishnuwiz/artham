@@ -6,6 +6,7 @@ import '../../data/split/split_models.dart';
 import '../../data/split/split_repository.dart';
 import '../../theme/artham_theme.dart';
 import '../../widgets/micro_interactions.dart';
+import 'category_picker.dart';
 import 'split_shared.dart';
 
 /// Records a bill and divides it between you and the people you shared it
@@ -75,6 +76,33 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
       _categories = categories;
       _accountId = accounts.isEmpty ? null : accounts.first.id;
     });
+  }
+
+  Category? get _selectedCategory {
+    for (final category in _categories) {
+      if (category.id == _categoryId) return category;
+    }
+    return null;
+  }
+
+  Future<List<Category>> _reloadCategories() async {
+    final fresh = await TransactionRepository(
+      widget.database,
+    ).getCategories('expense');
+    if (mounted) setState(() => _categories = fresh);
+    return fresh;
+  }
+
+  Future<void> _chooseCategory() async {
+    FocusScope.of(context).unfocus();
+    final picked = await showCategoryPicker(
+      context,
+      database: widget.database,
+      categories: _categories,
+      selectedId: _categoryId,
+      reload: _reloadCategories,
+    );
+    if (picked != null && mounted) setState(() => _categoryId = picked.id);
   }
 
   TextEditingController _controller(String key) =>
@@ -285,113 +313,182 @@ class _AddSplitScreenState extends State<AddSplitScreen> {
                   const SizedBox(height: 16),
                   AppearIn(
                     index: 1,
-                    child: Row(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Expanded(
-                          flex: 6,
-                          child: TextField(
+                    child: Container(
+                      padding: const EdgeInsets.fromLTRB(20, 16, 20, 14),
+                      decoration: BoxDecoration(
+                        gradient: ArthamColors.heroGradient,
+                        borderRadius: BorderRadius.circular(26),
+                        border: Border.all(color: ArthamColors.line),
+                      ),
+                      child: Column(
+                        children: [
+                          Text(
+                            _iPaid ? 'TOTAL YOU PAID' : 'TOTAL BILL',
+                            style: const TextStyle(
+                              color: ArthamColors.muted,
+                              fontSize: 11,
+                              fontWeight: FontWeight.w700,
+                              letterSpacing: 1.4,
+                            ),
+                          ),
+                          TextField(
                             key: const Key('split-total'),
                             controller: _total,
-                            keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                            textAlign: TextAlign.center,
+                            keyboardType: const TextInputType.numberWithOptions(
+                              decimal: true,
+                            ),
                             onChanged: (_) => setState(() => _error = null),
                             style: const TextStyle(
                               color: ArthamColors.text,
-                              fontSize: 20,
+                              fontSize: 40,
                               fontWeight: FontWeight.w800,
+                              letterSpacing: -1,
                             ),
-                            decoration: splitFieldDecoration('Total bill')
-                                .copyWith(prefixText: '₹ '),
+                            decoration: const InputDecoration(
+                              border: InputBorder.none,
+                              enabledBorder: InputBorder.none,
+                              focusedBorder: InputBorder.none,
+                              filled: false,
+                              hintText: '₹0',
+                              hintStyle: TextStyle(color: ArthamColors.faint),
+                              prefixText: '₹ ',
+                              prefixStyle: TextStyle(
+                                color: ArthamColors.muted,
+                                fontSize: 28,
+                                fontWeight: FontWeight.w700,
+                              ),
+                            ),
                           ),
-                        ),
-                        const SizedBox(width: 10),
-                        Expanded(
-                          flex: 5,
-                          child: DropdownButtonFormField<int>(
-                            key: ValueKey(_categories.length),
-                            initialValue: _categoryId,
-                            isExpanded: true,
-                            dropdownColor: ArthamColors.sheet,
-                            style: const TextStyle(color: ArthamColors.text),
-                            decoration: splitFieldDecoration('Category'),
-                            items: [
-                              for (final category in _categories)
-                                DropdownMenuItem(
-                                  value: category.id,
-                                  child: Text(category.name, overflow: TextOverflow.ellipsis),
-                                ),
-                            ],
-                            onChanged: (value) => setState(() => _categoryId = value),
-                          ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
-                  const SizedBox(height: 12),
+                  const SizedBox(height: 14),
                   AppearIn(
                     index: 2,
-                    child: TextField(
-                      key: const Key('split-title'),
-                      controller: _title,
-                      textCapitalization: TextCapitalization.sentences,
-                      style: const TextStyle(color: ArthamColors.text),
-                      decoration: splitFieldDecoration('Description', hint: 'Team lunch'),
+                    child: CategoryPickerField(
+                      key: const Key('split-category'),
+                      selected: _selectedCategory,
+                      onTap: _chooseCategory,
                     ),
                   ),
                   const SizedBox(height: 12),
                   AppearIn(
                     index: 3,
-                    child: Row(
-                      children: [
-                        if (_iPaid)
-                          Expanded(
-                            child: DropdownButtonFormField<int>(
-                              key: ValueKey(_accounts.length),
-                              initialValue: _accountId,
-                              isExpanded: true,
-                              dropdownColor: ArthamColors.sheet,
-                              style: const TextStyle(color: ArthamColors.text),
-                              decoration: splitFieldDecoration('Paid from'),
-                              items: [
-                                for (final account in _accounts)
-                                  DropdownMenuItem(
-                                    value: account.id,
-                                    child: Text(
-                                      bankAccountDisplayLabel(
-                                        account.bankName,
-                                        account.accountNumberLast4,
+                    child: TextField(
+                      key: const Key('split-title'),
+                      controller: _title,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: const TextStyle(color: ArthamColors.text),
+                      decoration: splitFieldDecoration(
+                        'Description',
+                        hint: 'Team lunch',
+                      ).copyWith(
+                        prefixIcon: const Icon(
+                          Icons.edit_note_rounded,
+                          color: ArthamColors.muted,
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 12),
+                  AppearIn(
+                    index: 4,
+                    child: SplitPanel(
+                      radius: 18,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 14,
+                        vertical: 4,
+                      ),
+                      child: Column(
+                        children: [
+                          if (_iPaid) ...[
+                            Row(
+                              children: [
+                                const Icon(
+                                  Icons.account_balance_outlined,
+                                  size: 18,
+                                  color: ArthamColors.muted,
+                                ),
+                                const SizedBox(width: 12),
+                                Expanded(
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<int>(
+                                      key: ValueKey(_accounts.length),
+                                      value: _accountId,
+                                      isExpanded: true,
+                                      dropdownColor: ArthamColors.sheet,
+                                      icon: const Icon(
+                                        Icons.expand_more_rounded,
+                                        color: ArthamColors.muted,
                                       ),
-                                      overflow: TextOverflow.ellipsis,
+                                      hint: const Text(
+                                        'Paid from',
+                                        style: TextStyle(
+                                          color: ArthamColors.faint,
+                                        ),
+                                      ),
+                                      style: const TextStyle(
+                                        color: ArthamColors.text,
+                                        fontSize: 14,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                      items: [
+                                        for (final account in _accounts)
+                                          DropdownMenuItem(
+                                            value: account.id,
+                                            child: Text(
+                                              'Paid from · ${bankAccountDisplayLabel(account.bankName, account.accountNumberLast4)}',
+                                              overflow: TextOverflow.ellipsis,
+                                            ),
+                                          ),
+                                      ],
+                                      onChanged: (value) =>
+                                          setState(() => _accountId = value),
                                     ),
                                   ),
+                                ),
                               ],
-                              onChanged: (value) => setState(() => _accountId = value),
                             ),
-                          ),
-                        if (_iPaid) const SizedBox(width: 10),
-                        Expanded(
-                          child: PressableScale(
+                            const Divider(height: 1, color: ArthamColors.line),
+                          ],
+                          PressableScale(
                             onTap: _pickDate,
-                            child: SplitPanel(
-                              radius: 15,
-                              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 17),
+                            scale: 0.99,
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 15),
                               child: Row(
                                 children: [
-                                  const Icon(Icons.calendar_today_outlined, size: 16, color: ArthamColors.muted),
-                                  const SizedBox(width: 8),
+                                  const Icon(
+                                    Icons.calendar_today_outlined,
+                                    size: 18,
+                                    color: ArthamColors.muted,
+                                  ),
+                                  const SizedBox(width: 12),
+                                  const Expanded(
+                                    child: Text(
+                                      'Date',
+                                      style: TextStyle(
+                                        color: ArthamColors.muted,
+                                        fontSize: 14,
+                                      ),
+                                    ),
+                                  ),
                                   Text(
                                     '${_date.day}/${_date.month}/${_date.year}',
                                     style: const TextStyle(
                                       color: ArthamColors.text,
-                                      fontWeight: FontWeight.w600,
+                                      fontSize: 14,
+                                      fontWeight: FontWeight.w700,
                                     ),
                                   ),
                                 ],
                               ),
                             ),
                           ),
-                        ),
-                      ],
+                        ],
+                      ),
                     ),
                   ),
                   const SizedBox(height: 22),

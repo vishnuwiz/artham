@@ -382,7 +382,22 @@ InputDecoration splitFieldDecoration(String label, {String? hint}) {
 }
 
 /// Asks for a name and returns it, or null when cancelled.
-Future<String?> askPersonName(BuildContext context) {
+Future<String?> askPersonName(BuildContext context) => askPersonNameLike(
+  context,
+  title: 'Add a person',
+  hint: 'Name',
+  action: 'Add person',
+  note: 'Only a name, saved on this phone. They never get anything from Artham.',
+);
+
+/// A small bottom sheet asking for one line of text.
+Future<String?> askPersonNameLike(
+  BuildContext context, {
+  required String title,
+  required String hint,
+  required String action,
+  String? note,
+}) {
   final controller = TextEditingController();
   return showModalBottomSheet<String>(
     context: context,
@@ -413,19 +428,21 @@ Future<String?> askPersonName(BuildContext context) {
             ),
           ),
           const SizedBox(height: 18),
-          const Text(
-            'Add a person',
-            style: TextStyle(
+          Text(
+            title,
+            style: const TextStyle(
               color: ArthamColors.text,
               fontSize: 20,
               fontWeight: FontWeight.w800,
             ),
           ),
-          const SizedBox(height: 6),
-          const Text(
-            'Only a name, saved on this phone. They never get anything from Artham.',
-            style: TextStyle(color: ArthamColors.muted, fontSize: 13),
-          ),
+          if (note != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              note,
+              style: const TextStyle(color: ArthamColors.muted, fontSize: 13),
+            ),
+          ],
           const SizedBox(height: 16),
           TextField(
             key: const Key('split-person-name'),
@@ -433,12 +450,12 @@ Future<String?> askPersonName(BuildContext context) {
             autofocus: true,
             textCapitalization: TextCapitalization.words,
             style: const TextStyle(color: ArthamColors.text),
-            decoration: splitFieldDecoration('Name'),
+            decoration: splitFieldDecoration(hint),
             onSubmitted: (value) => Navigator.pop(context, value),
           ),
           const SizedBox(height: 16),
           SplitPrimaryButton(
-            label: 'Add person',
+            label: action,
             onPressed: () => Navigator.pop(context, controller.text),
           ),
         ],
