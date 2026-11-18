@@ -237,6 +237,14 @@ abstract final class ArthamColors {
   /// Text and icons placed on a solid lavender, mint, peach or white fill.
   static Color get onAccent => _palette.onAccent;
 
+  /// The selected pill in the bottom bar. White in the original look.
+  static Color get tabCapsule =>
+      _palette.id == 'artham' ? const Color(0xFFFFFFFF) : _palette.lavender;
+
+  /// Labels and icons of tabs that are not selected.
+  static Color get tabIdle =>
+      _palette.id == 'artham' ? const Color(0xFFFFFFFF) : _palette.muted;
+
   static Color get glass => _palette.glass;
   static Color get glassSoft => _palette.glassSoft;
   static Color get line => _palette.line;
@@ -576,13 +584,15 @@ class ArthamTabBar extends StatelessWidget {
                     top: 0,
                     bottom: 0,
                     width: tabWidth,
-                    child: const Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 2),
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 2),
                       child: DecoratedBox(
-                        key: ValueKey('artham-tab-capsule'),
+                        key: const ValueKey('artham-tab-capsule'),
                         decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(27)),
+                          color: ArthamColors.tabCapsule,
+                          borderRadius: const BorderRadius.all(
+                            Radius.circular(27),
+                          ),
                         ),
                       ),
                     ),
@@ -627,7 +637,7 @@ class _TabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final color = selected ? ArthamColors.onAccent : Colors.white;
+    final color = selected ? ArthamColors.onAccent : ArthamColors.tabIdle;
 
     return Semantics(
       button: true,
