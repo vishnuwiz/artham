@@ -433,13 +433,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  Category? get _selectedCategory {
-    for (final category in _categories) {
-      if (category.id == _selectedCategoryId) return category;
-    }
-    return null;
-  }
-
   Future<int?> _createCategoryFromPicker() async {
     final controller = TextEditingController();
     try {
