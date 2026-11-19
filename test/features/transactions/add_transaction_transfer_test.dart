@@ -65,6 +65,13 @@ void main() {
     expect(find.text('To account'), findsOneWidget);
     expect(find.text('Category'), findsNothing);
     expect(find.text('Save Transaction'), findsNothing);
+    expect(find.byKey(const Key('swap-accounts-button')), findsOneWidget);
+
+    // Swapping exchanges the two accounts without errors.
+    await tester.tap(find.byKey(const Key('swap-accounts-button')));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('From account'), findsOneWidget);
+    expect(find.text('To account'), findsOneWidget);
 
     await tester.runAsync(() => database.close());
   });
