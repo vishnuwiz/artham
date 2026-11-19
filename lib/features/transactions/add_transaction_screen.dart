@@ -433,13 +433,6 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     }
   }
 
-  Category? get _selectedCategory {
-    for (final category in _categories) {
-      if (category.id == _selectedCategoryId) return category;
-    }
-    return null;
-  }
-
   Future<int?> _createCategoryFromPicker() async {
     final controller = TextEditingController();
     try {
@@ -758,13 +751,19 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     );
   }
 
+  Color get _accentColor {
+    switch (_transactionType) {
+      case 'income':
+        return ArthamColors.mint;
+      case 'transfer':
+        return ArthamColors.lavender;
+      default:
+        return ArthamColors.debit;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final isIncome = _transactionType == 'income';
-    final accent = _transactionType == 'expense'
-        ? ArthamColors.debit
-        : transactionGreen;
-
     return ArthamScaffold(
       appBar: AppBar(
         backgroundColor: Colors.transparent,
@@ -772,401 +771,645 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
         elevation: 0,
         title: const Text(
           'New Transaction',
-          style: TextStyle(fontWeight: FontWeight.w800),
+          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 22),
         ),
       ),
       body: _isLoading
-          ? Center(
-              child: CircularProgressIndicator(color: transactionGreen),
-            )
+          ? Center(child: CircularProgressIndicator(color: transactionGreen))
           : _accounts.isEmpty
           ? _buildNoAccounts()
-          : _buildForm(isIncome, accent),
+          : _buildForm(_accentColor),
     );
   }
 
-  Widget _buildForm(bool isIncome, Color accent) {
-    return Form(
-      key: _formKey,
+  Widget _caption(String text) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 0, 4, 10),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: ArthamColors.muted,
+          fontSize: 12,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 1,
+        ),
+      ),
+    );
+  }
+
+  /// A rounded, tappable choice used for categories and accounts. The fill and
+  /// border animate when it becomes selected.
+  Widget _choice({
+    required Key key,
+    required bool selected,
+    required Color color,
+    required VoidCallback onTap,
+    required Widget child,
+    double verticalPadding = 10,
+  }) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    return PressableScale(
+      key: key,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
+      child: AnimatedContainer(
+        duration: reduce ? Duration.zero : const Duration(milliseconds: 240),
+        curve: Curves.easeOutCubic,
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: verticalPadding),
+        decoration: BoxDecoration(
+          color: selected
+              ? color.withValues(alpha: 0.2)
+              : ArthamColors.glassSoft,
+          borderRadius: BorderRadius.circular(24),
+          border: Border.all(
+            color: selected ? color : ArthamColors.line,
+            width: selected ? 1.6 : 1,
+          ),
+        ),
+        child: child,
+      ),
+    );
+  }
+
+  Widget _categoryRow(Color accent) {
+    return SizedBox(
+      height: 48,
       child: ListView(
-        padding: const EdgeInsets.fromLTRB(20, 12, 20, 30),
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
         children: [
-          SegmentedButton<String>(
-            segments: const [
-              ButtonSegment(
-                value: 'expense',
-                label: Text('Expense'),
-                icon: Icon(Icons.arrow_upward_rounded),
-              ),
-              ButtonSegment(
-                value: 'income',
-                label: Text('Income'),
-                icon: Icon(Icons.arrow_downward_rounded),
-              ),
-              ButtonSegment(
-                value: 'transfer',
-                label: Text('Transfer'),
-                icon: Icon(Icons.swap_horiz_rounded),
-              ),
-            ],
-            showSelectedIcon: false,
-            selected: {_transactionType},
-            onSelectionChanged: (selection) {
-              _changeTransactionType(selection.first);
-            },
-            style: SegmentedButton.styleFrom(
-              selectedBackgroundColor: accent.withValues(alpha: 0.13),
-              selectedForegroundColor: accent,
-            ),
-          ),
-
-          const SizedBox(height: 25),
-
-          Container(
-            padding: const EdgeInsets.all(22),
-            decoration: BoxDecoration(
-              color: ArthamColors.glass,
-              borderRadius: BorderRadius.circular(22),
-              border: Border.all(color: ArthamColors.line),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  _isTransfer
-                      ? 'TRANSFER AMOUNT'
-                      : (isIncome ? 'INCOME AMOUNT' : 'EXPENSE AMOUNT'),
-                  style: TextStyle(
-                    color: ArthamColors.muted,
-                    fontSize: 11,
-                    fontWeight: FontWeight.w700,
-                    letterSpacing: 1,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  controller: _amountController,
-                  autofocus: false,
-                  keyboardType: const TextInputType.numberWithOptions(
-                    decimal: true,
-                  ),
-                  inputFormatters: [
-                    FilteringTextInputFormatter.allow(
-                      RegExp(r'^\d*\.?\d{0,2}'),
-                    ),
-                  ],
-                  style: TextStyle(
-                    color: accent,
-                    fontSize: 30,
-                    fontWeight: FontWeight.w800,
-                  ),
-                  decoration: InputDecoration(
-                    prefixText: '₹ ',
-                    prefixStyle: TextStyle(
-                      color: accent,
-                      fontSize: 28,
-                      fontWeight: FontWeight.w800,
-                    ),
-                    hintText: '0.00',
-                    border: InputBorder.none,
-                  ),
-                  validator: (value) {
-                    final amount = double.tryParse(value?.trim() ?? '');
-
-                    if (amount == null || !amount.isFinite || amount <= 0) {
-                      return 'Enter a valid amount';
-                    }
-
-                    if ((amount * 100).round() <= 0) {
-                      return 'Amount must be at least ₹0.01';
-                    }
-
-                    if (_isTransfer) {
-                      final available =
-                          _balanceSummary
-                              ?.accountBalancesPaise[_selectedAccountId] ??
-                          0;
-                      if ((amount * 100).round() > available) {
-                        return 'Amount exceeds available balance';
-                      }
-                    }
-
-                    return null;
-                  },
-                ),
-              ],
-            ),
-          ),
-
-          const SizedBox(height: 24),
-
-          if (_isTransfer) ...[
-            Text(
-              'Move money between your own accounts. Transfers do not count '
-              'as income or expenses.',
-              style: TextStyle(color: ArthamColors.muted, fontSize: 12.5),
-            ),
-            const SizedBox(height: 16),
-          ],
-
-          Text(
-            _isTransfer ? 'TRANSFER DETAILS' : 'TRANSACTION DETAILS',
-            style: TextStyle(
-              color: ArthamColors.muted,
-              fontSize: 11,
-              fontWeight: FontWeight.w700,
-              letterSpacing: 1,
-            ),
-          ),
-
-          const SizedBox(height: 13),
-
-          DropdownButtonFormField<int>(
-            initialValue: _selectedAccountId,
-            isExpanded: true,
-            decoration: _decoration(
-              _isTransfer ? 'From account' : 'Bank Account',
-              prefix: Icon(
-                Icons.account_balance_outlined,
-                color: transactionGreen,
-              ),
-            ),
-            items: _accounts.map((account) {
-              return DropdownMenuItem<int>(
-                value: account.id,
-                child: Text(
-                  bankAccountDisplayLabel(
-                    account.bankName,
-                    account.accountNumberLast4,
-                  ),
-                  overflow: TextOverflow.ellipsis,
-                ),
-              );
-            }).toList(),
-            onChanged: (value) {
-              setState(() {
-                _selectedAccountId = value;
-                if (_isTransfer) _ensureDifferentDestination();
-              });
-            },
-            validator: (value) =>
-                value == null ? 'Select a bank account' : null,
-          ),
-
-          if (_isTransfer) ...[
-            if (_selectedAccountId != null) ...[
-              const SizedBox(height: 6),
-              Text(
-                'Available: ${_money(_balanceSummary?.accountBalancesPaise[_selectedAccountId] ?? 0)}',
-                style: TextStyle(color: ArthamColors.muted, fontSize: 12),
-              ),
-            ],
-            const SizedBox(height: 16),
-            if (_accounts.length < 2)
-              Text(
-                'Add at least two active bank accounts to make a transfer.',
-                style: TextStyle(color: ArthamColors.debit, fontSize: 13),
-              )
-            else
-              DropdownButtonFormField<int>(
-                key: ValueKey<int?>(_toAccountId),
-                initialValue: _toAccountId,
-                isExpanded: true,
-                decoration: _decoration(
-                  'To account',
-                  prefix: Icon(
-                    Icons.account_balance_outlined,
-                    color: transactionGreen,
-                  ),
-                ),
-                items: _accounts
-                    .where((account) => account.id != _selectedAccountId)
-                    .map((account) {
-                      return DropdownMenuItem<int>(
-                        value: account.id,
-                        child: Text(
-                          bankAccountDisplayLabel(
-                            account.bankName,
-                            account.accountNumberLast4,
-                          ),
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    })
-                    .toList(),
-                onChanged: (value) {
-                  setState(() => _toAccountId = value);
-                },
-                validator: (value) =>
-                    value == null ? 'Select a destination account' : null,
-              ),
-          ] else ...[
-            const SizedBox(height: 16),
-
-            InkWell(
-              onTap: _selectCategory,
-              borderRadius: BorderRadius.circular(15),
-              child: InputDecorator(
-                decoration: _decoration('Category'),
-                child: Row(
-                  children: [
-                    if (_selectedCategory != null)
-                      CategoryIconBadge.forCategory(
-                        _selectedCategory!,
-                        size: 30,
-                      )
-                    else
-                      const CategoryIconBadge(
-                        iconKey: fallbackCategoryIconKey,
-                        colorHex: '#B99AFF',
-                        size: 30,
+          for (final category in _categories) ...[
+            Builder(
+              builder: (context) {
+                final color = categoryColorFor(category.colorHex);
+                final selected = category.id == _selectedCategoryId;
+                return _choice(
+                  key: ValueKey('category-chip-${category.id}'),
+                  selected: selected,
+                  color: color,
+                  onTap: () => setState(() {
+                    _selectedCategoryId = category.id;
+                    _categoryWasManuallySelected = true;
+                  }),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        categoryIconFor(category.iconKey),
+                        size: 18,
+                        color: color,
                       ),
-                    const SizedBox(width: 12),
-                    Expanded(
-                      child: Text(
-                        _selectedCategory?.name ?? 'Choose a category',
+                      const SizedBox(width: 8),
+                      Text(
+                        category.name,
                         style: TextStyle(
                           color: transactionNavy,
-                          fontWeight: FontWeight.w600,
+                          fontSize: 13,
+                          fontWeight: selected
+                              ? FontWeight.w700
+                              : FontWeight.w500,
                         ),
                       ),
-                    ),
-                    Icon(
-                      Icons.keyboard_arrow_down_rounded,
-                      color: transactionGreen,
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          ],
-
-          const SizedBox(height: 16),
-
-          TextFormField(
-            controller: _descriptionController,
-            maxLength: 150,
-            onChanged: _handleDescriptionChanged,
-            decoration: _decoration(
-              'Description (optional)',
-              hint: 'e.g. Lunch with friends',
-              prefix: Icon(Icons.notes_rounded, color: transactionGreen),
-            ),
-          ),
-          const SizedBox(height: 12),
-          _buildTagsField(),
-          if (_merchantSuggestion != null) ...[
-            const SizedBox(height: 6),
-            Row(
-              children: [
-                Icon(
-                  Icons.auto_awesome_rounded,
-                  size: 15,
-                  color: transactionGreen,
-                ),
-                const SizedBox(width: 6),
-                Expanded(
-                  child: Text(
-                    'Recognised ${_merchantSuggestion!.name} · '
-                    'suggested ${_merchantSuggestion!.categoryName}',
-                    style: TextStyle(
-                      color: transactionGreen,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w600,
-                    ),
+                    ],
                   ),
+                );
+              },
+            ),
+            const SizedBox(width: 8),
+          ],
+          _choice(
+            key: const ValueKey('category-more-chip'),
+            selected: false,
+            color: accent,
+            onTap: _selectCategory,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Icon(Icons.search_rounded, size: 18, color: ArthamColors.muted),
+                const SizedBox(width: 8),
+                Text(
+                  'More',
+                  style: TextStyle(color: ArthamColors.muted, fontSize: 13),
                 ),
               ],
-            ),
-          ],
-
-          const SizedBox(height: 8),
-
-          InkWell(
-            onTap: _selectDate,
-            borderRadius: BorderRadius.circular(15),
-            child: InputDecorator(
-              decoration: _decoration(
-                'Transaction Date',
-                prefix: Icon(
-                  Icons.calendar_month_outlined,
-                  color: transactionGreen,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(child: Text(_formatDate(_transactionDate))),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: transactionGreen,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 12),
-
-          InkWell(
-            onTap: _selectTime,
-            borderRadius: BorderRadius.circular(15),
-            child: InputDecorator(
-              decoration: _decoration(
-                'Transaction Time',
-                prefix: Icon(
-                  Icons.access_time_rounded,
-                  color: transactionGreen,
-                ),
-              ),
-              child: Row(
-                children: [
-                  Expanded(child: Text(_formatTime(_transactionDate))),
-                  Icon(
-                    Icons.keyboard_arrow_down_rounded,
-                    color: transactionGreen,
-                  ),
-                ],
-              ),
-            ),
-          ),
-
-          const SizedBox(height: 28),
-
-          SizedBox(
-            height: 55,
-            child: FilledButton.icon(
-              onPressed: _isSaving || (_isTransfer && _accounts.length < 2)
-                  ? null
-                  : _saveTransaction,
-              style: FilledButton.styleFrom(
-                backgroundColor: accent,
-                foregroundColor: ArthamColors.onAccent,
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(16),
-                ),
-              ),
-              icon: _isSaving
-                  ? SizedBox(
-                      height: 20,
-                      width: 20,
-                      child: CircularProgressIndicator(
-                        color: ArthamColors.onAccent,
-                        strokeWidth: 2,
-                      ),
-                    )
-                  : const Icon(Icons.check_circle_outline_rounded),
-              label: Text(
-                _isSaving
-                    ? 'Saving...'
-                    : (_isTransfer ? 'Confirm Transfer' : 'Save Transaction'),
-                style: const TextStyle(
-                  fontWeight: FontWeight.w700,
-                  fontSize: 15,
-                ),
-              ),
             ),
           ),
         ],
+      ),
+    );
+  }
+
+  Widget _accountRow({
+    required List<BankAccount> accounts,
+    required int? selectedId,
+    required ValueChanged<int> onSelected,
+    required Color accent,
+    required String keyPrefix,
+  }) {
+    return SizedBox(
+      height: 62,
+      child: ListView(
+        scrollDirection: Axis.horizontal,
+        clipBehavior: Clip.none,
+        children: [
+          for (final account in accounts) ...[
+            _choice(
+              key: ValueKey('$keyPrefix-${account.id}'),
+              selected: account.id == selectedId,
+              color: accent,
+              onTap: () => onSelected(account.id),
+              verticalPadding: 7,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    account.bankName,
+                    style: TextStyle(
+                      color: transactionNavy,
+                      fontSize: 13,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  Text(
+                    accountNumberLastFourLabel(account.accountNumberLast4),
+                    style: TextStyle(color: ArthamColors.muted, fontSize: 11),
+                  ),
+                ],
+              ),
+            ),
+            const SizedBox(width: 8),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _pickerButton({
+    required String caption,
+    required String value,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return PressableScale(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: ArthamColors.glass,
+          borderRadius: BorderRadius.circular(22),
+          border: Border.all(color: ArthamColors.line),
+        ),
+        child: Row(
+          children: [
+            Icon(icon, size: 20, color: transactionGreen),
+            const SizedBox(width: 10),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    caption,
+                    style: TextStyle(color: ArthamColors.muted, fontSize: 11),
+                  ),
+                  const SizedBox(height: 2),
+                  Text(
+                    value,
+                    style: TextStyle(
+                      color: transactionNavy,
+                      fontSize: 14,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildForm(Color accent) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    final label = _isTransfer
+        ? 'TRANSFER AMOUNT'
+        : (_transactionType == 'income' ? 'INCOME AMOUNT' : 'EXPENSE AMOUNT');
+    final fromAccounts = _accounts;
+    final toAccounts = _accounts
+        .where((account) => account.id != _selectedAccountId)
+        .toList();
+
+    return Form(
+      key: _formKey,
+      child: Stack(
+        children: [
+          ListView(
+            padding: const EdgeInsets.fromLTRB(18, 8, 18, 130),
+            children: [
+              _Rise(
+                index: 0,
+                child: _TypeSwitch(
+                  value: _transactionType,
+                  onChanged: _changeTransactionType,
+                ),
+              ),
+              const SizedBox(height: 20),
+              _Rise(
+                index: 1,
+                child: Container(
+                  padding: const EdgeInsets.fromLTRB(22, 20, 22, 16),
+                  decoration: BoxDecoration(
+                    gradient: ArthamColors.glassGradient,
+                    borderRadius: BorderRadius.circular(28),
+                    border: Border.all(color: ArthamColors.line),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        label,
+                        style: TextStyle(
+                          color: ArthamColors.muted,
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          letterSpacing: 1.4,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      TextFormField(
+                        controller: _amountController,
+                        autofocus: false,
+                        keyboardType: const TextInputType.numberWithOptions(
+                          decimal: true,
+                        ),
+                        inputFormatters: [
+                          FilteringTextInputFormatter.allow(
+                            RegExp(r'^\d*\.?\d{0,2}'),
+                          ),
+                        ],
+                        style: TextStyle(
+                          color: transactionNavy,
+                          fontSize: 44,
+                          fontWeight: FontWeight.w900,
+                          letterSpacing: -1,
+                        ),
+                        decoration: InputDecoration(
+                          prefixText: '₹ ',
+                          prefixStyle: TextStyle(
+                            color: accent,
+                            fontSize: 38,
+                            fontWeight: FontWeight.w800,
+                          ),
+                          hintText: '0.00',
+                          hintStyle: TextStyle(
+                            color: ArthamColors.faint,
+                            fontSize: 44,
+                            fontWeight: FontWeight.w900,
+                          ),
+                          border: InputBorder.none,
+                          enabledBorder: InputBorder.none,
+                          focusedBorder: InputBorder.none,
+                          filled: false,
+                        ),
+                        validator: (value) {
+                          final amount = double.tryParse(value?.trim() ?? '');
+
+                          if (amount == null ||
+                              !amount.isFinite ||
+                              amount <= 0) {
+                            return 'Enter a valid amount';
+                          }
+
+                          if ((amount * 100).round() <= 0) {
+                            return 'Amount must be at least ₹0.01';
+                          }
+
+                          if (_isTransfer) {
+                            final available =
+                                _balanceSummary
+                                    ?.accountBalancesPaise[_selectedAccountId] ??
+                                0;
+                            if ((amount * 100).round() > available) {
+                              return 'Amount exceeds available balance';
+                            }
+                          }
+
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 6),
+                      ValueListenableBuilder<TextEditingValue>(
+                        valueListenable: _amountController,
+                        builder: (context, value, _) {
+                          return Container(
+                            height: 3,
+                            alignment: Alignment.centerLeft,
+                            decoration: BoxDecoration(
+                              color: ArthamColors.line,
+                              borderRadius: BorderRadius.circular(2),
+                            ),
+                            child: AnimatedFractionallySizedBox(
+                              duration: reduce
+                                  ? Duration.zero
+                                  : const Duration(milliseconds: 380),
+                              curve: Curves.easeOutCubic,
+                              alignment: Alignment.centerLeft,
+                              widthFactor: value.text.isEmpty ? 0.3 : 1,
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(
+                                  color: accent,
+                                  borderRadius: BorderRadius.circular(2),
+                                ),
+                                child: const SizedBox(height: 3),
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+              _Rise(
+                index: 2,
+                child: AnimatedSize(
+                  duration: reduce
+                      ? Duration.zero
+                      : const Duration(milliseconds: 260),
+                  curve: Curves.easeInOutCubic,
+                  alignment: Alignment.topCenter,
+                  child: AnimatedSwitcher(
+                    duration: reduce
+                        ? Duration.zero
+                        : const Duration(milliseconds: 260),
+                    switchInCurve: Curves.easeOutCubic,
+                    child: KeyedSubtree(
+                      key: ValueKey<bool>(_isTransfer),
+                      child: _isTransfer
+                          ? _transferSection(
+                              accent,
+                              fromAccounts,
+                              toAccounts,
+                            )
+                          : _expenseIncomeSection(accent, fromAccounts),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 22),
+              _Rise(
+                index: 3,
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: _pickerButton(
+                        caption: 'Transaction Date',
+                        value: _formatDate(_transactionDate),
+                        icon: Icons.calendar_month_outlined,
+                        onTap: _selectDate,
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: _pickerButton(
+                        caption: 'Transaction Time',
+                        value: _formatTime(_transactionDate),
+                        icon: Icons.access_time_rounded,
+                        onTap: _selectTime,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 16),
+              _Rise(
+                index: 4,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    TextFormField(
+                      controller: _descriptionController,
+                      maxLength: 150,
+                      onChanged: _handleDescriptionChanged,
+                      decoration: _decoration(
+                        'Description (optional)',
+                        hint: 'e.g. Lunch with friends',
+                        prefix: Icon(
+                          Icons.notes_rounded,
+                          color: transactionGreen,
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 12),
+                    _buildTagsField(),
+                    if (_merchantSuggestion != null) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.auto_awesome_rounded,
+                            size: 15,
+                            color: transactionGreen,
+                          ),
+                          const SizedBox(width: 6),
+                          Expanded(
+                            child: Text(
+                              'Recognised ${_merchantSuggestion!.name} · '
+                              'suggested ${_merchantSuggestion!.categoryName}',
+                              style: TextStyle(
+                                color: transactionGreen,
+                                fontSize: 11,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
+                ),
+              ),
+            ],
+          ),
+          Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: _buildSaveBar(accent),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _expenseIncomeSection(Color accent, List<BankAccount> accounts) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        _caption('Category'),
+        _categoryRow(accent),
+        const SizedBox(height: 20),
+        _caption('Account'),
+        _accountRow(
+          accounts: accounts,
+          selectedId: _selectedAccountId,
+          onSelected: (id) => setState(() => _selectedAccountId = id),
+          accent: accent,
+          keyPrefix: 'account-chip',
+        ),
+      ],
+    );
+  }
+
+  Widget _transferSection(
+    Color accent,
+    List<BankAccount> fromAccounts,
+    List<BankAccount> toAccounts,
+  ) {
+    final available =
+        _balanceSummary?.accountBalancesPaise[_selectedAccountId] ?? 0;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 0, 4, 14),
+          child: Text(
+            'Move money between your own accounts. Transfers do not count '
+            'as income or expenses.',
+            style: TextStyle(color: ArthamColors.muted, fontSize: 12.5),
+          ),
+        ),
+        _caption('From account'),
+        _accountRow(
+          accounts: fromAccounts,
+          selectedId: _selectedAccountId,
+          onSelected: (id) => setState(() {
+            _selectedAccountId = id;
+            _ensureDifferentDestination();
+          }),
+          accent: accent,
+          keyPrefix: 'from-chip',
+        ),
+        if (_selectedAccountId != null) ...[
+          const SizedBox(height: 6),
+          Padding(
+            padding: const EdgeInsets.only(left: 4),
+            child: Text(
+              'Available: ${_money(available)}',
+              style: TextStyle(color: ArthamColors.muted, fontSize: 12),
+            ),
+          ),
+        ],
+        const SizedBox(height: 16),
+        Row(
+          children: [
+            Expanded(child: _caption('To account')),
+            if (_accounts.length >= 2 && _toAccountId != null)
+              Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: IconButton.filledTonal(
+                  key: const Key('swap-accounts-button'),
+                  tooltip: 'Swap accounts',
+                  onPressed: () {
+                    HapticFeedback.selectionClick();
+                    setState(() {
+                      final from = _selectedAccountId;
+                      _selectedAccountId = _toAccountId;
+                      _toAccountId = from;
+                    });
+                  },
+                  icon: const Icon(Icons.swap_vert_rounded, size: 20),
+                ),
+              ),
+          ],
+        ),
+        if (_accounts.length < 2)
+          Text(
+            'Add at least two active bank accounts to make a transfer.',
+            style: TextStyle(color: ArthamColors.debit, fontSize: 13),
+          )
+        else
+          _accountRow(
+            accounts: toAccounts,
+            selectedId: _toAccountId,
+            onSelected: (id) => setState(() => _toAccountId = id),
+            accent: accent,
+            keyPrefix: 'to-chip',
+          ),
+      ],
+    );
+  }
+
+  Widget _buildSaveBar(Color accent) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    final enabled = !_isSaving && !(_isTransfer && _accounts.length < 2);
+    return Container(
+      padding: const EdgeInsets.fromLTRB(18, 24, 18, 18),
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            ArthamColors.ink.withValues(alpha: 0),
+            ArthamColors.ink.withValues(alpha: 0.92),
+          ],
+        ),
+      ),
+      child: SafeArea(
+        top: false,
+        child: PressableScale(
+          onTap: enabled ? _saveTransaction : null,
+          child: AnimatedContainer(
+            duration: reduce ? Duration.zero : const Duration(milliseconds: 320),
+            curve: Curves.easeOutCubic,
+            height: 58,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(
+              color: enabled ? accent : accent.withValues(alpha: 0.5),
+              borderRadius: BorderRadius.circular(29),
+              boxShadow: [
+                BoxShadow(
+                  color: accent.withValues(alpha: 0.32),
+                  blurRadius: 24,
+                  offset: const Offset(0, 8),
+                ),
+              ],
+            ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                _isSaving
+                    ? SizedBox(
+                        height: 20,
+                        width: 20,
+                        child: CircularProgressIndicator(
+                          color: ArthamColors.onAccent,
+                          strokeWidth: 2,
+                        ),
+                      )
+                    : Icon(
+                        Icons.check_circle_outline_rounded,
+                        color: ArthamColors.onAccent,
+                      ),
+                const SizedBox(width: 10),
+                Text(
+                  _isSaving
+                      ? 'Saving...'
+                      : (_isTransfer ? 'Confirm Transfer' : 'Save Transaction'),
+                  style: TextStyle(
+                    color: ArthamColors.onAccent,
+                    fontWeight: FontWeight.w700,
+                    fontSize: 16,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1205,6 +1448,136 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+
+/// Fades and lifts a child in, one after another by [index]. Skipped when the
+/// system "reduce motion" setting is on.
+class _Rise extends StatelessWidget {
+  const _Rise({required this.index, required this.child});
+
+  final int index;
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context) {
+    if (MediaQuery.of(context).disableAnimations) return child;
+    final delay = index * 70;
+    final total = 420 + delay;
+    return TweenAnimationBuilder<double>(
+      tween: Tween(begin: 0, end: 1),
+      duration: Duration(milliseconds: total),
+      curve: Interval(delay / total, 1, curve: Curves.easeOutCubic),
+      builder: (context, t, child) => Opacity(
+        opacity: t,
+        child: Transform.translate(
+          offset: Offset(0, (1 - t) * 14),
+          child: child,
+        ),
+      ),
+      child: child,
+    );
+  }
+}
+
+/// Expense / Income / Transfer switch. A capsule slides under the selected
+/// label, like the bottom tab bar.
+class _TypeSwitch extends StatelessWidget {
+  const _TypeSwitch({required this.value, required this.onChanged});
+
+  final String value;
+  final ValueChanged<String> onChanged;
+
+  static const _items = [
+    ('expense', 'Expense', Icons.arrow_upward_rounded),
+    ('income', 'Income', Icons.arrow_downward_rounded),
+    ('transfer', 'Transfer', Icons.swap_horiz_rounded),
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    final reduce = MediaQuery.of(context).disableAnimations;
+    final duration = reduce ? Duration.zero : const Duration(milliseconds: 340);
+    final index = _items.indexWhere((item) => item.$1 == value);
+    return Container(
+      height: 58,
+      padding: const EdgeInsets.all(5),
+      decoration: BoxDecoration(
+        color: ArthamColors.glass,
+        borderRadius: BorderRadius.circular(29),
+        border: Border.all(color: ArthamColors.line),
+      ),
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          final segment = constraints.maxWidth / _items.length;
+          return Stack(
+            children: [
+              AnimatedPositioned(
+                duration: duration,
+                curve: Curves.easeOutCubic,
+                left: index * segment,
+                width: segment,
+                top: 0,
+                bottom: 0,
+                child: DecoratedBox(
+                  key: const ValueKey('type-switch-capsule'),
+                  decoration: BoxDecoration(
+                    color: ArthamColors.tabCapsule,
+                    borderRadius: BorderRadius.circular(24),
+                  ),
+                ),
+              ),
+              Row(
+                children: [
+                  for (final item in _items)
+                    Expanded(
+                      child: Semantics(
+                        button: true,
+                        selected: item.$1 == value,
+                        child: InkWell(
+                          borderRadius: BorderRadius.circular(24),
+                          onTap: () {
+                            if (item.$1 != value) {
+                              HapticFeedback.selectionClick();
+                            }
+                            onChanged(item.$1);
+                          },
+                          child: Center(
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(
+                                  item.$3,
+                                  size: 16,
+                                  color: item.$1 == value
+                                      ? ArthamColors.onAccent
+                                      : ArthamColors.tabIdle,
+                                ),
+                                const SizedBox(width: 5),
+                                Text(
+                                  item.$2,
+                                  style: TextStyle(
+                                    color: item.$1 == value
+                                        ? ArthamColors.onAccent
+                                        : ArthamColors.tabIdle,
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ],
+          );
+        },
       ),
     );
   }
