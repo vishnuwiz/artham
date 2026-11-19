@@ -58,7 +58,8 @@ void main() {
     expect(find.text('Transaction Time'), findsOneWidget);
 
     await tester.tap(find.text('Transfer'));
-    await tester.pump(const Duration(milliseconds: 300));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 700));
 
     expect(find.text('Confirm Transfer'), findsOneWidget);
     expect(find.text('From account'), findsOneWidget);

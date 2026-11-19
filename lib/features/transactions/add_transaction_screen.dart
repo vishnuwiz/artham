@@ -805,6 +805,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     required Color color,
     required VoidCallback onTap,
     required Widget child,
+    double verticalPadding = 10,
   }) {
     final reduce = MediaQuery.of(context).disableAnimations;
     return PressableScale(
@@ -816,7 +817,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
       child: AnimatedContainer(
         duration: reduce ? Duration.zero : const Duration(milliseconds: 240),
         curve: Curves.easeOutCubic,
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+        padding: EdgeInsets.symmetric(horizontal: 16, vertical: verticalPadding),
         decoration: BoxDecoration(
           color: selected
               ? color.withValues(alpha: 0.2)
@@ -908,7 +909,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
     required String keyPrefix,
   }) {
     return SizedBox(
-      height: 56,
+      height: 62,
       child: ListView(
         scrollDirection: Axis.horizontal,
         clipBehavior: Clip.none,
@@ -919,6 +920,7 @@ class _AddTransactionScreenState extends State<AddTransactionScreen> {
               selected: account.id == selectedId,
               color: accent,
               onTap: () => onSelected(account.id),
+              verticalPadding: 7,
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
