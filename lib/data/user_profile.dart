@@ -15,14 +15,13 @@ String greetingFor(DateTime now) {
 /// The name the user wants to be greeted by. It is kept in a small private
 /// file, separate from the financial database, so no schema change is needed.
 class UserProfile {
-  UserProfile({Future<Directory> Function()? directoryProvider})
-    : _directoryProvider = directoryProvider;
+  UserProfile({this.directoryProvider});
 
   static final UserProfile instance = UserProfile();
 
   static const int maxNameLength = 24;
 
-  final Future<Directory> Function()? _directoryProvider;
+  final Future<Directory> Function()? directoryProvider;
 
   /// The saved name, or null when none was given.
   final ValueNotifier<String?> name = ValueNotifier<String?>(null);
@@ -40,7 +39,7 @@ class UserProfile {
   }
 
   Future<File> _file() async {
-    final provider = _directoryProvider;
+    final provider = directoryProvider;
     final directory = provider == null
         ? await getApplicationSupportDirectory()
         : await provider();
