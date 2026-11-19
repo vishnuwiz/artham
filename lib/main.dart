@@ -22,7 +22,9 @@ import 'features/alerts/alerts_screen.dart';
 import 'widgets/animated_charts.dart';
 import 'widgets/micro_interactions.dart';
 import 'features/settings/settings_screen.dart';
+import 'features/onboarding/name_gate.dart';
 import 'features/onboarding/onboarding_gate.dart';
+import 'data/user_profile.dart';
 import 'features/setup/first_time_setup_gate.dart';
 import 'splash/artham_splash.dart';
 
@@ -83,9 +85,11 @@ class ArthamApp extends StatelessWidget {
             ? const HomeScreen()
             : SplashGate(
                 child: OnboardingGate(
-                  child: FirstTimeSetupGate(
-                    database: appDatabase,
-                    child: const HomeScreen(),
+                  child: NameGate(
+                    child: FirstTimeSetupGate(
+                      database: appDatabase,
+                      child: const HomeScreen(),
+                    ),
                   ),
                 ),
               ),
@@ -359,24 +363,53 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           ),
         ),
         const SizedBox(width: 12),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              'Artham',
-              style: TextStyle(
-                fontSize: 23,
-                fontWeight: FontWeight.w800,
-                color: darkNavy,
-              ),
-            ),
-            Text(
-              'Your money, under control.',
-              style: TextStyle(fontSize: 12, color: ArthamColors.muted),
-            ),
-          ],
+        Expanded(
+          child: ValueListenableBuilder<String?>(
+            valueListenable: UserProfile.instance.name,
+            builder: (context, name, _) {
+              if (name == null) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Artham',
+                      style: TextStyle(
+                        fontSize: 23,
+                        fontWeight: FontWeight.w800,
+                        color: darkNavy,
+                      ),
+                    ),
+                    Text(
+                      'Your money, under control.',
+                      style: TextStyle(fontSize: 12, color: ArthamColors.muted),
+                    ),
+                  ],
+                );
+              }
+              return Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    greetingFor(DateTime.now()),
+                    key: const Key('home-greeting'),
+                    style: TextStyle(fontSize: 13, color: ArthamColors.muted),
+                  ),
+                  Text(
+                    name,
+                    key: const Key('home-greeting-name'),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 23,
+                      fontWeight: FontWeight.w800,
+                      color: darkNavy,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
         ),
-        const Spacer(),
         ValueListenableBuilder<int>(
           valueListenable: AlertCenter.instance.unreadCount,
           builder: (context, unread, _) {
@@ -414,13 +447,56 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
           },
         ),
         const SizedBox(width: 4),
-        CircleAvatar(
-          radius: 21,
-          backgroundColor: primaryGreen.withValues(alpha: 0.12),
-          child: Icon(Icons.person_outline, color: primaryGreen),
+        InkResponse(
+          key: const Key('home-profile-button'),
+          onTap: _editName,
+          radius: 26,
+          child: Tooltip(
+            message: 'Edit your name',
+            child: CircleAvatar(
+              radius: 21,
+              backgroundColor: primaryGreen.withValues(alpha: 0.12),
+              child: Icon(Icons.person_outline, color: primaryGreen),
+            ),
+          ),
         ),
       ],
     );
+  }
+
+  Future<void> _editName() async {
+    final controller = TextEditingController(text: UserProfile.instance.name.value);
+    try {
+      final result = await showDialog<String>(
+        context: context,
+        builder: (dialogContext) => AlertDialog(
+          title: const Text('Your name'),
+          content: TextField(
+            key: const Key('edit-name-field'),
+            controller: controller,
+            autofocus: true,
+            textCapitalization: TextCapitalization.words,
+            maxLength: UserProfile.maxNameLength,
+            decoration: const InputDecoration(hintText: 'What should we call you?'),
+            onSubmitted: (value) => Navigator.pop(dialogContext, value),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(dialogContext),
+              child: const Text('Cancel'),
+            ),
+            FilledButton(
+              key: const Key('edit-name-save'),
+              onPressed: () => Navigator.pop(dialogContext, controller.text),
+              child: const Text('Save'),
+            ),
+          ],
+        ),
+      );
+      if (result != null) await UserProfile.instance.save(result);
+    } finally {
+      controller.dispose();
+    }
   }
 
   /// A money value that counts up when it first appears (and whenever the

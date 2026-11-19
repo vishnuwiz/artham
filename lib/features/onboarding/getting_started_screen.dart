@@ -223,21 +223,13 @@ class _TopBar extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(24, 10, 12, 0),
       child: Row(
         children: [
-          Container(
-            width: 34,
-            height: 34,
-            alignment: Alignment.center,
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(11),
-              color: AC.lavender,
-            ),
-            child: const Text(
-              'A',
-              style: TextStyle(
-                fontWeight: FontWeight.w900,
-                fontSize: 18,
-                color: AC.bg,
-              ),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(11),
+            child: Image.asset(
+              'assets/branding/artham_app_icon_ios_1024.png',
+              width: 34,
+              height: 34,
+              fit: BoxFit.cover,
             ),
           ),
           const SizedBox(width: 10),
