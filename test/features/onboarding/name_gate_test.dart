@@ -5,6 +5,17 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:artham/data/user_profile.dart';
 import 'package:artham/features/onboarding/name_gate.dart';
 
+/// File writes finish on the real event loop, so alternate between letting it
+/// run and pumping frames until the chained futures have completed.
+Future<void> _settle(WidgetTester tester) async {
+  for (var i = 0; i < 6; i++) {
+    await tester.runAsync(
+      () => Future<void>.delayed(const Duration(milliseconds: 100)),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+  }
+}
+
 void main() {
   testWidgets('asks for a name once, then shows the app', (tester) async {
     late Directory dir;
@@ -33,10 +44,7 @@ void main() {
     expect(find.textContaining(', Vishnu'), findsOneWidget);
 
     await tester.tap(find.byKey(const Key('name-continue-button')));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 300)),
-    );
-    await tester.pump(const Duration(milliseconds: 400));
+    await _settle(tester);
 
     expect(find.text('HOME'), findsOneWidget);
     expect(profile.name.value, 'Vishnu');
@@ -64,10 +72,7 @@ void main() {
     await tester.pump(const Duration(milliseconds: 700));
 
     await tester.tap(find.byKey(const Key('name-skip-button')));
-    await tester.runAsync(
-      () => Future<void>.delayed(const Duration(milliseconds: 300)),
-    );
-    await tester.pump(const Duration(milliseconds: 400));
+    await _settle(tester);
 
     expect(find.text('HOME'), findsOneWidget);
     expect(profile.name.value, isNull);
